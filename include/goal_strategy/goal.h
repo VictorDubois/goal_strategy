@@ -14,6 +14,7 @@
 #include <ctime>
 //#include "goldo2018.h"
 #include "coupe2019.h"
+#include "ros/ros.h"
 #define TRUE 1
 #define FALSE 0
 
@@ -76,6 +77,7 @@ private:
 	bool is_baffe_action();
 	std::string read_stop_distance_modulation();
 	void write_stop_distance_modulation(std::string distanceToWrite);
+	ros::Publisher pose_pub;
 };
 
 #endif

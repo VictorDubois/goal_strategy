@@ -5,6 +5,7 @@ project(goal_strategy)
 add_compile_options(-std=c++11)
 
 add_definitions(-D STANDALONE_STRATEGIE)
+add_definitions(-D USE_ROS)
 add_definitions(-D USE_IOSTREAM)
 set(ROS_BUILD_TYPE Debug)
 

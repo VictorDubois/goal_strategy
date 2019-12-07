@@ -1,6 +1,10 @@
 #include <math.h>
 
 #include "Krabi/positionPlusAngle.h"
+#ifdef USE_ROS
+#include "tf/tf.h"
+#include "geometry_msgs/Pose.h"
+#endif
 
 PositionPlusAngle::PositionPlusAngle()
 {
@@ -101,3 +105,17 @@ PositionPlusAngle PositionPlusAngle::operator-(const Vec3d &vec3d) const
     PositionPlusAngle resultat(Position(position.getX()-vec3d.x, position.getY()-vec3d.y), angle-vec3d.z);
     return resultat;
 }
+
+#ifdef USE_ROS
+geometry_msgs::Pose PositionPlusAngle::getPose() const
+{
+    geometry_msgs::Point point;
+    geometry_msgs::Pose pose;
+    point.x = position.getX();
+    point.y = position.getY();
+    point.z = 0;
+    pose.position = point;
+    pose.orientation = tf::createQuaternionMsgFromYaw(angle);
+    return pose;
+}
+#endif

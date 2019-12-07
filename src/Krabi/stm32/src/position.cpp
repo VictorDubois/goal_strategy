@@ -148,3 +148,14 @@ Angle Position::getAngle() const
 {
 	return atan2(y,x);
 }
+
+#ifdef USE_ROS
+geometry_msgs::Point Position::getPoint() const
+{
+	geometry_msgs::Point point;
+        point.x = this->getX();
+        point.y = this->getY();
+        point.z = 0;
+        return point;
+}
+#endif

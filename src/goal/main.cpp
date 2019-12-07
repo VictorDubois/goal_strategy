@@ -76,6 +76,7 @@ void GoalStrat::printCurrentAction() {
 
 // Entry point
 int main (int argc, char * argv[]) {
+	ros::init(argc, argv, "goalStrat");
 	GoalStrat* goalStrat = new GoalStrat{};
 
 	goalStrat->loop();
@@ -270,6 +271,8 @@ GoalStrat::GoalStrat() {
 	timeoutMoving = 10;// sec
 	timeoutOrient = 5;// sec
 	isFirstAction = true;
+	ros::NodeHandle n;
+	pose_pub = n.advertise<geometry_msgs::Point>("position", 1000);
 }
 
 
@@ -293,7 +296,7 @@ int GoalStrat::sendNewMission(StrategieV3* strat) {
 }
 
 int GoalStrat::loop() {	
-	while (state != EXIT) {
+	while (state != EXIT && ros::ok()) {
 		bool isLate = false;
 		printCurrentAction();
 		update_selected_attractor();
@@ -368,7 +371,12 @@ int GoalStrat::loop() {
 			}
 			go_to_next_mission();
 		}
+		pose_pub.publish(strat_graph->getEtapeEnCours()->getPosition().getPoint());
+		
+
 		usleep(20000);
+		
+		ros::spinOnce();
 	}
 	std::cout << "Mission accomplished, shutting down" << std::endl;	
 	fflush(stdout);

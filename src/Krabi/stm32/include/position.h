@@ -7,6 +7,7 @@
 
 #ifdef USE_IOSTREAM
 #include <iostream>
+#include "geometry_msgs/Point.h"
 #endif // USE_IOSTREAM
 
 class StrategieV2;
@@ -88,6 +89,10 @@ class Position
         /// @brief Coordonnées
         Distance x;
         Distance y;
+
+	#ifdef USE_ROS
+	geometry_msgs::Point getPoint() const;
+	#endif
 };
 
 #endif
