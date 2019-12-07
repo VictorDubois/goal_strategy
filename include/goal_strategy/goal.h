@@ -12,10 +12,6 @@
 #include <stdint.h>
 #include <math.h>
 #include <ctime>
-#include "blc_channel.h"
-#include "attractors.h"
-#include "Krabi/strategie/strategies.h"
-#include "Krabi/strategie/positionPlusAngle.h"
 //#include "goldo2018.h"
 #include "coupe2019.h"
 #define TRUE 1
@@ -68,8 +64,6 @@ private:
 	unsigned int get_angular_diff();
 	int sendNewMission(StrategieV3* strat);
 	bool displayed_end_msg;
-	struct Strategy strategy;
-	struct Attractor attractor;
 	enum MissionState mission_state;
 	int goal_nb, orientation, mission_finished;
 	float dist_to_goal;
@@ -77,7 +71,7 @@ private:
 	PositionPlusAngle startingPosition;
 	StrategieV3* strat_graph;
 	struct timespec now, begin, orientTime;
-	unsigned long timeoutMoving, timeoutOrient;
+	long timeoutMoving, timeoutOrient;
 	bool isFirstAction;
 	bool is_baffe_action();
 	std::string read_stop_distance_modulation();

@@ -1,0 +1,3 @@
+bool obstacle_seen
+---
+geometry_msgs/Point new_goal

@@ -5,6 +5,8 @@ project(goal_strategy)
 add_compile_options(-std=c++11)
 
 add_definitions(-D STANDALONE_STRATEGIE)
+add_definitions(-D USE_IOSTREAM)
+set(ROS_BUILD_TYPE Debug)
 
 ## Find catkin macros and libraries
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
@@ -13,6 +15,8 @@ find_package(catkin REQUIRED COMPONENTS
   roscpp
   rospy
   std_msgs
+  message_generation
+  geometry_msgs
 )
 
 ## System dependencies are found with CMake's conventions
@@ -56,11 +60,12 @@ find_package(catkin REQUIRED COMPONENTS
 # )
 
 ## Generate services in the 'srv' folder
-# add_service_files(
-#   FILES
+add_service_files(
+  FILES
+  UpdateStrat.srv
 #   Service1.srv
 #   Service2.srv
-# )
+)
 
 ## Generate actions in the 'action' folder
 # add_action_files(
@@ -70,10 +75,12 @@ find_package(catkin REQUIRED COMPONENTS
 # )
 
 ## Generate added messages and services with any dependencies listed here
-# generate_messages(
-#   DEPENDENCIES
-#   std_msgs
-# )
+generate_messages(
+  DEPENDENCIES
+  std_msgs
+  geometry_msgs
+  #UpdateStrat
+)
 
 ################################################
 ## Declare ROS dynamic reconfigure parameters ##
@@ -106,9 +113,9 @@ find_package(catkin REQUIRED COMPONENTS
 ## DEPENDS: system dependencies of this project that dependent projects also need
 catkin_package(
   INCLUDE_DIRS include
-#  LIBRARIES goal_strategy
-  CATKIN_DEPENDS roscpp rospy std_msgs
-  DEPENDS system_lib
+  LIBRARIES goal_strategy
+  CATKIN_DEPENDS roscpp rospy std_msgs geometry_msgs
+  #DEPENDS system_lib
 )
 
 ###########
@@ -136,10 +143,11 @@ include_directories(
 ## With catkin_make all packages are built within a single CMake context
 ## The recommended prefix ensures that target names across packages don't collide
 # add_executable(${PROJECT_NAME}_node src/goal_strategy_node.cpp)
-add_executable(IA src/goal/main.cpp
+add_executable(goal_strategy_node 
+src/goal/main.cpp
 src/goal/coupe2019.cpp
 src/Krabi/stm32/src/angle.cpp  src/Krabi/stm32/src/distance.cpp  src/Krabi/stm32/src/position.cpp  src/Krabi/stm32/src/positionPlusAngle.cpp  src/Krabi/stm32/src/vec2d.cpp  src/Krabi/stm32/src/vec3d.cpp
-src/Krabi/stm32/src/strategie/abeille.cpp      src/Krabi/stm32/src/strategie/dijkstra.cpp   src/Krabi/stm32/src/strategie/goldo2018.cpp          src/Krabi/stm32/src/strategie/strategiev3.cpp
+src/Krabi/stm32/src/strategie/abeille.cpp      src/Krabi/stm32/src/strategie/dijkstra.cpp   src/Krabi/stm32/src/strategie/strategiev3.cpp
 src/Krabi/stm32/src/strategie/accelerator.cpp  src/Krabi/stm32/src/strategie/etape.cpp      src/Krabi/stm32/src/strategie/mediumLevelAction.cpp
 src/Krabi/stm32/src/strategie/actionGoTo.cpp   src/Krabi/stm32/src/strategie/goldenium.cpp  src/Krabi/stm32/src/strategie/reservoirEau.cpp
 )
@@ -155,9 +163,9 @@ src/Krabi/stm32/src/strategie/actionGoTo.cpp   src/Krabi/stm32/src/strategie/gol
 # add_dependencies(${PROJECT_NAME}_node ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 
 ## Specify libraries to link a library or executable target against
-# target_link_libraries(${PROJECT_NAME}_node
-#   ${catkin_LIBRARIES}
-# )
+target_link_libraries(${PROJECT_NAME}_node
+  ${catkin_LIBRARIES}
+)
 
 #############
 ## Install ##

@@ -1,20 +1,19 @@
-//main goal.c
-#define STANDALONE_STRATEGIE
 #define USE_IOSTREAM
-#define ENABLE_REAL_SERVOS
 #ifdef USE_IOSTREAM
 #include <iostream>
 #endif
 #include <fstream>
 #include "Krabi/strategie/etape.h"
 #include "Krabi/strategie/dijkstra.h"
+#include "Krabi/positionPlusAngle.h"
 //#include "Krabi/goldo2018.h"
 #include "goal_strategy/coupe2019.h"
 //#include "Krabi/../../stratV3/include/strategie/etape.h"
 #include "Krabi/constantes.h"
 #include "goal_strategy/goal.h"
-
-#define NB_NEURONS 360
+#include "geometry_msgs/Pose.h"
+#include "geometry_msgs/Point.h"
+#include "tf/transform_datatypes.h"
 
 #define SERVO_RIGHT 0
 #define SERVO_LEFT  1
@@ -26,63 +25,24 @@
 #define LOW_SPEED  0.19607 //50
 #define FAST_SPEED 0.58823 //150
 
-/*
- * Choose the first attractor
- */
 using namespace goal;
-
-static float * set_servo; //array of cmd see order in firmware lib/servos.cpp
-static float * read_servo;
-static float * ard_servo_running;
-static float * ard_servo_reset;
-static float * idServo; //set_servo[0]
-static float * angleServo; //set_servo[1]
-static float * speed;  //set_servo[2]
-static float * currentAction; //set_servo[3]
-static float * enable;  //set_servo[4]
-static float * startFunny;  //set_servo[5]
-static float * resetServo;  //set_servo[6]
 
 State state = RUN;
 
 void ard_goToPosition(int servoNb, enum PositionServo position) {
-#ifdef ENABLE_REAL_SERVOS
-	*idServo = servoNb * 0.0039;
-		switch (position) {
-			case UP :
-				*angleServo = UP_ANGLE;
-				*speed = LOW_SPEED;
-			break;
-
-			case DOWN :
-				*angleServo = DOWN_ANGLE;
-				*speed = LOW_SPEED;
-			break;
-
-			case RELEASE :
-				*angleServo = RELEASE_ANGLE;
-				*speed = FAST_SPEED;
-			break;
-
-			default :
-				;
-		}
-		printf("Setting servo %d to angle %f with speed %f\n", servoNb, *angleServo, *speed);
-
-		//start servos
-		*enable = 1.;
-#endif
 }
 
-unsigned int get_idx_of_max (float * vector, size_t len) {
-	unsigned int curr_max = 0, i;
+void stopLinear() {
+	//@TODO stop linear speed
+}
 
-	for (int i = 0; i < len; i += 1) {
-		if (vector[i] > vector[curr_max])
-			curr_max = i;
-	}
+void startLinear() {
+	//@TODO stop linear speed
+}
 
-	return curr_max;
+bool isBlue() {
+	//@TODO return true if current color is Blue
+	return true;
 }
 
 // Handle CTRL + C
@@ -98,91 +58,12 @@ void sig_handler(int signal) {
 	}
 }
 
-void debug_vector (const char * title, const float * vector, const size_t len, const int display_index, const int display_max) {
-	unsigned int i, idx;
-	float max_value;
-
-	printf("%s",title);
-
-	for (int i = 0; i < len; i += 10) {
-		printf("%+.1f ", vector[i]);
-	}
-	printf("\n");
-
-	if (display_index == TRUE) {
-		for (i = 0; i < len; i += 10) {
-		       printf("% 4d ", i);
-		}
-
-		printf("\n");
-	}
-
-	if (display_max == TRUE) {
-		idx = 0;
-		max_value = vector[0];
-
-		for (int i = 1; i < len; i += 1) {
-			if (vector[i] > max_value) {
-				idx = i;
-				max_value = vector[i];
-			}
-		}
-
-		printf("Max: %f @%d deg\n", max_value, idx);
-	}
-
-	printf("\n");
-}
-
-/*
- * Init share memory to store pid
- */
-static float * emergency_stop_bis;
-void init_ard_shm (void) {
-	blc_channel * chan;
-	chan  = create_blc_channel( "GOAL_PID" , sizeof(float));
-	int * p = (int*)chan->data;
-	*p = getpid();
-
-	chan       = create_blc_channel( "MOTORS_CLUB_SpeedOrder" , sizeof(float)*4);
-	emergency_stop_bis   = (float*)chan->data;
-
-	chan       =  create_blc_channel( "SERVOS_CLUB_Servos"  , sizeof(float)*7);
-	set_servo    = (float*)chan->data;
-	ard_servo_reset = &set_servo[6];
-
-	/*
-	idServo       = (uint8_t *)&set_servo[0];
-	angleServo         = (uint16_t *)&set_servo[1];
-	speed         = (uint8_t *)&set_servo[2];
-	currentAction = (uint16_t *)&set_servo[3]; //not used for now
-	enable        = (uint8_t *)&set_servo[4];
-	startFunny    = (uint8_t *)&set_servo[5]; //totaly unused (firmware manage it)
-	*/
-
-	idServo       = (float*)&set_servo[0];
-	angleServo         = (float *)&set_servo[1];
-	speed         = (float *)&set_servo[2];
-	currentAction = (float *)&set_servo[3]; //not used for now
-	enable        = (float *)&set_servo[4];
-	startFunny    = (float *)&set_servo[5]; //totaly unused (firmware manage it)
-
-
-	//READER
-	chan       = create_blc_channel( "SERVOS_CLUB_Servos_status" , sizeof(float)*3);
-	read_servo   = (float*)chan->data;
-
-	//set to 1 when broker and arduino is running
-	chan       = create_blc_channel( "SERVOS_CLUB_running", sizeof(float));
-	ard_servo_running  = (float*)chan->data;
-}
-
 void GoalStrat::printCurrentAction() {
 	if (!state_msg_displayed) {
 		int etapeId = strat_graph->getEtapeEnCours()->getNumero();
 		Position goal = strat_graph->getEtapeEnCours()->getPosition();
 		int mission_type = strat_graph->getEtapeEnCours()->getEtapeType();
-		std::cout << "Attractor: " << etapeId << std::endl;
+		std::cout << "Etape id: " << etapeId << std::endl;
 		std::cout << "goal: " << goal.Print() << std::endl;
 		std::cout << "type: " << mission_type << std::endl;
 		state_msg_displayed = true;
@@ -197,17 +78,11 @@ void GoalStrat::printCurrentAction() {
 int main (int argc, char * argv[]) {
 	GoalStrat* goalStrat = new GoalStrat{};
 
-	while(42) {
-		goalStrat->loop();
-	}
+	goalStrat->loop();
 }
 
 void GoalStrat::orient_to_angle(float a_angle) {
-        orientation = strategy.input->orientation;
-
-	for (int i = 0; i < NB_NEURONS; i += 1) {
-		strategy.output->neural_field[i] = cos((int) (i - a_angle) * M_PI / 180.);
-	}
+	//@TODO orient
 }
 
 float GoalStrat::compute_angular_diff(float a_angle_1, float a_angle_2) {
@@ -228,17 +103,15 @@ int GoalStrat::arrived_there() {
 	// Orient the robot
 	move_toward_goal();
 
-	int driveAngle = get_idx_of_max(attractor.drive, NB_NEURONS);
-
 	// Get distance to the attractor
-	dist_to_goal = attractor.drive[driveAngle];
+	dist_to_goal = 0;//@TODO get distance to goal
 
 	//printf("Distance to objective: %.2f\n", dist_to_goal);
 	//fflush(stdout);
 
 	if (dist_to_goal < REACH_DIST) {
 		// Make it stop
-		strategy.output->speed_inhibition = 0;
+		stopLinear();
 
 		return 1;
 	}
@@ -260,29 +133,12 @@ int GoalStrat::done_orienting_to(int angle) {
 }
 
 void GoalStrat::move_toward_goal() {
-
-	attractor = strategy.input->attractors[goal_nb];
-	memcpy(strategy.output->neural_field, attractor.drive, NB_NEURONS * sizeof(*(attractor.drive)));
-
-	unsigned int angular_diff = get_angular_diff();
-
-	strategy.output->speed_inhibition = (int)round(MAX_ALLOWED_SPEED * (- (float)angular_diff / 180. + 1.));
+	//@TODO send pose
 }
 
 unsigned int GoalStrat::get_angular_diff() {
-	attractor = strategy.input->attractors[goal_nb];
-	// Get distance to the attractor
-	int driveAngle = get_idx_of_max(attractor.drive, NB_NEURONS);
-
-	// Inhibit linear speed based on angular difference
-	// Compute the angular distance between our orientation and the target's
-	unsigned int ad1 = abs(360 + (int) driveAngle - (int)strategy.input->orientation) % 360;
-	unsigned int ad2 = abs(360 + (int)strategy.input->orientation - (int) driveAngle) % 360;
-
-	if (ad1 < ad2) {
-		return ad1;
-	}
-	return ad2;
+	//@TODO return the angular difference between the command and the current state
+	return 0;
 }
 
 // Returns true if the current action is a baffe (push goldenium/accelerator). Specific to 2019
@@ -335,16 +191,16 @@ void GoalStrat::write_stop_distance_modulation(std::string distanceToWrite) {
 }
 
 void GoalStrat::go_to_next_mission() {
-	//strategy.output->angular_speed_inhibition = 0;
+	startLinear();
 	isFirstAction = false;
 	// Reset timeout
 	clock_gettime (CLOCK_MONOTONIC, &begin);
 	
-	strategy.output->angular_speed_inhibition = MAX_ALLOWED_ANGULAR_SPEED;
 	state_msg_displayed = false;
 
 	int strat_graph_status = strat_graph->update();
 	if (strat_graph_status == -1) {
+		std::cout << "Graph status is -1: we're done" << std::endl;
 		state = EXIT;
 		return;
 	}
@@ -371,14 +227,12 @@ GoalStrat::GoalStrat() {
 	state_msg_displayed = false;
 	// Attach signal handler
 	signal(SIGINT, sig_handler);
-	init_ard_shm();
 
 	/*************************************************
 	 *           Variables initialization            *
 	 *************************************************/
 
 	// Create & attach to SHM segment
-	strategy = init_strategy(SHM_INPUT_FILE, GOAL_SHM_FILE, AM_STRATEGY);
 	mission_finished = 0;
 	mission_state = GO_FOOD_1;
 
@@ -386,20 +240,8 @@ GoalStrat::GoalStrat() {
 	 *                   Main loop                   *
 	 *************************************************/
 
-	printf("Starting goal strategy.\n");
-	attractor = strategy.input->attractors[goal_nb];
-	int driveAngle = get_idx_of_max(attractor.drive, NB_NEURONS);
-	printf("Start goal #%d @ %d deg.\n", goal_nb, driveAngle);
-
-	strategy.output->angular_speed_inhibition = MAX_ALLOWED_ANGULAR_SPEED;
-
-
-	printf("before\n");
 	Position pos(200,1850, true);//strategy.input->color);//1500, isBlue());
-	printf("after\n");
 	startingPosition = PositionPlusAngle (pos,-M_PI/2);
-
-	attractor = strategy.input->attractors[goal_nb];
 
 	ard_goToPosition(SERVO_RIGHT, UP);
 	ard_goToPosition(SERVO_LEFT, UP);
@@ -410,8 +252,14 @@ GoalStrat::GoalStrat() {
 	ard_goToPosition(SERVO_RIGHT, UP);
 	ard_goToPosition(SERVO_LEFT, UP);
 
-	//std::cout << "size of attractors = " << strategy.input->attractors.size() << std::endl;
-	strat_graph = new Coupe2019(false, strategy.input->attractors, 8);
+	geometry_msgs::Point point1 = geometry_msgs::Point();
+	point1.x = 0;
+	point1.y = 0;
+	point1.z = 0;
+	std::vector<geometry_msgs::Point> etapes;
+	etapes.push_back(point1);
+
+	strat_graph = new Coupe2019(false, etapes);
 	//while(sendNewMission(strat_graph) != -1) {}
 	strat_graph->update();
 	
@@ -433,20 +281,19 @@ GoalStrat::GoalStrat() {
 int GoalStrat::sendNewMission(StrategieV3* strat) {
 	int result = strat->update();
 	int etapeId = strat->getEtapeEnCours()->getNumero();
-	Position goal = strat->getEtapeEnCours()->getPosition();
+	//Position goal = strat->getEtapeEnCours()->getPosition();
 	int mission_type = strat->getEtapeEnCours()->getEtapeType();
     	#ifdef USE_IOSTREAM
-	std::cout << "Attractor: " << etapeId << std::endl;
-	std::cout << "goal: " << goal.Print() << std::endl;
+	std::cout << "EtapeId: " << etapeId << std::endl;
+	//std::cout << "goal: " << goal.Print() << std::endl;
 	std::cout << "type: " << mission_type << std::endl;
 	#endif // USE_IOSTREAM
-    	PositionPlusAngle* goalWithAngle = new PositionPlusAngle(goal, 0);
+    	//PositionPlusAngle* goalWithAngle = new PositionPlusAngle(goal, 0);
 	return result;
 }
 
 int GoalStrat::loop() {	
 	while (state != EXIT) {
-		int driveAngle;
 		bool isLate = false;
 		printCurrentAction();
 		update_selected_attractor();
@@ -475,12 +322,12 @@ int GoalStrat::loop() {
 				case Etape::EtapeType::ACCELERATOR:
 				case Etape::EtapeType::GOLDENIUM:
 					// Stop moving, not already done if baffing
-					strategy.output->speed_inhibition = 0;
+					stopLinear();
 
 					printf("In front of goldenium/accelerator, orienting\n");
 					fflush(stdout);
 					angleAction = 320;
-					if (strategy.input->color) {
+					if (isBlue()) {
 						angleAction = 40;
 					}
 					clock_gettime (CLOCK_MONOTONIC, &orientTime);
@@ -496,7 +343,7 @@ int GoalStrat::loop() {
 					ard_goToPosition(SERVO_LEFT, DOWN);
 					usleep(1500000); // 1.5s
 					angleAction = 220;
-					if (strategy.input->color) {
+					if (isBlue()) {
 						angleAction = 140;
 					}
 					clock_gettime (CLOCK_MONOTONIC, &orientTime);
@@ -521,24 +368,10 @@ int GoalStrat::loop() {
 			}
 			go_to_next_mission();
 		}
-
-		strategy.output->strength = 1;
 		usleep(20000);
 	}
 	std::cout << "Mission accomplished, shutting down" << std::endl;	
 	fflush(stdout);
-	// Stop everything
-	strategy.output->speed_inhibition = 0;
-	strategy.output->angular_speed_inhibition = 0;
-
-
-	// When exiting, set strength to 1: we want the robot to stay off
-
-	strategy.output->strength = 1;
-
-	// Cleanly close strategy
-	close_strategy(&strategy);
-
 	return 0;
 }
 
