@@ -91,7 +91,11 @@ class Position
         Distance y;
 
 	#ifdef USE_ROS
+	/// @brief Conversion vers geometry_msgs::Point
 	geometry_msgs::Point getPoint() const;
+
+        /// @brief Constructeur depuis geometry_msgs::Point
+        Position(const geometry_msgs::Point&, bool colorDependent);
 	#endif
 };
 

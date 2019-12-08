@@ -118,4 +118,10 @@ geometry_msgs::Pose PositionPlusAngle::getPose() const
     pose.orientation = tf::createQuaternionMsgFromYaw(angle);
     return pose;
 }
+
+PositionPlusAngle::PositionPlusAngle(const geometry_msgs::Pose& pose, bool colorDependent)
+{
+    position = Position(pose.position, colorDependent);
+    angle = tf::getYaw(pose.orientation);
+}
 #endif

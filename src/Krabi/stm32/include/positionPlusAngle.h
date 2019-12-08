@@ -78,7 +78,11 @@ class PositionPlusAngle
         Angle angle;
 
 	#ifdef USE_ROS
+	/// @brief Conversion vers geometry_msgs::Pose
         geometry_msgs::Pose getPose() const;
+
+        /// @brief Constructeur depuis geometry_msgs::Pose
+        PositionPlusAngle(const geometry_msgs::Pose&, bool colorDependent = false);
         #endif
 };
 

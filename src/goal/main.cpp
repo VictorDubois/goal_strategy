@@ -191,6 +191,10 @@ void GoalStrat::write_stop_distance_modulation(std::string distanceToWrite) {
         }
 }
 
+void GoalStrat::updateCurrentPose(geometry_msgs::Pose newPose) {
+	currentPosition = PositionPlusAngle(newPose);
+}
+
 void GoalStrat::go_to_next_mission() {
 	startLinear();
 	isFirstAction = false;
@@ -272,7 +276,8 @@ GoalStrat::GoalStrat() {
 	timeoutOrient = 5;// sec
 	isFirstAction = true;
 	ros::NodeHandle n;
-	pose_pub = n.advertise<geometry_msgs::Point>("position", 1000);
+	goal_pose_pub = n.advertise<geometry_msgs::Point>("goal_position", 1000);
+	current_pose_sub = n.subscribe("current_pose", 1000, &GoalStrat::updateCurrentPose, this);
 }
 
 
@@ -371,7 +376,7 @@ int GoalStrat::loop() {
 			}
 			go_to_next_mission();
 		}
-		pose_pub.publish(strat_graph->getEtapeEnCours()->getPosition().getPoint());
+		goal_pose_pub.publish(strat_graph->getEtapeEnCours()->getPosition().getPoint());
 		
 
 		usleep(20000);

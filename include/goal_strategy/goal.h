@@ -77,7 +77,10 @@ private:
 	bool is_baffe_action();
 	std::string read_stop_distance_modulation();
 	void write_stop_distance_modulation(std::string distanceToWrite);
-	ros::Publisher pose_pub;
+	ros::Publisher goal_pose_pub;
+	ros::Subscriber current_pose_sub;
+	PositionPlusAngle currentPosition;
+	void updateCurrentPose(geometry_msgs::Pose);
 };
 
 #endif

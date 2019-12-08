@@ -158,4 +158,9 @@ geometry_msgs::Point Position::getPoint() const
         point.z = 0;
         return point;
 }
+
+Position::Position(const geometry_msgs::Point& position, bool colorDependent = false):Position(position.x, position.y, colorDependent)
+{
+	
+}
 #endif
