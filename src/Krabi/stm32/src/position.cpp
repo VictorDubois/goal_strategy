@@ -159,7 +159,7 @@ geometry_msgs::Point Position::getPoint() const
         return point;
 }
 
-Position::Position(const geometry_msgs::Point& position, bool colorDependent = false):Position(position.x, position.y, colorDependent)
+Position::Position(const geometry_msgs::Point& position, bool colorDependent):Position(position.x, position.y, colorDependent)
 {
 	
 }

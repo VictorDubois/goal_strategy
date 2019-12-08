@@ -10,17 +10,6 @@
 	#include <QDebug>
 #endif
 
-unsigned int get_idx_of_max_2 (float * vector, size_t len = NB_NEURONS) {
-        unsigned int curr_max = 0, i;
-
-        for (i = 0; i < len; i += 1) {
-                if (vector[i] > vector[curr_max])
-                        curr_max = i;
-        }
-
-        return curr_max;
-}
-
 /*Position Coupe2019::positionFromAttractor(int attractorId) {
 	unsigned int angle = get_idx_of_max_2(m_attractors[attractorId].position, NB_NEURONS);
 	float distance = m_attractors[attractorId].position[angle];
@@ -33,33 +22,6 @@ unsigned int get_idx_of_max_2 (float * vector, size_t len = NB_NEURONS) {
 	Position newPos = Position(posX, posY, color);
 	return newPos;
 }*/
-
-Position Coupe2019::positionFromPose(geometry_msgs::Pose pose) {
-	return this->positionFromPoint(pose.position);
-}
-
-Position Coupe2019::positionFromPoint(geometry_msgs::Point point) {
-	std::cout << "posX = " << point.x << ", posY = " << point.y << std::endl;
-	bool color = true;
-	Position newPos = Position(point.x, point.y, color);
-	return newPos;
-}
-
-geometry_msgs::Pose Coupe2019::poseFromPosition(Position position) {
-	geometry_msgs::Point point = pointFromPosition(position);
-	geometry_msgs::Pose pose;
-	pose.position = point;
-	return pose;
-}
-
-geometry_msgs::Point Coupe2019::pointFromPosition(Position position) {
-	geometry_msgs::Point point;
-	point.x = position.getX();
-	point.y = position.getY();
-	point.z = 0;
-	std::cout << "posX = " << point.x << ", posY = " << point.y << std::endl;
-	return point;
-}
 
 Coupe2019::Coupe2019(const bool isYellow, const std::vector<geometry_msgs::Pose> etapesAsPoses) : StrategieV3(isYellow) {
 	std::vector<geometry_msgs::Point> etapesAsPoints;
@@ -84,7 +46,7 @@ Coupe2019::Coupe2019(const bool isYellow, const std::vector<geometry_msgs::Point
 	//int etapeId = 0;
 	//int start = Etape::makeEtape(positionFromAttractor(0), Etape::DEPART); // départ au fond de la zone de départ
 	//int start = Etape::makeEtape(positionFromPoint(etapes_as_points[++etapeId]), Etape::DEPART); // départ au fond de la zone de départ
-	Position position1 = positionFromPoint(etapes_as_points[0]);
+	Position position1 = Position(etapes_as_points[0]);
 	//positionFromPoint(etapes_as_points[0]);
 	std::cout << "posX = " << position1.getX() << std::endl;
 	//Etape::makeEtape(position1, Etape::DEPART); // départ au fond de la zone de départ
@@ -206,38 +168,5 @@ int Coupe2019::getScoreEtape(int i)
 		default :
 			return 1; /* DEBUG (0 sinon) */
 	}
-}
-
-bool Coupe2019::updateWIP(goal_strategy::UpdateStrat::Request &req,
-           goal_strategy::UpdateStrat::Response &res) {
-	std::cout << "updating strat!" << std::endl;
-	if (req.obstacle_seen) {
-		std::cout << "J'ai vu un Grominet!" << std::endl;
-	}
-	geometry_msgs::Point point1 = geometry_msgs::Point();
-	point1.x = 0;
-	point1.y = 0;
-	point1.z = 0;
-	res.new_goal = point1;
-	return true;
-}
-
-int main2(int argc, char **argv) {
-	//geometry_msgs::Point point1 = geometry_msgs::Point(0, 0, 0);
-	geometry_msgs::Point point1 = geometry_msgs::Point();
-	point1.x = 0;
-	point1.y = 0;
-	point1.z = 0;
-	std::vector<geometry_msgs::Point> etapes;
-	etapes.push_back(point1);
-	//std::shared_ptr<Coupe2019> strat_graph = std::make_shared<Coupe2019>(false, etapes);
-	//Coupe2019* strat_graph = new Coupe2019(false, etapes);
-	std::cout << "Hello world!" << std::endl;
-	//ros::init(argc, argv, "goal_strategy_node");
-	//ros::NodeHandle node;
-	//ros::ServiceServer service = node.advertiseService("update", &Coupe2019::update, strat_graph);
-	ROS_INFO("krabi_strat_server is ready");
-	ros::spin();
-	return 0;
 }
 

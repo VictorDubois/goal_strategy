@@ -95,7 +95,7 @@ class Position
 	geometry_msgs::Point getPoint() const;
 
         /// @brief Constructeur depuis geometry_msgs::Point
-        Position(const geometry_msgs::Point&, bool colorDependent);
+        Position(const geometry_msgs::Point&, bool colorDependent = false);
 	#endif
 };
 
