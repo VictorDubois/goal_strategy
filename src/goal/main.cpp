@@ -106,6 +106,7 @@ int GoalStrat::arrived_there() {
 
 	// Get distance to the attractor
 	dist_to_goal = 0;//@TODO get distance to goal
+	dist_to_goal = (currentPosition.getPosition()-strat_graph->getEtapeEnCours()->getPosition()).getNorme();
 
 	//printf("Distance to objective: %.2f\n", dist_to_goal);
 	//fflush(stdout);
@@ -124,7 +125,7 @@ int GoalStrat::done_orienting_to(int angle) {
 	orient_to_angle(angle);
 
 	// Compute angular diff
-	unsigned int angular_error = compute_angular_diff(angle, orientation);
+	unsigned int angular_error = compute_angular_diff(angle, currentPosition.getAngle());
 
 	// When we reached the correct orientation, angularly stop and switch state
 	if (angular_error < REACH_ANG) {
