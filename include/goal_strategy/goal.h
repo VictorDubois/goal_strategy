@@ -80,6 +80,7 @@ private:
 	ros::Publisher goal_pose_pub;
 	ros::Subscriber current_pose_sub;
 	PositionPlusAngle currentPosition;
+	PositionPlusAngle goal_pose;
 	void updateCurrentPose(geometry_msgs::Pose);
 };
 

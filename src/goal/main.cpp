@@ -45,19 +45,6 @@ bool isBlue() {
 	return true;
 }
 
-// Handle CTRL + C
-void sig_handler(int signal) {
-	static unsigned int nb = 0;
-	(void)signal;
-	state = EXIT;
-
-	// If this has been called more than once, immediately exit
-	if (nb++ >= 1) {
-		printf("Immediate exit requested.\n");
-		exit(1);
-	}
-}
-
 void GoalStrat::printCurrentAction() {
 	if (!state_msg_displayed) {
 		int etapeId = strat_graph->getEtapeEnCours()->getNumero();
@@ -72,8 +59,6 @@ void GoalStrat::printCurrentAction() {
 	fflush(stdout);
 }
 
-
-
 // Entry point
 int main (int argc, char * argv[]) {
 	ros::init(argc, argv, "goalStrat");
@@ -83,7 +68,7 @@ int main (int argc, char * argv[]) {
 }
 
 void GoalStrat::orient_to_angle(float a_angle) {
-	//@TODO orient
+	goal_pose.setAngle(a_angle);
 }
 
 float GoalStrat::compute_angular_diff(float a_angle_1, float a_angle_2) {
@@ -100,12 +85,7 @@ void GoalStrat::update_selected_attractor() {
 }
 
 int GoalStrat::arrived_there() {
-	// Go fetch the food
-	// Orient the robot
-	move_toward_goal();
 
-	// Get distance to the attractor
-	dist_to_goal = 0;//@TODO get distance to goal
 	dist_to_goal = (currentPosition.getPosition()-strat_graph->getEtapeEnCours()->getPosition()).getNorme();
 
 	//printf("Distance to objective: %.2f\n", dist_to_goal);
@@ -135,7 +115,10 @@ int GoalStrat::done_orienting_to(int angle) {
 }
 
 void GoalStrat::move_toward_goal() {
-	//@TODO send pose
+	Position goal_position = strat_graph->getEtapeEnCours()->getPosition();
+	goal_pose.setX(goal_position.getX());
+	goal_pose.setY(goal_position.getY());
+	goal_pose_pub.publish(goal_pose.getPose());
 }
 
 unsigned int GoalStrat::get_angular_diff() {
@@ -231,8 +214,6 @@ GoalStrat::GoalStrat() {
 	goal_nb = 0;
 	dist_to_goal = 100.;
 	state_msg_displayed = false;
-	// Attach signal handler
-	signal(SIGINT, sig_handler);
 
 	/*************************************************
 	 *           Variables initialization            *
@@ -277,7 +258,7 @@ GoalStrat::GoalStrat() {
 	timeoutOrient = 5;// sec
 	isFirstAction = true;
 	ros::NodeHandle n;
-	goal_pose_pub = n.advertise<geometry_msgs::Point>("goal_position", 1000);
+	goal_pose_pub = n.advertise<geometry_msgs::Pose>("goal_position", 1000);
 	current_pose_sub = n.subscribe("current_pose", 1000, &GoalStrat::updateCurrentPose, this);
 }
 
@@ -377,8 +358,7 @@ int GoalStrat::loop() {
 			}
 			go_to_next_mission();
 		}
-		goal_pose_pub.publish(strat_graph->getEtapeEnCours()->getPosition().getPoint());
-		
+		move_toward_goal();
 
 		usleep(20000);
 		
