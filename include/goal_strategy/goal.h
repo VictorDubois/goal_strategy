@@ -21,7 +21,7 @@
 #define GOAL_SHM_FILE "goal.key"
 
 // The distance to a goal (in m)
-#define REACH_DIST 0.07 // 5cm
+#define REACH_DIST 5//0.07 // 5cm
 #define REACH_ANG 2 //°
 enum MissionState {
 	GO_FOOD_1,
