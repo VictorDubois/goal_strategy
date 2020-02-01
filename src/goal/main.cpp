@@ -1,7 +1,4 @@
-#define USE_IOSTREAM
-#ifdef USE_IOSTREAM
 #include <iostream>
-#endif
 #include <fstream>
 #include "Krabi/strategie/etape.h"
 #include "Krabi/strategie/dijkstra.h"
@@ -87,9 +84,9 @@ void GoalStrat::update_selected_attractor() {
 int GoalStrat::arrived_there() {
 
 	dist_to_goal = (currentPosition.getPosition()-strat_graph->getEtapeEnCours()->getPosition()).getNorme();
-
-	//printf("Distance to objective: %.2f\n", dist_to_goal);
-	//fflush(stdout);
+    std::cout << "current pose: x = " << currentPosition.getPosition().getX() << ", y = " << currentPosition.getPosition().getY() << ", etape_en_cours: x = " << strat_graph->getEtapeEnCours()->getPosition().getX() << ", y = " << strat_graph->getEtapeEnCours()->getPosition().getY()<< std::endl;
+    printf("Distance to objective: %.2f\n", dist_to_goal);
+    fflush(stdout);
 
 	if (dist_to_goal < REACH_DIST) {
 		// Make it stop
@@ -258,7 +255,7 @@ GoalStrat::GoalStrat() {
 	timeoutOrient = 5;// sec
 	isFirstAction = true;
 	ros::NodeHandle n;
-	goal_pose_pub = n.advertise<geometry_msgs::Pose>("goal_position", 1000);
+    goal_pose_pub = n.advertise<geometry_msgs::Pose>("goal_pose", 1000);
 	current_pose_sub = n.subscribe("current_pose", 1000, &GoalStrat::updateCurrentPose, this);
 }
 
