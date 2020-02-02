@@ -12,6 +12,9 @@ Position::Position()
 {
 }
 
+Position::Position(Vec2d vect): x(vect.x), y(vect.y)
+{}
+
 Position::Position(Distance X, Distance Y, bool colorDependent)
     : x(X), y(Y)
 {

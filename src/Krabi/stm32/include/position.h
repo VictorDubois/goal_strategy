@@ -22,6 +22,8 @@ class Position
         /// @brief Constructeur par défaut avec des coordonnées nulles.
         Position();
 
+        Position(Vec2d vect);
+
         /// @brief Constructeur avec des coordonnées prédéfinies.
         Position(Distance X, Distance Y, bool colorDependent = false);
 
@@ -32,6 +34,7 @@ class Position
 
         /// @brief Surchage d'opérateur pour soustraire des coordonnées
         Vec2d operator-(const Position &position) const;
+        //Position operator-(const Position &other) const;
 
         /// @brief Surchage d'opérateur pour multiplier par un flottant
         Position operator*(float val) const;
