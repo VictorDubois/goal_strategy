@@ -14,9 +14,9 @@
 	unsigned int angle = get_idx_of_max_2(m_attractors[attractorId].position, NB_NEURONS);
 	float distance = m_attractors[attractorId].position[angle];
 	std::cout << "AttractorId = " << attractorId << ", angle = " << angle << ", distance = " << distance << std::endl;
-	int posX, posY;
-	posX =(int)1000* distance*cos(angle * PI/180);
-	posY =(int)1000* distance*sin(angle * PI/180);
+	float posX, posY;
+	posX = distance*cos(angle * PI/180);
+	posY = distance*sin(angle * PI/180);
 	std::cout << "posX = " << posX << ", posY = " << posY << std::endl;
 	bool color;
 	Position newPos = Position(posX, posY, color);
@@ -31,9 +31,9 @@
  * @param posX the distance, in meters
  **/
 //#define DEBUG_cart_to_polar
-void cart_to_polar(int posX, int posY, float& theta, float& distance) {
+void cart_to_polar(float posX, float posY, float& theta, float& distance) {
 	theta = ((180./M_PI) * atan2((float) posX, (float) posY));
-	distance = sqrt((float)(posX * posX + posY * posY))/1000.f;
+	distance = sqrt((float)(posX * posX + posY * posY));
 
 	// fix angular ambiguity
 	if (posY < 0) {
@@ -42,19 +42,19 @@ void cart_to_polar(int posX, int posY, float& theta, float& distance) {
 
 	#ifdef DEBUG_cart_to_polar
 		std::cout << "posX = " << posX << "posY = " <<  posY<< "theta = " << theta << ", distance = " << distance << std::endl;
-		int posXafter =(int)1000* distance*cos(theta * M_PI/180.f);
-        	int posYafter =(int)1000* distance*sin(theta * M_PI/180.f);
+		float posXafter =distance*cos(theta * M_PI/180.f);
+        	float posYafter =distance*sin(theta * M_PI/180.f);
 	        std::cout << "posXafter = " << posXafter << ", posYafter = " << posYafter << std::endl;
 	#endif
 }
 void createEtapes(bool is_blue) {
 
-	std::vector<std::pair<int, int> > positionsCart;
+	std::vector<std::pair<float, float> > positionsCart;
 	std::vector<std::pair<float, float> > positionsPolar;
 
 	// first: longueur (vers l'autre couleur)
 	// second: profondeur (vers le publique)
-    std::pair<int, int> positionDepart = std::make_pair(300, 450);
+    std::pair<float, float> positionDepart = std::make_pair(300, 450);
     int angleDepart = -90;//degrees
     positionsCart.push_back(std::make_pair(800, 450));//OK          out of red
 	positionsCart.push_back(std::make_pair(800, 750));//OK          out of green
@@ -133,9 +133,9 @@ Coupe2019::Coupe2019(const bool isYellow, const std::vector<geometry_msgs::Point
 	//Etape::makeEtape(position1, Etape::DEPART); // départ au fond de la zone de départ
     bool isBlue = false;
     int start = Etape::makeEtape(Position(0, 0, isBlue), Etape::DEPART); // départ au fond de la zone de départ
-    int pp1 = Etape::makeEtape(Position(100, 0, isBlue), Etape::POINT_PASSAGE); // départ au fond de la zone de départ
-    int pp2 = Etape::makeEtape(Position(100, 100, isBlue), Etape::POINT_PASSAGE); // départ au fond de la zone de départ
-    int goal = Etape::makeEtape(Position(0, 100, isBlue), Etape::ABEILLE); // départ au fond de la zone de départ
+    int pp1 = Etape::makeEtape(Position(1.f, 1.5f, isBlue), Etape::POINT_PASSAGE); // départ au fond de la zone de départ
+    int pp2 = Etape::makeEtape(Position(1, 0, isBlue), Etape::POINT_PASSAGE); // départ au fond de la zone de départ
+    int goal = Etape::makeEtape(Position(0, 1, isBlue), Etape::ABEILLE); // départ au fond de la zone de départ
 	Etape::get(pp1)->addVoisins(start);
 	Etape::get(pp1)->addVoisins(pp2);
 	Etape::get(pp2)->addVoisins(goal);
