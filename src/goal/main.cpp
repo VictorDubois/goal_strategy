@@ -251,8 +251,8 @@ GoalStrat::GoalStrat() {
 
 	// Initialize time
 	clock_gettime (CLOCK_MONOTONIC, &begin);
-	timeoutMoving = 10;// sec
-	timeoutOrient = 5;// sec
+	timeoutMoving = 100;// sec
+	timeoutOrient = 50;// sec
 	isFirstAction = true;
 	ros::NodeHandle n;
     goal_pose_pub = n.advertise<geometry_msgs::Pose>("goal_pose", 1000);

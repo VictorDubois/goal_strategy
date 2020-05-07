@@ -118,7 +118,8 @@ Coupe2019::Coupe2019(const bool isYellow, const std::vector<geometry_msgs::Point
 	
 	//Initialisation des tableaux d'étapes
 	this->numeroEtapeGarage = ETAPE_GARAGE;
-	tableauEtapesTotal = Etape::initTableauEtapeTotal(etapes_as_points.size());//NOMBRE_ETAPES);//new Etape*[NOMBRE_ETAPES];
+	tableauEtapesTotal = Etape::initTableauEtapeTotal(8);//NOMBRE_ETAPES);//new Etape*[NOMBRE_ETAPES];
+	//tableauEtapesTotal = Etape::initTableauEtapeTotal(etapes_as_points.size());//NOMBRE_ETAPES);//new Etape*[NOMBRE_ETAPES];
 
 	// Création des étapes
 	// Les étapes correspondant à des actions sont créées automatiquement lors de l'ajout d'actions
@@ -133,12 +134,29 @@ Coupe2019::Coupe2019(const bool isYellow, const std::vector<geometry_msgs::Point
 	//Etape::makeEtape(position1, Etape::DEPART); // départ au fond de la zone de départ
     bool isBlue = false;
     int start = Etape::makeEtape(Position(0, 0, isBlue), Etape::DEPART); // départ au fond de la zone de départ
-    int pp1 = Etape::makeEtape(Position(1.f, 1.5f, isBlue), Etape::POINT_PASSAGE); // départ au fond de la zone de départ
-    int pp2 = Etape::makeEtape(Position(1, 0, isBlue), Etape::POINT_PASSAGE); // départ au fond de la zone de départ
-    int goal = Etape::makeEtape(Position(0, 1, isBlue), Etape::ABEILLE); // départ au fond de la zone de départ
+    int pp1 = Etape::makeEtape(Position(1.f, .5f, isBlue), Etape::POINT_PASSAGE);
+    int pp2 = Etape::makeEtape(Position(1.f, 1.f, isBlue), Etape::POINT_PASSAGE);
+    int pp3 = Etape::makeEtape(Position(.5f, 1.f, isBlue), Etape::ABEILLE);
+    int pp4 = Etape::makeEtape(Position(0.f, 0.f, isBlue), Etape::POINT_PASSAGE);
+    int pp5 = Etape::makeEtape(Position(-.5f, -1.f, isBlue), Etape::POINT_PASSAGE);
+    int pp6 = Etape::makeEtape(Position(-1.f, -1.f, isBlue), Etape::ABEILLE);
+    int pp7 = Etape::makeEtape(Position(-1.f, -.5f, isBlue), Etape::POINT_PASSAGE);
 	Etape::get(pp1)->addVoisins(start);
+	std::cout << "1" << std::endl;
 	Etape::get(pp1)->addVoisins(pp2);
-	Etape::get(pp2)->addVoisins(goal);
+	std::cout << "1" << std::endl;
+	Etape::get(pp3)->addVoisins(pp2);
+	std::cout << "1" << std::endl;
+	Etape::get(pp3)->addVoisins(pp4);
+	std::cout << "1" << std::endl;
+	Etape::get(pp5)->addVoisins(pp4);
+	std::cout << "1" << std::endl;
+	Etape::get(pp5)->addVoisins(pp6);
+	std::cout << "1" << std::endl;
+	Etape::get(pp7)->addVoisins(pp6);
+	std::cout << "1" << std::endl;
+	Etape::get(pp7)->addVoisins(start);
+	std::cout << "1" << std::endl;
 	//Etape::get(pp2)->addVoisins(start);
 
 /*
