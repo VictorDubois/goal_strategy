@@ -98,11 +98,11 @@ int GoalStrat::arrived_there() {
 }
 
 int GoalStrat::done_orienting_to(int angle) {
-        // Output a goal relative to the robot
+    // Output a goal relative to the robot
 	orient_to_angle(angle);
 
 	// Compute angular diff
-	unsigned int angular_error = compute_angular_diff(angle, currentPosition.getAngle());
+    unsigned int angular_error = compute_angular_diff(angle, currentPosition.getAngle());
 
 	// When we reached the correct orientation, angularly stop and switch state
 	if (angular_error < REACH_ANG) {
@@ -251,8 +251,8 @@ GoalStrat::GoalStrat() {
 
 	// Initialize time
 	clock_gettime (CLOCK_MONOTONIC, &begin);
-	timeoutMoving = 10;// sec
-	timeoutOrient = 5;// sec
+    timeoutMoving = 1000;// sec
+    timeoutOrient = 500;// sec
 	isFirstAction = true;
 	ros::NodeHandle n;
     goal_pose_pub = n.advertise<geometry_msgs::Pose>("goal_pose", 1000);
@@ -275,7 +275,7 @@ int GoalStrat::sendNewMission(StrategieV3* strat) {
 	//std::cout << "goal: " << goal.Print() << std::endl;
 	std::cout << "type: " << mission_type << std::endl;
 	#endif // USE_IOSTREAM
-    	//PositionPlusAngle* goalWithAngle = new PositionPlusAngle(goal, 0);
+    //PositionPlusAngle* goalWithAngle = new PositionPlusAngle(goal, 0);
 	return result;
 }
 

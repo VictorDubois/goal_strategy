@@ -96,12 +96,8 @@ void createEtapes(bool is_blue) {
 		fflush(stdout);
 	}
 
-
 	std::cout << "There are " << positionsPolar.size() << " positionPolar, " << positionsCart.size() << " positionCart" << std::endl;
 	fflush(stdout);
-
-
-
 }
 
 Coupe2019::Coupe2019(const bool isYellow, const std::vector<geometry_msgs::Pose> etapesAsPoses) : StrategieV3(isYellow) {
@@ -133,9 +129,9 @@ Coupe2019::Coupe2019(const bool isYellow, const std::vector<geometry_msgs::Point
 	//Etape::makeEtape(position1, Etape::DEPART); // départ au fond de la zone de départ
     bool isBlue = false;
     int start = Etape::makeEtape(Position(0, 0, isBlue), Etape::DEPART); // départ au fond de la zone de départ
-    int pp1 = Etape::makeEtape(Position(100, 0, isBlue), Etape::POINT_PASSAGE); // départ au fond de la zone de départ
-    int pp2 = Etape::makeEtape(Position(100, 100, isBlue), Etape::POINT_PASSAGE); // départ au fond de la zone de départ
-    int goal = Etape::makeEtape(Position(0, 100, isBlue), Etape::ABEILLE); // départ au fond de la zone de départ
+    int pp1 = Etape::makeEtape(Position(0, 200, isBlue), Etape::POINT_PASSAGE); // départ au fond de la zone de départ
+    int pp2 = Etape::makeEtape(Position(200, 200, isBlue), Etape::POINT_PASSAGE); // départ au fond de la zone de départ
+    int goal = Etape::makeEtape(Position(200, 0, isBlue), Etape::ABEILLE); // départ au fond de la zone de départ
 	Etape::get(pp1)->addVoisins(start);
 	Etape::get(pp1)->addVoisins(pp2);
 	Etape::get(pp2)->addVoisins(goal);
