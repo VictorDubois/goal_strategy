@@ -156,13 +156,13 @@ Angle Position::getAngle() const
 geometry_msgs::Point Position::getPoint() const
 {
 	geometry_msgs::Point point;
-        point.x = this->getX();
-        point.y = this->getY();
+        point.x = this->getX()/1000.f;
+        point.y = this->getY()/1000.f;
         point.z = 0;
         return point;
 }
 
-Position::Position(const geometry_msgs::Point& position, bool colorDependent):Position(position.x, position.y, colorDependent)
+Position::Position(const geometry_msgs::Point& position, bool colorDependent):Position(position.x * 1000, position.y * 1000, colorDependent)
 {
 	
 }

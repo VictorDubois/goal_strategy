@@ -109,12 +109,12 @@ PositionPlusAngle PositionPlusAngle::operator-(const Vec3d &vec3d) const
 #ifdef USE_ROS
 geometry_msgs::Pose PositionPlusAngle::getPose() const
 {
-    geometry_msgs::Point point;
+//    geometry_msgs::Point point;
     geometry_msgs::Pose pose;
-    point.x = position.getX();
-    point.y = position.getY();
-    point.z = 0;
-    pose.position = point;
+//    point.x = position.getX();
+//    point.y = position.getY();
+//    point.z = 0;
+    pose.position = position.getPoint();
     pose.orientation = tf::createQuaternionMsgFromYaw(angle);
     return pose;
 }
