@@ -39,7 +39,7 @@ void startLinear() {
 
 bool isBlue() {
 	//@TODO return true if current color is Blue
-	return true;
+	return false;
 }
 
 void GoalStrat::printCurrentAction() {
@@ -243,7 +243,7 @@ GoalStrat::GoalStrat() {
 	std::vector<geometry_msgs::Point> etapes;
 	etapes.push_back(point1);
 
-	strat_graph = new Coupe2019(false, etapes);
+	strat_graph = new Coupe2019(!isBlue(), etapes);
 	//while(sendNewMission(strat_graph) != -1) {}
 	strat_graph->update();
 	

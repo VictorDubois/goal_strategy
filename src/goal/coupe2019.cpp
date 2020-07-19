@@ -126,27 +126,27 @@ Coupe2019::Coupe2019(const bool isYellow, const std::vector<geometry_msgs::Point
     // Les étapes correspondant à des actions sont créées automatiquement lors de l'ajout d'actions
 
     // Initialisation in simulator in initKrabi.cpp
-    int main_port = Etape::makeEtape(Position(200, 800, true), Etape::DEPART); // départ au fond de la zone de départ
+    int main_port = Etape::makeEtape(Position(200, 800, isYellow), Etape::DEPART); // départ au fond de la zone de départ
 
-    int lighthouse = Etape::makeEtape(Position(301,  200, true));
+    int lighthouse = Etape::makeEtape(Position(301,  200, isYellow));
 
-    int out_of_lighthouse = Etape::makeEtape(Position(640, 400, true));
+    int out_of_lighthouse = Etape::makeEtape(Position(640, 400, isYellow));
 
-    int out_of_main_port = Etape::makeEtape(Position(700, 800, true));
+    int out_of_main_port = Etape::makeEtape(Position(700, 800, isYellow));
 
     Etape::get(main_port)->addVoisins(out_of_main_port);
     Etape::get(lighthouse)->addVoisins(out_of_lighthouse);
     Etape::get(out_of_main_port)->addVoisins(out_of_lighthouse);
 
-    int first_air = Etape::makeEtape(new Abeille(Position(230, 1800, true)));
-    int second_air = Etape::makeEtape(new Abeille(Position(635, 1800, true)));
-    int out_of_air = Etape::makeEtape(Position(430, 1400, true));
+    int first_air = Etape::makeEtape(new Abeille(Position(230, 1800, isYellow)));
+    int second_air = Etape::makeEtape(new Abeille(Position(635, 1800, isYellow)));
+    int out_of_air = Etape::makeEtape(Position(430, 1400, isYellow));
 
     Etape::get(first_air)->addVoisins(out_of_air);
     Etape::get(second_air)->addVoisins(out_of_air);
 
-    int south = Etape::makeEtape(new Abeille(Position(150, 1250, true)));
-    int north = Etape::makeEtape(new Abeille(Position(150, 320, true)));
+    int south = Etape::makeEtape(new Abeille(Position(150, 1250, isYellow)));
+    int north = Etape::makeEtape(new Abeille(Position(150, 320, isYellow)));
 
     Etape::get(south)->addVoisins(out_of_air);
     Etape::get(north)->addVoisins(out_of_lighthouse);
@@ -154,8 +154,8 @@ Coupe2019::Coupe2019(const bool isYellow, const std::vector<geometry_msgs::Point
 
 
     /** Points de passage **/
-    int waypoint_south = Etape::makeEtape(Position(640, 1300, true));
-    int waypoint_out_of_enemy_port = Etape::makeEtape(Position(1100, 1400, true));
+    int waypoint_south = Etape::makeEtape(Position(640, 1300, isYellow));
+    int waypoint_out_of_enemy_port = Etape::makeEtape(Position(1100, 1400, isYellow));
     Etape::get(out_of_air)->addVoisins(waypoint_south);// green to waypoint
     Etape::get(out_of_main_port)->addVoisins(waypoint_south);// red to waypoint
     Etape::get(waypoint_out_of_enemy_port)->addVoisins(waypoint_south);// red to waypoint
