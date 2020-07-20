@@ -128,7 +128,7 @@ Coupe2019::Coupe2019(const bool isYellow, const std::vector<geometry_msgs::Point
     // Initialisation in simulator in initKrabi.cpp
     int main_port = Etape::makeEtape(Position(200, 800, isYellow), Etape::DEPART); // départ au fond de la zone de départ
 
-    int lighthouse = Etape::makeEtape(Position(301,  200, isYellow));
+    int lighthouse = Etape::makeEtape(new Goldenium(Position(301,  200, isYellow)));
 
     int out_of_lighthouse = Etape::makeEtape(Position(640, 400, isYellow));
 
@@ -138,8 +138,8 @@ Coupe2019::Coupe2019(const bool isYellow, const std::vector<geometry_msgs::Point
     Etape::get(lighthouse)->addVoisins(out_of_lighthouse);
     Etape::get(out_of_main_port)->addVoisins(out_of_lighthouse);
 
-    int first_air = Etape::makeEtape(new Abeille(Position(230, 1800, isYellow)));
-    int second_air = Etape::makeEtape(new Abeille(Position(635, 1800, isYellow)));
+    int first_air = Etape::makeEtape(new Accelerator(Position(230, 1800, isYellow)));
+    int second_air = Etape::makeEtape(new Accelerator(Position(635, 1800, isYellow)));
     int out_of_air = Etape::makeEtape(Position(430, 1400, isYellow));
 
     Etape::get(first_air)->addVoisins(out_of_air);
@@ -152,14 +152,12 @@ Coupe2019::Coupe2019(const bool isYellow, const std::vector<geometry_msgs::Point
     Etape::get(north)->addVoisins(out_of_lighthouse);
     Etape::get(north)->addVoisins(lighthouse);
 
-
     /** Points de passage **/
     int waypoint_south = Etape::makeEtape(Position(640, 1300, isYellow));
     int waypoint_out_of_enemy_port = Etape::makeEtape(Position(1100, 1400, isYellow));
-    Etape::get(out_of_air)->addVoisins(waypoint_south);// green to waypoint
-    Etape::get(out_of_main_port)->addVoisins(waypoint_south);// red to waypoint
-    Etape::get(waypoint_out_of_enemy_port)->addVoisins(waypoint_south);// red to waypoint
-
+    Etape::get(out_of_air)->addVoisins(waypoint_south);
+    Etape::get(out_of_main_port)->addVoisins(waypoint_south);
+    Etape::get(waypoint_out_of_enemy_port)->addVoisins(waypoint_south);
 
 #ifdef QTGUI
 	qDebug() << Etape::getTotalEtapes();
@@ -192,7 +190,11 @@ int Coupe2019::getScoreEtape(int i)
 		case Etape::POINT_PASSAGE :
 			return 0;
 		case Etape::ABEILLE :
-			return 100;
+            return 10;
+        case Etape::GOLDENIUM :
+            return 100;
+        case Etape::ACCELERATOR :
+            return 100;
 		case Etape::RESERVOIR_EAU :
 			return 0; //@TODO new type that is only worth points after accelerator done
 
