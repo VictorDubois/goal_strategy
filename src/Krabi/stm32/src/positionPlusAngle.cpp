@@ -122,6 +122,6 @@ geometry_msgs::Pose PositionPlusAngle::getPose() const
 PositionPlusAngle::PositionPlusAngle(const geometry_msgs::Pose& pose, bool colorDependent)
 {
     position = Position(pose.position, colorDependent);
-    angle = tf::getYaw(pose.orientation);
+    angle = tf::getYaw(pose.orientation) * 180.f/M_PI;
 }
 #endif
