@@ -129,49 +129,6 @@ bool GoalStrat::is_baffe_action() {
 	    || strat_graph->getEtapeEnCours()->getEtapeType() == Etape::EtapeType::GOLDENIUM ;
 }
 
-std::string GoalStrat::read_stop_distance_modulation() {
-	try {
-		std::ifstream stopDistanceFile;
-		std::string stopDistanceRead = "";
-		stopDistanceFile.open ("/tmp/stopdistance");
-		if (stopDistanceFile.is_open()) {
-			std::getline(stopDistanceFile, stopDistanceRead);
-			stopDistanceFile.close();
-			return stopDistanceRead;
-		}
-		else {
-			return "";
-		}
-	}
-	catch (const std::exception& e) {
-		std::cout << "Error caught while trying to get distanceCoeff in goal! " << e.what() << std::endl;
-		fflush(stdout);
-		return "";
-	}
-}
-
-// Writes the modulation of detection distance. 1 = full distance, 0.5 = start braking when the obstacle is closer
-void GoalStrat::write_stop_distance_modulation(std::string distanceToWrite) {
-	if (read_stop_distance_modulation() == distanceToWrite)
-	{
-		// No need to write it
-		return;
-	}
-
-	try {
-		std::ofstream writeStopFile;
-		writeStopFile.open ("/tmp/stopdistance", std::ios::trunc);
-		if (writeStopFile.is_open()) {
-			writeStopFile << distanceToWrite << std::endl;
-			writeStopFile.close();
-		}
-	}
-        catch (const std::exception& e) {
-                std::cout << "Error caught while trying to write distanceCoeff! " << e.what() << std::endl;
-		fflush(stdout);
-        }
-}
-
 void GoalStrat::updateCurrentPose(geometry_msgs::Pose newPose) {
 	currentPosition = PositionPlusAngle(newPose);
 }
@@ -192,10 +149,10 @@ void GoalStrat::go_to_next_mission() {
 	}
 
 	if (is_baffe_action()) {
-		write_stop_distance_modulation("0.67");
+        //write_stop_distance_modulation("0.67");
 	}
 	else {
-		write_stop_distance_modulation("1");
+        //write_stop_distance_modulation("1");
 	}
 	
 	//mission_state = strat_graph->getEtapeEnCours()->getEtapeType();
@@ -204,7 +161,7 @@ void GoalStrat::go_to_next_mission() {
 
 GoalStrat::GoalStrat() {
 	// Initialize stop distance modulation
-	write_stop_distance_modulation("1");
+    //write_stop_distance_modulation("1");
 
 	usleep(1000000);
 	displayed_end_msg = false;
