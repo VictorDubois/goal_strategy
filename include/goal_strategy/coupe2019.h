@@ -6,7 +6,6 @@
 #define NOMBRE_ETAPES 30
 
 #include "Krabi/strategie/strategiev3.h"
-//#include "Krabi/strategie/attractors.h"
 #include "Krabi/strategie/etape.h"
 #include "Krabi/strategie/abeille.h"
 #include "Krabi/strategie/goldenium.h"
@@ -21,7 +20,6 @@ class Coupe2019 : public StrategieV3
 public:
 	/** @brief Constructeur de la stratégie *
 	* @param isBlue le côté de départ */
-	//Coupe2019(bool isYellow, Attractor* attractors, unsigned int sizeofAttractors);
 	Coupe2019(bool isYellow, std::vector<geometry_msgs::Pose> etapes);
 	Coupe2019(bool isYellow, std::vector<geometry_msgs::Point> etapes);
 
