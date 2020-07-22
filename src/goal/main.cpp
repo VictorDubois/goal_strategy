@@ -99,6 +99,8 @@ int GoalStrat::arrived_there() {
 
 int GoalStrat::done_orienting_to(int angle) {
     // Output a goal relative to the robot
+	std::cout << "done_orienting_to angle: " << angle << " ? current: " << currentPosition.getAngle() << std::endl;
+	std::cout << currentPosition.getPosition().getX() << std::endl;
 	orient_to_angle(angle);
 
 	// Compute angular diff
@@ -123,6 +125,7 @@ unsigned int GoalStrat::get_angular_diff() {
 	return 0;
 }
 
+
 // Returns true if the current action is a baffe (push goldenium/accelerator). Specific to 2019
 bool GoalStrat::is_baffe_action() {
 	return strat_graph->getEtapeEnCours()->getEtapeType() == Etape::EtapeType::ACCELERATOR
@@ -130,6 +133,7 @@ bool GoalStrat::is_baffe_action() {
 }
 
 void GoalStrat::updateCurrentPose(geometry_msgs::Pose newPose) {
+	std::cout << "updateCurrentPose: " << newPose.orientation.z << std::endl;
 	currentPosition = PositionPlusAngle(newPose);
 }
 
@@ -279,6 +283,7 @@ int GoalStrat::loop() {
 					while(!done_orienting_to(angleAction) && ((now.tv_sec - orientTime.tv_sec) < timeoutOrient)) {
 						clock_gettime (CLOCK_MONOTONIC, &now);
 						usleep(10000);
+						ros::spinOnce();
 					}
 					printf("MOVING SERVO DOWN\n");
 					fflush(stdout);
@@ -295,6 +300,7 @@ int GoalStrat::loop() {
 					while(!done_orienting_to(angleAction) && ((now.tv_sec - orientTime.tv_sec) < timeoutOrient)) {
 						clock_gettime (CLOCK_MONOTONIC, &now);
 						usleep(10000);
+						ros::spinOnce();
 					}
 
 					printf("MOVING SERVO UP\n");
@@ -322,4 +328,3 @@ int GoalStrat::loop() {
 	fflush(stdout);
 	return 0;
 }
-
