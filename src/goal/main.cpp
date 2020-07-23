@@ -70,9 +70,9 @@ void GoalStrat::orient_to_angle(float a_angle) {
 
 float GoalStrat::compute_angular_diff(float a_angle_1, float a_angle_2) {
 	if (a_angle_1 >= a_angle_2) {
-		return a_angle_1 - a_angle_2;
+    return fmod(a_angle_1 - a_angle_2, 360);
 	}
-	return a_angle_2 - a_angle_1;
+  return fmod(a_angle_2 - a_angle_1, 360);
 }
 
 void GoalStrat::update_selected_attractor() {
@@ -99,15 +99,15 @@ int GoalStrat::arrived_there() {
 
 int GoalStrat::done_orienting_to(int angle) {
     // Output a goal relative to the robot
-	std::cout << "done_orienting_to angle: " << angle << " ? current: " << currentPosition.getAngle() << std::endl;
 	std::cout << currentPosition.getPosition().getX() << std::endl;
 	orient_to_angle(angle);
 
 	// Compute angular diff
     unsigned int angular_error = compute_angular_diff(angle, currentPosition.getAngle());
+    std::cout << "done_orienting_to angle: " << angle << " ? current: " << currentPosition.getAngle() << "angular_error = " << angular_error%360 << std::endl;
 
 	// When we reached the correct orientation, angularly stop and switch state
-	if (angular_error < REACH_ANG) {
+  if (angular_error < REACH_ANG || angular_error > 360 - REACH_ANG) {
 		return 1;
 	}
 	return 0;
