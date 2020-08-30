@@ -115,7 +115,7 @@ geometry_msgs::Pose PositionPlusAngle::getPose() const
 //    point.y = position.getY();
 //    point.z = 0;
     pose.position = position.getPoint();
-    pose.orientation = tf::createQuaternionMsgFromYaw(angle);
+    pose.orientation = tf::createQuaternionMsgFromYaw(angle * M_PI/180.f);
     return pose;
 }
 
