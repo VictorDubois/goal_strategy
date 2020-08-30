@@ -73,7 +73,12 @@ int main(int argc, char* argv[])
 
 void GoalStrat::orient_to_angle(float a_angle)
 {
+    std::cout << "Orient_to_angle " << a_angle << std::endl;
     goal_pose.setAngle(a_angle);
+    Position goal_position = strat_graph->getEtapeEnCours()->getPosition();
+    goal_pose.setX(goal_position.getX());
+    goal_pose.setY(goal_position.getY());
+    goal_pose_pub.publish(goal_pose.getPose());
 }
 
 float GoalStrat::compute_angular_diff(float a_angle_1, float a_angle_2)
