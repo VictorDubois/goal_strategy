@@ -15,6 +15,7 @@
 //#include "goldo2018.h"
 #include "coupe2019.h"
 #include "ros/ros.h"
+#include "goal_strategy/servos_cmd.h"
 #define TRUE 1
 #define FALSE 0
 
@@ -83,10 +84,13 @@ private:
     std::string read_stop_distance_modulation();
     void write_stop_distance_modulation(std::string distanceToWrite);
     ros::Publisher goal_pose_pub;
+    ros::Publisher arm_servo_pub;
     ros::Subscriber current_pose_sub;
     PositionPlusAngle currentPosition;
     PositionPlusAngle goal_pose;
     void updateCurrentPose(geometry_msgs::Pose);
+    void moveArm(enum PositionServo position);
+    goal_strategy::servos_cmd m_servos_cmd;
 };
 
 #endif

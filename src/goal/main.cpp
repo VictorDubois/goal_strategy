@@ -10,6 +10,8 @@
 #include "geometry_msgs/Point.h"
 #include "geometry_msgs/Pose.h"
 #include "goal_strategy/goal.h"
+#include "std_msgs/Float32.h"
+#include "goal_strategy/servos_cmd.h"
 #include "tf/transform_datatypes.h"
 
 #define SERVO_RIGHT 0
@@ -28,6 +30,28 @@ State state = RUN;
 
 void ard_goToPosition(int servoNb, enum PositionServo position)
 {
+}
+
+void GoalStrat::moveArm(enum PositionServo position)
+{
+    switch (position) {
+	case UP:
+            m_servos_cmd.brak_speed = 10;
+            m_servos_cmd.brak_angle = 100;
+	    break;
+	case RELEASE:
+            m_servos_cmd.brak_speed = 10;
+            m_servos_cmd.brak_angle = 128;
+	    break;
+	case DOWN:
+            m_servos_cmd.brak_speed = 10;
+            m_servos_cmd.brak_angle = 150;
+	    break;
+	default:
+	    break;
+    }
+    m_servos_cmd.enable = true;
+    arm_servo_pub.publish(m_servos_cmd);
 }
 
 void stopLinear()
@@ -83,11 +107,10 @@ void GoalStrat::orient_to_angle(float a_angle)
 
 float GoalStrat::compute_angular_diff(float a_angle_1, float a_angle_2)
 {
-    if (a_angle_1 >= a_angle_2)
-    {
-        return fmod(a_angle_1 - a_angle_2, 360);
-    }
-    return fmod(a_angle_2 - a_angle_1, 360);
+    // Thanks to https://stackoverflow.com/a/7571008
+    float phi = fmod(std::abs(a_angle_1 - a_angle_2), 360.f);       // This is either the distance or 360 - distance
+    float distance = phi > 180 ? 360.f - phi : phi;
+    return distance;
 }
 
 void GoalStrat::update_selected_attractor()
@@ -199,6 +222,11 @@ void GoalStrat::go_to_next_mission()
 
 GoalStrat::GoalStrat()
 {
+    m_servos_cmd.enable = false;
+    m_servos_cmd.brak_speed = 0;
+    m_servos_cmd.brak_angle = 128;
+    m_servos_cmd.pavillon_speed = 0;
+    m_servos_cmd.pavillon_angle = 128;
     // Initialize stop distance modulation
     // write_stop_distance_modulation("1");
 
@@ -252,6 +280,7 @@ GoalStrat::GoalStrat()
     isFirstAction = true;
     ros::NodeHandle n;
     goal_pose_pub = n.advertise<geometry_msgs::Pose>("goal_pose", 1000);
+    arm_servo_pub = n.advertise<goal_strategy::servos_cmd>("arm_servo", 1000);
     current_pose_sub = n.subscribe("current_pose", 1000, &GoalStrat::updateCurrentPose, this);
 }
 

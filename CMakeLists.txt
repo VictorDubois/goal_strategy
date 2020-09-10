@@ -59,6 +59,7 @@ add_message_files(
   encoders.msg
   motors.msg
   motors_cmd.msg
+  servos_cmd.msg
 )
 
 ## Generate services in the 'srv' folder
