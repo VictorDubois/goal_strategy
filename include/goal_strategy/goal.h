@@ -24,19 +24,6 @@
 // The distance to a goal (in m)
 #define REACH_DIST 20 // 0.07 // 20mm
 #define REACH_ANG 2  //°
-enum MissionState
-{
-    GO_FOOD_1,
-    PICKUP_FOOD_1,
-    GO_DELIVERY_PLACE_1,
-    DELIVER_FOOD_1,
-    GO_FOOD_2,
-    PICKUP_FOOD_2,
-    GO_DELIVERY_PLACE_2,
-    DELIVER_FOOD_2,
-    FOOD_DONE
-};
-
 namespace goal
 {
 enum State
@@ -71,7 +58,6 @@ private:
     unsigned int get_angular_diff();
     int sendNewMission(StrategieV3* strat);
     bool displayed_end_msg;
-    enum MissionState mission_state;
     int goal_nb, orientation, mission_finished;
     float dist_to_goal;
     bool state_msg_displayed;

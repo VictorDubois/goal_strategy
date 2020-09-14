@@ -28,10 +28,6 @@ using namespace goal;
 
 State state = RUN;
 
-void ard_goToPosition(int servoNb, enum PositionServo position)
-{
-}
-
 void GoalStrat::moveArm(enum PositionServo position)
 {
     switch (position) {
@@ -216,7 +212,6 @@ void GoalStrat::go_to_next_mission()
         // write_stop_distance_modulation("1");
     }
 
-    // mission_state = strat_graph->getEtapeEnCours()->getEtapeType();
     return;
 }
 
@@ -242,7 +237,6 @@ GoalStrat::GoalStrat()
 
     // Create & attach to SHM segment
     mission_finished = 0;
-    mission_state = GO_FOOD_1;
 
     /*************************************************
      *                   Main loop                   *
@@ -250,15 +244,6 @@ GoalStrat::GoalStrat()
 
     Position pos(200, 1850, true); // strategy.input->color);//1500, isBlue());
     startingPosition = PositionPlusAngle(pos, -M_PI / 2);
-
-    ard_goToPosition(SERVO_RIGHT, UP);
-    ard_goToPosition(SERVO_LEFT, UP);
-    usleep(1000000);
-    ard_goToPosition(SERVO_RIGHT, DOWN);
-    ard_goToPosition(SERVO_LEFT, DOWN);
-    usleep(1000000);
-    ard_goToPosition(SERVO_RIGHT, UP);
-    ard_goToPosition(SERVO_LEFT, UP);
 
     geometry_msgs::Point point1 = geometry_msgs::Point();
     point1.x = 0;
@@ -282,6 +267,12 @@ GoalStrat::GoalStrat()
     goal_pose_pub = n.advertise<geometry_msgs::Pose>("goal_pose", 1000);
     arm_servo_pub = n.advertise<goal_strategy::servos_cmd>("arm_servo", 1000);
     current_pose_sub = n.subscribe("current_pose", 1000, &GoalStrat::updateCurrentPose, this);
+
+    moveArm(UP);
+    usleep(1000000);
+    moveArm(DOWN);
+    usleep(1000000);
+    moveArm(UP);
 }
 
 /**
@@ -362,9 +353,7 @@ int GoalStrat::loop()
                 }
                 printf("MOVING SERVO DOWN\n");
                 fflush(stdout);
-                // Move (both) servos to low position
-                ard_goToPosition(SERVO_RIGHT, DOWN);
-                ard_goToPosition(SERVO_LEFT, DOWN);
+		moveArm(DOWN);
                 usleep(1500000); // 1.5s
                 angleAction = 220;
                 if (isBlue())
@@ -384,8 +373,7 @@ int GoalStrat::loop()
                 printf("MOVING SERVO UP\n");
                 fflush(stdout);
                 // Move (both) servos to up position
-                ard_goToPosition(SERVO_RIGHT, UP);
-                ard_goToPosition(SERVO_LEFT, UP);
+		moveArm(UP);
                 usleep(1500000); // 1.5s
                 break;
             default:
