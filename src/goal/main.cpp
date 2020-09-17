@@ -32,15 +32,15 @@ void GoalStrat::moveArm(enum PositionServo position)
 {
     switch (position) {
 	case UP:
-            m_servos_cmd.brak_speed = 10;
-            m_servos_cmd.brak_angle = 100;
+            m_servos_cmd.brak_speed = 50;
+            m_servos_cmd.brak_angle = 50;
 	    break;
 	case RELEASE:
             m_servos_cmd.brak_speed = 10;
             m_servos_cmd.brak_angle = 128;
 	    break;
 	case DOWN:
-            m_servos_cmd.brak_speed = 10;
+            m_servos_cmd.brak_speed = 50;
             m_servos_cmd.brak_angle = 150;
 	    break;
 	default:
