@@ -35,6 +35,9 @@ public:
         ZONE_CONSTRUCTION = 0x08,
         CABINE = 0x10,
 
+        PHARE = 0x11,
+        MANCHE_A_AIR = 0x12,
+        PORT = 0x13,
 //#endif
         POINT_PASSAGE = 0x20,
 

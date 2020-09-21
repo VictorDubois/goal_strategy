@@ -1,15 +1,11 @@
 #include "Krabi/strategie/mancheAAir.h"
 #include "Krabi/strategie/mediumLevelAction.h"
-#include "Krabi/strategie/position.h"
+#include "Krabi/position.h"
 
 
 #ifndef STANDALONE_STRATEGIE
 #include "Krabi/strategie/command.h"
 #include "Krabi/strategie/strategieV2.h"
-#else
-#include "Krabi/strategie/commandSSA.h"
-#include "Krabi/strategie/strategieV2_SSA.h"
-//#define VITESSE_LINEAIRE_MAX 100
 #endif
 
 
@@ -41,10 +37,10 @@ int MancheAAir::update()
 {
 
     // la stratégie standalone ne s'occupe pas de faire tourner les actions
-//#ifdef STANDALONE_STRATEGIE
+#ifdef STANDALONE_STRATEGIE
     // Finir tout de suite l'action
-    //status = -1;
-//#else
+    status = -1;
+#else
     if (status == 0) //Début
     {
         // A faire : Desactiver le Sharp avant
@@ -96,7 +92,7 @@ int MancheAAir::update()
     }
 
 
-//#endif
+#endif
 
     return status;
 }

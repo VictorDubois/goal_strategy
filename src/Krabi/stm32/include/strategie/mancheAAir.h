@@ -1,13 +1,13 @@
 #ifndef MANCHE_A_AIR_H
 #define MANCHE_A_AIR_H
 
-#include "position.h"
-#include "mediumLevelAction.h"
+#include "Krabi/position.h"
+#include "Krabi/strategie/mediumLevelAction.h"
 
 #ifndef STANDALONE_STRATEGIE
 #include "command.h"
 #else
-#include "commandSSA.h"
+#include "Krabi/asservissement/command.h"
 #endif // STANDALONE_STRATEGIE
 
 class MancheAAir : public MediumLevelAction

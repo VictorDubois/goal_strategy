@@ -38,10 +38,10 @@ int Phare::update()
 {
 
     // la stratégie standalone ne s'occupe pas de faire tourner les actions
-//#ifdef STANDALONE_STRATEGIE
+#ifdef STANDALONE_STRATEGIE
     // Finir tout de suite l'action
-    //status = -1;
-//#else
+    status = -1;
+#else
 
     if (status == 0) //Début
     {
@@ -94,7 +94,7 @@ int Phare::update()
     }
 
 
-//#endif
+#endif
 
     return status;
 }
