@@ -38,6 +38,8 @@ public:
         PHARE = 0x11,
         MANCHE_A_AIR = 0x12,
         PORT = 0x13,
+        MOUILLAGE_NORD = 0x14,
+        MOUILLAGE_SUD = 0x15,
 //#endif
         POINT_PASSAGE = 0x20,
 

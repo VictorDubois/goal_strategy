@@ -1,4 +1,7 @@
 #include "goal_strategy/coupe2019.h"
+#include "Krabi/strategie/port.h"
+#include "Krabi/strategie/phare.h"
+#include "Krabi/strategie/mancheAAir.h"
 #include <cmath>
 #include <iostream>
 #define NB_NEURONS 360
@@ -73,7 +76,7 @@ Coupe2019::Coupe2019(const bool isYellow, const std::vector<geometry_msgs::Point
     int main_port = Etape::makeEtape(Position(200, 800, isYellow),
                                      Etape::DEPART); // départ au fond de la zone de départ
 
-    int lighthouse = Etape::makeEtape(new Goldenium(Position(301, 200, isYellow)));
+    int lighthouse = Etape::makeEtape(new Phare(Position(301, 200, isYellow)));
 
     int out_of_lighthouse = Etape::makeEtape(Position(640, 400, isYellow));
 
@@ -83,15 +86,15 @@ Coupe2019::Coupe2019(const bool isYellow, const std::vector<geometry_msgs::Point
     Etape::get(lighthouse)->addVoisins(out_of_lighthouse);
     Etape::get(out_of_main_port)->addVoisins(out_of_lighthouse);
 
-    int first_air = Etape::makeEtape(new Accelerator(Position(230, 1800, isYellow)));
-    int second_air = Etape::makeEtape(new Accelerator(Position(635, 1800, isYellow)));
+    int first_air = Etape::makeEtape(new MancheAAir(Position(230, 1800, isYellow)));
+    int second_air = Etape::makeEtape(new MancheAAir(Position(635, 1800, isYellow)));
     int out_of_air = Etape::makeEtape(Position(430, 1400, isYellow));
 
     Etape::get(first_air)->addVoisins(out_of_air);
     Etape::get(second_air)->addVoisins(out_of_air);
 
-    int south = Etape::makeEtape(new Abeille(Position(150, 1250, isYellow)));
-    int north = Etape::makeEtape(new Abeille(Position(150, 320, isYellow)));
+    int south = Etape::makeEtape(new Port(Position(150, 1250, isYellow)));
+    int north = Etape::makeEtape(new Port(Position(150, 320, isYellow)));
 
     Etape::get(south)->addVoisins(out_of_air);
     Etape::get(north)->addVoisins(out_of_lighthouse);
