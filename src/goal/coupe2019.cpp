@@ -2,6 +2,8 @@
 #include "Krabi/strategie/port.h"
 #include "Krabi/strategie/phare.h"
 #include "Krabi/strategie/mancheAAir.h"
+#include "Krabi/strategie/mouillageNord.h"
+#include "Krabi/strategie/mouillageSud.h"
 #include <cmath>
 #include <iostream>
 #define NB_NEURONS 360
@@ -93,19 +95,34 @@ Coupe2019::Coupe2019(const bool isYellow, const std::vector<geometry_msgs::Point
     Etape::get(first_air)->addVoisins(out_of_air);
     Etape::get(second_air)->addVoisins(out_of_air);
 
-    int south = Etape::makeEtape(new Port(Position(150, 1250, isYellow)));
-    int north = Etape::makeEtape(new Port(Position(150, 320, isYellow)));
+    int south = Etape::makeEtape(new MouillageSud(Position(150, 1250, isYellow)));
+    int north = Etape::makeEtape(new MouillageNord(Position(150, 320, isYellow)));
 
     Etape::get(south)->addVoisins(out_of_air);
     Etape::get(north)->addVoisins(out_of_lighthouse);
     Etape::get(north)->addVoisins(lighthouse);
 
+    int push_south_bouees = Etape::makeEtape(Position(260, 1000, true));
+
     /** Points de passage **/
     int waypoint_south = Etape::makeEtape(Position(640, 1300, isYellow));
-    int waypoint_out_of_enemy_port = Etape::makeEtape(Position(1100, 1400, isYellow));
+    int waypoint_out_of_enemy_small_port = Etape::makeEtape(Position(1100, 1400, isYellow));
     Etape::get(out_of_air)->addVoisins(waypoint_south);
     Etape::get(out_of_main_port)->addVoisins(waypoint_south);
-    Etape::get(waypoint_out_of_enemy_port)->addVoisins(waypoint_south);
+    Etape::get(out_of_main_port)->addVoisins(waypoint_out_of_enemy_small_port);
+    Etape::get(waypoint_out_of_enemy_small_port)->addVoisins(waypoint_south);
+
+    int waypoint_middle_ports = Etape::makeEtape(Position(1500, 1400, isYellow));
+    int waypoint_out_of_our_small_port = Etape::makeEtape(Position(1900, 1400, isYellow));
+    Etape::get(waypoint_out_of_enemy_small_port)->addVoisins(waypoint_middle_ports);
+    Etape::get(waypoint_out_of_our_small_port)->addVoisins(waypoint_middle_ports);
+
+    int waypoint_out_of_push_south_bouees = Etape::makeEtape(Position(480, 1220, isYellow));
+    Etape::get(waypoint_out_of_push_south_bouees)->addVoisins(push_south_bouees);
+
+    Etape::get(waypoint_out_of_push_south_bouees)->addVoisins(waypoint_south);
+    Etape::get(waypoint_out_of_push_south_bouees)->addVoisins(out_of_air);
+
 
 #ifdef QTGUI
     qDebug() << Etape::getTotalEtapes();
