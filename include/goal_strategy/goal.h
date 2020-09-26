@@ -14,10 +14,10 @@
 #include <unistd.h>
 //#include "goldo2018.h"
 #include "coupe2019.h"
-#include "ros/ros.h"
 #include "goal_strategy/servos_cmd.h"
-#include "std_msgs/Duration.h"
+#include "ros/ros.h"
 #include "std_msgs/Bool.h"
+#include "std_msgs/Duration.h"
 #define TRUE 1
 #define FALSE 0
 
@@ -25,7 +25,7 @@
 
 // The distance to a goal (in m)
 #define REACH_DIST 20 // 0.07 // 20mm
-#define REACH_ANG 2  //°
+#define REACH_ANG 2   //°
 namespace goal
 {
 enum State
@@ -47,7 +47,7 @@ public:
     GoalStrat();
     int loop();
     void printCurrentAction();
-    int done_orienting_to(int angle);
+    int done_orienting_to(float angle);
     int arrived_there();
 
 private:
@@ -89,7 +89,7 @@ private:
     PositionPlusAngle goal_pose;
     goal_strategy::servos_cmd m_servos_cmd;
     ros::Duration remainig_time;
-    bool team_color;// true if blue
+    bool team_color; // true if blue
 };
 
 #endif

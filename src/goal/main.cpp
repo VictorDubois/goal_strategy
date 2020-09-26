@@ -10,8 +10,8 @@
 #include "geometry_msgs/Point.h"
 #include "geometry_msgs/Pose.h"
 #include "goal_strategy/goal.h"
-#include "std_msgs/Float32.h"
 #include "goal_strategy/servos_cmd.h"
+#include "std_msgs/Float32.h"
 #include "tf/transform_datatypes.h"
 #include <ros/time.h>
 
@@ -31,21 +31,22 @@ State state = RUN;
 
 void GoalStrat::moveArm(enum PositionServo position)
 {
-    switch (position) {
-	case UP:
-            m_servos_cmd.brak_speed = 50;
-            m_servos_cmd.brak_angle = 50;
-	    break;
-	case RELEASE:
-            m_servos_cmd.brak_speed = 10;
-            m_servos_cmd.brak_angle = 128;
-	    break;
-	case DOWN:
-            m_servos_cmd.brak_speed = 50;
-            m_servos_cmd.brak_angle = 150;
-	    break;
-	default:
-	    break;
+    switch (position)
+    {
+    case UP:
+        m_servos_cmd.brak_speed = 50;
+        m_servos_cmd.brak_angle = 50;
+        break;
+    case RELEASE:
+        m_servos_cmd.brak_speed = 10;
+        m_servos_cmd.brak_angle = 128;
+        break;
+    case DOWN:
+        m_servos_cmd.brak_speed = 50;
+        m_servos_cmd.brak_angle = 150;
+        break;
+    default:
+        break;
     }
     m_servos_cmd.enable = true;
     arm_servo_pub.publish(m_servos_cmd);
@@ -87,8 +88,6 @@ void GoalStrat::printCurrentAction()
         std::cout << "type: " << mission_type << std::endl;
         state_msg_displayed = true;
     }
-    return;
-    fflush(stdout);
 }
 
 // Entry point
@@ -113,7 +112,8 @@ void GoalStrat::orient_to_angle(float a_angle)
 float GoalStrat::compute_angular_diff(float a_angle_1, float a_angle_2)
 {
     // Thanks to https://stackoverflow.com/a/7571008
-    float phi = fmod(std::abs(a_angle_1 - a_angle_2), 360.f);       // This is either the distance or 360 - distance
+    float phi = fmod(std::abs(a_angle_1 - a_angle_2),
+                     360.f); // This is either the distance or 360 - distance
     float distance = phi > 180 ? 360.f - phi : phi;
     return distance;
 }
@@ -148,7 +148,7 @@ int GoalStrat::arrived_there()
     return 0;
 }
 
-int GoalStrat::done_orienting_to(int angle)
+int GoalStrat::done_orienting_to(float angle)
 {
     // Output a goal relative to the robot
     std::cout << currentPosition.getPosition().getX() << std::endl;
@@ -232,10 +232,10 @@ void GoalStrat::go_to_next_mission()
 GoalStrat::GoalStrat()
 {
     m_servos_cmd.enable = false;
-    m_servos_cmd.brak_speed = 0;
-    m_servos_cmd.brak_angle = 128;
-    m_servos_cmd.pavillon_speed = 0;
-    m_servos_cmd.pavillon_angle = 128;
+    m_servos_cmd.brak_speed = 10;
+    m_servos_cmd.brak_angle = 50;
+    m_servos_cmd.pavillon_speed = 10;
+    m_servos_cmd.pavillon_angle = 255;
     // Initialize stop distance modulation
     // write_stop_distance_modulation("1");
 
@@ -282,7 +282,8 @@ GoalStrat::GoalStrat()
     arm_servo_pub = n.advertise<goal_strategy::servos_cmd>("arm_servo", 1000);
     current_pose_sub = n.subscribe("current_pose", 1000, &GoalStrat::updateCurrentPose, this);
     color_sub = n.subscribe("color", 5, &GoalStrat::updateColor, this);
-    remaining_time_match_sub = n.subscribe("remaining_time", 1000, &GoalStrat::updateRemainingTime, this);
+    remaining_time_match_sub
+      = n.subscribe("remaining_time", 1000, &GoalStrat::updateRemainingTime, this);
 
     moveArm(UP);
     usleep(1000000);
@@ -311,24 +312,30 @@ int GoalStrat::sendNewMission(StrategieV3* strat)
     return result;
 }
 
-void GoalStrat::updateRemainingTime(std_msgs::Duration a_remaining_time_match) {
+void GoalStrat::updateRemainingTime(std_msgs::Duration a_remaining_time_match)
+{
     remainig_time = a_remaining_time_match.data;
     checkFunnyAction();
 }
 
-void GoalStrat::checkFunnyAction() {
-    const ros::Duration funny_action_timing = ros::Duration(4.f);// 4s before T=0;
+void GoalStrat::checkFunnyAction()
+{
+    const ros::Duration funny_action_timing = ros::Duration(4.); // 4s before T=0;
 
-    if (remainig_time < funny_action_timing) {
+    if (remainig_time.toSec() < funny_action_timing.toSec())
+    {
         std::cout << "Do the funny action" << std::endl;
         hissezLesPavillons();
     }
 }
 
-void GoalStrat::orient_to_angle_with_timeout(float angleIfBlue, float angleIfNotBlue) {
+void GoalStrat::orient_to_angle_with_timeout(float angleIfBlue, float angleIfNotBlue)
+{
     float angleAction = isBlue() ? angleIfBlue : angleIfNotBlue;
-    ros::Time orientTimeoutDeadline = ros::Time::now() + ros::Duration(timeoutOrient/1000.f);
-    while(!done_orienting_to(angleAction) && ros::Time::now() < orientTimeoutDeadline) {
+    ros::Time orientTimeoutDeadline = ros::Time::now() + ros::Duration(timeoutOrient / 1000.);
+    while (!done_orienting_to(angleAction)
+           && ros::Time::now().toSec() < orientTimeoutDeadline.toSec())
+    {
         usleep(10000);
         ros::spinOnce();
     }
