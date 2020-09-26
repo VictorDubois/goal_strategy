@@ -33,7 +33,7 @@ void GoalStrat::moveArm(enum PositionServo position)
 {
     switch (position)
     {
-    case UP:
+    case PositionServo::UP:
         m_servos_cmd.brak_speed = 50;
         m_servos_cmd.brak_angle = 50;
         break;
@@ -198,6 +198,16 @@ void GoalStrat::updateCurrentPose(geometry_msgs::Pose newPose)
 void GoalStrat::updateColor(std_msgs::Bool a_is_blue)
 {
     team_color = a_is_blue.data;
+    if (!color_set) {
+        geometry_msgs::Point point1 = geometry_msgs::Point();
+        point1.x = 0;
+        point1.y = 0;
+        point1.z = 0;
+        std::vector<geometry_msgs::Point> etapes;
+        etapes.push_back(point1);
+        strat_graph = new Coupe2019(!isBlue(), etapes);
+        strat_graph->update();
+    }
     color_set = true;
 }
 
@@ -281,11 +291,10 @@ GoalStrat::GoalStrat()
     remaining_time_match_sub
       = n.subscribe("remaining_time", 1000, &GoalStrat::updateRemainingTime, this);
 
-    moveArm(UP);
-    usleep(1000000);
-    moveArm(DOWN);
-    usleep(1000000);
-    moveArm(UP);
+    int argc;
+    char** argv;
+    ros::init(argc, argv, "goalStrat");
+    ros::start();
 }
 
 /**
@@ -341,17 +350,13 @@ int GoalStrat::loop()
 {
     while (state != EXIT && ros::ok())
     {
+
+        // Wait until we know what team color we are
         if (!color_set) {
+            // Set the default arm position (the other nodes should be up now
+            moveArm(UP);
             continue;
         }
-    geometry_msgs::Point point1 = geometry_msgs::Point();
-    point1.x = 0;
-    point1.y = 0;
-    point1.z = 0;
-    std::vector<geometry_msgs::Point> etapes;
-    etapes.push_back(point1);
-        strat_graph = new Coupe2019(!isBlue(), etapes);
-        strat_graph->update();
 
         bool isLate = false;
         printCurrentAction();
