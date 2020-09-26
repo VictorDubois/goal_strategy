@@ -198,6 +198,7 @@ void GoalStrat::updateCurrentPose(geometry_msgs::Pose newPose)
 void GoalStrat::updateColor(std_msgs::Bool a_is_blue)
 {
     team_color = a_is_blue.data;
+    color_set = true;
 }
 
 void GoalStrat::go_to_next_mission()
@@ -231,6 +232,7 @@ void GoalStrat::go_to_next_mission()
 
 GoalStrat::GoalStrat()
 {
+    color_set = false;
     m_servos_cmd.enable = false;
     m_servos_cmd.brak_speed = 10;
     m_servos_cmd.brak_angle = 50;
@@ -259,16 +261,10 @@ GoalStrat::GoalStrat()
     Position pos(200, 1850, true); // strategy.input->color);//1500, isBlue());
     startingPosition = PositionPlusAngle(pos, -M_PI / 2);
 
-    geometry_msgs::Point point1 = geometry_msgs::Point();
-    point1.x = 0;
-    point1.y = 0;
-    point1.z = 0;
-    std::vector<geometry_msgs::Point> etapes;
-    etapes.push_back(point1);
 
-    strat_graph = new Coupe2019(!isBlue(), etapes);
+    //strat_graph = new Coupe2019(!isBlue(), etapes);
     // while(sendNewMission(strat_graph) != -1) {}
-    strat_graph->update();
+    //strat_graph->update();
 
     fflush(stdout);
 
@@ -279,7 +275,7 @@ GoalStrat::GoalStrat()
     isFirstAction = true;
     ros::NodeHandle n;
     goal_pose_pub = n.advertise<geometry_msgs::Pose>("goal_pose", 1000);
-    arm_servo_pub = n.advertise<goal_strategy::servos_cmd>("arm_servo", 1000);
+    arm_servo_pub = n.advertise<goal_strategy::servos_cmd>("cmd_servos", 1000);
     current_pose_sub = n.subscribe("current_pose", 1000, &GoalStrat::updateCurrentPose, this);
     color_sub = n.subscribe("color", 5, &GoalStrat::updateColor, this);
     remaining_time_match_sub
@@ -345,6 +341,18 @@ int GoalStrat::loop()
 {
     while (state != EXIT && ros::ok())
     {
+        if (!color_set) {
+            continue;
+        }
+    geometry_msgs::Point point1 = geometry_msgs::Point();
+    point1.x = 0;
+    point1.y = 0;
+    point1.z = 0;
+    std::vector<geometry_msgs::Point> etapes;
+    etapes.push_back(point1);
+        strat_graph = new Coupe2019(!isBlue(), etapes);
+        strat_graph->update();
+
         bool isLate = false;
         printCurrentAction();
         update_selected_attractor();

@@ -90,6 +90,7 @@ private:
     goal_strategy::servos_cmd m_servos_cmd;
     ros::Duration remainig_time;
     bool team_color; // true if blue
+    bool color_set;// need to wait for the color to be initialized before starting
 };
 
 #endif
