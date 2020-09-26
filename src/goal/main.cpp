@@ -54,8 +54,8 @@ void GoalStrat::moveArm(enum PositionServo position)
 void GoalStrat::hissezLesPavillons()
 {
     std::cout << "Hissez les pavillons!" << std::endl;
-    m_servos_cmd.pavillon_speed = 50;
-    m_servos_cmd.pavillon_angle = 128;// A determiner
+    m_servos_cmd.pavillon_speed = 128;
+    m_servos_cmd.pavillon_angle = 80;
     m_servos_cmd.enable = true;
     arm_servo_pub.publish(m_servos_cmd);
 }
@@ -70,10 +70,9 @@ void startLinear()
     //@TODO stop linear speed
 }
 
-bool isBlue()
+bool GoalStrat::isBlue()
 {
-    //@TODO return true if current color is Blue
-    return false;
+    return team_color;
 }
 
 void GoalStrat::printCurrentAction()
@@ -196,6 +195,11 @@ void GoalStrat::updateCurrentPose(geometry_msgs::Pose newPose)
     currentPosition = PositionPlusAngle(newPose);
 }
 
+void GoalStrat::updateColor(std_msgs::Bool a_is_blue)
+{
+    team_color = a_is_blue.data;
+}
+
 void GoalStrat::go_to_next_mission()
 {
     startLinear();
@@ -277,6 +281,7 @@ GoalStrat::GoalStrat()
     goal_pose_pub = n.advertise<geometry_msgs::Pose>("goal_pose", 1000);
     arm_servo_pub = n.advertise<goal_strategy::servos_cmd>("arm_servo", 1000);
     current_pose_sub = n.subscribe("current_pose", 1000, &GoalStrat::updateCurrentPose, this);
+    color_sub = n.subscribe("color", 5, &GoalStrat::updateColor, this);
     remaining_time_match_sub = n.subscribe("remaining_time", 1000, &GoalStrat::updateRemainingTime, this);
 
     moveArm(UP);

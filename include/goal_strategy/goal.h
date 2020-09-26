@@ -17,6 +17,7 @@
 #include "ros/ros.h"
 #include "goal_strategy/servos_cmd.h"
 #include "std_msgs/Duration.h"
+#include "std_msgs/Bool.h"
 #define TRUE 1
 #define FALSE 0
 
@@ -64,9 +65,11 @@ private:
     std::string read_stop_distance_modulation();
     void write_stop_distance_modulation(std::string distanceToWrite);
     void updateRemainingTime(std_msgs::Duration remainingTime);
+    void updateColor(std_msgs::Bool is_blue);
     void hissezLesPavillons();
     void checkFunnyAction();
     void orient_to_angle_with_timeout(float angleIfBlue, float angleIfNotBlue);
+    bool isBlue();
 
     bool displayed_end_msg;
     int goal_nb, orientation, mission_finished;
@@ -81,10 +84,12 @@ private:
     ros::Publisher arm_servo_pub;
     ros::Subscriber current_pose_sub;
     ros::Subscriber remaining_time_match_sub;
+    ros::Subscriber color_sub;
     PositionPlusAngle currentPosition;
     PositionPlusAngle goal_pose;
     goal_strategy::servos_cmd m_servos_cmd;
     ros::Duration remainig_time;
+    bool team_color;// true if blue
 };
 
 #endif
