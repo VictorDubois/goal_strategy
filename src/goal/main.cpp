@@ -13,6 +13,7 @@
 #include "std_msgs/Float32.h"
 #include "goal_strategy/servos_cmd.h"
 #include "tf/transform_datatypes.h"
+#include <ros/time.h>
 
 #define SERVO_RIGHT 0
 #define SERVO_LEFT 1
@@ -46,6 +47,15 @@ void GoalStrat::moveArm(enum PositionServo position)
 	default:
 	    break;
     }
+    m_servos_cmd.enable = true;
+    arm_servo_pub.publish(m_servos_cmd);
+}
+
+void GoalStrat::hissezLesPavillons()
+{
+    std::cout << "Hissez les pavillons!" << std::endl;
+    m_servos_cmd.pavillon_speed = 50;
+    m_servos_cmd.pavillon_angle = 128;// A determiner
     m_servos_cmd.enable = true;
     arm_servo_pub.publish(m_servos_cmd);
 }
@@ -267,6 +277,7 @@ GoalStrat::GoalStrat()
     goal_pose_pub = n.advertise<geometry_msgs::Pose>("goal_pose", 1000);
     arm_servo_pub = n.advertise<goal_strategy::servos_cmd>("arm_servo", 1000);
     current_pose_sub = n.subscribe("current_pose", 1000, &GoalStrat::updateCurrentPose, this);
+    remaining_time_match_sub = n.subscribe("remaining_time", 1000, &GoalStrat::updateRemainingTime, this);
 
     moveArm(UP);
     usleep(1000000);
@@ -293,6 +304,29 @@ int GoalStrat::sendNewMission(StrategieV3* strat)
 #endif // USE_IOSTREAM
        // PositionPlusAngle* goalWithAngle = new PositionPlusAngle(goal, 0);
     return result;
+}
+
+void GoalStrat::updateRemainingTime(std_msgs::Duration a_remaining_time_match) {
+    remainig_time = a_remaining_time_match.data;
+    checkFunnyAction();
+}
+
+void GoalStrat::checkFunnyAction() {
+    const ros::Duration funny_action_timing = ros::Duration(4.f);// 4s before T=0;
+
+    if (remainig_time < funny_action_timing) {
+        std::cout << "Do the funny action" << std::endl;
+        hissezLesPavillons();
+    }
+}
+
+void GoalStrat::orient_to_angle_with_timeout(float angleIfBlue, float angleIfNotBlue) {
+    float angleAction = isBlue() ? angleIfBlue : angleIfNotBlue;
+    ros::Time orientTimeoutDeadline = ros::Time::now() + ros::Duration(timeoutOrient/1000.f);
+    while(!done_orienting_to(angleAction) && ros::Time::now() < orientTimeoutDeadline) {
+        usleep(10000);
+        ros::spinOnce();
+    }
 }
 
 int GoalStrat::loop()
@@ -330,7 +364,38 @@ int GoalStrat::loop()
             int angleAction = 0;
             switch (strat_graph->getEtapeEnCours()->getEtapeType())
             {
+            case Etape::EtapeType::MANCHE_A_AIR:
+                stopLinear();
+                std::cout << "In front of a Manche a Air, orienting" << std::endl;
+                orient_to_angle_with_timeout(40, 320);
+
+                std::cout << "MOVING SERVO DOWN" << std::endl;
+                moveArm(DOWN);
+                usleep(1500000); // 1.5s
+
+                orient_to_angle_with_timeout(140, 220);
+
+                std::cout << "MOVING SERVO UP" << std::endl;
+                moveArm(UP);
+                usleep(1500000); // 1.5s
+                std::cout << "Manche A Air Done" << std::endl;
+                break;
+            case Etape::EtapeType::PHARE:
+                stopLinear();
+                std::cout << "In front of Phare, orienting" << std::endl;
+                orient_to_angle_with_timeout(90, 270);
+
+                std::cout << "MOVING SERVO DOWN" << std::endl;
+                moveArm(DOWN);
+                usleep(1500000); // 1.5s
+
+                std::cout << "MOVING SERVO UP" << std::endl;
+                moveArm(UP);
+                usleep(1500000); // 1.5s
+                std::cout << "Phare Done" << std::endl;
+                break;
             case Etape::EtapeType::ACCELERATOR:
+                // Intentional cascade, they were the same action
             case Etape::EtapeType::GOLDENIUM:
                 // Stop moving, not already done if baffing
                 stopLinear();
@@ -353,7 +418,7 @@ int GoalStrat::loop()
                 }
                 printf("MOVING SERVO DOWN\n");
                 fflush(stdout);
-		moveArm(DOWN);
+                moveArm(DOWN);
                 usleep(1500000); // 1.5s
                 angleAction = 220;
                 if (isBlue())
@@ -373,7 +438,7 @@ int GoalStrat::loop()
                 printf("MOVING SERVO UP\n");
                 fflush(stdout);
                 // Move (both) servos to up position
-		moveArm(UP);
+                moveArm(UP);
                 usleep(1500000); // 1.5s
                 break;
             default:
@@ -389,6 +454,7 @@ int GoalStrat::loop()
 
         ros::spinOnce();
     }
+
     std::cout << "Mission accomplished, shutting down" << std::endl;
     fflush(stdout);
     return 0;

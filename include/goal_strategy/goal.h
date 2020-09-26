@@ -16,6 +16,7 @@
 #include "coupe2019.h"
 #include "ros/ros.h"
 #include "goal_strategy/servos_cmd.h"
+#include "std_msgs/Duration.h"
 #define TRUE 1
 #define FALSE 0
 
@@ -57,6 +58,16 @@ private:
     void update_selected_attractor();
     unsigned int get_angular_diff();
     int sendNewMission(StrategieV3* strat);
+    void updateCurrentPose(geometry_msgs::Pose);
+    void moveArm(enum PositionServo position);
+    bool is_baffe_action();
+    std::string read_stop_distance_modulation();
+    void write_stop_distance_modulation(std::string distanceToWrite);
+    void updateRemainingTime(std_msgs::Duration remainingTime);
+    void hissezLesPavillons();
+    void checkFunnyAction();
+    void orient_to_angle_with_timeout(float angleIfBlue, float angleIfNotBlue);
+
     bool displayed_end_msg;
     int goal_nb, orientation, mission_finished;
     float dist_to_goal;
@@ -66,17 +77,14 @@ private:
     struct timespec now, begin, orientTime;
     long timeoutMoving, timeoutOrient;
     bool isFirstAction;
-    bool is_baffe_action();
-    std::string read_stop_distance_modulation();
-    void write_stop_distance_modulation(std::string distanceToWrite);
     ros::Publisher goal_pose_pub;
     ros::Publisher arm_servo_pub;
     ros::Subscriber current_pose_sub;
+    ros::Subscriber remaining_time_match_sub;
     PositionPlusAngle currentPosition;
     PositionPlusAngle goal_pose;
-    void updateCurrentPose(geometry_msgs::Pose);
-    void moveArm(enum PositionServo position);
     goal_strategy::servos_cmd m_servos_cmd;
+    ros::Duration remainig_time;
 };
 
 #endif
