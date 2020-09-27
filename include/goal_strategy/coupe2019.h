@@ -23,6 +23,11 @@ public:
     Coupe2019(bool isYellow, std::vector<geometry_msgs::Pose> etapes);
     Coupe2019(bool isYellow, std::vector<geometry_msgs::Point> etapes);
 
+    void setRemainingTime(float seconds_left);
+    void setGoodMouillage(Etape::EtapeType good_mouillage);
+
+    std::vector<geometry_msgs::Point> getPositions();
+
 private:
     //	/** Nombre d'étapes dans le graph */
     //	int nombreEtapes = NOMBRE_ETAPES;
@@ -32,6 +37,9 @@ private:
 
     /** @brief update du score d'une étape */
     int getScoreEtape(int i);
+
+    float remainingTime;
+    Etape::EtapeType good_mouillage;
 
     // Attractor* m_attractors;
 };

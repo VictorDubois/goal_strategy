@@ -9,6 +9,7 @@
 #include "Krabi/constantes.h"
 #include "geometry_msgs/Point.h"
 #include "geometry_msgs/Pose.h"
+#include "geometry_msgs/PoseArray.h"
 #include "goal_strategy/goal.h"
 #include "goal_strategy/servos_cmd.h"
 #include "std_msgs/Float32.h"
@@ -275,6 +276,8 @@ GoalStrat::GoalStrat()
     ros::NodeHandle n;
     goal_pose_pub = n.advertise<geometry_msgs::PoseStamped>("goal_pose", 1000);
     arm_servo_pub = n.advertise<goal_strategy::servos_cmd>("cmd_servos", 1000);
+    goals_pub = n.advertise<geometry_msgs::PoseArray>("etapes", 5);
+
     current_pose_sub = n.subscribe("current_pose", 1000, &GoalStrat::updateCurrentPose, this);
     remaining_time_match_sub
       = n.subscribe("remaining_time", 1000, &GoalStrat::updateRemainingTime, this);
@@ -295,7 +298,18 @@ GoalStrat::GoalStrat()
     std::vector<geometry_msgs::Point> etapes;
     etapes.push_back(point1);
     strat_graph = new Coupe2019(!isBlue(), etapes);
+
     strat_graph->update();
+
+    geometry_msgs::PoseArray l_etapes;
+    l_etapes.header.frame_id = "odom";
+    for (auto etape : strat_graph->getPositions())
+    {
+        geometry_msgs::Pose l_pose;
+        l_pose.position = etape;
+        l_etapes.poses.push_back(l_pose);
+    }
+    goals_pub.publish(l_etapes);
 }
 
 /**

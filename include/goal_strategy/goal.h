@@ -75,12 +75,13 @@ private:
     float dist_to_goal;
     bool state_msg_displayed;
     PositionPlusAngle startingPosition;
-    StrategieV3* strat_graph;
+    Coupe2019* strat_graph;
     struct timespec now, begin, orientTime;
     long timeoutMoving, timeoutOrient;
     bool isFirstAction;
     ros::Publisher goal_pose_pub;
     ros::Publisher arm_servo_pub;
+    ros::Publisher goals_pub;
     ros::Subscriber current_pose_sub;
     ros::Subscriber remaining_time_match_sub;
     ros::Subscriber color_sub;

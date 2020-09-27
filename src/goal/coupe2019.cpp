@@ -54,9 +54,14 @@ Coupe2019::Coupe2019(const bool isYellow, const std::vector<geometry_msgs::Pose>
     Coupe2019(isYellow, etapesAsPoints);
 }
 
+
+
 Coupe2019::Coupe2019(const bool isYellow, const std::vector<geometry_msgs::Point> etapes_as_points)
   : StrategieV3(isYellow)
 {
+    remainingTime = 100;
+    good_mouillage = Etape::EtapeType::DEPART;// No mouillage is good yet
+
     // Initialisation des tableaux d'étapes
 
     // tableauEtapesTotal =
@@ -124,6 +129,8 @@ Coupe2019::Coupe2019(const bool isYellow, const std::vector<geometry_msgs::Point
     Etape::get(waypoint_out_of_push_south_bouees)->addVoisins(out_of_air);
 
 
+
+
 #ifdef QTGUI
     qDebug() << Etape::getTotalEtapes();
 #endif
@@ -138,9 +145,30 @@ Coupe2019::Coupe2019(const bool isYellow, const std::vector<geometry_msgs::Point
     startDijkstra();
 }
 
+std::vector<geometry_msgs::Point> Coupe2019::getPositions()
+{
+    std::vector<geometry_msgs::Point> l_points;
+    for (int positionID = 0; positionID < nombreEtapes; positionID++)
+    {
+        l_points.push_back(tableauEtapesTotal[positionID]->getPosition().getPoint());
+    }
+
+    return l_points;
+}
+
+void Coupe2019::setRemainingTime(float a_seconds_left)
+{
+    remainingTime = a_seconds_left;
+}
+
+void Coupe2019::setGoodMouillage(Etape::EtapeType a_good_mouillage)
+{
+    good_mouillage = a_good_mouillage;
+}
+
 int Coupe2019::getScoreEtape(int i)
 {
-
+    float l_score = 0;
     switch (this->tableauEtapesTotal[i]->getEtapeType())
     {
         /*case Etape::TYPE_ACTION:
@@ -149,17 +177,34 @@ int Coupe2019::getScoreEtape(int i)
         // A faire : remplacer la priorite par le nombre de points obtenables a l'etape
 
     case Etape::DEPART:
-        return 0;
+        l_score = 0;
+        break;
     case Etape::POINT_PASSAGE:
-        return 0;
-    case Etape::ABEILLE:
-        return 10;
-    case Etape::GOLDENIUM:
-        return 100;
-    case Etape::ACCELERATOR:
-        return 100;
-    case Etape::RESERVOIR_EAU:
-        return 0; //@TODO new type that is only worth points after accelerator done
+        l_score = 0;
+        break;
+    case Etape::PHARE:
+        l_score = 100;
+        break;
+    case Etape::MANCHE_A_AIR:
+        l_score = 100;
+        break;
+    case Etape::PORT:
+        l_score = 100;
+        break;
+    case Etape::MOUILLAGE_NORD:
+        l_score = 0;
+        if (good_mouillage == Etape::MOUILLAGE_NORD && remainingTime < 10.)
+        {
+            l_score = 100;
+        }
+        break;
+    case Etape::MOUILLAGE_SUD:
+        l_score = 0;
+        if (good_mouillage == Etape::MOUILLAGE_SUD && remainingTime < 10.)
+        {
+            l_score = 100;
+        }
+        break;
 
     default:
         return 1; /* DEBUG (0 sinon) */
