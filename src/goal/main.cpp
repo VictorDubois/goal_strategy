@@ -106,7 +106,10 @@ void GoalStrat::orient_to_angle(float a_angle)
     Position goal_position = strat_graph->getEtapeEnCours()->getPosition();
     goal_pose.setX(goal_position.getX());
     goal_pose.setY(goal_position.getY());
-    goal_pose_pub.publish(goal_pose.getPose());
+    geometry_msgs::PoseStamped l_posestamped;
+    l_posestamped.pose = goal_pose.getPose();
+    l_posestamped.header.frame_id = "odom";
+    goal_pose_pub.publish(l_posestamped);
 }
 
 float GoalStrat::compute_angular_diff(float a_angle_1, float a_angle_2)
@@ -173,7 +176,10 @@ void GoalStrat::move_toward_goal()
     Position goal_position = strat_graph->getEtapeEnCours()->getPosition();
     goal_pose.setX(goal_position.getX());
     goal_pose.setY(goal_position.getY());
-    goal_pose_pub.publish(goal_pose.getPose());
+    geometry_msgs::PoseStamped l_posestamped;
+    l_posestamped.pose = goal_pose.getPose();
+    l_posestamped.header.frame_id = "odom";
+    goal_pose_pub.publish(l_posestamped);
 }
 
 unsigned int GoalStrat::get_angular_diff()
@@ -267,7 +273,7 @@ GoalStrat::GoalStrat()
     timeoutOrient = 500;  // sec
     isFirstAction = true;
     ros::NodeHandle n;
-    goal_pose_pub = n.advertise<geometry_msgs::Pose>("goal_pose", 1000);
+    goal_pose_pub = n.advertise<geometry_msgs::PoseStamped>("goal_pose", 1000);
     arm_servo_pub = n.advertise<goal_strategy::servos_cmd>("cmd_servos", 1000);
     current_pose_sub = n.subscribe("current_pose", 1000, &GoalStrat::updateCurrentPose, this);
     remaining_time_match_sub
