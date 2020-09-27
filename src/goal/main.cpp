@@ -50,7 +50,6 @@ void GoalStrat::moveArm(enum PositionServo position)
         break;
     }
     m_servos_cmd.enable = true;
-    arm_servo_pub.publish(m_servos_cmd);
 }
 
 void GoalStrat::hissezLesPavillons()
@@ -233,7 +232,7 @@ void GoalStrat::go_to_next_mission()
 
 GoalStrat::GoalStrat()
 {
-    m_servos_cmd.enable = false;
+    m_servos_cmd.enable = true;
     m_servos_cmd.brak_speed = 10;
     m_servos_cmd.brak_angle = 50;
     m_servos_cmd.pavillon_speed = 10;
@@ -300,7 +299,10 @@ GoalStrat::GoalStrat()
     strat_graph = new Coupe2019(!isBlue(), etapes);
 
     strat_graph->update();
+}
 
+void GoalStrat::publishEtapes()
+{
     geometry_msgs::PoseArray l_etapes;
     l_etapes.header.frame_id = "odom";
     for (auto etape : strat_graph->getPositions())
@@ -365,7 +367,8 @@ int GoalStrat::loop()
 {
     while (state != EXIT && ros::ok())
     {
-
+    	arm_servo_pub.publish(m_servos_cmd);
+	publishEtapes();
         bool isLate = false;
         printCurrentAction();
         update_selected_attractor();

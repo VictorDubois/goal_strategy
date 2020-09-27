@@ -7,7 +7,7 @@
 #ifndef STANDALONE_STRATEGIE
 #include "command.h"
 #else
-#include "Krabi/asservissement/command.h"
+//#include "Krabi/asservissement/command.h"
 #endif // STANDALONE_STRATEGIE
 
 class MancheAAir : public MediumLevelAction

@@ -69,6 +69,7 @@ private:
     void checkFunnyAction();
     void orient_to_angle_with_timeout(float angleIfBlue, float angleIfNotBlue);
     bool isBlue();
+    void publishEtapes();
 
     bool displayed_end_msg;
     int goal_nb, orientation, mission_finished;
