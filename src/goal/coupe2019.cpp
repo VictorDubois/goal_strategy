@@ -189,7 +189,7 @@ int Coupe2019::getScoreEtape(int i)
         l_score = 100;
         break;
     case Etape::PORT:
-        l_score = 100;
+        l_score = 10;
         break;
     case Etape::MOUILLAGE_NORD:
         l_score = 0;
