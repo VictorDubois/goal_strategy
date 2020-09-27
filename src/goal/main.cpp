@@ -34,22 +34,26 @@ void GoalStrat::moveArm(enum PositionServo position)
 {
     switch (position)
     {
-    case PositionServo::UP:
-        m_servos_cmd.brak_speed = 50;
+    case UP:
+        m_servos_cmd.brak_speed = 128;
         m_servos_cmd.brak_angle = 50;
+	std::cout << "Actually move servo UP" << std::endl;
         break;
     case RELEASE:
-        m_servos_cmd.brak_speed = 10;
+        m_servos_cmd.brak_speed = 128;
         m_servos_cmd.brak_angle = 128;
+	std::cout << "Actually release servo" << std::endl;
         break;
     case DOWN:
-        m_servos_cmd.brak_speed = 50;
+        m_servos_cmd.brak_speed = 128;
         m_servos_cmd.brak_angle = 150;
+	std::cout << "Actually move servo DOWN" << std::endl;
         break;
     default:
         break;
     }
     m_servos_cmd.enable = true;
+    arm_servo_pub.publish(m_servos_cmd);
 }
 
 void GoalStrat::hissezLesPavillons()
@@ -354,7 +358,7 @@ void GoalStrat::checkFunnyAction()
 void GoalStrat::orient_to_angle_with_timeout(float angleIfBlue, float angleIfNotBlue)
 {
     float angleAction = isBlue() ? angleIfBlue : angleIfNotBlue;
-    ros::Time orientTimeoutDeadline = ros::Time::now() + ros::Duration(timeoutOrient / 1000.);
+    ros::Time orientTimeoutDeadline = ros::Time::now() + ros::Duration(timeoutOrient);
     while (!done_orienting_to(angleAction)
            && ros::Time::now().toSec() < orientTimeoutDeadline.toSec())
     {
