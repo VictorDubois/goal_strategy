@@ -195,22 +195,6 @@ void GoalStrat::updateCurrentPose(geometry_msgs::Pose newPose)
     currentPosition = PositionPlusAngle(newPose);
 }
 
-void GoalStrat::updateColor(std_msgs::Bool a_is_blue)
-{
-    team_color = a_is_blue.data;
-    if (!color_set) {
-        geometry_msgs::Point point1 = geometry_msgs::Point();
-        point1.x = 0;
-        point1.y = 0;
-        point1.z = 0;
-        std::vector<geometry_msgs::Point> etapes;
-        etapes.push_back(point1);
-        strat_graph = new Coupe2019(!isBlue(), etapes);
-        strat_graph->update();
-    }
-    color_set = true;
-}
-
 void GoalStrat::go_to_next_mission()
 {
     startLinear();
@@ -242,7 +226,6 @@ void GoalStrat::go_to_next_mission()
 
 GoalStrat::GoalStrat()
 {
-    color_set = false;
     m_servos_cmd.enable = false;
     m_servos_cmd.brak_speed = 10;
     m_servos_cmd.brak_angle = 50;
@@ -287,14 +270,26 @@ GoalStrat::GoalStrat()
     goal_pose_pub = n.advertise<geometry_msgs::Pose>("goal_pose", 1000);
     arm_servo_pub = n.advertise<goal_strategy::servos_cmd>("cmd_servos", 1000);
     current_pose_sub = n.subscribe("current_pose", 1000, &GoalStrat::updateCurrentPose, this);
-    color_sub = n.subscribe("color", 5, &GoalStrat::updateColor, this);
     remaining_time_match_sub
       = n.subscribe("remaining_time", 1000, &GoalStrat::updateRemainingTime, this);
 
-    int argc;
-    char** argv;
-    ros::init(argc, argv, "goalStrat");
-    ros::start();
+    n.param<bool>("isBlue", team_color, true);
+
+    if(team_color) {
+        std::cout << "Is Blue !" << std::endl;
+    }
+    else {
+        std::cout << "Not Blue :'(" << std::endl;
+    }
+
+    geometry_msgs::Point point1 = geometry_msgs::Point();
+    point1.x = 0;
+    point1.y = 0;
+    point1.z = 0;
+    std::vector<geometry_msgs::Point> etapes;
+    etapes.push_back(point1);
+    strat_graph = new Coupe2019(!isBlue(), etapes);
+    strat_graph->update();
 }
 
 /**
@@ -350,13 +345,6 @@ int GoalStrat::loop()
 {
     while (state != EXIT && ros::ok())
     {
-
-        // Wait until we know what team color we are
-        if (!color_set) {
-            // Set the default arm position (the other nodes should be up now
-            moveArm(UP);
-            continue;
-        }
 
         bool isLate = false;
         printCurrentAction();

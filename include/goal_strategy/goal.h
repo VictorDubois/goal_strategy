@@ -65,7 +65,6 @@ private:
     std::string read_stop_distance_modulation();
     void write_stop_distance_modulation(std::string distanceToWrite);
     void updateRemainingTime(std_msgs::Duration remainingTime);
-    void updateColor(std_msgs::Bool is_blue);
     void hissezLesPavillons();
     void checkFunnyAction();
     void orient_to_angle_with_timeout(float angleIfBlue, float angleIfNotBlue);
@@ -90,7 +89,6 @@ private:
     goal_strategy::servos_cmd m_servos_cmd;
     ros::Duration remainig_time;
     bool team_color; // true if blue
-    bool color_set;// need to wait for the color to be initialized before starting
 };
 
 #endif
