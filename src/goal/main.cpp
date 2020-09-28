@@ -280,6 +280,8 @@ GoalStrat::GoalStrat()
     goal_pose_pub = n.advertise<geometry_msgs::PoseStamped>("goal_pose", 1000);
     arm_servo_pub = n.advertise<goal_strategy::servos_cmd>("cmd_servos", 1000);
     goals_pub = n.advertise<geometry_msgs::PoseArray>("etapes", 5);
+    reverse_pub = n.advertise<std_msgs::Bool>("reverseGear", 5);
+    stop_linear_pub = n.advertise<std_msgs::Bool>("stopLinearSpeed", 5);
 
     current_pose_sub = n.subscribe("current_pose", 1000, &GoalStrat::updateCurrentPose, this);
     remaining_time_match_sub
@@ -303,6 +305,7 @@ GoalStrat::GoalStrat()
     strat_graph = new Coupe2019(!isBlue(), etapes);
 
     strat_graph->update();
+    previousEtapeType = strat_graph->getEtapeEnCours()->getEtapeType();
 }
 
 void GoalStrat::publishEtapes()
@@ -325,6 +328,7 @@ void GoalStrat::publishEtapes()
  */
 int GoalStrat::sendNewMission(StrategieV3* strat)
 {
+    previousEtapeType = strat->getEtapeEnCours()->getEtapeType();
     int result = strat->update();
     int etapeId = strat->getEtapeEnCours()->getNumero();
     // Position goal = strat->getEtapeEnCours()->getPosition();
@@ -367,6 +371,19 @@ void GoalStrat::orient_to_angle_with_timeout(float angleIfBlue, float angleIfNot
     }
 }
 
+void GoalStrat::chooseGear() {
+    std_msgs::Bool l_reverseGear;
+    if (previousEtapeType == Etape::EtapeType::MANCHE_A_AIR ||
+        previousEtapeType == Etape::EtapeType::PHARE)
+    {
+        l_reverseGear.data = true;
+    }
+    else {
+        l_reverseGear.data = false;
+    }
+    reverse_pub.publish(l_reverseGear);
+}
+
 int GoalStrat::loop()
 {
     while (state != EXIT && ros::ok())
@@ -376,6 +393,8 @@ int GoalStrat::loop()
         bool isLate = false;
         printCurrentAction();
         update_selected_attractor();
+
+        chooseGear(); // Go in reverse gear if needed
 
         clock_gettime(CLOCK_MONOTONIC, &now);
         if (!isFirstAction && ((now.tv_sec - begin.tv_sec) >= timeoutMoving))

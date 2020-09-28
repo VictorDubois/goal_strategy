@@ -70,6 +70,7 @@ private:
     void orient_to_angle_with_timeout(float angleIfBlue, float angleIfNotBlue);
     bool isBlue();
     void publishEtapes();
+    void chooseGear();
 
     bool displayed_end_msg;
     int goal_nb, orientation, mission_finished;
@@ -83,6 +84,8 @@ private:
     ros::Publisher goal_pose_pub;
     ros::Publisher arm_servo_pub;
     ros::Publisher goals_pub;
+    ros::Publisher reverse_pub;
+    ros::Publisher stop_linear_pub;
     ros::Subscriber current_pose_sub;
     ros::Subscriber remaining_time_match_sub;
     ros::Subscriber color_sub;
@@ -91,6 +94,7 @@ private:
     goal_strategy::servos_cmd m_servos_cmd;
     ros::Duration remainig_time;
     bool team_color; // true if blue
+    Etape::EtapeType previousEtapeType;
 };
 
 #endif
