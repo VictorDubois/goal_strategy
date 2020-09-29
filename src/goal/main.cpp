@@ -37,17 +37,17 @@ void GoalStrat::moveArm(enum PositionServo position)
     case UP:
         m_servos_cmd.brak_speed = 128;
         m_servos_cmd.brak_angle = 50;
-	std::cout << "Actually move servo UP" << std::endl;
+        std::cout << "Actually move servo UP" << std::endl;
         break;
     case RELEASE:
         m_servos_cmd.brak_speed = 128;
         m_servos_cmd.brak_angle = 128;
-	std::cout << "Actually release servo" << std::endl;
+        std::cout << "Actually release servo" << std::endl;
         break;
     case DOWN:
         m_servos_cmd.brak_speed = 128;
         m_servos_cmd.brak_angle = 150;
-	std::cout << "Actually move servo DOWN" << std::endl;
+        std::cout << "Actually move servo DOWN" << std::endl;
         break;
     default:
         break;
@@ -264,10 +264,9 @@ GoalStrat::GoalStrat()
     Position pos(200, 1850, true); // strategy.input->color);//1500, isBlue());
     startingPosition = PositionPlusAngle(pos, -M_PI / 2);
 
-
-    //strat_graph = new Coupe2019(!isBlue(), etapes);
+    // strat_graph = new Coupe2019(!isBlue(), etapes);
     // while(sendNewMission(strat_graph) != -1) {}
-    //strat_graph->update();
+    // strat_graph->update();
 
     fflush(stdout);
 
@@ -289,10 +288,12 @@ GoalStrat::GoalStrat()
 
     n.param<bool>("isBlue", team_color, true);
 
-    if(team_color) {
+    if (team_color)
+    {
         std::cout << "Is Blue !" << std::endl;
     }
-    else {
+    else
+    {
         std::cout << "Not Blue :'(" << std::endl;
     }
 
@@ -371,14 +372,16 @@ void GoalStrat::orient_to_angle_with_timeout(float angleIfBlue, float angleIfNot
     }
 }
 
-void GoalStrat::chooseGear() {
+void GoalStrat::chooseGear()
+{
     std_msgs::Bool l_reverseGear;
-    if (previousEtapeType == Etape::EtapeType::MANCHE_A_AIR ||
-        previousEtapeType == Etape::EtapeType::PHARE)
+    if (previousEtapeType == Etape::EtapeType::MANCHE_A_AIR
+        || previousEtapeType == Etape::EtapeType::PHARE)
     {
         l_reverseGear.data = true;
     }
-    else {
+    else
+    {
         l_reverseGear.data = false;
     }
     reverse_pub.publish(l_reverseGear);
@@ -388,8 +391,8 @@ int GoalStrat::loop()
 {
     while (state != EXIT && ros::ok())
     {
-    	arm_servo_pub.publish(m_servos_cmd);
-	publishEtapes();
+        arm_servo_pub.publish(m_servos_cmd);
+        publishEtapes();
         bool isLate = false;
         printCurrentAction();
         update_selected_attractor();
