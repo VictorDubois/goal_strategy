@@ -307,6 +307,7 @@ GoalStrat::GoalStrat()
 
     strat_graph->update();
     previousEtapeType = strat_graph->getEtapeEnCours()->getEtapeType();
+    futurepreviousEtapeType = strat_graph->getEtapeEnCours()->getEtapeType();
 }
 
 void GoalStrat::publishEtapes()
@@ -329,8 +330,12 @@ void GoalStrat::publishEtapes()
  */
 int GoalStrat::sendNewMission(StrategieV3* strat)
 {
-    previousEtapeType = strat->getEtapeEnCours()->getEtapeType();
+
+    previousEtapeType = futurepreviousEtapeType;
     int result = strat->update();
+    futurepreviousEtapeType
+      = strat->getEtapeEnCours()->getEtapeType(); // the previous etape was reset to waypoint
+
     int etapeId = strat->getEtapeEnCours()->getNumero();
     // Position goal = strat->getEtapeEnCours()->getPosition();
     int mission_type = strat->getEtapeEnCours()->getEtapeType();
@@ -384,6 +389,10 @@ void GoalStrat::chooseGear()
     {
         l_reverseGear.data = false;
     }
+
+    std::cout << "######################" << std::endl;
+    std::cout << "previousEtapeType = " << previousEtapeType
+              << ", reverseGear = " << l_reverseGear.data << std::endl;
     reverse_pub.publish(l_reverseGear);
 }
 
