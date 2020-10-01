@@ -214,6 +214,8 @@ void GoalStrat::go_to_next_mission()
 
     state_msg_displayed = false;
 
+    previousEtapeType = strat_graph->getEtapeEnCours()->getEtapeType();
+
     int strat_graph_status = strat_graph->update();
     if (strat_graph_status == -1)
     {
@@ -307,7 +309,9 @@ GoalStrat::GoalStrat()
 
     strat_graph->update();
     previousEtapeType = strat_graph->getEtapeEnCours()->getEtapeType();
-    futurepreviousEtapeType = strat_graph->getEtapeEnCours()->getEtapeType();
+
+
+
 }
 
 void GoalStrat::publishEtapes()
@@ -330,11 +334,7 @@ void GoalStrat::publishEtapes()
  */
 int GoalStrat::sendNewMission(StrategieV3* strat)
 {
-
-    previousEtapeType = futurepreviousEtapeType;
     int result = strat->update();
-    futurepreviousEtapeType
-      = strat->getEtapeEnCours()->getEtapeType(); // the previous etape was reset to waypoint
 
     int etapeId = strat->getEtapeEnCours()->getNumero();
     // Position goal = strat->getEtapeEnCours()->getPosition();
@@ -380,8 +380,9 @@ void GoalStrat::orient_to_angle_with_timeout(float angleIfBlue, float angleIfNot
 void GoalStrat::chooseGear()
 {
     std_msgs::Bool l_reverseGear;
-    if (previousEtapeType == Etape::EtapeType::MANCHE_A_AIR
-        || previousEtapeType == Etape::EtapeType::PHARE)
+    if (strat_graph->getEtapeEnCours()->getEtapeType() == Etape::EtapeType::MANCHE_A_AIR
+        || strat_graph->getEtapeEnCours()->getEtapeType() == Etape::EtapeType::PHARE
+        || previousEtapeType == Etape::EtapeType::PORT)
     {
         l_reverseGear.data = true;
     }
@@ -391,7 +392,8 @@ void GoalStrat::chooseGear()
     }
 
     std::cout << "######################" << std::endl;
-    std::cout << "previousEtapeType = " << previousEtapeType
+    std::cout << "currentEtapeType = " << strat_graph->getEtapeEnCours()->getEtapeType()
+              << "previousEtapeType = " << previousEtapeType
               << ", reverseGear = " << l_reverseGear.data << std::endl;
     reverse_pub.publish(l_reverseGear);
 }
