@@ -125,14 +125,6 @@ float GoalStrat::compute_angular_diff(float a_angle_1, float a_angle_2)
     return distance;
 }
 
-void GoalStrat::update_selected_attractor()
-{
-    // Choose correct attractor number
-    goal_nb
-      = strat_graph->getEtapeEnCours()->getNumero() - 1; // -1 because the start is not an attractor
-    return;
-}
-
 int GoalStrat::arrived_there()
 {
 
@@ -216,6 +208,29 @@ void GoalStrat::go_to_next_mission()
 
     previousEtapeType = strat_graph->getEtapeEnCours()->getEtapeType();
 
+    if (!actionaborted)
+    {
+        // Check if we scored points
+        switch(previousEtapeType)
+        {
+        case Etape::EtapeType::PHARE:
+            scoreMatch += 30;
+        break;
+        case Etape::EtapeType::PORT:
+            scoreMatch += 30;
+            //TODO check by etape ID?
+        break;
+        case Etape::EtapeType::MANCHE_A_AIR:
+            scoreMatch += 30;
+        break;
+        default:
+            break;
+
+        }
+    }
+
+    actionaborted = false;
+
     int strat_graph_status = strat_graph->update();
     if (strat_graph_status == -1)
     {
@@ -248,7 +263,6 @@ GoalStrat::GoalStrat()
 
     usleep(1000000);
     displayed_end_msg = false;
-    goal_nb = 0;
     dist_to_goal = 100.;
     state_msg_displayed = false;
 
@@ -299,6 +313,8 @@ GoalStrat::GoalStrat()
         std::cout << "Not Blue :'(" << std::endl;
     }
 
+    actionaborted = false;
+
     geometry_msgs::Point point1 = geometry_msgs::Point();
     point1.x = 0;
     point1.y = 0;
@@ -325,27 +341,6 @@ void GoalStrat::publishEtapes()
         l_etapes.poses.push_back(l_pose);
     }
     goals_pub.publish(l_etapes);
-}
-
-/**
- * Update the strategy, and send the new mission
- * @param StrategieV3* strat, the strategy
- * @return result, the strategie's update result
- */
-int GoalStrat::sendNewMission(StrategieV3* strat)
-{
-    int result = strat->update();
-
-    int etapeId = strat->getEtapeEnCours()->getNumero();
-    // Position goal = strat->getEtapeEnCours()->getPosition();
-    int mission_type = strat->getEtapeEnCours()->getEtapeType();
-#ifdef USE_IOSTREAM
-    std::cout << "EtapeId: " << etapeId << std::endl;
-    // std::cout << "goal: " << goal.Print() << std::endl;
-    std::cout << "type: " << mission_type << std::endl;
-#endif // USE_IOSTREAM
-       // PositionPlusAngle* goalWithAngle = new PositionPlusAngle(goal, 0);
-    return result;
 }
 
 void GoalStrat::updateRemainingTime(std_msgs::Duration a_remaining_time_match)
@@ -398,6 +393,12 @@ void GoalStrat::chooseGear()
     reverse_pub.publish(l_reverseGear);
 }
 
+void GoalStrat::abortAction()
+{
+    strat_graph->collisionAvoided();
+    actionaborted = true;
+}
+
 int GoalStrat::loop()
 {
     while (state != EXIT && ros::ok())
@@ -406,7 +407,6 @@ int GoalStrat::loop()
         publishEtapes();
         bool isLate = false;
         printCurrentAction();
-        update_selected_attractor();
 
         chooseGear(); // Go in reverse gear if needed
 
@@ -427,8 +427,7 @@ int GoalStrat::loop()
             // opponent + no other way) The baffe actions are excluded because if something is
             // detected, it must be the wall
             std::cout << "Timeout, probable obstacle on the way. Trying another path." << std::endl;
-            fflush(stdout);
-            strat_graph->collisionAvoided();
+            abortAction();
             go_to_next_mission();
         }
         else if (arrived_there() || (isLate && is_baffe_action()))

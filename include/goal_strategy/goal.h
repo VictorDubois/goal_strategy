@@ -56,9 +56,7 @@ private:
     float compute_angular_diff(float, float);
     void move_toward_goal();
     void go_to_next_mission();
-    void update_selected_attractor();
     unsigned int get_angular_diff();
-    int sendNewMission(StrategieV3* strat);
     void updateCurrentPose(geometry_msgs::Pose);
     void moveArm(enum PositionServo position);
     bool is_baffe_action();
@@ -71,9 +69,10 @@ private:
     bool isBlue();
     void publishEtapes();
     void chooseGear();
+    void abortAction();
 
     bool displayed_end_msg;
-    int goal_nb, orientation, mission_finished;
+    int orientation, mission_finished;
     float dist_to_goal;
     bool state_msg_displayed;
     PositionPlusAngle startingPosition;
@@ -95,6 +94,8 @@ private:
     ros::Duration remainig_time;
     bool team_color; // true if blue
     Etape::EtapeType previousEtapeType;
+    bool actionaborted;
+    float scoreMatch;
 };
 
 #endif
