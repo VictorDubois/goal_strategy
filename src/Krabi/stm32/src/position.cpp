@@ -2,29 +2,34 @@
 
 #include "Krabi/position.h"
 #ifndef STANDALONE_STRATEGIE
-    // Only for color
-    #include "Krabi/strategieV2.h"
+// Only for color
+#include "Krabi/strategieV2.h"
 #endif // STANDALONE_STRATEGIE
 
 // Constructeur par défaut avec des coordonnées nulles.
 Position::Position()
-    : x(0), y(0)
+  : x(0)
+  , y(0)
 {
 }
 
-Position::Position(Vec2d vect): x(vect.x), y(vect.y)
-{}
+Position::Position(Vec2d vect)
+  : x(vect.x)
+  , y(vect.y)
+{
+}
 
 Position::Position(Distance X, Distance Y, bool colorDependent)
-    : x(X), y(Y)
+  : x(X)
+  , y(Y)
 {
-    #ifndef STANDALONE_STRATEGIE
+#ifndef STANDALONE_STRATEGIE
     if (colorDependent && !StrategieV2::isYellow())
-    #else
+#else
     if (colorDependent && true /*!StrategieV2::isYellow()*/)
-    #endif
+#endif
     {
-        x = 3000-x;
+        x = 3000 - x;
     }
 }
 
@@ -50,7 +55,7 @@ Position Position::colorPosition(Distance x, Distance y, bool isYellow)
     if (!isYellow)
         return Position(isYellow ? x : 3000 - x, y, isYellow);
     else
-        return Position(x,y,isYellow);
+        return Position(x, y, isYellow);
 }
 
 void Position::setX(Distance X)
@@ -69,22 +74,22 @@ Position Position::getSymetrical()
     return p;
 }
 
-Vec2d Position::operator+(const Position &position) const
+Vec2d Position::operator+(const Position& position) const
 {
-    Vec2d resultat(x+position.x,y+position.y);
+    Vec2d resultat(x + position.x, y + position.y);
     return resultat;
 }
 
-Vec2d Position::operator-(const Position &position) const
+Vec2d Position::operator-(const Position& position) const
 {
-    Vec2d resultat(x-position.x,y-position.y);
+    Vec2d resultat(x - position.x, y - position.y);
     return resultat;
 }
 
 /// @brief Surchage d'opérateur pour multiplier par un flottant
 Position Position::operator*(float val) const
 {
-    Position resultat(x * val,y * val);
+    Position resultat(x * val, y * val);
     return resultat;
 }
 
@@ -93,77 +98,77 @@ void Position::operator=(Position position)
 
     x = position.x;
     y = position.y;
-
 }
 
-Position Position::operator+=(const Position &position)
+Position Position::operator+=(const Position& position)
 {
-    this->x+=position.x;
-    this->y+=position.y;
+    this->x += position.x;
+    this->y += position.y;
 
     return *this;
 }
 
-Position Position::operator-=(const Position &position)
+Position Position::operator-=(const Position& position)
 {
-    this->x-=position.x;
-    this->y-=position.y;
+    this->x -= position.x;
+    this->y -= position.y;
 
     return *this;
 }
 
-Position Position::operator+(const Vec2d &vec2d) const
+Position Position::operator+(const Vec2d& vec2d) const
 {
-    Position resultat(x+vec2d.x,y+vec2d.y);
+    Position resultat(x + vec2d.x, y + vec2d.y);
     return resultat;
 }
 
-Position Position::operator-(const Vec2d &vec2d) const
+Position Position::operator-(const Vec2d& vec2d) const
 {
-    Position resultat(x-vec2d.x,y-vec2d.y);
+    Position resultat(x - vec2d.x, y - vec2d.y);
     return resultat;
 }
 
-bool Position::presqueEgales(const Position &p) const
+bool Position::presqueEgales(const Position& p) const
 {
-    return (DistanceTools::distancePresqueEgales(x, p.x) && DistanceTools::distancePresqueEgales(y,p.y));
+    return (DistanceTools::distancePresqueEgales(x, p.x)
+            && DistanceTools::distancePresqueEgales(y, p.y));
 }
 
-bool Position::operator==(const Position &p) const
+bool Position::operator==(const Position& p) const
 {
     return (x == p.x && y == p.y);
 }
 
 bool Position::operator*=(float val)
 {
-    this->x = this->x*val;
-    this->y = this->y*val;
+    this->x = this->x * val;
+    this->y = this->y * val;
 
     return true;
 }
 
 Distance Position::getNorme() const
 {
-    return Distance(sqrt(x*x+y*y));
+    return Distance(sqrt(x * x + y * y));
 }
 
 Angle Position::getAngle() const
 {
-	return atan2(y,x);
+    return atan2(y, x);
 }
 
 #ifdef USE_ROS
 geometry_msgs::Point Position::getPoint() const
 {
-	geometry_msgs::Point point;
-        point.x = this->getX()/1000.f;
-        point.y = this->getY()/1000.f;
-        point.z = 0;
-        return point;
+    geometry_msgs::Point point;
+    point.x = this->getX() / 1000.f;
+    point.y = this->getY() / 1000.f;
+    point.z = 0;
+    return point;
 }
 
-Position::Position(const geometry_msgs::Point& position, bool colorDependent):Position(position.x * 1000, position.y * 1000, colorDependent)
+Position::Position(const geometry_msgs::Point& position, bool colorDependent)
+  : Position(position.x * 1000, position.y * 1000, colorDependent)
 {
-	
 }
 #endif

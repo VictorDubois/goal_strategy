@@ -63,7 +63,9 @@ void GoalStrat::hissezLesPavillons()
     m_servos_cmd.pavillon_speed = 128;
     m_servos_cmd.pavillon_angle = 80;
     m_servos_cmd.enable = true;
+    scoreMatch += 10;
     arm_servo_pub.publish(m_servos_cmd);
+    publishScore();
 }
 
 void stopLinear()
@@ -216,14 +218,40 @@ void GoalStrat::go_to_next_mission()
         switch (previousEtapeType)
         {
         case Etape::EtapeType::PHARE:
-            scoreMatch += 30;
+            scoreMatch += 3;
+            // Will the phare have enough time to be raised?
+            if (remainig_time.toSec() > 10.)
+            {
+                scoreMatch += 10;
+            }
             break;
         case Etape::EtapeType::PORT:
+            switch (strat_graph->getEtapeEnCours()->getNumero())
+            {
+            case 10:
+                scoreMatch += 3;
+                break;
+            case 11:
+                scoreMatch += 3;
+                break;
+            case 17:
+                scoreMatch += 6;
+                break;
+            default:
+                std::cout << "Warning, unkown port!" << std::endl;
+                scoreMatch += 2;
+                break;
+            }
             scoreMatch += 30;
-            // TODO check by etape ID?
             break;
         case Etape::EtapeType::MANCHE_A_AIR:
-            scoreMatch += 30;
+            // 5 for the first, 10 for the second
+            scoreMatch += 5;
+            if (firstMancheAAirdone)
+            {
+                scoreMatch += 5;
+            }
+            firstMancheAAirdone = true;
             break;
         default:
             break;
@@ -255,8 +283,9 @@ void GoalStrat::go_to_next_mission()
 
 GoalStrat::GoalStrat()
 {
+    firstMancheAAirdone = false;
     m_good_mouillage = Etape::EtapeType::DEPART; // disabled for now
-    scoreMatch = 0;
+    scoreMatch = 2;                              // phare posé
     m_servos_cmd.enable = true;
     m_servos_cmd.brak_speed = 10;
     m_servos_cmd.brak_angle = 50;
@@ -456,12 +485,28 @@ int GoalStrat::loop()
                 if (m_good_mouillage == Etape::MOUILLAGE_SUD && remainig_time.toSec() < 10.)
                 {
                     // stop !
+                    stopLinear();
+                    scoreMatch += 10;
+                    publishScore();
+                    while (ros::ok())
+                    {
+                        ros::spinOnce();
+                        usleep(20000);
+                    }
                 }
                 break;
             case Etape::MOUILLAGE_NORD:
                 if (m_good_mouillage == Etape::MOUILLAGE_NORD && remainig_time.toSec() < 10.)
                 {
                     // stop !
+                    stopLinear();
+                    scoreMatch += 10;
+                    publishScore();
+                    while (ros::ok())
+                    {
+                        ros::spinOnce();
+                        usleep(20000);
+                    }
                 }
                 break;
             case Etape::EtapeType::MANCHE_A_AIR:

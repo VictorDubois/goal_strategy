@@ -100,6 +100,7 @@ private:
     bool actionaborted;
     float scoreMatch;
     Etape::EtapeType m_good_mouillage;
+    bool firstMancheAAirdone;
 };
 
 #endif
