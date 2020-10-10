@@ -79,7 +79,7 @@ Coupe2019::Coupe2019(const bool isYellow, const std::vector<geometry_msgs::Point
     int main_port = Etape::makeEtape(Position(200, 800, isYellow),
                                      Etape::DEPART); // départ au fond de la zone de départ
 
-    int lighthouse = Etape::makeEtape(new Phare(Position(301, 200, isYellow)));
+    int lighthouse = Etape::makeEtape(new Phare(Position(640, 200, isYellow)));
 
     int out_of_lighthouse = Etape::makeEtape(Position(640, 400, isYellow));
 
@@ -106,15 +106,14 @@ Coupe2019::Coupe2019(const bool isYellow, const std::vector<geometry_msgs::Point
     Etape::get(north)->addVoisins(out_of_lighthouse);
     Etape::get(north)->addVoisins(lighthouse);
 
-    int push_south_bouees = Etape::makeEtape(new Port(Position(260, 1000, isYellow)));
-    int push_north_bouees = Etape::makeEtape(new Port(Position(260, 700, isYellow)));
+    int push_south_bouees = Etape::makeEtape(new Port(Position(350, 1000, isYellow)));
+    int push_north_bouees = Etape::makeEtape(new Port(Position(350, 600, isYellow)));
     Etape::get(out_of_lighthouse)->addVoisins(push_north_bouees);
 
     // Points de passage
     int waypoint_south = Etape::makeEtape(Position(640, 1300, isYellow));
     int waypoint_out_of_enemy_small_port = Etape::makeEtape(Position(1100, 1400, isYellow));
     Etape::get(south)->addVoisins(waypoint_south);
-    Etape::get(push_south_bouees)->addVoisins(waypoint_south);
     Etape::get(out_of_first_air)->addVoisins(waypoint_south);
     Etape::get(out_of_second_air)->addVoisins(waypoint_south);
     Etape::get(out_of_second_air)->addVoisins(waypoint_out_of_enemy_small_port);
@@ -127,7 +126,7 @@ Coupe2019::Coupe2019(const bool isYellow, const std::vector<geometry_msgs::Point
     Etape::get(waypoint_out_of_enemy_small_port)->addVoisins(waypoint_middle_ports);
     Etape::get(waypoint_out_of_our_small_port)->addVoisins(waypoint_middle_ports);
 
-    int waypoint_out_of_push_south_bouees = Etape::makeEtape(Position(480, 1220, isYellow));
+    int waypoint_out_of_push_south_bouees = Etape::makeEtape(Position(480, 1300, isYellow));
     Etape::get(waypoint_out_of_push_south_bouees)->addVoisins(push_south_bouees);
 
     Etape::get(waypoint_out_of_push_south_bouees)->addVoisins(waypoint_south);
@@ -135,7 +134,6 @@ Coupe2019::Coupe2019(const bool isYellow, const std::vector<geometry_msgs::Point
 
     int our_small_port = Etape::makeEtape(new Port(Position(1800, 1750, isYellow)));
     Etape::get(our_small_port)->addVoisins(waypoint_out_of_our_small_port);
-
 #ifdef QTGUI
     qDebug() << Etape::getTotalEtapes();
 #endif
