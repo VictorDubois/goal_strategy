@@ -70,6 +70,8 @@ private:
     void publishEtapes();
     void chooseGear();
     void abortAction();
+    void publishScore();
+    void updateGirouette();
 
     bool displayed_end_msg;
     int orientation, mission_finished;
@@ -85,6 +87,7 @@ private:
     ros::Publisher goals_pub;
     ros::Publisher reverse_pub;
     ros::Publisher stop_linear_pub;
+    ros::Publisher score_pub;
     ros::Subscriber current_pose_sub;
     ros::Subscriber remaining_time_match_sub;
     ros::Subscriber color_sub;
@@ -96,6 +99,7 @@ private:
     Etape::EtapeType previousEtapeType;
     bool actionaborted;
     float scoreMatch;
+    Etape::EtapeType m_good_mouillage;
 };
 
 #endif

@@ -13,6 +13,7 @@
 #include "goal_strategy/goal.h"
 #include "goal_strategy/servos_cmd.h"
 #include "std_msgs/Float32.h"
+#include "std_msgs/UInt16.h"
 #include "tf/transform_datatypes.h"
 #include <ros/time.h>
 
@@ -210,23 +211,24 @@ void GoalStrat::go_to_next_mission()
 
     if (!actionaborted)
     {
+        std::cout << "etape type: " << previousEtapeType << ", score before: " << scoreMatch;
         // Check if we scored points
-        switch(previousEtapeType)
+        switch (previousEtapeType)
         {
         case Etape::EtapeType::PHARE:
             scoreMatch += 30;
-        break;
+            break;
         case Etape::EtapeType::PORT:
             scoreMatch += 30;
-            //TODO check by etape ID?
-        break;
+            // TODO check by etape ID?
+            break;
         case Etape::EtapeType::MANCHE_A_AIR:
             scoreMatch += 30;
-        break;
+            break;
         default:
             break;
-
         }
+        std::cout << "score after: " << scoreMatch << std::endl;
     }
 
     actionaborted = false;
@@ -253,6 +255,8 @@ void GoalStrat::go_to_next_mission()
 
 GoalStrat::GoalStrat()
 {
+    m_good_mouillage = Etape::EtapeType::DEPART; // disabled for now
+    scoreMatch = 0;
     m_servos_cmd.enable = true;
     m_servos_cmd.brak_speed = 10;
     m_servos_cmd.brak_angle = 50;
@@ -297,6 +301,7 @@ GoalStrat::GoalStrat()
     goals_pub = n.advertise<geometry_msgs::PoseArray>("etapes", 5);
     reverse_pub = n.advertise<std_msgs::Bool>("reverseGear", 5);
     stop_linear_pub = n.advertise<std_msgs::Bool>("stopLinearSpeed", 5);
+    score_pub = n.advertise<std_msgs::UInt16>("score", 5);
 
     current_pose_sub = n.subscribe("current_pose", 1000, &GoalStrat::updateCurrentPose, this);
     remaining_time_match_sub
@@ -325,9 +330,6 @@ GoalStrat::GoalStrat()
 
     strat_graph->update();
     previousEtapeType = strat_graph->getEtapeEnCours()->getEtapeType();
-
-
-
 }
 
 void GoalStrat::publishEtapes()
@@ -399,10 +401,23 @@ void GoalStrat::abortAction()
     actionaborted = true;
 }
 
+void GoalStrat::publishScore()
+{
+    std_msgs::UInt16 l_score_match;
+    l_score_match.data = static_cast<uint16_t>(std::ceil(scoreMatch));
+    score_pub.publish(l_score_match);
+}
+
+void GoalStrat::updateGirouette()
+{
+}
+
 int GoalStrat::loop()
 {
     while (state != EXIT && ros::ok())
     {
+        strat_graph->setGoodMouillage(m_good_mouillage);
+        publishScore();
         arm_servo_pub.publish(m_servos_cmd);
         publishEtapes();
         bool isLate = false;
@@ -411,6 +426,7 @@ int GoalStrat::loop()
         chooseGear(); // Go in reverse gear if needed
 
         clock_gettime(CLOCK_MONOTONIC, &now);
+
         if (!isFirstAction && ((now.tv_sec - begin.tv_sec) >= timeoutMoving))
         {
             isLate = true;
@@ -436,6 +452,18 @@ int GoalStrat::loop()
             int angleAction = 0;
             switch (strat_graph->getEtapeEnCours()->getEtapeType())
             {
+            case Etape::MOUILLAGE_SUD:
+                if (m_good_mouillage == Etape::MOUILLAGE_SUD && remainig_time.toSec() < 10.)
+                {
+                    // stop !
+                }
+                break;
+            case Etape::MOUILLAGE_NORD:
+                if (m_good_mouillage == Etape::MOUILLAGE_NORD && remainig_time.toSec() < 10.)
+                {
+                    // stop !
+                }
+                break;
             case Etape::EtapeType::MANCHE_A_AIR:
                 stopLinear();
                 std::cout << "In front of a Manche a Air, orienting" << std::endl;

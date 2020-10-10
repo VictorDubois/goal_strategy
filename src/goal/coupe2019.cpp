@@ -1,9 +1,9 @@
 #include "goal_strategy/coupe2019.h"
-#include "Krabi/strategie/port.h"
-#include "Krabi/strategie/phare.h"
 #include "Krabi/strategie/mancheAAir.h"
 #include "Krabi/strategie/mouillageNord.h"
 #include "Krabi/strategie/mouillageSud.h"
+#include "Krabi/strategie/phare.h"
+#include "Krabi/strategie/port.h"
 #include <cmath>
 #include <iostream>
 #define NB_NEURONS 360
@@ -54,13 +54,11 @@ Coupe2019::Coupe2019(const bool isYellow, const std::vector<geometry_msgs::Pose>
     Coupe2019(isYellow, etapesAsPoints);
 }
 
-
-
 Coupe2019::Coupe2019(const bool isYellow, const std::vector<geometry_msgs::Point> etapes_as_points)
   : StrategieV3(isYellow)
 {
     remainingTime = 100;
-    good_mouillage = Etape::EtapeType::DEPART;// No mouillage is good yet
+    good_mouillage = Etape::EtapeType::DEPART; // No mouillage is good yet
 
     // Initialisation des tableaux d'étapes
 
@@ -78,8 +76,6 @@ Coupe2019::Coupe2019(const bool isYellow, const std::vector<geometry_msgs::Point
 
     // Création des étapes
     // Les étapes correspondant à des actions sont créées automatiquement lors de l'ajout d'actions
-
-    // Initialisation in simulator in initKrabi.cpp
     int main_port = Etape::makeEtape(Position(200, 800, isYellow),
                                      Etape::DEPART); // départ au fond de la zone de départ
 
@@ -95,30 +91,39 @@ Coupe2019::Coupe2019(const bool isYellow, const std::vector<geometry_msgs::Point
 
     int first_air = Etape::makeEtape(new MancheAAir(Position(230, 1800, isYellow)));
     int second_air = Etape::makeEtape(new MancheAAir(Position(635, 1800, isYellow)));
-    int out_of_air = Etape::makeEtape(Position(430, 1400, isYellow));
+    int out_of_first_air = Etape::makeEtape(Position(230, 1600, isYellow));
+    int out_of_second_air = Etape::makeEtape(Position(635, 1600, isYellow));
 
-    Etape::get(first_air)->addVoisins(out_of_air);
-    Etape::get(second_air)->addVoisins(out_of_air);
+    Etape::get(out_of_second_air)->addVoisins(out_of_first_air);
+    Etape::get(first_air)->addVoisins(out_of_first_air);
+    Etape::get(second_air)->addVoisins(out_of_second_air);
 
     int south = Etape::makeEtape(new MouillageSud(Position(150, 1250, isYellow)));
     int north = Etape::makeEtape(new MouillageNord(Position(150, 320, isYellow)));
 
-    Etape::get(south)->addVoisins(out_of_air);
+    Etape::get(south)->addVoisins(out_of_second_air);
+    Etape::get(south)->addVoisins(out_of_first_air);
     Etape::get(north)->addVoisins(out_of_lighthouse);
     Etape::get(north)->addVoisins(lighthouse);
 
-    int push_south_bouees = Etape::makeEtape(Position(260, 1000, true));
+    int push_south_bouees = Etape::makeEtape(new Port(Position(260, 1000, isYellow)));
+    int push_north_bouees = Etape::makeEtape(new Port(Position(260, 700, isYellow)));
+    Etape::get(out_of_lighthouse)->addVoisins(push_north_bouees);
 
-    /** Points de passage **/
+    // Points de passage
     int waypoint_south = Etape::makeEtape(Position(640, 1300, isYellow));
     int waypoint_out_of_enemy_small_port = Etape::makeEtape(Position(1100, 1400, isYellow));
-    Etape::get(out_of_air)->addVoisins(waypoint_south);
+    Etape::get(south)->addVoisins(waypoint_south);
+    Etape::get(push_south_bouees)->addVoisins(waypoint_south);
+    Etape::get(out_of_first_air)->addVoisins(waypoint_south);
+    Etape::get(out_of_second_air)->addVoisins(waypoint_south);
+    Etape::get(out_of_second_air)->addVoisins(waypoint_out_of_enemy_small_port);
     Etape::get(out_of_main_port)->addVoisins(waypoint_south);
     Etape::get(out_of_main_port)->addVoisins(waypoint_out_of_enemy_small_port);
     Etape::get(waypoint_out_of_enemy_small_port)->addVoisins(waypoint_south);
 
     int waypoint_middle_ports = Etape::makeEtape(Position(1500, 1400, isYellow));
-    int waypoint_out_of_our_small_port = Etape::makeEtape(Position(1900, 1400, isYellow));
+    int waypoint_out_of_our_small_port = Etape::makeEtape(Position(1800, 1400, isYellow));
     Etape::get(waypoint_out_of_enemy_small_port)->addVoisins(waypoint_middle_ports);
     Etape::get(waypoint_out_of_our_small_port)->addVoisins(waypoint_middle_ports);
 
@@ -126,10 +131,10 @@ Coupe2019::Coupe2019(const bool isYellow, const std::vector<geometry_msgs::Point
     Etape::get(waypoint_out_of_push_south_bouees)->addVoisins(push_south_bouees);
 
     Etape::get(waypoint_out_of_push_south_bouees)->addVoisins(waypoint_south);
-    Etape::get(waypoint_out_of_push_south_bouees)->addVoisins(out_of_air);
+    Etape::get(waypoint_out_of_push_south_bouees)->addVoisins(out_of_second_air);
 
-
-
+    int our_small_port = Etape::makeEtape(new Port(Position(1800, 1750, isYellow)));
+    Etape::get(our_small_port)->addVoisins(waypoint_out_of_our_small_port);
 
 #ifdef QTGUI
     qDebug() << Etape::getTotalEtapes();
@@ -168,7 +173,7 @@ void Coupe2019::setGoodMouillage(Etape::EtapeType a_good_mouillage)
 
 int Coupe2019::getScoreEtape(int i)
 {
-    float l_score = 0;
+    int l_score = 0;
     switch (this->tableauEtapesTotal[i]->getEtapeType())
     {
         /*case Etape::TYPE_ACTION:
@@ -193,20 +198,21 @@ int Coupe2019::getScoreEtape(int i)
         break;
     case Etape::MOUILLAGE_NORD:
         l_score = 0;
-        if (good_mouillage == Etape::MOUILLAGE_NORD && remainingTime < 10.)
+        if (good_mouillage == Etape::MOUILLAGE_NORD && remainingTime < 10.f)
         {
             l_score = 100;
         }
         break;
     case Etape::MOUILLAGE_SUD:
         l_score = 0;
-        if (good_mouillage == Etape::MOUILLAGE_SUD && remainingTime < 10.)
+        if (good_mouillage == Etape::MOUILLAGE_SUD && remainingTime < 10.f)
         {
             l_score = 100;
         }
         break;
 
     default:
-        return 1; /* DEBUG (0 sinon) */
+        return 0;
     }
+    return l_score;
 }

@@ -3,7 +3,7 @@
 
 #define ETAPE_GARAGE 1
 
-#define NOMBRE_ETAPES 30
+#define NOMBRE_ETAPES 50
 
 #include "Krabi/strategie/abeille.h"
 #include "Krabi/strategie/accelerator.h"
