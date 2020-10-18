@@ -35,6 +35,21 @@ void GoalStrat::moveArm(enum PositionServo position)
 {
     switch (position)
     {
+    case FOLDED:
+        m_servos_cmd.brak_speed = 128;
+        m_servos_cmd.brak_angle = 180;
+        std::cout << "Actually fold servo" << std::endl;
+        break;
+    case IN:
+        m_servos_cmd.brak_speed = 128;
+        m_servos_cmd.brak_angle = 156;
+        std::cout << "Actually move servo IN" << std::endl;
+        break;
+    case OUT:
+        m_servos_cmd.brak_speed = 128;
+        m_servos_cmd.brak_angle = 23;
+        std::cout << "Actually move servo OUT" << std::endl;
+        break;
     case UP:
         m_servos_cmd.brak_speed = 128;
         m_servos_cmd.brak_angle = 50;
@@ -202,6 +217,8 @@ void GoalStrat::updateCurrentPose(geometry_msgs::Pose newPose)
 
 void GoalStrat::go_to_next_mission()
 {
+    servo_out = false;
+
     startLinear();
     isFirstAction = false;
     // Reset timeout
@@ -324,6 +341,7 @@ GoalStrat::GoalStrat()
     timeoutMoving = 1000; // sec
     timeoutOrient = 500;  // sec
     isFirstAction = true;
+    servo_out = false;
     ros::NodeHandle n;
     goal_pose_pub = n.advertise<geometry_msgs::PoseStamped>("goal_pose", 1000);
     arm_servo_pub = n.advertise<goal_strategy::servos_cmd>("cmd_servos", 1000);
@@ -456,6 +474,14 @@ int GoalStrat::loop()
 
         clock_gettime(CLOCK_MONOTONIC, &now);
 
+        // prepare arm if needed
+        if (isBlue() && !servo_out
+            && strat_graph->getEtapeEnCours()->getEtapeType() == Etape::EtapeType::MANCHE_A_AIR)
+        {
+            moveArm(OUT);
+            servo_out = true;
+        }
+
         if (!isFirstAction && ((now.tv_sec - begin.tv_sec) >= timeoutMoving))
         {
             isLate = true;
@@ -477,6 +503,12 @@ int GoalStrat::loop()
         }
         else if (arrived_there() || (isLate && is_baffe_action()))
         {
+            // retract amr if needed
+            if (previousEtapeType == Etape::EtapeType::MANCHE_A_AIR)
+            {
+                moveArm(IN);
+            }
+
             // if (angle != -1 || done_orienting_to(angle)) {
             int angleAction = 0;
             switch (strat_graph->getEtapeEnCours()->getEtapeType())
@@ -511,7 +543,18 @@ int GoalStrat::loop()
                 break;
             case Etape::EtapeType::MANCHE_A_AIR:
                 stopLinear();
-                std::cout << "In front of a Manche a Air, orienting" << std::endl;
+
+                if (isBlue())
+                {
+                    moveArm(IN);
+                }
+                else
+                {
+                    moveArm(OUT);
+                }
+                usleep(1500000); // 1.5s
+
+                /*std::cout << "In front of a Manche a Air, orienting" << std::endl;
                 orient_to_angle_with_timeout(40, 320);
 
                 std::cout << "MOVING SERVO DOWN" << std::endl;
@@ -522,7 +565,7 @@ int GoalStrat::loop()
 
                 std::cout << "MOVING SERVO UP" << std::endl;
                 moveArm(UP);
-                usleep(1500000); // 1.5s
+                usleep(1500000); // 1.5s*/
                 std::cout << "Manche A Air Done" << std::endl;
                 break;
             case Etape::EtapeType::PHARE:

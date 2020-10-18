@@ -38,7 +38,10 @@ enum PositionServo
 {
     UP,
     DOWN,
-    RELEASE
+    RELEASE,
+    OUT,
+    IN,
+    FOLDED
 };
 
 class GoalStrat
@@ -101,6 +104,7 @@ private:
     float scoreMatch;
     Etape::EtapeType m_good_mouillage;
     bool firstMancheAAirdone;
+    bool servo_out;
 };
 
 #endif
