@@ -46,7 +46,7 @@ void GoalStrat::moveArm(enum PositionServo position)
         std::cout << "Actually move servo IN" << std::endl;
         break;
     case OUT:
-        m_servos_cmd.brak_speed = 128;
+        m_servos_cmd.brak_speed = 40;
         m_servos_cmd.brak_angle = 23;
         std::cout << "Actually move servo OUT" << std::endl;
         break;
@@ -305,7 +305,7 @@ GoalStrat::GoalStrat()
     scoreMatch = 2;                              // phare posé
     m_servos_cmd.enable = true;
     m_servos_cmd.brak_speed = 10;
-    m_servos_cmd.brak_angle = 50;
+    m_servos_cmd.brak_angle = 180;
     m_servos_cmd.pavillon_speed = 10;
     m_servos_cmd.pavillon_angle = 255;
     // Initialize stop distance modulation
@@ -461,6 +461,10 @@ void GoalStrat::updateGirouette()
 
 int GoalStrat::loop()
 {
+/*    moveArm(IN);
+    usleep(1000000);
+    moveArm(FOLDED);*/
+    
     while (state != EXIT && ros::ok())
     {
         strat_graph->setGoodMouillage(m_good_mouillage);
@@ -552,7 +556,7 @@ int GoalStrat::loop()
                 {
                     moveArm(OUT);
                 }
-                usleep(1500000); // 1.5s
+                usleep(2500000); // 1.5s
 
                 /*std::cout << "In front of a Manche a Air, orienting" << std::endl;
                 orient_to_angle_with_timeout(40, 320);
@@ -574,11 +578,11 @@ int GoalStrat::loop()
                 orient_to_angle_with_timeout(90, 270);
 
                 std::cout << "MOVING SERVO DOWN" << std::endl;
-                moveArm(DOWN);
+                moveArm(OUT);
                 usleep(1500000); // 1.5s
 
                 std::cout << "MOVING SERVO UP" << std::endl;
-                moveArm(UP);
+                moveArm(IN);
                 usleep(1500000); // 1.5s
                 std::cout << "Phare Done" << std::endl;
                 break;
