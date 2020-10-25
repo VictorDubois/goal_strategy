@@ -37,22 +37,22 @@ void GoalStrat::moveArm(enum PositionServo position)
     {
     case FOLDED:
         m_servos_cmd.brak_speed = 128;
-        m_servos_cmd.brak_angle = 180;
+        m_servos_cmd.brak_angle = 10;
         std::cout << "Actually fold servo" << std::endl;
         break;
     case IN:
         m_servos_cmd.brak_speed = 128;
-        m_servos_cmd.brak_angle = 156;
+        m_servos_cmd.brak_angle = 23;
         std::cout << "Actually move servo IN" << std::endl;
         break;
     case OUT:
         m_servos_cmd.brak_speed = 40;
-        m_servos_cmd.brak_angle = 23;
+        m_servos_cmd.brak_angle = 156;
         std::cout << "Actually move servo OUT" << std::endl;
         break;
     case UP:
-        m_servos_cmd.brak_speed = 128;
-        m_servos_cmd.brak_angle = 50;
+        m_servos_cmd.s3_speed = 128;
+        m_servos_cmd.s3_angle = 40;
         std::cout << "Actually move servo UP" << std::endl;
         break;
     case RELEASE:
@@ -61,8 +61,8 @@ void GoalStrat::moveArm(enum PositionServo position)
         std::cout << "Actually release servo" << std::endl;
         break;
     case DOWN:
-        m_servos_cmd.brak_speed = 128;
-        m_servos_cmd.brak_angle = 150;
+        m_servos_cmd.s3_speed = 128;
+        m_servos_cmd.s3_angle = 120;
         std::cout << "Actually move servo DOWN" << std::endl;
         break;
     default:
@@ -76,7 +76,7 @@ void GoalStrat::hissezLesPavillons()
 {
     std::cout << "Hissez les pavillons!" << std::endl;
     m_servos_cmd.pavillon_speed = 128;
-    m_servos_cmd.pavillon_angle = 80;
+    m_servos_cmd.pavillon_angle = 40;
     m_servos_cmd.enable = true;
     scoreMatch += 10;
     arm_servo_pub.publish(m_servos_cmd);
@@ -338,8 +338,8 @@ GoalStrat::GoalStrat()
 
     // Initialize time
     clock_gettime(CLOCK_MONOTONIC, &begin);
-    timeoutMoving = 1000; // sec
-    timeoutOrient = 500;  // sec
+    timeoutMoving = 10; // sec
+    timeoutOrient = 5;  // sec
     isFirstAction = true;
     servo_out = false;
     ros::NodeHandle n;
@@ -461,10 +461,10 @@ void GoalStrat::updateGirouette()
 
 int GoalStrat::loop()
 {
-/*    moveArm(IN);
-    usleep(1000000);
-    moveArm(FOLDED);*/
-    
+    /*    moveArm(IN);
+        usleep(1000000);
+        moveArm(FOLDED);*/
+
     while (state != EXIT && ros::ok())
     {
         strat_graph->setGoodMouillage(m_good_mouillage);
@@ -578,11 +578,11 @@ int GoalStrat::loop()
                 orient_to_angle_with_timeout(90, 270);
 
                 std::cout << "MOVING SERVO DOWN" << std::endl;
-                moveArm(OUT);
+                moveArm(DOWN);
                 usleep(1500000); // 1.5s
 
                 std::cout << "MOVING SERVO UP" << std::endl;
-                moveArm(IN);
+                moveArm(UP);
                 usleep(1500000); // 1.5s
                 std::cout << "Phare Done" << std::endl;
                 break;
