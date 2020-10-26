@@ -60,6 +60,7 @@ add_message_files(
   motors.msg
   motors_cmd.msg
   servos_cmd.msg
+  odom_light.msg
 )
 
 ## Generate services in the 'srv' folder
