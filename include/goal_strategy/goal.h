@@ -105,6 +105,7 @@ private:
     Etape::EtapeType m_good_mouillage;
     bool firstMancheAAirdone;
     bool servo_out;
+    ros::Time movingTimeoutDeadline;
 };
 
 #endif

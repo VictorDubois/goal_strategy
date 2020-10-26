@@ -219,6 +219,8 @@ void GoalStrat::go_to_next_mission()
 {
     servo_out = false;
 
+    movingTimeoutDeadline = ros::Time::now() + ros::Duration(timeoutMoving);
+
     startLinear();
     isFirstAction = false;
     // Reset timeout
@@ -486,7 +488,7 @@ int GoalStrat::loop()
             servo_out = true;
         }
 
-        if (!isFirstAction && ((now.tv_sec - begin.tv_sec) >= timeoutMoving))
+        if (!isFirstAction && (ros::Time::now() >= movingTimeoutDeadline))
         {
             isLate = true;
             std::cout << "Robot is late (spent more than " << timeoutMoving
