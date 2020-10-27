@@ -107,6 +107,7 @@ private:
     bool firstMancheAAirdone;
     bool servo_out;
     ros::Time movingTimeoutDeadline;
+    bool funny_action_counted;
 };
 
 #endif

@@ -78,7 +78,12 @@ void GoalStrat::hissezLesPavillons()
     m_servos_cmd.pavillon_speed = 128;
     m_servos_cmd.pavillon_angle = 40;
     m_servos_cmd.enable = true;
-    scoreMatch += 10;
+
+    if (!funny_action_counted)
+    {
+        funny_action_counted = true;
+        scoreMatch += 10;
+    }
     arm_servo_pub.publish(m_servos_cmd);
     publishScore();
 }
@@ -301,6 +306,7 @@ void GoalStrat::go_to_next_mission()
 
 GoalStrat::GoalStrat()
 {
+    funny_action_counted = false;
     firstMancheAAirdone = false;
     m_good_mouillage = Etape::EtapeType::DEPART; // disabled for now
     scoreMatch = 2;                              // phare posé
