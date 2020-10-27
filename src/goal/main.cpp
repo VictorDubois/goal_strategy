@@ -455,6 +455,10 @@ void GoalStrat::publishScore()
     std_msgs::UInt16 l_score_match;
     l_score_match.data = static_cast<uint16_t>(std::ceil(scoreMatch));
     score_pub.publish(l_score_match);
+
+    // Hack to use only one arduino for both servos and LCD
+    m_servos_cmd.s4_angle = static_cast<uint16_t>(std::ceil(scoreMatch));
+    m_servos_cmd.s4_speed = static_cast<uint16_t>(std::ceil(scoreMatch));
 }
 
 void GoalStrat::updateGirouette()
