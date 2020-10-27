@@ -75,6 +75,7 @@ private:
     void abortAction();
     void publishScore();
     void updateGirouette();
+    void stopActuators();
 
     bool displayed_end_msg;
     int orientation, mission_finished;

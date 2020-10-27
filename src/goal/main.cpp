@@ -261,7 +261,6 @@ void GoalStrat::go_to_next_mission()
                 scoreMatch += 2;
                 break;
             }
-            scoreMatch += 30;
             break;
         case Etape::EtapeType::MANCHE_A_AIR:
             // 5 for the first, 10 for the second
@@ -465,6 +464,12 @@ void GoalStrat::updateGirouette()
 {
 }
 
+void GoalStrat::stopActuators()
+{
+    m_servos_cmd.enable = false;
+    arm_servo_pub.publish(m_servos_cmd);
+}
+
 int GoalStrat::loop()
 {
     /*    moveArm(IN);
@@ -652,6 +657,8 @@ int GoalStrat::loop()
 
         ros::spinOnce();
     }
+
+    stopActuators();
 
     std::cout << "Mission accomplished, shutting down" << std::endl;
     fflush(stdout);
