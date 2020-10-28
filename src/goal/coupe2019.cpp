@@ -79,9 +79,17 @@ Coupe2019::Coupe2019(const bool isYellow, const std::vector<geometry_msgs::Point
     int main_port = Etape::makeEtape(Position(200, 800, isYellow),
                                      Etape::DEPART); // départ au fond de la zone de départ
 
-    int lighthouse = Etape::makeEtape(new Phare(Position(450, 200, isYellow)));
+    int lighthouse, out_of_lighthouse;
+    if(isYellow)
+    {
+        lighthouse = Etape::makeEtape(new Phare(Position(350, 200, isYellow)));
+        out_of_lighthouse = Etape::makeEtape(Position(350, 300, isYellow));
+    }
+    else {
+        lighthouse = Etape::makeEtape(new Phare(Position(450, 200, isYellow)));
+        out_of_lighthouse = Etape::makeEtape(Position(450, 300, isYellow));
+    }
 
-    int out_of_lighthouse = Etape::makeEtape(Position(450, 300, isYellow));
 
     int out_of_main_port = Etape::makeEtape(Position(700, 800, isYellow));
 
