@@ -88,14 +88,18 @@ void GoalStrat::hissezLesPavillons()
     publishScore();
 }
 
-void stopLinear()
+void GoalStrat::stopLinear()
 {
-    //@TODO stop linear speed
+    std_msgs::Bool linear;
+    linear.data = true;
+    stop_linear_pub.publish(linear);
 }
 
-void startLinear()
+void GoalStrat::startLinear()
 {
-    //@TODO stop linear speed
+    std_msgs::Bool linear;
+    linear.data = false;
+    stop_linear_pub.publish(linear);
 }
 
 bool GoalStrat::isBlue()
@@ -352,14 +356,15 @@ GoalStrat::GoalStrat()
     ros::NodeHandle n;
     goal_pose_pub = n.advertise<geometry_msgs::PoseStamped>("goal_pose", 1000);
     arm_servo_pub = n.advertise<goal_strategy::servos_cmd>("cmd_servos", 1000);
-    goals_pub = n.advertise<geometry_msgs::PoseArray>("etapes", 5);
+    // goals_pub = n.advertise<geometry_msgs::PoseArray>("etapes", 5);
     reverse_pub = n.advertise<std_msgs::Bool>("reverseGear", 5);
     stop_linear_pub = n.advertise<std_msgs::Bool>("stopLinearSpeed", 5);
-    score_pub = n.advertise<std_msgs::UInt16>("score", 5);
+    // score_pub = n.advertise<std_msgs::UInt16>("score", 5);
 
     current_pose_sub = n.subscribe("current_pose", 1000, &GoalStrat::updateCurrentPose, this);
     remaining_time_match_sub
       = n.subscribe("remaining_time", 1000, &GoalStrat::updateRemainingTime, this);
+    girouette_sub = n.subscribe("girouette_is_south", 1000, &GoalStrat::updateGirouette, this);
 
     n.param<bool>("isBlue", team_color, true);
 
@@ -459,15 +464,23 @@ void GoalStrat::publishScore()
 {
     std_msgs::UInt16 l_score_match;
     l_score_match.data = static_cast<uint16_t>(std::ceil(scoreMatch));
-    score_pub.publish(l_score_match);
+    // score_pub.publish(l_score_match);
 
     // Hack to use only one arduino for both servos and LCD
     m_servos_cmd.s4_angle = static_cast<uint16_t>(std::ceil(scoreMatch));
     m_servos_cmd.s4_speed = static_cast<uint16_t>(std::ceil(scoreMatch));
 }
 
-void GoalStrat::updateGirouette()
+void GoalStrat::updateGirouette(std_msgs::Bool girouette_is_south)
 {
+    if (girouette_is_south.data)
+    {
+        m_good_mouillage = Etape::EtapeType::MOUILLAGE_SUD;
+    }
+    else
+    {
+        m_good_mouillage = Etape::EtapeType::MOUILLAGE_NORD;
+    }
 }
 
 void GoalStrat::stopActuators()
@@ -487,7 +500,7 @@ int GoalStrat::loop()
         strat_graph->setGoodMouillage(m_good_mouillage);
         publishScore();
         arm_servo_pub.publish(m_servos_cmd);
-        publishEtapes();
+        // publishEtapes();
         bool isLate = false;
         printCurrentAction();
 

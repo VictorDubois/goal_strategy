@@ -74,8 +74,10 @@ private:
     void chooseGear();
     void abortAction();
     void publishScore();
-    void updateGirouette();
+    void updateGirouette(std_msgs::Bool girouette_is_south);
     void stopActuators();
+    void stopLinear();
+    void startLinear();
 
     bool displayed_end_msg;
     int orientation, mission_finished;
@@ -95,6 +97,7 @@ private:
     ros::Subscriber current_pose_sub;
     ros::Subscriber remaining_time_match_sub;
     ros::Subscriber color_sub;
+    ros::Subscriber girouette_sub;
     PositionPlusAngle currentPosition;
     PositionPlusAngle goal_pose;
     goal_strategy::servos_cmd m_servos_cmd;
