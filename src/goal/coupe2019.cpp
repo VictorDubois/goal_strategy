@@ -186,7 +186,7 @@ int Coupe2019::getScoreEtape(int i)
         l_score = 0;
         break;
     case Etape::PHARE:
-        l_score = 100;
+        l_score = 200;
         break;
     case Etape::MANCHE_A_AIR:
         l_score = 100;
