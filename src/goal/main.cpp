@@ -356,7 +356,7 @@ GoalStrat::GoalStrat()
     ros::NodeHandle n;
     goal_pose_pub = n.advertise<geometry_msgs::PoseStamped>("goal_pose", 1000);
     arm_servo_pub = n.advertise<goal_strategy::servos_cmd>("cmd_servos", 1000);
-    // goals_pub = n.advertise<geometry_msgs::PoseArray>("etapes", 5);
+    goals_pub = n.advertise<geometry_msgs::PoseArray>("etapes", 5);
     reverse_pub = n.advertise<std_msgs::Bool>("reverseGear", 5);
     stop_linear_pub = n.advertise<std_msgs::Bool>("stopLinearSpeed", 5);
     // score_pub = n.advertise<std_msgs::UInt16>("score", 5);
@@ -500,7 +500,7 @@ int GoalStrat::loop()
         strat_graph->setGoodMouillage(m_good_mouillage);
         publishScore();
         arm_servo_pub.publish(m_servos_cmd);
-        // publishEtapes();
+        publishEtapes();
         bool isLate = false;
         printCurrentAction();
 
