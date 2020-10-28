@@ -82,12 +82,12 @@ Coupe2019::Coupe2019(const bool isYellow, const std::vector<geometry_msgs::Point
     int lighthouse, out_of_lighthouse;
     if(isYellow)
     {
-        lighthouse = Etape::makeEtape(new Phare(Position(350, 200, isYellow)));
-        out_of_lighthouse = Etape::makeEtape(Position(350, 300, isYellow));
+        lighthouse = Etape::makeEtape(new Phare(Position(250, 200, isYellow)));
+        out_of_lighthouse = Etape::makeEtape(Position(250, 300, isYellow));
     }
     else {
-        lighthouse = Etape::makeEtape(new Phare(Position(450, 200, isYellow)));
-        out_of_lighthouse = Etape::makeEtape(Position(450, 300, isYellow));
+        lighthouse = Etape::makeEtape(new Phare(Position(350, 200, isYellow)));
+        out_of_lighthouse = Etape::makeEtape(Position(350, 300, isYellow));
     }
 
 
