@@ -496,7 +496,7 @@ int GoalStrat::loop()
         clock_gettime(CLOCK_MONOTONIC, &now);
 
         // prepare arm if needed
-        if (isBlue() && !servo_out
+        if (!isBlue() && !servo_out
             && strat_graph->getEtapeEnCours()->getEtapeType() == Etape::EtapeType::MANCHE_A_AIR)
         {
             moveArm(OUT);
@@ -565,7 +565,7 @@ int GoalStrat::loop()
             case Etape::EtapeType::MANCHE_A_AIR:
                 stopLinear();
 
-                if (isBlue())
+                if (!isBlue())
                 {
                     moveArm(IN);
                 }
