@@ -349,8 +349,8 @@ GoalStrat::GoalStrat()
 
     // Initialize time
     clock_gettime(CLOCK_MONOTONIC, &begin);
-    timeoutMoving = 35; // sec
-    timeoutOrient = 30; // sec
+    timeoutMoving = 15; // sec
+    timeoutOrient = 10; // sec
     isFirstAction = true;
     servo_out = false;
     ros::NodeHandle n;
