@@ -349,8 +349,8 @@ GoalStrat::GoalStrat()
 
     // Initialize time
     clock_gettime(CLOCK_MONOTONIC, &begin);
-    timeoutMoving = 10; // sec
-    timeoutOrient = 5;  // sec
+    timeoutMoving = 35; // sec
+    timeoutOrient = 30;  // sec
     isFirstAction = true;
     servo_out = false;
     ros::NodeHandle n;
@@ -509,7 +509,7 @@ int GoalStrat::loop()
         clock_gettime(CLOCK_MONOTONIC, &now);
 
         // prepare arm if needed
-        if (isBlue() && !servo_out
+        if (!isBlue() && !servo_out
             && strat_graph->getEtapeEnCours()->getEtapeType() == Etape::EtapeType::MANCHE_A_AIR)
         {
             moveArm(OUT);
@@ -578,7 +578,7 @@ int GoalStrat::loop()
             case Etape::EtapeType::MANCHE_A_AIR:
                 stopLinear();
 
-                if (isBlue())
+                if (!isBlue())
                 {
                     moveArm(IN);
                 }
@@ -609,7 +609,9 @@ int GoalStrat::loop()
 
                 std::cout << "MOVING SERVO DOWN" << std::endl;
                 moveArm(DOWN);
-                usleep(1500000); // 1.5s
+                usleep(1000000); // 1.s
+                moveArm(DOWN);
+                usleep(500000); // .5s
 
                 std::cout << "MOVING SERVO UP" << std::endl;
                 moveArm(UP);
