@@ -78,6 +78,7 @@ private:
     void stopActuators();
     void stopLinear();
     void startLinear();
+    void checkStopMatch();
 
     bool displayed_end_msg;
     int orientation, mission_finished;

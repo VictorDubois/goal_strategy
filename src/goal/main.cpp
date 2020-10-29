@@ -350,7 +350,7 @@ GoalStrat::GoalStrat()
     // Initialize time
     clock_gettime(CLOCK_MONOTONIC, &begin);
     timeoutMoving = 35; // sec
-    timeoutOrient = 30;  // sec
+    timeoutOrient = 30; // sec
     isFirstAction = true;
     servo_out = false;
     ros::NodeHandle n;
@@ -408,6 +408,19 @@ void GoalStrat::updateRemainingTime(std_msgs::Duration a_remaining_time_match)
 {
     remainig_time = a_remaining_time_match.data;
     checkFunnyAction();
+    checkStopMatch();
+}
+
+void GoalStrat::checkStopMatch()
+{
+    const ros::Duration stop_timing = ros::Duration(1.); // 1s before T=0;
+
+    if (remainig_time.toSec() < stop_timing.toSec())
+    {
+        std::cout << "Stop the actuators" << std::endl;
+        stopActuators();
+        state = EXIT;
+    }
 }
 
 void GoalStrat::checkFunnyAction()
@@ -680,6 +693,11 @@ int GoalStrat::loop()
     }
 
     stopActuators();
+    usleep(20000);
+    stopActuators();
+    usleep(20000);
+    stopActuators();
+    usleep(20000);
 
     std::cout << "Mission accomplished, shutting down" << std::endl;
     fflush(stdout);
