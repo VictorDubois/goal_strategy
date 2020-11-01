@@ -11,7 +11,7 @@
 #include "geometry_msgs/Pose.h"
 #include "geometry_msgs/PoseArray.h"
 #include "goal_strategy/goal.h"
-#include "goal_strategy/servos_cmd.h"
+#include "krabi_msgs/servos_cmd.h"
 #include "std_msgs/Float32.h"
 #include "std_msgs/UInt16.h"
 #include "tf/transform_datatypes.h"
@@ -355,7 +355,7 @@ GoalStrat::GoalStrat()
     servo_out = false;
     ros::NodeHandle n;
     goal_pose_pub = n.advertise<geometry_msgs::PoseStamped>("goal_pose", 1000);
-    arm_servo_pub = n.advertise<goal_strategy::servos_cmd>("cmd_servos", 1000);
+    arm_servo_pub = n.advertise<krabi_msgs::servos_cmd>("cmd_servos", 1000);
     goals_pub = n.advertise<geometry_msgs::PoseArray>("etapes", 5);
     reverse_pub = n.advertise<std_msgs::Bool>("reverseGear", 5);
     stop_linear_pub = n.advertise<std_msgs::Bool>("stopLinearSpeed", 5);

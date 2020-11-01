@@ -14,7 +14,7 @@
 #include <unistd.h>
 //#include "goldo2018.h"
 #include "coupe2019.h"
-#include "goal_strategy/servos_cmd.h"
+#include "krabi_msgs/servos_cmd.h"
 #include "ros/ros.h"
 #include "std_msgs/Bool.h"
 #include "std_msgs/Duration.h"
@@ -101,7 +101,7 @@ private:
     ros::Subscriber girouette_sub;
     PositionPlusAngle currentPosition;
     PositionPlusAngle goal_pose;
-    goal_strategy::servos_cmd m_servos_cmd;
+    krabi_msgs::servos_cmd m_servos_cmd;
     ros::Duration remainig_time;
     bool team_color; // true if blue
     Etape::EtapeType previousEtapeType;
