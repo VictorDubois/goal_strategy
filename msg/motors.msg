@@ -1,6 +1,0 @@
-Header header
-encoders encoders
-uint16 current_left
-uint16 current_right
-uint32 current_left_accumulated
-uint32 current_right_accumulated

@@ -1,5 +1,0 @@
-Header header
-geometry_msgs/Pose pose
-geometry_msgs/Twist speed
-float32 current_motor_left
-float32 current_motor_right

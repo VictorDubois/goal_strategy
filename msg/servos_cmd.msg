@@ -1,9 +1,0 @@
-bool enable
-uint8 brak_speed
-uint8 brak_angle
-uint8 pavillon_speed
-uint8 pavillon_angle
-uint8 s3_speed
-uint8 s3_angle
-uint8 s4_speed
-uint8 s4_angle
