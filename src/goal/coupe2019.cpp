@@ -1,9 +1,9 @@
 #include "goal_strategy/coupe2019.h"
-#include "Krabi/strategie/mancheAAir.h"
-#include "Krabi/strategie/mouillageNord.h"
-#include "Krabi/strategie/mouillageSud.h"
-#include "Krabi/strategie/phare.h"
-#include "Krabi/strategie/port.h"
+#include "krabilib/strategie/mancheAAir.h"
+#include "krabilib/strategie/mouillageNord.h"
+#include "krabilib/strategie/mouillageSud.h"
+#include "krabilib/strategie/phare.h"
+#include "krabilib/strategie/port.h"
 #include <cmath>
 #include <iostream>
 #define NB_NEURONS 360

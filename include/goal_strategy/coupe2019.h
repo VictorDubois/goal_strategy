@@ -5,12 +5,12 @@
 
 #define NOMBRE_ETAPES 50
 
-#include "Krabi/strategie/abeille.h"
-#include "Krabi/strategie/accelerator.h"
-#include "Krabi/strategie/etape.h"
-#include "Krabi/strategie/goldenium.h"
-#include "Krabi/strategie/reservoirEau.h"
-#include "Krabi/strategie/strategiev3.h"
+#include "krabilib/strategie/abeille.h"
+#include "krabilib/strategie/accelerator.h"
+#include "krabilib/strategie/etape.h"
+#include "krabilib/strategie/goldenium.h"
+#include "krabilib/strategie/reservoirEau.h"
+#include "krabilib/strategie/strategiev3.h"
 #include <geometry_msgs/Point.h>
 
 #include <geometry_msgs/Pose.h>
