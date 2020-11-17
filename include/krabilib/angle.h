@@ -3,9 +3,8 @@
 
 BOOST_STRONG_TYPEDEF(double, Angle);
 BOOST_STRONG_TYPEDEF(double, AngleDeg);
+BOOST_STRONG_TYPEDEF(double, VitesseAngulaire);
 BOOST_STRONG_TYPEDEF(double, AccelerationAngulaire);
-
-
 
 class AngleTools
 {
@@ -21,7 +20,7 @@ public:
 
     /**
      * @brief Convert from radian to degrees
-     * 
+     *
      * @param a angle to convert in degree
      * @return Angle in radian
      */
@@ -29,11 +28,26 @@ public:
 
     /**
      * @brief Convert from degrees to radian
-     * 
+     *
      * @param a angle to convert in radian
      * @return AngleDeg in degree
      */
     static Angle deg2rad(AngleDeg a);
 };
 
+Angle operator*(Angle d, float k);
+Angle operator*(Angle d, double k);
+VitesseAngulaire operator*(VitesseAngulaire d, float k);
+VitesseAngulaire operator*(VitesseAngulaire d, double k);
+AngleDeg operator*(AngleDeg d, float k);
+AngleDeg operator*(AngleDeg d, double k);
+Angle operator/(Angle d, float k);
+Angle operator/(Angle d, double k);
+VitesseAngulaire operator/(VitesseAngulaire d, float k);
+VitesseAngulaire operator/(VitesseAngulaire d, double k);
+AngleDeg operator/(AngleDeg d, float k);
+AngleDeg operator/(AngleDeg d, double k);
 
+Angle operator-(Angle d1, Angle d2);
+VitesseAngulaire operator-(VitesseAngulaire d1, VitesseAngulaire d2);
+AngleDeg operator-(AngleDeg d1, AngleDeg d2);

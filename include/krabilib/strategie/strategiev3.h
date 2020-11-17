@@ -1,9 +1,7 @@
-#ifndef STRATEGIEV3_H
-#define STRATEGIEV3_H
+#pragma once
 
 #ifndef STANDALONE_STRATEGIE
 #include "krabilib/strategie/actionGoTo.h"
-#include "krabilib/strategie/strategieV2.h"
 #endif
 
 #include "krabilib/strategie/mediumLevelAction.h"
@@ -23,8 +21,7 @@
 #endif*/
 //#define ETAPE_GARAGE 1
 //#define NOMBRE_ETAPES 10
-class StrategieV3 : public MediumLevelAction
-{
+class StrategieV3{
 
 public:
     static bool isYellow();
@@ -103,6 +100,5 @@ protected:
 
 private:
     bool updateScores();
+    int64_t millisecondesRestantes;
 };
-
-#endif // STRATEGIEV3_H

@@ -137,7 +137,7 @@ void GoalStrat::orient_to_angle(Angle a_angle)
     goal_pose.setY(goal_position.getY());
     geometry_msgs::PoseStamped l_posestamped;
     l_posestamped.pose = goal_pose;
-    l_posestamped.header.frame_id = "odom";
+    l_posestamped.header.frame_id = "map";
     goal_pose_pub.publish(l_posestamped);
 }
 
@@ -190,7 +190,7 @@ void GoalStrat::move_toward_goal()
     goal_pose.setY(goal_position.getY());
     geometry_msgs::PoseStamped l_posestamped;
     l_posestamped.pose = goal_pose;
-    l_posestamped.header.frame_id = "odom";
+    l_posestamped.header.frame_id = "map";
     goal_pose_pub.publish(l_posestamped);
 }
 
@@ -385,7 +385,7 @@ GoalStrat::GoalStrat()
 void GoalStrat::publishEtapes()
 {
     geometry_msgs::PoseArray l_etapes;
-    l_etapes.header.frame_id = "odom";
+    l_etapes.header.frame_id = "map";
     for (auto etape : strat_graph->getPositions())
     {
         geometry_msgs::Pose l_pose;

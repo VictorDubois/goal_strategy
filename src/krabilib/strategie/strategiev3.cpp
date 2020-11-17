@@ -14,9 +14,8 @@
 #ifdef QTGUI
     #include <QDebug>
 #endif
-//#include <iostream>
 
-StrategieV3::StrategieV3(bool /*isYellow*/) : MediumLevelAction()
+StrategieV3::StrategieV3(bool /*isYellow*/)
 {
     this->avoiding = false;
     this->etapeEnCours = 0;
