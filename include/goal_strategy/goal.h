@@ -1,5 +1,4 @@
-#ifndef _GOAL_H_
-#define _GOAL_H_
+#pragma once
 
 #include <csignal>
 #include <cstring>
@@ -18,20 +17,29 @@
 #include "ros/ros.h"
 #include "std_msgs/Bool.h"
 #include "std_msgs/Duration.h"
-#define TRUE 1
-#define FALSE 0
+
 
 #define GOAL_SHM_FILE "goal.key"
 
 // The distance to a goal (in m)
-#define REACH_DIST 20 // 0.07 // 20mm
-#define REACH_ANG 2   //°
-namespace goal
-{
-enum State
-{
-    RUN,
-    EXIT
+#define REACH_DIST 0.05//0.07 // 5cm
+#define REACH_ANG 2 //°
+enum MissionState {
+	GO_FOOD_1,
+	PICKUP_FOOD_1,
+	GO_DELIVERY_PLACE_1,
+	DELIVER_FOOD_1,
+	GO_FOOD_2,
+	PICKUP_FOOD_2,
+	GO_DELIVERY_PLACE_2,
+	DELIVER_FOOD_2,
+	FOOD_DONE
+};
+
+namespace goal {
+enum State {
+	RUN,
+	EXIT
 };
 }
 enum PositionServo
@@ -50,13 +58,12 @@ public:
     GoalStrat();
     int loop();
     void printCurrentAction();
-    int done_orienting_to(float angle);
+    int done_orienting_to(Angle angle);
     int arrived_there();
 
 private:
-    void orient_to_angle(float a_angle);
+    void orient_to_angle(Angle a_angle);
     int choose_angle();
-    float compute_angular_diff(float, float);
     void move_toward_goal();
     void go_to_next_mission();
     unsigned int get_angular_diff();
@@ -68,7 +75,7 @@ private:
     void updateRemainingTime(std_msgs::Duration remainingTime);
     void hissezLesPavillons();
     void checkFunnyAction();
-    void orient_to_angle_with_timeout(float angleIfBlue, float angleIfNotBlue);
+    void orient_to_angle_with_timeout(Angle angleIfBlue, Angle angleIfNotBlue);
     bool isBlue();
     void publishEtapes();
     void chooseGear();
@@ -84,7 +91,7 @@ private:
     int orientation, mission_finished;
     float dist_to_goal;
     bool state_msg_displayed;
-    PositionPlusAngle startingPosition;
+    Pose startingPosition;
     Coupe2019* strat_graph;
     struct timespec now, begin, orientTime;
     long timeoutMoving, timeoutOrient;
@@ -99,8 +106,8 @@ private:
     ros::Subscriber remaining_time_match_sub;
     ros::Subscriber color_sub;
     ros::Subscriber girouette_sub;
-    PositionPlusAngle currentPosition;
-    PositionPlusAngle goal_pose;
+    Pose currentPosition;
+    Pose goal_pose;
     krabi_msgs::servos_cmd m_servos_cmd;
     ros::Duration remainig_time;
     bool team_color; // true if blue
@@ -113,5 +120,3 @@ private:
     ros::Time movingTimeoutDeadline;
     bool funny_action_counted;
 };
-
-#endif

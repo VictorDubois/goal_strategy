@@ -1,174 +1,169 @@
+#include "krabilib/position.h"
+#include "tf/tf.h"
 #include <math.h>
 
-#include "krabilib/position.h"
-#ifndef STANDALONE_STRATEGIE
-// Only for color
-#include "krabilib/strategieV2.h"
-#endif // STANDALONE_STRATEGIE
-
 // Constructeur par défaut avec des coordonnées nulles.
-Position::Position()
-  : x(0)
-  , y(0)
+Position::Position(Distance x, Distance y)
+  : m_pos(x, y)
 {
 }
 
-Position::Position(Vec2d vect)
-  : x(vect.x)
-  , y(vect.y)
+Position::Position(const Eigen::Vector2d& position)
+  : m_pos(position)
 {
 }
 
-Position::Position(Distance X, Distance Y, bool colorDependent)
-  : x(X)
-  , y(Y)
+Position::Position(const PolarPosition& pp)
 {
-#ifndef STANDALONE_STRATEGIE
-    if (colorDependent && !StrategieV2::isYellow())
-#else
-    if (colorDependent && true /*!StrategieV2::isYellow()*/)
-#endif
-    {
-        x = 3000 - x;
-    }
+    m_pos[0] = pp.getDistance() * cos(pp.getAngle());
+    m_pos[1] = pp.getDistance() * sin(pp.getAngle());
 }
-
-#ifdef USE_IOSTREAM
-std::string Position::Print()
-{
-    return std::to_string(this->getX()) + ", " + std::to_string(this->getY());
-}
-#endif // USE_IOSTREAM
 
 Distance Position::getX() const
 {
-    return x;
+    return Distance(m_pos.x());
 }
 
 Distance Position::getY() const
 {
-    return y;
-}
-
-Position Position::colorPosition(Distance x, Distance y, bool isYellow)
-{
-    if (!isYellow)
-        return Position(isYellow ? x : 3000 - x, y, isYellow);
-    else
-        return Position(x, y, isYellow);
+    return Distance(m_pos.y());
 }
 
 void Position::setX(Distance X)
 {
-    x = X;
+    m_pos.x() = X;
 }
 
 void Position::setY(Distance Y)
 {
-    y = Y;
-}
-
-Position Position::getSymetrical()
-{
-    Position p(3000 - this->x, this->y);
-    return p;
-}
-
-Vec2d Position::operator+(const Position& position) const
-{
-    Vec2d resultat(x + position.x, y + position.y);
-    return resultat;
-}
-
-Vec2d Position::operator-(const Position& position) const
-{
-    Vec2d resultat(x - position.x, y - position.y);
-    return resultat;
+    m_pos.y() = Y;
 }
 
 /// @brief Surchage d'opérateur pour multiplier par un flottant
 Position Position::operator*(float val) const
 {
-    Position resultat(x * val, y * val);
+    Position resultat(m_pos * val);
     return resultat;
 }
 
 void Position::operator=(Position position)
 {
 
-    x = position.x;
-    y = position.y;
+    m_pos.x() = position.m_pos.x();
+    m_pos.y() = position.m_pos.y();
 }
 
-Position Position::operator+=(const Position& position)
+Position& Position::operator+=(const Position& position)
 {
-    this->x += position.x;
-    this->y += position.y;
+    m_pos.x() += position.m_pos.x();
+    m_pos.y() += position.m_pos.y();
 
     return *this;
 }
 
-Position Position::operator-=(const Position& position)
+Position& Position::operator-=(const Position& position)
 {
-    this->x -= position.x;
-    this->y -= position.y;
+    m_pos.x() -= position.m_pos.x();
+    m_pos.y() -= position.m_pos.y();
 
     return *this;
-}
-
-Position Position::operator+(const Vec2d& vec2d) const
-{
-    Position resultat(x + vec2d.x, y + vec2d.y);
-    return resultat;
-}
-
-Position Position::operator-(const Vec2d& vec2d) const
-{
-    Position resultat(x - vec2d.x, y - vec2d.y);
-    return resultat;
 }
 
 bool Position::presqueEgales(const Position& p) const
 {
-    return (DistanceTools::distancePresqueEgales(x, p.x)
-            && DistanceTools::distancePresqueEgales(y, p.y));
+    return (DistanceTools::distancePresqueEgales(getX(), p.getX())
+            && DistanceTools::distancePresqueEgales(getY(), p.getY()));
 }
 
 bool Position::operator==(const Position& p) const
 {
-    return (x == p.x && y == p.y);
+    return (m_pos.x() == p.m_pos.x() && m_pos.y() == p.m_pos.y());
 }
 
-bool Position::operator*=(float val)
+Position& Position::operator*=(float val)
 {
-    this->x = this->x * val;
-    this->y = this->y * val;
+    m_pos *= val;
+    return *this;
+}
 
-    return true;
+Position Position::operator-(const Position& p)
+{
+    return Position(m_pos - p.m_pos);
 }
 
 Distance Position::getNorme() const
 {
-    return Distance(sqrt(x * x + y * y));
+    return Distance(m_pos.norm());
 }
 
 Angle Position::getAngle() const
 {
-    return atan2(y, x);
+    return Angle(atan2(m_pos.y(), m_pos.x()));
 }
 
 #ifdef USE_ROS
-geometry_msgs::Point Position::getPoint() const
+Position::Position(const geometry_msgs::Point& p)
 {
-    geometry_msgs::Point point;
-    point.x = this->getX() / 1000.f;
-    point.y = this->getY() / 1000.f;
-    point.z = 0;
-    return point;
+    m_pos << p.x, p.y;
 }
 
-Position::Position(const geometry_msgs::Point& position, bool colorDependent)
-  : Position(position.x * 1000, position.y * 1000, colorDependent)
+Position::operator geometry_msgs::Point() const
 {
+    geometry_msgs::Point pt;
+    pt.x = m_pos.x();
+    pt.y = m_pos.y();
+    pt.z = 0;
+    return pt;
+}
+
+Transform transformFromMsg(const geometry_msgs::Transform& t)
+{
+    Transform out;
+    tf::Quaternion q(t.rotation.x, t.rotation.y, t.rotation.z, t.rotation.w);
+    tf::Matrix3x3 m(q);
+    double roll, pitch, yaw;
+    m.getRPY(roll, pitch, yaw);
+
+    out << cos(yaw), -sin(yaw), t.translation.x, sin(yaw), cos(yaw), t.translation.y, 0, 0, 1;
+
+    return out;
+}
+
+#endif
+
+#ifdef USE_IOSTREAM
+std::ostream& operator<<(std::ostream& os, const Position& p)
+{
+    os << "p:{x:" << double(p.getX()) << "m, y: " << double(p.getY()) << "m}";
+}
+
+std::ostream& operator<<(std::ostream& os, const PolarPosition& p)
+{
+    os << "p:{r: " << double(p.getDistance()) << "m, theta: " << double(p.getAngle()) << "rad}";
 }
 #endif
+
+PolarPosition::PolarPosition(const Distance d, const Angle a)
+  : m_dist(d)
+  , m_angle(a)
+{
+}
+PolarPosition::PolarPosition(const Position& pos)
+{
+    m_angle = pos.getAngle();
+    m_dist = pos.getNorme();
+}
+
+Distance PolarPosition::getDistance() const
+{
+    return m_dist;
+};
+Angle PolarPosition::getAngle() const
+{
+    return m_angle;
+};
+
+Position Position::transform(const Transform& t)
+{
+    return Position((t * m_pos.homogeneous()).head<2>());
+}

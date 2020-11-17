@@ -1,105 +1,132 @@
-#ifndef POSITION_H
-#define POSITION_H
+#pragma once
 
 #include "krabilib/angle.h"
 #include "krabilib/distance.h"
-#include "krabilib/vec2d.h"
-
+#include <Eigen/Dense>
 #ifdef USE_IOSTREAM
 #include <iostream>
-#include "geometry_msgs/Point.h"
-#endif // USE_IOSTREAM
+#endif
 
-class StrategieV2;
-
-#define COLOR_POSITION Position::colorPosition
+#ifdef USE_ROS
+#include <geometry_msgs/Point.h>
+#include <geometry_msgs/Transform.h>
+#endif
+typedef Eigen::Matrix3d Transform;
+class PolarPosition;
 
 /// @brief Classe permettant de stocker des positions en coordonnées cartésiennes
 class Position
 {
-    public:
+public:
+    /// @brief Constructeur avec des coordonnées prédéfinies.
+    Position(Distance X= Distance(0), Distance Y = Distance(0));
 
-        /// @brief Constructeur par défaut avec des coordonnées nulles.
-        Position();
+    /// @brief Constructeur avec des coordonnées prédéfinies.
+    Position(const Eigen::Vector2d& position);
 
-        Position(Vec2d vect);
+    /**
+     * @brief Construct a new Position object using a PolarPosition
+     * 
+     * @param pp 
+     */
+    Position(const PolarPosition& pp);
 
-        /// @brief Constructeur avec des coordonnées prédéfinies.
-        Position(Distance X, Distance Y, bool colorDependent = false);
+    /// @brief Surchage d'opérateur pour multiplier par un flottant
+    Position operator*(float val) const;
 
-        Position getSymetrical();
+    /// @brief Surcharge d'opérateur pour assigner une position.
+    void operator=(Position position);
 
-        /// @brief Surchage d'opérateur pour ajouter des coordonnées
-        Vec2d operator+(const Position &position) const;
+    /// @brief Surchage d'opérateur pour ajouter et copier des coordonnées
+    Position& operator+=(const Position& position);
 
-        /// @brief Surchage d'opérateur pour soustraire des coordonnées
-        Vec2d operator-(const Position &position) const;
-        //Position operator-(const Position &other) const;
+    /// @brief Surchage d'opérateur pour soustraire et copier des coordonnées
+    Position& operator-=(const Position& position);
 
-        /// @brief Surchage d'opérateur pour multiplier par un flottant
-        Position operator*(float val) const;
+    /// @brief Surchage d'opérateur pour soustraire et copier des coordonnées
+    Position operator-(const Position& position);
 
-        static Position colorPosition(Distance x, Distance y, bool isYellow = false);
+    /// @brief Surchage d'opérateur pour multiplier les coordonées
+    Position& operator*=(float val);
 
-        /// @brief Surcharge d'opérateur pour assigner une position.
-        void operator=(Position position);
+    /// @brief Surchage d'opérateur pour comparer des coordonnées
+    bool operator==(const Position& p) const;
 
-        /// @brief Surchage d'opérateur pour ajouter et copier des coordonnées
-        Position operator+=(const Position &position);
+    /// @brief Fonction comparant l'égalité de positions à peu prés
+    bool presqueEgales(const Position& p) const;
 
-        /// @brief Surchage d'opérateur pour soustraire et copier des coordonnées
-        Position operator-=(const Position &position);
+    /// @brief Fonction donnant la distance entre la position et le point de coordonnées nulles
+    Distance getNorme(void) const;
 
-        /// @brief Surchage d'opérateur pour multiplier les coordonées
-        bool operator*=(float val);
+    /// @brief Fonction donnant l'angle entre l'axe des absysses et la position
+    Angle getAngle(void) const;
 
-        /// @brief Surchage d'opérateur pour comparer des coordonnées
-        bool operator==(const Position &p) const;
+    /// @brief Pour récupérer X
+    Distance getX() const;
 
-        /// @brief Surchage d'opérateur pour ajouter des coordonnées
-        Position operator+(const Vec2d &vec2d) const;
+    /// @brief Pour récupérer Y
+    Distance getY() const;
 
-        /// @brief Surchage d'opérateur pour soustraire des coordonnées
-        Position operator-(const Vec2d &vec2d) const;
+    /// @brief Pour modifier X
+    void setX(Distance X);
 
-        /// @brief Fonction comparant l'égalité de positions à peu prés
-        bool presqueEgales(const Position &p) const;
+    /// @brief Pour modifier Y
+    void setY(Distance Y);
 
-        /// @brief Fonction donnant la distance entre la position et le point de coordonnées nulles
-        Distance getNorme(void) const;
+    /**
+     * @brief Transform the current point from the current frame to the frame defines by transform
+     * 
+     * @param t 3x3 2d transform matrix
+     * @return Position new position in transformed frame
+     */
+    Position transform(const Transform& t);
 
-        /// @brief Fonction donnant l'angle entre l'axe des absysses et la position
-        Angle getAngle(void) const;
+#ifdef USE_ROS
+    Position(const geometry_msgs::Point& p);
+    operator geometry_msgs::Point() const;
+#endif
 
-        /// @brief Pour récupérer X
-        Distance getX() const;
+#ifdef USE_IOSTREAM
+    /**
+     * @brief
+     *
+     * @param os output stream
+     * @param p position
+     * @return ostream&
+     */
+    friend std::ostream& operator<<(std::ostream& os, const Position& p);
+#endif
 
-        /// @brief Pour récupérer Y
-        Distance getY() const;
-
-        /// @brief Pour modifier X
-        void setX(Distance X);
-
-        /// @brief Pour modifier Y
-        void setY(Distance Y);
-
-
-        #ifdef USE_IOSTREAM
-        /// @brief Decrit la position
-        std::string Print();
-        #endif // USE_IOSTREAM
-
-        /// @brief Coordonnées
-        Distance x;
-        Distance y;
-
-	#ifdef USE_ROS
-	/// @brief Conversion vers geometry_msgs::Point
-	geometry_msgs::Point getPoint() const;
-
-        /// @brief Constructeur depuis geometry_msgs::Point
-        Position(const geometry_msgs::Point&, bool colorDependent = false);
-	#endif
+private:
+    // @brief Coordonnées
+    Eigen::Vector2d m_pos;
 };
 
+class PolarPosition{
+    public:
+    PolarPosition(const Distance d = Distance(0),const Angle a = Angle(0));
+    PolarPosition(const Position& pos);
+
+    Distance getDistance() const;
+    Angle getAngle() const;
+
+#ifdef USE_IOSTREAM
+    /**
+     * @brief
+     *
+     * @param os output stream
+     * @param p position
+     * @return ostream&
+     */
+    friend std::ostream& operator<<(std::ostream& os, const PolarPosition& p);
+#endif
+
+    private:
+    Distance m_dist;
+    Angle m_angle;
+
+};
+
+#ifdef USE_ROS
+    Transform transformFromMsg(const geometry_msgs::Transform& t);
 #endif

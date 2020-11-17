@@ -103,7 +103,7 @@ int ActionGoTo::update()
     }
     else if (status ==1) // on recule
     {
-        Vec2d vect = intermediateGoalPosition - Odometrie::odometrie->getPos().getPosition();
+        Position vect = intermediateGoalPosition - Odometrie::odometrie->getPos().getPosition();
         //std::cout << "status = 1 " << vect.getNorme() << std::endl;
         if (vect.getNorme() < precision) // now we have
         {
@@ -160,7 +160,7 @@ int ActionGoTo::update()
     {
 //        allumerLED();
         //std::cout << "status = 3" << std::endl;
-        Vec2d vect = goalPosition - Odometrie::odometrie->getPos().getPosition();
+        Position vect = goalPosition - Odometrie::odometrie->getPos().getPosition();
         //std::cout << vect.getNorme() << std::endl;
         //std::cout << Odometrie::odometrie->getPos().getPosition().getX() << " "<< Odometrie::odometrie->getPos().getPosition().getY()   << std::endl;
         if (vect.getNorme() < precision || (command != 0 && command->fini()))

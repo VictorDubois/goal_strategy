@@ -1,11 +1,9 @@
-#include "krabilib/positionPlusAngle.h"
+#include "krabilib/pose.h"
 #include "krabilib/strategie/dijkstra.h"
 #include "krabilib/strategie/etape.h"
 #include <fstream>
 #include <iostream>
-//#include "krabilib/goldo2018.h"
 #include "goal_strategy/coupe2019.h"
-//#include "krabilib/../../stratV3/include/strategie/etape.h"
 #include "krabilib/constantes.h"
 #include "geometry_msgs/Point.h"
 #include "geometry_msgs/Pose.h"
@@ -115,7 +113,7 @@ void GoalStrat::printCurrentAction()
         Position goal = strat_graph->getEtapeEnCours()->getPosition();
         int mission_type = strat_graph->getEtapeEnCours()->getEtapeType();
         std::cout << "Etape id: " << etapeId << std::endl;
-        std::cout << "goal: " << goal.Print() << std::endl;
+        std::cout << "goal: " << goal << std::endl;
         std::cout << "type: " << mission_type << std::endl;
         state_msg_displayed = true;
     }
@@ -130,7 +128,7 @@ int main(int argc, char* argv[])
     goalStrat->loop();
 }
 
-void GoalStrat::orient_to_angle(float a_angle)
+void GoalStrat::orient_to_angle(Angle a_angle)
 {
     std::cout << "Orient_to_angle " << a_angle << std::endl;
     goal_pose.setAngle(a_angle);
@@ -138,18 +136,9 @@ void GoalStrat::orient_to_angle(float a_angle)
     goal_pose.setX(goal_position.getX());
     goal_pose.setY(goal_position.getY());
     geometry_msgs::PoseStamped l_posestamped;
-    l_posestamped.pose = goal_pose.getPose();
+    l_posestamped.pose = goal_pose;
     l_posestamped.header.frame_id = "odom";
     goal_pose_pub.publish(l_posestamped);
-}
-
-float GoalStrat::compute_angular_diff(float a_angle_1, float a_angle_2)
-{
-    // Thanks to https://stackoverflow.com/a/7571008
-    float phi = fmod(std::abs(a_angle_1 - a_angle_2),
-                     360.f); // This is either the distance or 360 - distance
-    float distance = phi > 180 ? 360.f - phi : phi;
-    return distance;
 }
 
 int GoalStrat::arrived_there()
@@ -174,14 +163,14 @@ int GoalStrat::arrived_there()
     return 0;
 }
 
-int GoalStrat::done_orienting_to(float angle)
+int GoalStrat::done_orienting_to(Angle angle)
 {
     // Output a goal relative to the robot
     std::cout << currentPosition.getPosition().getX() << std::endl;
     orient_to_angle(angle);
 
     // Compute angular diff
-    unsigned int angular_error = compute_angular_diff(angle, currentPosition.getAngle());
+    unsigned int angular_error =  AngleTools::diffAngle(angle, currentPosition.getAngle());
     std::cout << "done_orienting_to angle: " << angle
               << " ? current: " << currentPosition.getAngle()
               << "angular_error = " << angular_error % 360 << std::endl;
@@ -200,7 +189,7 @@ void GoalStrat::move_toward_goal()
     goal_pose.setX(goal_position.getX());
     goal_pose.setY(goal_position.getY());
     geometry_msgs::PoseStamped l_posestamped;
-    l_posestamped.pose = goal_pose.getPose();
+    l_posestamped.pose = goal_pose;
     l_posestamped.header.frame_id = "odom";
     goal_pose_pub.publish(l_posestamped);
 }
@@ -221,7 +210,7 @@ bool GoalStrat::is_baffe_action()
 void GoalStrat::updateCurrentPose(geometry_msgs::Pose newPose)
 {
     std::cout << "updateCurrentPose: " << newPose.orientation.z << std::endl;
-    currentPosition = PositionPlusAngle(newPose);
+    currentPosition = Pose(newPose);
 }
 
 void GoalStrat::go_to_next_mission()
@@ -338,8 +327,11 @@ GoalStrat::GoalStrat()
      *                   Main loop                   *
      *************************************************/
 
-    Position pos(200, 1850, true); // strategy.input->color);//1500, isBlue());
-    startingPosition = PositionPlusAngle(pos, -M_PI / 2);
+        ros::NodeHandle n;
+    
+    Position p(Distance(n.param<float>("start_pose/x", 0)), Distance(n.param<float>("start_pose/y", 0)));
+    Angle a(n.param<float>("start_pose/theta", 0));
+    startingPosition = Pose(p, a);
 
     // strat_graph = new Coupe2019(!isBlue(), etapes);
     // while(sendNewMission(strat_graph) != -1) {}
@@ -353,7 +345,6 @@ GoalStrat::GoalStrat()
     timeoutOrient = 10; // sec
     isFirstAction = true;
     servo_out = false;
-    ros::NodeHandle n;
     goal_pose_pub = n.advertise<geometry_msgs::PoseStamped>("goal_pose", 1000);
     arm_servo_pub = n.advertise<krabi_msgs::servos_cmd>("cmd_servos", 1000);
     goals_pub = n.advertise<geometry_msgs::PoseArray>("etapes", 5);
@@ -434,9 +425,9 @@ void GoalStrat::checkFunnyAction()
     }
 }
 
-void GoalStrat::orient_to_angle_with_timeout(float angleIfBlue, float angleIfNotBlue)
+void GoalStrat::orient_to_angle_with_timeout(Angle angleIfBlue, Angle angleIfNotBlue)
 {
-    float angleAction = isBlue() ? angleIfBlue : angleIfNotBlue;
+    Angle angleAction = isBlue() ? angleIfBlue : angleIfNotBlue;
     ros::Time orientTimeoutDeadline = ros::Time::now() + ros::Duration(timeoutOrient);
     while (!done_orienting_to(angleAction)
            && ros::Time::now().toSec() < orientTimeoutDeadline.toSec())
@@ -557,7 +548,7 @@ int GoalStrat::loop()
             }
 
             // if (angle != -1 || done_orienting_to(angle)) {
-            int angleAction = 0;
+            Angle angleAction(0);
             switch (strat_graph->getEtapeEnCours()->getEtapeType())
             {
             case Etape::MOUILLAGE_SUD:
@@ -601,24 +592,12 @@ int GoalStrat::loop()
                 }
                 usleep(2500000); // 1.5s
 
-                /*std::cout << "In front of a Manche a Air, orienting" << std::endl;
-                orient_to_angle_with_timeout(40, 320);
-
-                std::cout << "MOVING SERVO DOWN" << std::endl;
-                moveArm(DOWN);
-                usleep(1500000); // 1.5s
-
-                orient_to_angle_with_timeout(140, 220);
-
-                std::cout << "MOVING SERVO UP" << std::endl;
-                moveArm(UP);
-                usleep(1500000); // 1.5s*/
                 std::cout << "Manche A Air Done" << std::endl;
                 break;
             case Etape::EtapeType::PHARE:
                 stopLinear();
                 std::cout << "In front of Phare, orienting" << std::endl;
-                orient_to_angle_with_timeout(90, 270);
+                orient_to_angle_with_timeout(Angle(AngleTools::deg2rad(AngleDeg(90))), AngleTools::deg2rad(AngleDeg(270)));
 
                 std::cout << "MOVING SERVO DOWN" << std::endl;
                 moveArm(DOWN);
@@ -639,10 +618,10 @@ int GoalStrat::loop()
 
                 printf("In front of goldenium/accelerator, orienting\n");
                 fflush(stdout);
-                angleAction = 320;
+                angleAction = AngleDeg(320);
                 if (isBlue())
                 {
-                    angleAction = 40;
+                    angleAction = AngleDeg(40);
                 }
                 clock_gettime(CLOCK_MONOTONIC, &orientTime);
                 clock_gettime(CLOCK_MONOTONIC, &now);

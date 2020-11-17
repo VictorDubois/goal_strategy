@@ -1,9 +1,4 @@
-#ifndef COUPE2019_H
-#define COUPE2019_H
-
-#define ETAPE_GARAGE 1
-
-#define NOMBRE_ETAPES 50
+#pragma once
 
 #include "krabilib/strategie/abeille.h"
 #include "krabilib/strategie/accelerator.h"
@@ -15,34 +10,31 @@
 
 #include <geometry_msgs/Pose.h>
 
-class Coupe2019 : public StrategieV3
+enum class Etape2021{
+        DEPART,
+        PHARE,
+        MANCHE_A_AIR,
+        PORT,
+        LECTURE_GIROUETTE
+        MOUILLAGE_NORD,
+        MOUILLAGE_SUD,
+}
+
+class Coupe2021 : public StrategieV3
 {
 public:
     /** @brief Constructeur de la stratégie *
      * @param isBlue le côté de départ */
-    Coupe2019(bool isYellow, std::vector<geometry_msgs::Pose> etapes);
-    Coupe2019(bool isYellow, std::vector<geometry_msgs::Point> etapes);
+    MissionPlanningCoupe2021(bool isBlue);
 
     void setRemainingTime(float seconds_left);
-    void setGoodMouillage(Etape::EtapeType good_mouillage);
 
     std::vector<geometry_msgs::Point> getPositions();
 
 private:
-    //	/** Nombre d'étapes dans le graph */
-    //	int nombreEtapes = NOMBRE_ETAPES;
-
-    //	/** Numéro de l'étape où le robot va se cacher à la fin */
-    //	int numeroEtapeGarage = ETAPE_GARAGE;
-
     /** @brief update du score d'une étape */
     int getScoreEtape(int i);
 
     float remainingTime;
     Etape::EtapeType good_mouillage;
-    Transform m_map_to_baselink;
-
-    // Attractor* m_attractors;
 };
-
-#endif // COUPE2019_H

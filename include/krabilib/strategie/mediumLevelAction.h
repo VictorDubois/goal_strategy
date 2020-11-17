@@ -11,7 +11,7 @@
 class MediumLevelAction
 {
     public:
-        MediumLevelAction(Position goalPos = Position(0,0), bool goBack = false);
+        MediumLevelAction(Position goalPos = Position({0,0}), bool goBack = false);
         virtual ~MediumLevelAction();
 
         virtual int     update() = 0;

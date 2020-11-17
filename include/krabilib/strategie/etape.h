@@ -1,5 +1,4 @@
-#ifndef ETAPE_H
-#define ETAPE_H
+#pragma once
 
 #include "krabilib/position.h"
 
@@ -7,10 +6,6 @@
 
 class ActionGoTo;
 class MediumLevelAction;
-
-#ifdef QTGUI
-    #include <QString>
-#endif
 
 class Etape
 {
@@ -181,10 +176,6 @@ public:
 
     static Etape** getTableauEtapesTotal();
 
-#ifdef QTGUI
-    static QString getNameType(EtapeType type);
-    static QString getShortNameType(EtapeType type);
-#endif
 
 private:
 
@@ -246,5 +237,3 @@ private:
 
     void postInit();
 };
-
-#endif // ETAPE_H

@@ -1,5 +1,4 @@
-#ifndef PORT_H
-#define PORT_H
+#pragma once
 
 #include "krabilib/position.h"
 #include "krabilib/strategie/mediumLevelAction.h"
@@ -25,5 +24,3 @@ protected:
     Position position;
     Position position_depart;
 };
-
-#endif // PORT_H
