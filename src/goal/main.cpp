@@ -92,14 +92,16 @@ void GoalStrat::stopLinear()
 {
     std_msgs::Bool linear;
     linear.data = true;
-    stop_linear_pub.publish(linear);
+    strat_mvnt.max_speed.linear.x = 0;
+    strat_mvnt.orient = true;
 }
 
 void GoalStrat::startLinear()
 {
     std_msgs::Bool linear;
     linear.data = false;
-    stop_linear_pub.publish(linear);
+    strat_mvnt.max_speed.linear.x = 1;
+    strat_mvnt.orient = false;
 }
 
 bool GoalStrat::isBlue()
@@ -141,6 +143,10 @@ void GoalStrat::orient_to_angle(float a_angle)
     l_posestamped.pose = goal_pose.getPose();
     l_posestamped.header.frame_id = "odom";
     goal_pose_pub.publish(l_posestamped);
+
+    strat_mvnt.goal_pose = goal_pose.getPose();
+    strat_mvnt.header.frame_id = "map";
+    strat_mvnt.orient = true;
 }
 
 float GoalStrat::compute_angular_diff(float a_angle_1, float a_angle_2)
@@ -203,6 +209,10 @@ void GoalStrat::move_toward_goal()
     l_posestamped.pose = goal_pose.getPose();
     l_posestamped.header.frame_id = "odom";
     goal_pose_pub.publish(l_posestamped);
+
+    strat_mvnt.goal_pose = goal_pose.getPose();
+    strat_mvnt.header.frame_id = "map";
+    strat_mvnt.orient = false;
 }
 
 unsigned int GoalStrat::get_angular_diff()
@@ -358,7 +368,7 @@ GoalStrat::GoalStrat()
     arm_servo_pub = n.advertise<krabi_msgs::servos_cmd>("cmd_servos", 1000);
     goals_pub = n.advertise<geometry_msgs::PoseArray>("etapes", 5);
     reverse_pub = n.advertise<std_msgs::Bool>("reverseGear", 5);
-    stop_linear_pub = n.advertise<std_msgs::Bool>("stopLinearSpeed", 5);
+    strat_movement_pub = n.advertise<krabi_msgs::strat_movement>("stratMovement", 5);
     // score_pub = n.advertise<std_msgs::UInt16>("score", 5);
 
     current_pose_sub = n.subscribe("current_pose", 1000, &GoalStrat::updateCurrentPose, this);
@@ -419,6 +429,8 @@ void GoalStrat::checkStopMatch()
     {
         std::cout << "Stop the actuators" << std::endl;
         stopActuators();
+        strat_mvnt.max_speed.linear.x = 0;
+        strat_mvnt.max_speed.angular.z = 0;
         state = EXIT;
     }
 }
@@ -441,6 +453,7 @@ void GoalStrat::orient_to_angle_with_timeout(float angleIfBlue, float angleIfNot
     while (!done_orienting_to(angleAction)
            && ros::Time::now().toSec() < orientTimeoutDeadline.toSec())
     {
+        strat_mvnt.orient = true;
         usleep(10000);
         ros::spinOnce();
     }
@@ -454,10 +467,20 @@ void GoalStrat::chooseGear()
         || previousEtapeType == Etape::EtapeType::PORT)
     {
         l_reverseGear.data = true;
+        strat_mvnt.reverse_gear = 1;
     }
-    else
+    else if (previousEtapeType == Etape::EtapeType::MANCHE_A_AIR
+             || previousEtapeType == Etape::EtapeType::PHARE
+             || strat_graph->getEtapeEnCours()->getEtapeType() == Etape::EtapeType::PORT)
     {
         l_reverseGear.data = false;
+        strat_mvnt.reverse_gear = 0;
+
+    }
+    else {
+        // Don't care
+        l_reverseGear.data = false;
+        strat_mvnt.reverse_gear = 2;
     }
 
     std::cout << "######################" << std::endl;
@@ -502,6 +525,19 @@ void GoalStrat::stopActuators()
     arm_servo_pub.publish(m_servos_cmd);
 }
 
+void GoalStrat::setMaxSpeedAtArrival()
+{
+    if (strat_graph->getEtapeEnCours()->getEtapeType() == Etape::EtapeType::POINT_PASSAGE)
+    {
+        // No need for complete stop at intermediate stops
+        strat_mvnt.max_speed_at_arrival = 1.f;
+    }
+    else {
+        // By default, brake before arriving
+        strat_mvnt.max_speed_at_arrival = 0.f;
+    }
+}
+
 int GoalStrat::loop()
 {
     /*    moveArm(IN);
@@ -510,6 +546,12 @@ int GoalStrat::loop()
 
     while (state != EXIT && ros::ok())
     {
+        strat_mvnt.max_speed_at_arrival = 0.1f;
+        strat_mvnt.orient = false;
+        strat_mvnt.max_speed.linear.x = 1.f;
+        strat_mvnt.max_speed.angular.x = 1.f;
+        strat_mvnt.reverse_gear = 2;//don't care
+
         strat_graph->setGoodMouillage(m_good_mouillage);
         publishScore();
         arm_servo_pub.publish(m_servos_cmd);
@@ -518,6 +560,7 @@ int GoalStrat::loop()
         printCurrentAction();
 
         chooseGear(); // Go in reverse gear if needed
+        setMaxSpeedAtArrival();
 
         clock_gettime(CLOCK_MONOTONIC, &now);
 

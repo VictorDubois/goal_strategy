@@ -15,6 +15,7 @@
 //#include "goldo2018.h"
 #include "coupe2019.h"
 #include "krabi_msgs/servos_cmd.h"
+#include  "krabi_msgs/strat_movement.h"
 #include "ros/ros.h"
 #include "std_msgs/Bool.h"
 #include "std_msgs/Duration.h"
@@ -79,6 +80,7 @@ private:
     void stopLinear();
     void startLinear();
     void checkStopMatch();
+    void setMaxSpeedAtArrival();
 
     bool displayed_end_msg;
     int orientation, mission_finished;
@@ -93,8 +95,8 @@ private:
     ros::Publisher arm_servo_pub;
     ros::Publisher goals_pub;
     ros::Publisher reverse_pub;
-    ros::Publisher stop_linear_pub;
     ros::Publisher score_pub;
+    ros::Publisher strat_movement_pub;
     ros::Subscriber current_pose_sub;
     ros::Subscriber remaining_time_match_sub;
     ros::Subscriber color_sub;
@@ -112,6 +114,7 @@ private:
     bool servo_out;
     ros::Time movingTimeoutDeadline;
     bool funny_action_counted;
+    krabi_msgs::strat_movement strat_mvnt;
 };
 
 #endif
