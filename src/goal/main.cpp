@@ -1,7 +1,6 @@
 #include "goal_strategy/goal.h"
 #include <std_msgs/UInt16.h>
 
-
 void GoalStrat::moveArm(enum PositionServo position)
 {
     switch (position)
@@ -63,14 +62,16 @@ void GoalStrat::stopLinear()
 {
     std_msgs::Bool linear;
     linear.data = true;
-    m_stop_linear_pub.publish(linear);
+    m_strat_mvnt.max_speed.linear.x = 0;
+    m_strat_mvnt.orient = true;
 }
 
 void GoalStrat::startLinear()
 {
     std_msgs::Bool linear;
     linear.data = false;
-    m_stop_linear_pub.publish(linear);
+    m_strat_mvnt.max_speed.linear.x = 1;
+    m_strat_mvnt.orient = false;
 }
 
 bool GoalStrat::isBlue()
@@ -112,6 +113,10 @@ void GoalStrat::orientToAngle(Angle a_angle)
     l_posestamped.pose = m_goal_pose;
     l_posestamped.header.frame_id = "map";
     m_goal_pose_pub.publish(l_posestamped);
+
+    m_strat_mvnt.goal_pose = m_goal_pose;
+    m_strat_mvnt.header.frame_id = "map";
+    m_strat_mvnt.orient = true;
 }
 
 bool GoalStrat::arrivedThere()
@@ -162,9 +167,14 @@ void GoalStrat::moveTowardGoal()
     m_goal_pose.setX(goal_position.getX());
     m_goal_pose.setY(goal_position.getY());
     geometry_msgs::PoseStamped l_posestamped;
+
     l_posestamped.pose = m_goal_pose;
     l_posestamped.header.frame_id = "map";
     m_goal_pose_pub.publish(l_posestamped);
+
+    m_strat_mvnt.goal_pose = m_goal_pose;
+    m_strat_mvnt.header.frame_id = "map";
+    m_strat_mvnt.orient = false;
 }
 
 void GoalStrat::updateCurrentPose()
@@ -285,12 +295,11 @@ GoalStrat::GoalStrat()
     m_is_first_action = true;
     m_servo_out = false;
     ros::NodeHandle n;
-    
+
     m_goal_pose_pub = n.advertise<geometry_msgs::PoseStamped>("goal_pose", 1000);
     m_arm_servo_pub = n.advertise<krabi_msgs::servos_cmd>("cmd_servos", 1000);
-    m_reverse_pub = n.advertise<std_msgs::Bool>("reverseGear", 5);
-    m_stop_linear_pub = n.advertise<std_msgs::Bool>("stopLinearSpeed", 5);
     m_debug_ma_etapes_pub = n.advertise<visualization_msgs::MarkerArray>("debug_etapes", 5);
+    m_strat_movement_pub = n.advertise<krabi_msgs::strat_movement>("stratMovement", 5);
 
     // m_score_pub = n.advertise<std_msgs::UInt16>("score", 5);
 
@@ -339,6 +348,8 @@ void GoalStrat::checkStopMatch()
         ROS_INFO_STREAM("Match ended, stopping the actuators" << std::endl);
         stopActuators();
         m_state = State::EXIT;
+        m_strat_mvnt.max_speed.linear.x = 0;
+        m_strat_mvnt.max_speed.angular.z = 0;
     }
 }
 
@@ -360,6 +371,7 @@ void GoalStrat::orientToAngleWithTimeout(Angle angleIfBlue, Angle angleIfNotBlue
     while (!doneOrientingTo(angleAction)
            && ros::Time::now().toSec() < orientTimeoutDeadline.toSec())
     {
+        m_strat_mvnt.orient = true;
         usleep(10000);
         ros::spinOnce();
     }
@@ -373,10 +385,20 @@ void GoalStrat::chooseGear()
         || m_previous_etape_type == Etape::EtapeType::PORT)
     {
         l_reverseGear.data = true;
+        m_strat_mvnt.reverse_gear = 1;
+    }
+    else if (m_previous_etape_type == Etape::EtapeType::MANCHE_A_AIR
+             || m_previous_etape_type == Etape::EtapeType::PHARE
+             || m_strat_graph->getEtapeEnCours()->getEtapeType() == Etape::EtapeType::PORT)
+    {
+        l_reverseGear.data = false;
+        m_strat_mvnt.reverse_gear = 0;
     }
     else
     {
+        // Don't care
         l_reverseGear.data = false;
+        m_strat_mvnt.reverse_gear = 2;
     }
 
     ROS_DEBUG_STREAM("######################" << std::endl);
@@ -422,12 +444,32 @@ void GoalStrat::stopActuators()
     m_arm_servo_pub.publish(m_servos_cmd);
 }
 
+void GoalStrat::setMaxSpeedAtArrival()
+{
+    if (m_strat_graph->getEtapeEnCours()->getEtapeType() == Etape::EtapeType::POINT_PASSAGE)
+    {
+        // No need for complete stop at intermediate stops
+        m_strat_mvnt.max_speed_at_arrival = 1.f;
+    }
+    else
+    {
+        // By default, brake before arriving
+        m_strat_mvnt.max_speed_at_arrival = 0.f;
+    }
+}
+
 int GoalStrat::loop()
 {
     while (m_state != State::EXIT && ros::ok())
     {
         updateCurrentPose();
         m_strat_graph->setGoodMouillage(m_good_mouillage);
+        m_strat_mvnt.max_speed_at_arrival = 0.1f;
+        m_strat_mvnt.orient = false;
+        m_strat_mvnt.max_speed.linear.x = 1.f;
+        m_strat_mvnt.max_speed.angular.x = 1.f;
+        m_strat_mvnt.reverse_gear = 2; // don't care
+
         publishScore();
         publishDebugInfos();
         m_arm_servo_pub.publish(m_servos_cmd);
@@ -435,6 +477,7 @@ int GoalStrat::loop()
         printCurrentAction();
 
         chooseGear(); // Go in reverse gear if needed
+        setMaxSpeedAtArrival();
 
         // prepare arm if needed
         if (!isBlue() && !m_servo_out

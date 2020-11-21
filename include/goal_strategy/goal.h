@@ -14,8 +14,8 @@
 
 #include "coupe2019.h"
 #include "krabi_msgs/servos_cmd.h"
+#include "krabi_msgs/strat_movement.h"
 #include "krabilib/pose.h"
-
 
 // The distance to a goal (in m)
 #define REACH_DIST 0.02                            // m
@@ -67,6 +67,7 @@ private:
     void startLinear();
     void checkStopMatch();
     void publishDebugInfos();
+    void setMaxSpeedAtArrival();
 
     State m_state = State::RUN;
     Distance m_dist_to_goal;
@@ -81,6 +82,7 @@ private:
     ros::Publisher m_stop_linear_pub;
     ros::Publisher m_score_pub;
     ros::Publisher m_debug_ma_etapes_pub;
+    ros::Publisher m_strat_movement_pub;
 
     ros::Subscriber m_remaining_time_match_sub;
     ros::Subscriber m_girouette_sub;
@@ -89,6 +91,7 @@ private:
     tf2_ros::TransformListener m_tf_listener;
     Pose m_current_pose;
     Pose m_goal_pose;
+
     krabi_msgs::servos_cmd m_servos_cmd;
     ros::Duration m_remainig_time;
     bool m_is_blue; // true if blue
@@ -100,4 +103,5 @@ private:
     bool m_servo_out;
     ros::Time m_moving_timeout_deadline;
     bool m_funny_action_counted;
+    krabi_msgs::strat_movement m_strat_mvnt;
 };
