@@ -1,6 +1,7 @@
 #pragma once
 
 #include "krabilib/position.h"
+#include <vector>
 
 #define ETAPE_INVALID_IDX   -1
 
@@ -35,7 +36,7 @@ public:
         PORT = 0x13,
         MOUILLAGE_NORD = 0x14,
         MOUILLAGE_SUD = 0x15,
-//#endif
+
         POINT_PASSAGE = 0x20,
 
         ROBOT_VU_ICI = 0x40
@@ -170,11 +171,11 @@ public:
 
     static int getTotalEtapes();
 
-    static Etape** initTableauEtapeTotal(int number);
+    static std::vector<Etape*>& initTableauEtapeTotal(int number);
 
     static Etape* get(int index);
 
-    static Etape** getTableauEtapesTotal();
+    static std::vector<Etape*>& getTableauEtapesTotal();
 
 
 private:
@@ -233,7 +234,7 @@ private:
 
     static int totalEtapesInstanciated;
 
-    static Etape** tableauEtapesTotal;
+    static std::vector<Etape*> tableauEtapesTotal;
 
     void postInit();
 };

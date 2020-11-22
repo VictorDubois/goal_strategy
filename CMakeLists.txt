@@ -8,7 +8,7 @@ add_definitions(-D USE_ROS)
 add_definitions(-D USE_IOSTREAM)
 
 find_package(catkin REQUIRED COMPONENTS roscpp rospy std_msgs geometry_msgs
-                                        krabi_msgs)
+                                        krabi_msgs tf)
 find_package(Eigen3 REQUIRED)
 catkin_package(
   INCLUDE_DIRS
@@ -21,6 +21,7 @@ catkin_package(
   std_msgs
   geometry_msgs
   krabi_msgs
+  tf
   DEPENDS
   EIGEN3)
 

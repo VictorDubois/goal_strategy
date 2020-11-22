@@ -4,14 +4,14 @@
 #include "krabilib/strategie/actionGoTo.h"
 #endif
 
-#include "krabilib/strategie/mediumLevelAction.h"
 #include "krabilib/strategie/dijkstra.h"
+#include "krabilib/strategie/mediumLevelAction.h"
 
 //#define SMOOTH_MOVE
 
 #ifdef QTGUI
-#include <QPainter>
 #include <QColor>
+#include <QPainter>
 #endif
 
 /*#ifdef KRABI_JR
@@ -21,16 +21,18 @@
 #endif*/
 //#define ETAPE_GARAGE 1
 //#define NOMBRE_ETAPES 10
-class StrategieV3{
+class StrategieV3
+{
 
 public:
-    static bool isYellow();
     /** @brief Constructeur de la stratégie *
-    * @param isYellow le côté de départ */
+     * @param isYellow le côté de départ */
     StrategieV3(bool isYellow);
 
-    /** @brief Update la stratégie, soit parceque le robot est arrivé à une étape, soit parcequ'il vient d'éviter un autre robot *
-    * @return Le status  : 1 = vers une étape-objectif, 2 = vers une étape intermédiaire, -1 = stratégie finie, plus rien à faire */
+    /** @brief Update la stratégie, soit parceque le robot est arrivé à une étape, soit parcequ'il
+     * vient d'éviter un autre robot *
+     * @return Le status  : 1 = vers une étape-objectif, 2 = vers une étape intermédiaire, -1 =
+     * stratégie finie, plus rien à faire */
     virtual int update();
 
     /** @brief COnfigure la stratégie pour prendre en compte le fait qu'on vient de voir un robot */
@@ -46,48 +48,73 @@ public:
     /** @brief Retourne un pointeur sur l'étape en cours */
     Etape* getEtapeEnCours();
 
+    /**
+     * @brief Compute the absolute position based on if we are blue or yellow
+     *
+     * @param x_yellow x position if we were yellow
+     * @param y_yellow y position if we were yellow
+     * @return Position positiion in map frame
+     */
+    Position positionC(Distance x_yellow, Distance y_yellow);
+
+        /**
+     * @brief Compute the absolute position based on if we are blue or yellow
+     *
+     * @param x_yellow x position if we were yellow
+     * @param y_yellow y position if we were yellow
+     * @return Position positiion in map frame
+     */
+    Position positionC(double x_yellow, double y_yellow);
+
+    bool isYellow();
+
+    double getRemainingTime();
+
 #ifdef QTGUI
     virtual void paint(QPainter* p);
 #endif
 
 protected:
-    static bool yellow;
+    bool m_yellow;
     /** @brief le numéro de l'étape en cours */
-    int etapeEnCours;
-    int nombreEtapes;
-    int numeroEtapeGarage;
+    int m_etape_en_cours;
+    int m_nombre_etapes;
+    int m_numero_etape_garage;
 
-    /** @brief tableau des actions qu'on peut décider de faire. TODO : mettre à jour ce tableau, en incluant des actions plus diverses */
+    /** @brief tableau des actions qu'on peut décider de faire. TODO : mettre à jour ce tableau, en
+     * incluant des actions plus diverses */
     /*MediumLevelAction** actionEtape;
     ActionGoTo* actionGoto;*/
 
     /** @brief la classe dijkstra pour calculer les distances */
-    Dijkstra* dijkstra;
+    Dijkstra* m_dijkstra;
 
     /** @brief le tableau des étapes constituant le graphe à explorer */
-    //Etape** tableauEtapes;
-    Etape** tableauEtapesTotal;
+    // std::vector<Etape*>& tableauEtapes;
+    std::vector<Etape*>& m_tableau_etapes_total;
 
     /** @brief vient-on de détecter un robot */
-    bool avoiding;
+    bool m_avoiding;
 
     /** @brief le numéro de l'étape-objectif */
-    int goal;
+    int m_goal;
 
     /** @brief le numéro de l'étape suivante */
-    int nextStep;
+    int m_next_step;
 
-    /** @brief le status de la stratégie : 1 = vers une étape-objectif, 2 = vers une étape intermédiaire, -1 = stratégie finie, plus rien à faire */
-    int statusStrat;
+    /** @brief le status de la stratégie : 1 = vers une étape-objectif, 2 = vers une étape
+     * intermédiaire, -1 = stratégie finie, plus rien à faire */
+    int m_status_strat;
 
     /** @brief status du robot, est-il en train d'éviter en reculant */
-    bool enTrainEviterReculant;
+    bool m_en_train_eviter_reculant;
 
     /** @brief status du robot, est-il en train d'éviter en avancant */
-    bool enTrainEviterAvancant;
+    bool m_en_train_eviter_avancant;
 
     void updateStock();
     virtual int getScoreEtape(int i) = 0;
+    void setRemainingTime(int64_t time_in_ms);
 
 #ifdef QTGUI
     QColor colorLiaisonsEtapes;
@@ -100,5 +127,5 @@ protected:
 
 private:
     bool updateScores();
-    int64_t millisecondesRestantes;
+    int64_t m_remaining_time_ms;
 };

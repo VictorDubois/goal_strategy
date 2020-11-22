@@ -13,10 +13,7 @@ public:
     /** @brief Constructeur de Dijkstra *
     * @param tableauEtapes le tableau contenant toutes les étapes du graphe à parcourir *
     * @param nbEtapes le nombre d'étapes contenues dans le tableau */
-    Dijkstra(Etape** tableauEtapes, int nbEtapes);
-
-    /** @brief Constructeur vide de Dijkstra */
-    Dijkstra();
+    Dijkstra(std::vector<Etape*>& tableauEtapes, int nbEtapes);
 
     /** @brief Renvoi un pointeur vers l'étape courante *
     * @return pointeur vers l'étape courante */
@@ -77,7 +74,7 @@ private:
     void initialiser();
 
     /** @brief le tableau des etapes constituant le graph à explorer */
-    Etape** tableauEtapes;
+    std::vector<Etape*>& tableauEtapes;
 
     /** @brief le nombre d'étapes constituant le graph */
     int nombreEtapes;

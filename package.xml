@@ -11,6 +11,7 @@
   <depend>catkin</depend>
   <depend>roscpp</depend>
   <depend>rospy</depend>
+  <depend>tf</depend>
   <depend>Eigen</depend>
   <depend>std_msgs</depend>
   <depend>geometry_msgs</depend>

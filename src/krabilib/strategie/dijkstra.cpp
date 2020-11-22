@@ -4,13 +4,10 @@
 #include "krabilib/strategie/dijkstra.h"
 #include <math.h>
 
-Dijkstra::Dijkstra(){}
-
-
-Dijkstra::Dijkstra(Etape** tableauEtapes, int nbEtapes)
+Dijkstra::Dijkstra(std::vector<Etape*>& tableauEtapes, int nbEtapes)
+:tableauEtapes(tableauEtapes),
+nombreEtapes(nbEtapes)
 {
-    this->tableauEtapes = tableauEtapes;
-    this->nombreEtapes = nbEtapes;
 }
 
 Etape* Dijkstra::getEtapeCourante()

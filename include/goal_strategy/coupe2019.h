@@ -1,5 +1,4 @@
-#ifndef COUPE2019_H
-#define COUPE2019_H
+#pragma once
 
 #define ETAPE_GARAGE 1
 
@@ -14,6 +13,10 @@
 #include <geometry_msgs/Point.h>
 
 #include <geometry_msgs/Pose.h>
+#include <visualization_msgs/MarkerArray.h>
+#include <visualization_msgs/Marker.h>
+
+
 
 class Coupe2019 : public StrategieV3
 {
@@ -23,8 +26,9 @@ public:
     Coupe2019(bool isYellow, std::vector<geometry_msgs::Pose> etapes);
     Coupe2019(bool isYellow, std::vector<geometry_msgs::Point> etapes);
 
-    void setRemainingTime(float seconds_left);
     void setGoodMouillage(Etape::EtapeType good_mouillage);
+
+    void debugEtapes(visualization_msgs::MarkerArray& ma);
 
     std::vector<geometry_msgs::Point> getPositions();
 
@@ -38,11 +42,7 @@ private:
     /** @brief update du score d'une étape */
     int getScoreEtape(int i);
 
-    float remainingTime;
-    Etape::EtapeType good_mouillage;
-    Transform m_map_to_baselink;
+    Etape::EtapeType m_good_mouillage;
+    uint32_t m_seq;
 
-    // Attractor* m_attractors;
 };
-
-#endif // COUPE2019_H

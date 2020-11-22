@@ -6,8 +6,7 @@
     #include <QDebug>
 #endif
 
-Etape** Etape::tableauEtapesTotal = 0;
-
+std::vector<Etape*> Etape::tableauEtapesTotal;
 int Etape::totalEtapesInstanciated = 0;
 
 Etape::Etape(Position position, EtapeType type)
@@ -327,11 +326,10 @@ int Etape::getNumeroEtapeFinAction()
     return this->numeroEtapeFinAction;
 }
 
-Etape** Etape::initTableauEtapeTotal(int number)
+std::vector<Etape*>& Etape::initTableauEtapeTotal(int number)
 {
-    tableauEtapesTotal = new Etape*[number];
-    for(int i(0); i<number; ++i)
-        tableauEtapesTotal[i] = 0;
+    tableauEtapesTotal.resize(number,nullptr);
+
     return tableauEtapesTotal;
 }
 
@@ -344,7 +342,7 @@ Etape* Etape::get(int index)
     return tableauEtapesTotal[index];
 }
 
-Etape** Etape::getTableauEtapesTotal()
+std::vector<Etape*>& Etape::getTableauEtapesTotal()
 {
     return tableauEtapesTotal;
 }
