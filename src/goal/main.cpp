@@ -117,6 +117,7 @@ void GoalStrat::orientToAngle(Angle a_angle)
     m_strat_mvnt.goal_pose = m_goal_pose;
     m_strat_mvnt.header.frame_id = "map";
     m_strat_mvnt.orient = true;
+    m_strat_movement_pub.publish(m_strat_mvnt);
 }
 
 bool GoalStrat::arrivedThere()
@@ -175,6 +176,8 @@ void GoalStrat::moveTowardGoal()
     m_strat_mvnt.goal_pose = m_goal_pose;
     m_strat_mvnt.header.frame_id = "map";
     m_strat_mvnt.orient = false;
+
+    m_strat_movement_pub.publish(m_strat_mvnt);
 }
 
 void GoalStrat::updateCurrentPose()
@@ -299,7 +302,7 @@ GoalStrat::GoalStrat()
     m_goal_pose_pub = n.advertise<geometry_msgs::PoseStamped>("goal_pose", 1000);
     m_arm_servo_pub = n.advertise<krabi_msgs::servos_cmd>("cmd_servos", 1000);
     m_debug_ma_etapes_pub = n.advertise<visualization_msgs::MarkerArray>("debug_etapes", 5);
-    m_strat_movement_pub = n.advertise<krabi_msgs::strat_movement>("stratMovement", 5);
+    m_strat_movement_pub = n.advertise<krabi_msgs::strat_movement>("strat_movement", 5);
 
     // m_score_pub = n.advertise<std_msgs::UInt16>("score", 5);
 
@@ -449,7 +452,7 @@ void GoalStrat::setMaxSpeedAtArrival()
     if (m_strat_graph->getEtapeEnCours()->getEtapeType() == Etape::EtapeType::POINT_PASSAGE)
     {
         // No need for complete stop at intermediate stops
-        m_strat_mvnt.max_speed_at_arrival = 1.f;
+        m_strat_mvnt.max_speed_at_arrival = 0.1f;
     }
     else
     {
