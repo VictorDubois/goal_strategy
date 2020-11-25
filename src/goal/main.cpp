@@ -409,7 +409,6 @@ void GoalStrat::chooseGear()
                                            << "m_previous_etape_type = " << m_previous_etape_type
                                            << ", reverseGear = " << l_reverseGear.data
                                            << std::endl);
-    m_reverse_pub.publish(l_reverseGear);
 }
 
 void GoalStrat::abortAction()

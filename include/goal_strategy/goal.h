@@ -78,7 +78,6 @@ private:
 
     ros::Publisher m_goal_pose_pub;
     ros::Publisher m_arm_servo_pub;
-    ros::Publisher m_reverse_pub;
     ros::Publisher m_stop_linear_pub;
     ros::Publisher m_score_pub;
     ros::Publisher m_debug_ma_etapes_pub;
