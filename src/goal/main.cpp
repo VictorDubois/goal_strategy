@@ -114,7 +114,7 @@ void GoalStrat::orientToAngle(Angle a_angle)
     l_posestamped.header.frame_id = "map";
     m_goal_pose_pub.publish(l_posestamped);
 
-    m_strat_mvnt.goal_pose = m_goal_pose;
+    m_strat_mvnt.goal_pose = l_posestamped;
     m_strat_mvnt.header.frame_id = "map";
     m_strat_mvnt.orient = true;
     m_strat_movement_pub.publish(m_strat_mvnt);
@@ -173,7 +173,7 @@ void GoalStrat::moveTowardGoal()
     l_posestamped.header.frame_id = "map";
     m_goal_pose_pub.publish(l_posestamped);
 
-    m_strat_mvnt.goal_pose = m_goal_pose;
+    m_strat_mvnt.goal_pose = l_posestamped;
     m_strat_mvnt.header.frame_id = "map";
     m_strat_mvnt.orient = false;
 
@@ -469,7 +469,7 @@ int GoalStrat::loop()
         m_strat_mvnt.max_speed_at_arrival = 0.1f;
         m_strat_mvnt.orient = false;
         m_strat_mvnt.max_speed.linear.x = 1.f;
-        m_strat_mvnt.max_speed.angular.x = 1.f;
+        m_strat_mvnt.max_speed.angular.z = 1.f;
         m_strat_mvnt.reverse_gear = 2; // don't care
 
         publishScore();
