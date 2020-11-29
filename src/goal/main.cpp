@@ -307,7 +307,7 @@ GoalStrat::GoalStrat()
     // m_score_pub = n.advertise<std_msgs::UInt16>("score", 5);
 
     m_remaining_time_match_sub
-      = n.subscribe("remaining_time", 1000, &GoalStrat::updateRemainingTime, this);
+      = n.subscribe("/remaining_time", 1000, &GoalStrat::updateRemainingTime, this);
     m_girouette_sub = n.subscribe("girouette_is_south", 1000, &GoalStrat::updateGirouette, this);
 
     n.param<bool>("isBlue", m_is_blue, true);
