@@ -185,9 +185,8 @@ void GoalStrat::updateCurrentPose()
     try
     {
         auto base_link_id = tf::resolve(ros::this_node::getNamespace(), "base_link");
-        auto map_id = tf::resolve(ros::this_node::getNamespace(), "map");
         const auto& transform
-          = m_tf_buffer.lookupTransform(map_id, base_link_id, ros::Time(0)).transform;
+          = m_tf_buffer.lookupTransform("map", base_link_id, ros::Time(0)).transform;
         m_current_pose = Pose(transform);
     }
     catch (tf2::TransformException& ex)
