@@ -12,6 +12,7 @@
 #include <geometry_msgs/Transform.h>
 #endif
 typedef Eigen::Matrix3d Transform;
+typedef Eigen::Affine3d Transform3D;
 class PolarPosition;
 
 /// @brief Classe permettant de stocker des positions en coordonnées cartésiennes
@@ -81,6 +82,14 @@ public:
      */
     Position transform(const Transform& t);
 
+    /**
+     * @brief Transform the current point from the current frame to the frame defines by transform
+     * 
+     * @param t 3d transform matrix
+     * @return Position new position in transformed frame
+     */
+    Position transform(const Transform3D& t);
+
 #ifdef USE_ROS
     Position(const geometry_msgs::Point& p);
     operator geometry_msgs::Point() const;
@@ -129,4 +138,5 @@ class PolarPosition{
 
 #ifdef USE_ROS
     Transform transformFromMsg(const geometry_msgs::Transform& t);
+    Transform3D transform3DFromMsg(const geometry_msgs::Transform& t);
 #endif

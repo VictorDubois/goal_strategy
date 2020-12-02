@@ -1,6 +1,7 @@
 #include "krabilib/position.h"
-#include "tf/tf.h"
 #include <math.h>
+#include <tf/tf.h>
+#include <tf_conversions/tf_eigen.h>
 
 // Constructeur par défaut avec des coordonnées nulles.
 Position::Position(Distance x, Distance y)
@@ -129,6 +130,27 @@ Transform transformFromMsg(const geometry_msgs::Transform& t)
     return out;
 }
 
+Transform3D transform3DFromMsg(const geometry_msgs::Transform& t)
+{
+    tf::Transform tmp;
+    tf::transformMsgToTF(t, tmp);
+    Eigen::Affine3d out;
+    for (int i = 0; i < 3; i++)
+    {
+        out.matrix()(i, 3) = tmp.getOrigin()[i];
+        for (int j = 0; j < 3; j++)
+        {
+            out.matrix()(i, j) = tmp.getBasis()[i][j];
+        }
+    }
+    // Fill in identity in last row
+    for (int col = 0; col < 3; col++)
+        out.matrix()(3, col) = 0;
+    out.matrix()(3, 3) = 1;
+
+    return out;
+}
+
 #endif
 
 #ifdef USE_IOSTREAM
@@ -166,4 +188,11 @@ Angle PolarPosition::getAngle() const
 Position Position::transform(const Transform& t)
 {
     return Position((t * m_pos.homogeneous()).head<2>());
+}
+
+Position Position::transform(const Transform3D& t)
+{
+    Eigen::Vector3d tmp;
+    tmp << m_pos, 0;
+    return Position((t * tmp).head<2>());
 }

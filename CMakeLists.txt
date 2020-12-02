@@ -8,13 +8,15 @@ add_definitions(-D USE_ROS)
 add_definitions(-D USE_IOSTREAM)
 
 find_package(catkin REQUIRED COMPONENTS roscpp rospy std_msgs geometry_msgs
-                                        krabi_msgs tf)
+                                        krabi_msgs tf tf_conversions eigen_conversions )
 find_package(Eigen3 REQUIRED)
 catkin_package(
   INCLUDE_DIRS
   include
   LIBRARIES
   krabilib
+  tf_conversions
+  eigen_conversions
   CATKIN_DEPENDS
   roscpp
   rospy
@@ -22,6 +24,8 @@ catkin_package(
   geometry_msgs
   krabi_msgs
   tf
+  eigen_conversions
+  tf_conversions
   DEPENDS
   EIGEN3)
 
