@@ -1,4 +1,4 @@
-#include "goal_strategy/coupe2019.h"
+#include "goal_strategy/coupe2021.h"
 #include "krabilib/pose.h"
 #include "krabilib/strategie/mancheAAir.h"
 #include "krabilib/strategie/mouillageNord.h"
@@ -9,34 +9,25 @@
 #include <cmath>
 #include <iostream>
 #include <ros/ros.h>
-#include <tf2_ros/transform_listener.h>
 #include <tf/transform_listener.h>
-
-
+#include <tf2_ros/transform_listener.h>
 
 #ifdef QTGUI
 #include <QDebug>
 #endif
 
-Coupe2019::Coupe2019(const bool isYellow, const std::vector<geometry_msgs::Pose> etapesAsPoses)
-  : StrategieV3(isYellow)
-{
-    std::vector<geometry_msgs::Point> etapesAsPoints;
-    for (auto pose : etapesAsPoses)
-    {
-        etapesAsPoints.push_back(pose.position);
-    }
-    Coupe2019(isYellow, etapesAsPoints);
-}
-
-Coupe2019::Coupe2019(const bool isYellow, const std::vector<geometry_msgs::Point> etapes_as_points)
+/**
+ * @brief Initialize the graph of goals based on the color
+ *
+ * @param isYellow
+ */
+Coupe2021::Coupe2021(const bool isYellow)
   : StrategieV3(isYellow)
 {
     setRemainingTime(100 * 1000);
     m_good_mouillage = Etape::EtapeType::DEPART; // No mouillage is good yet
 
     // Initialisation des tableaux d'étapes
-    m_numero_etape_garage = ETAPE_GARAGE;
     m_tableau_etapes_total
       = Etape::initTableauEtapeTotal(NOMBRE_ETAPES); // new Etape*[NOMBRE_ETAPES];
 
@@ -63,13 +54,11 @@ Coupe2019::Coupe2019(const bool isYellow, const std::vector<geometry_msgs::Point
     Etape::get(first_air)->addVoisins(out_of_first_air);
     Etape::get(second_air)->addVoisins(out_of_second_air);
 
-    int south = Etape::makeEtape(new MouillageSud(positionC(1.350, -0.250)));
-    int north = Etape::makeEtape(new MouillageNord(positionC(1.350, 0.680)));
+    int m_south_id = Etape::makeEtape(new MouillageSud(positionC(1.350, -0.250)));
+    int m_north_id = Etape::makeEtape(new MouillageNord(positionC(1.350, 0.680)));
+    m_numero_etape_garage = m_south_id;
 
-    Etape::get(south)->addVoisins(out_of_second_air);
-    Etape::get(south)->addVoisins(out_of_first_air);
-    Etape::get(north)->addVoisins(out_of_lighthouse);
-    Etape::get(north)->addVoisins(lighthouse);
+    Etape::get(m_north_id)->addVoisins(out_of_lighthouse, lighthouse);
 
     int push_south_bouees = Etape::makeEtape(new Port(positionC(1.150, 0)));
     int push_north_bouees = Etape::makeEtape(new Port(positionC(1.150, 0.4)));
@@ -78,24 +67,19 @@ Coupe2019::Coupe2019(const bool isYellow, const std::vector<geometry_msgs::Point
     // Points de passage
     int waypoint_south = Etape::makeEtape(positionC(.860, -0.300));
     int waypoint_out_of_enemy_small_port = Etape::makeEtape(positionC(0.4, -0.4));
-    Etape::get(south)->addVoisins(waypoint_south);
+
+    Etape::get(m_south_id)->addVoisins(out_of_second_air, out_of_first_air, waypoint_south);
     Etape::get(out_of_first_air)->addVoisins(waypoint_south);
-    Etape::get(out_of_second_air)->addVoisins(waypoint_south);
-    Etape::get(out_of_second_air)->addVoisins(waypoint_out_of_enemy_small_port);
-    Etape::get(out_of_main_port)->addVoisins(waypoint_south);
-    Etape::get(out_of_main_port)->addVoisins(waypoint_out_of_enemy_small_port);
-    Etape::get(waypoint_out_of_enemy_small_port)->addVoisins(waypoint_south);
+    Etape::get(out_of_second_air)->addVoisins(waypoint_south, waypoint_out_of_enemy_small_port);
+    Etape::get(out_of_main_port)->addVoisins(waypoint_south, waypoint_out_of_enemy_small_port);
 
     int waypoint_middle_ports = Etape::makeEtape(positionC(0, -0.4));
     int waypoint_out_of_our_small_port = Etape::makeEtape(positionC(0.3, -0.4));
-    Etape::get(waypoint_out_of_enemy_small_port)->addVoisins(waypoint_middle_ports);
+    Etape::get(waypoint_out_of_enemy_small_port)->addVoisins(waypoint_middle_ports, waypoint_south);
     Etape::get(waypoint_out_of_our_small_port)->addVoisins(waypoint_middle_ports);
 
     int waypoint_out_of_push_south_bouees = Etape::makeEtape(positionC(1.020, -0.3));
-    Etape::get(waypoint_out_of_push_south_bouees)->addVoisins(push_south_bouees);
-
-    Etape::get(waypoint_out_of_push_south_bouees)->addVoisins(waypoint_south);
-    Etape::get(waypoint_out_of_push_south_bouees)->addVoisins(out_of_second_air);
+    Etape::get(waypoint_out_of_push_south_bouees)->addVoisins(push_south_bouees, waypoint_south, out_of_second_air);
 
     int our_small_port = Etape::makeEtape(new Port(positionC(0.3, -0.750)));
     Etape::get(our_small_port)->addVoisins(waypoint_out_of_our_small_port);
@@ -109,23 +93,25 @@ Coupe2019::Coupe2019(const bool isYellow, const std::vector<geometry_msgs::Point
     startDijkstra();
 }
 
-std::vector<geometry_msgs::Point> Coupe2019::getPositions()
-{
-    std::vector<geometry_msgs::Point> l_points;
-    for (int positionID = 0; positionID < m_nombre_etapes; positionID++)
-    {
-        l_points.push_back(m_tableau_etapes_total[positionID]->getPosition());
-    }
-
-    return l_points;
-}
-
-void Coupe2019::setGoodMouillage(Etape::EtapeType a_m_good_mouillage)
+/**
+ * @brief The the port where we should stop at the end
+ *
+ * @param a_m_good_mouillage
+ */
+void Coupe2021::setGoodMouillage(Etape::EtapeType a_m_good_mouillage)
 {
     m_good_mouillage = a_m_good_mouillage;
+    m_numero_etape_garage
+      = a_m_good_mouillage == Etape::EtapeType::MOUILLAGE_SUD ? m_south_id : m_north_id;
 }
 
-std_msgs::ColorRGBA etape_type_to_marker(visualization_msgs::Marker& m,const Etape::EtapeType& e)
+/**
+ * @brief Convert a EtapeType into a marker
+ *
+ * @param m output marker
+ * @param e input etape
+ */
+void etape_type_to_marker(visualization_msgs::Marker& m, const Etape::EtapeType& e)
 {
     auto& color = m.color;
     m.scale.x = 0.05;
@@ -190,7 +176,12 @@ std_msgs::ColorRGBA etape_type_to_marker(visualization_msgs::Marker& m,const Eta
     color.a = 1;
 }
 
-void Coupe2019::debugEtapes(visualization_msgs::MarkerArray& ma)
+/**
+ * @brief Convert the graph into marker array for debug purpose
+ *
+ * @param ma marker array
+ */
+void Coupe2021::debugEtapes(visualization_msgs::MarkerArray& ma)
 {
     uint i = 0;
     for (const auto& etape : Etape::getTableauEtapesTotal())
@@ -212,7 +203,13 @@ void Coupe2019::debugEtapes(visualization_msgs::MarkerArray& ma)
     }
 }
 
-int Coupe2019::getScoreEtape(int i)
+/**
+ * @brief Get the score for the current step
+ *
+ * @param i
+ * @return int
+ */
+int Coupe2021::getScoreEtape(int i)
 {
     int l_score = 0;
     switch (this->m_tableau_etapes_total[i]->getEtapeType())

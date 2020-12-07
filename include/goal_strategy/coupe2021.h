@@ -1,6 +1,5 @@
 #pragma once
 
-#define ETAPE_GARAGE 1
 
 #define NOMBRE_ETAPES 50
 
@@ -18,31 +17,22 @@
 
 
 
-class Coupe2019 : public StrategieV3
+class Coupe2021 : public StrategieV3
 {
 public:
-    /** @brief Constructeur de la stratégie *
-     * @param isBlue le côté de départ */
-    Coupe2019(bool isYellow, std::vector<geometry_msgs::Pose> etapes);
-    Coupe2019(bool isYellow, std::vector<geometry_msgs::Point> etapes);
+    Coupe2021(bool isYellow);
 
     void setGoodMouillage(Etape::EtapeType good_mouillage);
 
     void debugEtapes(visualization_msgs::MarkerArray& ma);
 
-    std::vector<geometry_msgs::Point> getPositions();
 
 private:
-    //	/** Nombre d'étapes dans le graph */
-    //	int nombreEtapes = NOMBRE_ETAPES;
-
-    //	/** Numéro de l'étape où le robot va se cacher à la fin */
-    //	int numeroEtapeGarage = ETAPE_GARAGE;
-
-    /** @brief update du score d'une étape */
     int getScoreEtape(int i);
 
     Etape::EtapeType m_good_mouillage;
+    int m_south_id;
+    int m_north_id;
     uint32_t m_seq;
 
 };

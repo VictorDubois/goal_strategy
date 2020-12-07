@@ -1,6 +1,11 @@
 #include "goal_strategy/goal.h"
 #include <std_msgs/UInt16.h>
 
+/**
+ * @brief Set the arm to a specified position
+ *
+ * @param position FOLDED, IN, OUT, UP, RELEASE, DOWN
+ */
 void GoalStrat::moveArm(enum PositionServo position)
 {
     switch (position)
@@ -42,6 +47,10 @@ void GoalStrat::moveArm(enum PositionServo position)
     m_arm_servo_pub.publish(m_servos_cmd);
 }
 
+/**
+ * @brief 2020/2021 Funny action: Move the servo to raise the flags
+ *
+ */
 void GoalStrat::hissezLesPavillons()
 {
     ROS_INFO_STREAM("Hissez les pavillons!" << std::endl);
@@ -58,6 +67,10 @@ void GoalStrat::hissezLesPavillons()
     publishScore();
 }
 
+/**
+ * @brief Send cmd to disable linear motion
+ *
+ */
 void GoalStrat::stopLinear()
 {
     std_msgs::Bool linear;
@@ -66,6 +79,10 @@ void GoalStrat::stopLinear()
     m_strat_mvnt.orient = true;
 }
 
+/**
+ * @brief Send cmd to enable linear motion
+ *
+ */
 void GoalStrat::startLinear()
 {
     std_msgs::Bool linear;
@@ -74,11 +91,10 @@ void GoalStrat::startLinear()
     m_strat_mvnt.orient = false;
 }
 
-bool GoalStrat::isBlue()
-{
-    return m_is_blue;
-}
-
+/**
+ * @brief Print in the console the current action perfomed
+ *
+ */
 void GoalStrat::printCurrentAction()
 {
     if (!m_state_msg_displayed)
@@ -93,16 +109,12 @@ void GoalStrat::printCurrentAction()
     }
 }
 
-// Entry point
-int main(int argc, char* argv[])
-{
-    ros::init(argc, argv, "goalStrat");
-    GoalStrat* goalStrat = new GoalStrat{};
-
-    goalStrat->loop();
-}
-
-void GoalStrat::orientToAngle(Angle a_angle)
+/**
+ * @brief Align the robot with the specified angle
+ *
+ * @param a_angle angle to align with
+ */
+void GoalStrat::alignWithAngle(Angle a_angle)
 {
     ROS_DEBUG_STREAM("orientToAngle " << a_angle << std::endl);
     m_goal_pose.setAngle(a_angle);
@@ -120,9 +132,14 @@ void GoalStrat::orientToAngle(Angle a_angle)
     m_strat_movement_pub.publish(m_strat_mvnt);
 }
 
-bool GoalStrat::arrivedThere()
+/**
+ * @brief Check if the robot reached the goal position
+ *
+ * @return true if the robot center is closer than REACH_DIST
+ */
+bool GoalStrat::isArrivedAtGoal()
 {
-
+    updateCurrentPose();
     m_dist_to_goal
       = (m_current_pose.getPosition() - m_strat_graph->getEtapeEnCours()->getPosition()).getNorme();
     ROS_DEBUG_STREAM("current pose: x = "
@@ -134,23 +151,25 @@ bool GoalStrat::arrivedThere()
 
     if (m_dist_to_goal < REACH_DIST)
     {
-        // Make it stop
-        stopLinear();
-
         return true;
     }
     return false;
 }
 
-bool GoalStrat::doneOrientingTo(Angle angle)
+/**
+ * @brief Check if the robot is Aligned with the specified angle
+ *
+ * @param angle target angle
+ * @return true if the angular difference between the goal and angle is smaller than REACH_ANG
+ */
+bool GoalStrat::isAlignedWithAngle(Angle angle)
 {
     // Output a goal relative to the robot
     ROS_DEBUG_STREAM(m_current_pose.getPosition().getX() << std::endl);
-    orientToAngle(angle);
 
     // Compute angular diff
     Angle angular_error = AngleTools::diffAngle(angle, m_current_pose.getAngle());
-    ROS_DEBUG_STREAM("doneOrientingTo angle: "
+    ROS_DEBUG_STREAM("isAlignedWithAngle angle: "
                      << angle << " ? current: " << m_current_pose.getAngle()
                      << "angular_error = " << AngleTools::rad2deg(angular_error) << std::endl);
 
@@ -162,11 +181,14 @@ bool GoalStrat::doneOrientingTo(Angle angle)
     return false;
 }
 
-void GoalStrat::moveTowardGoal()
+/**
+ * @brief Publish the cmd to move the robot toward the goal
+ *
+ */
+void GoalStrat::publishGoal()
 {
     Position goal_position = m_strat_graph->getEtapeEnCours()->getPosition();
-    m_goal_pose.setX(goal_position.getX());
-    m_goal_pose.setY(goal_position.getY());
+    m_goal_pose.setPosition(goal_position);
     geometry_msgs::PoseStamped l_posestamped;
 
     l_posestamped.pose = m_goal_pose;
@@ -180,6 +202,10 @@ void GoalStrat::moveTowardGoal()
     m_strat_movement_pub.publish(m_strat_mvnt);
 }
 
+/**
+ * @brief Update the robot pose and the various transforms
+ *
+ */
 void GoalStrat::updateCurrentPose()
 {
     try
@@ -197,6 +223,10 @@ void GoalStrat::updateCurrentPose()
     ROS_DEBUG_STREAM("updateCurrentPose: " << m_current_pose << std::endl);
 }
 
+/**
+ * @brief Perform the transition between two goals
+ *
+ */
 void GoalStrat::goToNextMission()
 {
     m_servo_out = false;
@@ -263,7 +293,8 @@ void GoalStrat::goToNextMission()
     int strat_graph_status = m_strat_graph->update();
     if (strat_graph_status == -1)
     {
-        ROS_DEBUG_STREAM("Graph status is -1: we're done" << std::endl);
+        ROS_DEBUG_STREAM("Graph status is -1: we're done");
+        ROS_INFO("All goals accomplished");
         m_state = State::EXIT;
         return;
     }
@@ -274,67 +305,34 @@ void GoalStrat::goToNextMission()
 GoalStrat::GoalStrat()
   : m_tf_listener(m_tf_buffer)
 {
-    m_funny_action_counted = false;
-    m_first_manche_a_air_done = false;
-    m_good_mouillage = Etape::EtapeType::DEPART; // disabled for now
-    m_score_match = 2;                           // phare posé
-    m_servos_cmd.enable = true;
-    m_servos_cmd.brak_speed = 10;
-    m_servos_cmd.brak_angle = 180;
-    m_servos_cmd.pavillon_speed = 10;
-    m_servos_cmd.pavillon_angle = 255;
-
-    usleep(1000000);
-    m_dist_to_goal = 100.;
-    m_state_msg_displayed = false;
-
-    /*************************************************
-     *                   Main loop                   *
-     *************************************************/
-
-    // Initialize time
-    m_timeout_moving = 15; // sec
-    m_timeout_orient = 10; // sec
-    m_is_first_action = true;
-    m_servo_out = false;
-    ros::NodeHandle n;
-
-    m_goal_pose_pub = n.advertise<geometry_msgs::PoseStamped>("goal_pose", 1000);
-    m_arm_servo_pub = n.advertise<krabi_msgs::servos_cmd>("cmd_servos", 1000);
-    m_debug_ma_etapes_pub = n.advertise<visualization_msgs::MarkerArray>("debug_etapes", 5);
-    m_strat_movement_pub = n.advertise<krabi_msgs::strat_movement>("strat_movement", 5);
-
-    // m_score_pub = n.advertise<std_msgs::UInt16>("score", 5);
+    m_goal_pose_pub = m_nh.advertise<geometry_msgs::PoseStamped>("goal_pose", 1000);
+    m_arm_servo_pub = m_nh.advertise<krabi_msgs::servos_cmd>("cmd_servos", 1000);
+    m_debug_ma_etapes_pub = m_nh.advertise<visualization_msgs::MarkerArray>("debug_etapes", 5);
+    m_strat_movement_pub = m_nh.advertise<krabi_msgs::strat_movement>("strat_movement", 5);
 
     m_remaining_time_match_sub
-      = n.subscribe("/remaining_time", 1000, &GoalStrat::updateRemainingTime, this);
-    m_girouette_sub = n.subscribe("girouette_is_south", 1000, &GoalStrat::updateGirouette, this);
-
-    n.param<bool>("isBlue", m_is_blue, true);
-
-    if (m_is_blue)
-    {
-        ROS_DEBUG_STREAM("Is Blue !" << std::endl);
-    }
-    else
-    {
-        ROS_DEBUG_STREAM("Not Blue :'(" << std::endl);
-    }
-
-    m_action_aborted = false;
-
-    geometry_msgs::Point point1 = geometry_msgs::Point();
-    point1.x = 0;
-    point1.y = 0;
-    point1.z = 0;
-    std::vector<geometry_msgs::Point> etapes;
-    etapes.push_back(point1);
-    m_strat_graph = new Coupe2019(!isBlue(), etapes);
-
-    m_strat_graph->update();
-    m_previous_etape_type = m_strat_graph->getEtapeEnCours()->getEtapeType();
+      = m_nh.subscribe("/remaining_time", 5, &GoalStrat::updateRemainingTime, this);
+    m_tirette_sub = m_nh.subscribe("tirette", 5, &GoalStrat::updateTirette, this);
+    m_state = State::INIT;
+    m_tirette = false;
 }
 
+/**
+ * @brief Update the tirette state
+ *
+ * @param tirette msg
+ */
+void GoalStrat::updateTirette(std_msgs::Bool tirette)
+{
+    m_tirette = tirette.data;
+}
+
+/**
+ * @brief Update the remaining time and perform the time sensitive actions like the funny action and
+ * stopping the robot at the end of the match
+ *
+ * @param a_remaining_time_match
+ */
 void GoalStrat::updateRemainingTime(std_msgs::Duration a_remaining_time_match)
 {
     m_remainig_time = a_remaining_time_match.data;
@@ -342,13 +340,17 @@ void GoalStrat::updateRemainingTime(std_msgs::Duration a_remaining_time_match)
     checkStopMatch();
 }
 
+/**
+ * @brief Check if the end of the match arrived and if so stopping the robot
+ *
+ */
 void GoalStrat::checkStopMatch()
 {
     const ros::Duration stop_timing = ros::Duration(1.); // 1s before T=0;
 
     if (m_remainig_time.toSec() < stop_timing.toSec())
     {
-        ROS_INFO_STREAM("Match ended, stopping the actuators" << std::endl);
+        ROS_INFO_STREAM("Match ended, stopping the actuators");
         stopActuators();
         m_state = State::EXIT;
         m_strat_mvnt.max_speed.linear.x = 0;
@@ -356,30 +358,48 @@ void GoalStrat::checkStopMatch()
     }
 }
 
+/**
+ * @brief Check if it's time to perform the funny action and perfom it if required
+ *
+ */
 void GoalStrat::checkFunnyAction()
 {
     const ros::Duration funny_action_timing = ros::Duration(4.); // 4s before T=0;
 
     if (m_remainig_time.toSec() < funny_action_timing.toSec())
     {
-        ROS_INFO_STREAM("Do the funny action" << std::endl);
+        ROS_INFO_STREAM("Doing the funny action");
         hissezLesPavillons();
     }
 }
 
-void GoalStrat::orientToAngleWithTimeout(Angle angleIfBlue, Angle angleIfNotBlue)
+/**
+ * @brief Try to align with an angle during a fix amount of time
+ * If the action take more than m_timeout_orient  seconds it is aborted.
+ *
+ * @param angle to align with
+ * @return true
+ * @return false
+ */
+bool GoalStrat::alignWithAngleWithTimeout(Angle angle)
 {
-    Angle angleAction = isBlue() ? angleIfBlue : angleIfNotBlue;
     ros::Time orientTimeoutDeadline = ros::Time::now() + ros::Duration(m_timeout_orient);
-    while (!doneOrientingTo(angleAction)
-           && ros::Time::now().toSec() < orientTimeoutDeadline.toSec())
+
+    alignWithAngle(angle);
+    ros::Rate r(100); // Check at 100Hz the new pose msg
+    while (!isAlignedWithAngle(angle) && ros::Time::now().toSec() < orientTimeoutDeadline.toSec())
     {
         m_strat_mvnt.orient = true;
-        usleep(10000);
         ros::spinOnce();
+        r.sleep();
     }
+    return ros::Time::now().toSec() > orientTimeoutDeadline.toSec();
 }
 
+/**
+ * @brief Choose the best direction for the robot base on the current and future actions
+ *
+ */
 void GoalStrat::chooseGear()
 {
     std_msgs::Bool l_reverseGear;
@@ -404,19 +424,27 @@ void GoalStrat::chooseGear()
         m_strat_mvnt.reverse_gear = 2;
     }
 
-    ROS_DEBUG_STREAM("######################" << std::endl);
     ROS_DEBUG_STREAM("currentEtapeType = " << m_strat_graph->getEtapeEnCours()->getEtapeType()
                                            << "m_previous_etape_type = " << m_previous_etape_type
                                            << ", reverseGear = " << l_reverseGear.data
                                            << std::endl);
 }
 
+/**
+ * @brief Abort the action that was currently performed and update the graph to indicate a danger
+ * for that action
+ *
+ */
 void GoalStrat::abortAction()
 {
     m_strat_graph->collisionAvoided();
     m_action_aborted = true;
 }
 
+/**
+ * @brief Publish the score
+ *
+ */
 void GoalStrat::publishScore()
 {
     std_msgs::UInt16 l_score_match;
@@ -428,24 +456,20 @@ void GoalStrat::publishScore()
     m_servos_cmd.s4_speed = static_cast<uint16_t>(std::ceil(m_score_match));
 }
 
-void GoalStrat::updateGirouette(std_msgs::Bool girouette_is_south)
-{
-    if (girouette_is_south.data)
-    {
-        m_good_mouillage = Etape::EtapeType::MOUILLAGE_SUD;
-    }
-    else
-    {
-        m_good_mouillage = Etape::EtapeType::MOUILLAGE_NORD;
-    }
-}
-
+/**
+ * @brief Publish command to disable actuator
+ *
+ */
 void GoalStrat::stopActuators()
 {
     m_servos_cmd.enable = false;
     m_arm_servo_pub.publish(m_servos_cmd);
 }
 
+/**
+ * @brief Choose the max speed at the end of the current action based on the action type
+ *
+ */
 void GoalStrat::setMaxSpeedAtArrival()
 {
     if (m_strat_graph->getEtapeEnCours()->getEtapeType() == Etape::EtapeType::POINT_PASSAGE)
@@ -460,163 +484,225 @@ void GoalStrat::setMaxSpeedAtArrival()
     }
 }
 
-int GoalStrat::loop()
+/**
+ * @brief RUN state of the state machine
+ *
+ * Here is performed most of the functions
+ */
+void GoalStrat::stateRun()
 {
-    while (m_state != State::EXIT && ros::ok())
+    updateCurrentPose();
+
+    m_strat_mvnt.max_speed_at_arrival = 0.1f;
+    m_strat_mvnt.orient = false;
+    m_strat_mvnt.max_speed.linear.x = 1.f;
+    m_strat_mvnt.max_speed.angular.z = 1.f;
+    m_strat_mvnt.reverse_gear = 2; // don't care
+
+    bool girouette_south;
+    m_nh.param<bool>("/isWeathercockSouth", girouette_south, false);
+    auto good_mouillage = girouette_south ? Etape::MOUILLAGE_SUD : Etape::MOUILLAGE_NORD;
+    m_strat_graph->setGoodMouillage(good_mouillage);
+
+    publishScore();
+    publishDebugInfos();
+    m_arm_servo_pub.publish(m_servos_cmd);
+    bool isLate = false;
+    printCurrentAction();
+
+    chooseGear(); // Go in reverse gear if needed
+    setMaxSpeedAtArrival();
+
+    // prepare arm if needed
+    if (!m_is_blue && !m_servo_out
+        && m_strat_graph->getEtapeEnCours()->getEtapeType() == Etape::EtapeType::MANCHE_A_AIR)
     {
-        updateCurrentPose();
-        m_strat_graph->setGoodMouillage(m_good_mouillage);
-        m_strat_mvnt.max_speed_at_arrival = 0.1f;
-        m_strat_mvnt.orient = false;
-        m_strat_mvnt.max_speed.linear.x = 1.f;
-        m_strat_mvnt.max_speed.angular.z = 1.f;
-        m_strat_mvnt.reverse_gear = 2; // don't care
+        moveArm(OUT);
+        m_servo_out = true;
+    }
 
-        publishScore();
-        publishDebugInfos();
-        m_arm_servo_pub.publish(m_servos_cmd);
-        bool isLate = false;
-        printCurrentAction();
+    if (!m_is_first_action && (ros::Time::now() >= m_moving_timeout_deadline))
+    {
+        isLate = true;
+        ROS_INFO_STREAM("Robot is late (spent more than "
+                        << m_timeout_moving << "seconds trying to reach destination)" << std::endl);
+    }
 
-        chooseGear(); // Go in reverse gear if needed
-        setMaxSpeedAtArrival();
-
-        // prepare arm if needed
-        if (!isBlue() && !m_servo_out
-            && m_strat_graph->getEtapeEnCours()->getEtapeType() == Etape::EtapeType::MANCHE_A_AIR)
+    if (isArrivedAtGoal())
+    {
+        // retract arm if needed
+        if (m_previous_etape_type == Etape::EtapeType::MANCHE_A_AIR)
         {
-            moveArm(OUT);
-            m_servo_out = true;
+            moveArm(IN);
         }
 
-        if (!m_is_first_action && (ros::Time::now() >= m_moving_timeout_deadline))
+        switch (m_strat_graph->getEtapeEnCours()->getEtapeType())
         {
-            isLate = true;
-            ROS_INFO_STREAM("Robot is late (spent more than "
-                            << m_timeout_moving << "seconds trying to reach destination)"
-                            << std::endl);
-        }
+        case Etape::MOUILLAGE_SUD:
+        case Etape::MOUILLAGE_NORD:
+            m_score_match += 10;
+            break;
+        case Etape::EtapeType::MANCHE_A_AIR:
+            stopLinear();
 
-        if (isLate)
-        {
-            // If it has been too long
-            // Then it means that there is an obstacle on the way
-            // The first action is excluded because we wait for the tirette (+ no reason for an
-            // opponent + no other way)
-            ROS_INFO_STREAM("Timeout, probable obstacle on the way. Trying another path."
-                            << std::endl);
-            abortAction();
-            goToNextMission();
-        }
-        else if (arrivedThere())
-        {
-            // retract arm if needed
-            if (m_previous_etape_type == Etape::EtapeType::MANCHE_A_AIR)
+            if (!m_is_blue)
             {
                 moveArm(IN);
             }
-
-            int angleAction = 0;
-            switch (m_strat_graph->getEtapeEnCours()->getEtapeType())
+            else
             {
-            case Etape::MOUILLAGE_SUD:
-                if (m_good_mouillage == Etape::MOUILLAGE_SUD && m_remainig_time.toSec() < 10.)
-                {
-                    // stop !
-                    stopLinear();
-                    m_score_match += 10;
-                    publishScore();
-                    while (ros::ok())
-                    {
-                        ros::spinOnce();
-                        usleep(20000);
-                    }
-                }
-                break;
-            case Etape::MOUILLAGE_NORD:
-                if (m_good_mouillage == Etape::MOUILLAGE_NORD && m_remainig_time.toSec() < 10.)
-                {
-                    // stop !
-                    stopLinear();
-                    m_score_match += 10;
-                    publishScore();
-                    while (ros::ok())
-                    {
-                        ros::spinOnce();
-                        usleep(20000);
-                    }
-                }
-                break;
-            case Etape::EtapeType::MANCHE_A_AIR:
-                stopLinear();
-
-                if (!isBlue())
-                {
-                    moveArm(IN);
-                }
-                else
-                {
-                    moveArm(OUT);
-                }
-                usleep(2500000); // 1.5s
-
-                /*ROS_DEBUG_STREAM( "In front of a Manche a Air, orienting" << std::endl);
-                orientToAngleWithTimeout(40, 320);
-
-                ROS_DEBUG_STREAM( "MOVING SERVO DOWN" << std::endl);
-                moveArm(DOWN);
-                usleep(1500000); // 1.5s
-
-                orientToAngleWithTimeout(140, 220);
-
-                ROS_DEBUG_STREAM( "MOVING SERVO UP" << std::endl);
-                moveArm(UP);
-                usleep(1500000); // 1.5s*/
-                ROS_INFO_STREAM("Manche A Air Done" << std::endl);
-                break;
-            case Etape::EtapeType::PHARE:
-                stopLinear();
-                ROS_INFO_STREAM("In front of Phare, orienting" << std::endl);
-                orientToAngleWithTimeout(Angle(M_PI / 2), Angle(-M_PI / 2));
-
-                ROS_INFO_STREAM("MOVING SERVO DOWN" << std::endl);
-                moveArm(DOWN);
-                usleep(1000000); // 1.s
-                moveArm(DOWN);
-                usleep(500000); // .5s
-
-                ROS_INFO_STREAM("MOVING SERVO UP" << std::endl);
-                moveArm(UP);
-                usleep(1500000); // 1.5s
-                ROS_INFO_STREAM("Phare Done" << std::endl);
-                break;
-            default:
-                ROS_INFO_STREAM("No special action here\n");
-                break;
+                moveArm(OUT);
             }
-            goToNextMission();
+            usleep(2.5e6);
+
+            ROS_INFO_STREAM("Manche A Air Done" << std::endl);
+            break;
+        case Etape::EtapeType::PHARE:
+            stopLinear();
+            ROS_INFO_STREAM("In front of Phare, orienting" << std::endl);
+            ROS_WARN_STREAM_COND(
+              alignWithAngleWithTimeout(m_is_blue ? Angle(M_PI / 2) : Angle(-M_PI / 2)),
+              "Timeout while orienting");
+
+            ROS_INFO_STREAM("MOVING SERVO DOWN" << std::endl);
+            moveArm(DOWN);
+            usleep(1e6);
+            moveArm(DOWN);
+            usleep(0.5e6);
+
+            ROS_INFO_STREAM("MOVING SERVO UP" << std::endl);
+            moveArm(UP);
+            usleep(1.5e6);
+            ROS_INFO_STREAM("Phare Done" << std::endl);
+            break;
+        default:
+            ROS_INFO_STREAM("No special action here\n");
+            break;
         }
-        moveTowardGoal();
-
-        usleep(20000);
-
-        ros::spinOnce();
+        goToNextMission();
     }
-
-    stopActuators();
-    usleep(20000);
-    stopActuators();
-    usleep(20000);
-    stopActuators();
-    usleep(20000);
-
-    ROS_INFO_STREAM("Mission accomplished, shutting down" << std::endl);
-    return 0;
+    else if (isLate)
+    {
+        // If it has been too long
+        // Then it means that there is an obstacle on the way
+        // The first action is excluded because we wait for the tirette (+ no reason for an
+        // opponent + no other way)
+        ROS_INFO_STREAM("Timeout, probable obstacle on the way. Trying another path." << std::endl);
+        abortAction();
+        goToNextMission();
+    }
+    publishGoal();
 }
 
+/**
+ * @brief EXIT State of the state machine
+ * Stop the actuators before shutting down the node
+ */
+void GoalStrat::stateExit()
+{
+    stopActuators();
+    publishScore();
+    ROS_INFO_STREAM("Mission finished, turning off actuators and waiting for new mission");
+    m_state = State::INIT;
+}
+
+/**
+ * @brief Initialization of the node
+ *
+ */
+void GoalStrat::init()
+{
+    m_funny_action_counted = false;
+    m_first_manche_a_air_done = false;
+    m_score_match = 2; // phare posé
+    m_servos_cmd.enable = true;
+    m_servos_cmd.brak_speed = 10;
+    m_servos_cmd.brak_angle = 180;
+    m_servos_cmd.pavillon_speed = 10;
+    m_servos_cmd.pavillon_angle = 255;
+
+    m_dist_to_goal = 100.;
+    m_state_msg_displayed = false;
+
+    /*************************************************
+     *                   Main loop                   *
+     *************************************************/
+
+    // Initialize time
+    m_timeout_moving = 15; // sec
+    m_timeout_orient = 10; // sec
+    m_is_first_action = true;
+    m_servo_out = false;
+
+    m_nh.param<bool>("isBlue", m_is_blue, true);
+
+    if (m_is_blue)
+    {
+        ROS_DEBUG_STREAM("Is Blue !" << std::endl);
+    }
+    else
+    {
+        ROS_DEBUG_STREAM("Not Blue :'(" << std::endl);
+    }
+
+    m_action_aborted = false;
+
+    m_strat_graph = std::make_unique<Coupe2021>(!m_is_blue);
+
+    m_strat_graph->update();
+    m_previous_etape_type = m_strat_graph->getEtapeEnCours()->getEtapeType();
+    m_state = State::WAIT_TIRETTE;
+}
+
+/**
+ * @brief State machine that handles the different goals
+ *
+ * @return int
+ */
+int GoalStrat::loop()
+{
+    switch (m_state)
+    {
+    case State::INIT:
+        init();
+        break;
+    case State::WAIT_TIRETTE:
+        if (m_state == State::WAIT_TIRETTE && m_tirette && m_remainig_time > ros::Duration(1, 0))
+        {
+            m_state = State::RUN;
+        }
+        break;
+    case State::RUN:
+        stateRun();
+        break;
+    case State::EXIT:
+        stateExit();
+        break;
+    }
+    ros::spinOnce();
+}
+
+/**
+ * @brief Publisher to visually debug the strategy graph
+ *
+ */
 void GoalStrat::publishDebugInfos()
 {
     visualization_msgs::MarkerArray ma;
     m_strat_graph->debugEtapes(ma);
     m_debug_ma_etapes_pub.publish(ma);
+}
+
+// Entry point
+int main(int argc, char* argv[])
+{
+    ros::init(argc, argv, "goalStrat");
+    GoalStrat goal_strat;
+
+    ros::Rate r(10); // 10 hz
+    while (ros::ok())
+    {
+        goal_strat.loop();
+        r.sleep();
+    }
 }

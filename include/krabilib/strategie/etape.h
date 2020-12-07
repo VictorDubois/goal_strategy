@@ -3,7 +3,7 @@
 #include "krabilib/position.h"
 #include <vector>
 
-#define ETAPE_INVALID_IDX   -1
+#define ETAPE_INVALID_IDX -1
 
 class ActionGoTo;
 class MediumLevelAction;
@@ -15,8 +15,7 @@ public:
     enum EtapeType
     {
         DEPART = 0x01,
-//#ifdef GOLDO2018
-
+        //#ifdef GOLDO2018
 
         ABEILLE = 0x03,
         RESERVOIR_EAU = 0x05,
@@ -24,10 +23,10 @@ public:
         GOLDENIUM = 0x06,
         ACCELERATOR = 0x07,
         PRE_BAFFE = 0x09,
-//#elif KRABI2016
+        //#elif KRABI2016
         CUBE_DEBUT = 0x02,
 
-        DUNE =  0x04,
+        DUNE = 0x04,
         ZONE_CONSTRUCTION = 0x08,
         CABINE = 0x10,
 
@@ -46,15 +45,15 @@ public:
     static int makeEtape(MediumLevelAction* action);
     static int makeEtape(Position position, EtapeType type = POINT_PASSAGE);
 
-
     /** @brief Renvoi un pointeur vers une des etapes attachees a celle-ci *
-    *   @param nb le numéro du lien vers l'autre etape */
+     *   @param nb le numéro du lien vers l'autre etape */
     Etape* getChild(int nb);
 
     /** @brief Renvoi un tableau de pointeurs vers les etapes attachees a celle-ci */
     Etape** getChildren();
 
-    /** @brief Renvoi l'étape précédente pour remonter à l'étape en cours (utilisé pour l'exploration du graphe) */
+    /** @brief Renvoi l'étape précédente pour remonter à l'étape en cours (utilisé pour
+     * l'exploration du graphe) */
     Etape* getParent();
 
     /** @brief Renvoi la position de cette étape */
@@ -64,17 +63,18 @@ public:
     int getState();
 
     /** @brief Set l'état de l'étape courante (utilisé pour l'exploration du graphe) *
-    *   @param state le nouvel état de l'étape */
+     *   @param state le nouvel état de l'étape */
     void setState(int state);
 
     /** @brief Renvoi la distance de cette étape à l'étape où se trouve le robot */
     int getDistance();
 
     /** @brief Set la distance de cette étape à l'étape où se trouve le robot *
-    *   @param distance de cette étape à l'étape où se trouve le robot */
+     *   @param distance de cette étape à l'étape où se trouve le robot */
     void setDistance(int distance);
 
-    /** @brief Set l'étape précédente pour remonter à l'étape en cours (utilisé pour l'exploration du graphe) */
+    /** @brief Set l'étape précédente pour remonter à l'étape en cours (utilisé pour l'exploration
+     * du graphe) */
     void setParent(Etape* parent);
 
     /** @brief Renvoi le nombre d'étapes attachées à celle_ci */
@@ -84,11 +84,11 @@ public:
     EtapeType getEtapeType();
 
     /** @brief Set le type de cette étape (un feu, un point de passage...) *
-    *   @param type le type de cette étape (un feu, un point de passage...) */
+     *   @param type le type de cette étape (un feu, un point de passage...) */
     void setEtapeType(EtapeType type);
 
     /** @brief set un tableau de pointeurs vers les etapes attachees a celle-ci *
-    *   @param children Tableau des étapes attachées à celle-ci */
+     *   @param children Tableau des étapes attachées à celle-ci */
     void setChildren(Etape** children);
 
     /** @brief On aurait vu un robot sur le chemin de cette étape */
@@ -107,51 +107,49 @@ public:
     int* getDistances();
 
     /** @brief set un tableau des distances vers les etapes attachees a celle-ci *
-    *   @param distances Tableau des distances vers les etapes attachées à celle-ci */
+     *   @param distances Tableau des distances vers les etapes attachées à celle-ci */
     void setDistances(int* distances);
 
     void computeChildDistances();
 
-    /** @brief Renvoi un tableau des étapes qui doivent être considérées comme finie si celle-ci l'est */
+    /** @brief Renvoi un tableau des étapes qui doivent être considérées comme finie si celle-ci
+     * l'est */
     int* getEtapesLieesParFinirEtape();
 
-    /** @brief set un tableau des étapes qui doivent être considérées comme finie si celle-ci l'est *
-    *   @param children Tableau des étapes qui doivent être considérées comme finie si celle-ci l'est */
+    /** @brief set un tableau des étapes qui doivent être considérées comme finie si celle-ci l'est
+     * *
+     *   @param children Tableau des étapes qui doivent être considérées comme finie si celle-ci
+     * l'est */
     void setEtapesLieesParFinirEtape(int* numerosEtapesLieesParFinirEtape);
 
-    /** @brief Renvoi le nombre d'étapes qui doivent être considérées comme finie si celle-ci l'est */
+    /** @brief Renvoi le nombre d'étapes qui doivent être considérées comme finie si celle-ci l'est
+     */
     int getNombreEtapesLieesParFinirEtape();
 
     /** @brief Effectue les changements nécessaires pour considérer l'étape comme effectuée */
     void finir(void);
 
     /** @brief set le score de l'étape *
-    *   @param score le score de l'étape */
+     *   @param score le score de l'étape */
     void setScore(int score);
 
     /** @brief Renvoi le score de l'étape */
     int getScore();
 
     /** @brief Ajoute un voisin au tableau de voisins */
-    void addVoisin(Etape* newVoisin, bool autreSens=true);
+    void addVoisin(Etape* newVoisin, bool autreSens = true);
 
     /** @brief Ajoute un voisin au tableau de voisins */
-    void addVoisin(int newVoisinIndex, bool autreSens=true);
+    void addVoisin(int newVoisinIndex, bool autreSens = true);
 
     /** @brief Ajoute un voisin au tableau de voisins */
-    void addVoisins(int newVoisinIndex);
-
-    /** @brief Ajoute des voisins au tableau de voisins */
-    void addVoisins(int newVoisinIndex1, int newVoisinIndex2);
-
-    /** @brief Ajoute des voisins au tableau de voisins */
-    void addVoisins(int newVoisinIndex1, int newVoisinIndex2, int newVoisinIndex3);
-
-    /** @brief Ajoute des voisins au tableau de voisins */
-    void addVoisins(int newVoisinIndex1, int newVoisinIndex2, int newVoisinIndex3, int newVoisinIndex4);
-
-    /** @brief Ajoute des voisins au tableau de voisins */
-    void addVoisins(int newVoisinIndex1, int newVoisinIndex2, int newVoisinIndex3, int newVoisinIndex4, int newVoisinIndex5);
+    void addVoisins();
+    template<typename... Types>
+    void addVoisins(int newVoisinIndex1, Types... otherIndexes)
+    {
+        this->addVoisin(newVoisinIndex1);
+        addVoisins(otherIndexes...);
+    }
 
     /** @brief Setter de l'étape à laquelle on fini l'action de l'étape */
     void setNumeroEtapeFinAction(int newNumeroEtapeFinAction);
@@ -177,20 +175,20 @@ public:
 
     static std::vector<Etape*>& getTableauEtapesTotal();
 
-
 private:
-
     /** @brief Constructeur d'une etape *
-    *   @param position Position de cette étape *
-    *   @param typeType d'étape (un feu, un point de passage...) *
-    *   @param state Etat de cette étape, utilisé pour l'exploration du graphe
-    *   @param nombreEtapesLieesParFinirEtape Nombre d'étapes qui doivent être considérées comme finie si celle-ci l'est */
+     *   @param position Position de cette étape *
+     *   @param typeType d'étape (un feu, un point de passage...) *
+     *   @param state Etat de cette étape, utilisé pour l'exploration du graphe
+     *   @param nombreEtapesLieesParFinirEtape Nombre d'étapes qui doivent être considérées comme
+     * finie si celle-ci l'est */
     Etape(Position position, EtapeType type = POINT_PASSAGE);
 
     /** @brief Tableau des étapes attachées à celle-ci */
     Etape** children;
 
-    /** @brief Etape précédente pour remonter à l'étape en cours, utilisé pour l'exploration du graphe */
+    /** @brief Etape précédente pour remonter à l'étape en cours, utilisé pour l'exploration du
+     * graphe */
     Etape* parent;
 
     /** @brief Position de cette étape */
@@ -230,7 +228,7 @@ private:
 
     MediumLevelAction* action;
 
-    //static int numberInit;
+    // static int numberInit;
 
     static int totalEtapesInstanciated;
 

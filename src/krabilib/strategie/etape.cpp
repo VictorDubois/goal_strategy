@@ -281,39 +281,8 @@ void Etape::addVoisin(int newVoisinIndex, bool autreSens)
     this->addVoisin(get(newVoisinIndex), autreSens);
 }
 
-void Etape::addVoisins(int newVoisinIndex)
+void Etape::addVoisins()
 {
-    this->addVoisin(newVoisinIndex);
-}
-
-void Etape::addVoisins(int newVoisinIndex1, int newVoisinIndex2)
-{
-    this->addVoisin(newVoisinIndex1);
-    this->addVoisin(newVoisinIndex2);
-}
-
-void Etape::addVoisins(int newVoisinIndex1, int newVoisinIndex2, int newVoisinIndex3)
-{
-    this->addVoisin(newVoisinIndex1);
-    this->addVoisin(newVoisinIndex2);
-    this->addVoisin(newVoisinIndex3);
-}
-
-void Etape::addVoisins(int newVoisinIndex1, int newVoisinIndex2, int newVoisinIndex3, int newVoisinIndex4)
-{
-    this->addVoisin(newVoisinIndex1);
-    this->addVoisin(newVoisinIndex2);
-    this->addVoisin(newVoisinIndex3);
-    this->addVoisin(newVoisinIndex4);
-}
-
-void Etape::addVoisins(int newVoisinIndex1, int newVoisinIndex2, int newVoisinIndex3, int newVoisinIndex4, int newVoisinIndex5)
-{
-    this->addVoisin(newVoisinIndex1);
-    this->addVoisin(newVoisinIndex2);
-    this->addVoisin(newVoisinIndex3);
-    this->addVoisin(newVoisinIndex4);
-    this->addVoisin(newVoisinIndex5);
 }
 
 void Etape::setNumeroEtapeFinAction(int newNumeroEtapeFinAction)

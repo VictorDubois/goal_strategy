@@ -14,13 +14,6 @@
 #include <QPainter>
 #endif
 
-/*#ifdef KRABI_JR
-
-    #define NOMBRE_ETAPES 31//22//10
-
-#endif*/
-//#define ETAPE_GARAGE 1
-//#define NOMBRE_ETAPES 10
 class StrategieV3
 {
 
