@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 2.8.3)
 project(goal_strategy)
 
-add_compile_options(-std=c++14)
+add_compile_options(-std=c++17)
 
 add_definitions(-D STANDALONE_STRATEGIE)
 add_definitions(-D USE_ROS)
