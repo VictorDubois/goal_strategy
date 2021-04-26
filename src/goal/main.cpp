@@ -585,8 +585,11 @@ void GoalStrat::stateRun()
         case Etape::EtapeType::BOUEE:
             stopLinear();
             ROS_INFO_STREAM("Orienting grabber" << std::endl);
-            ROS_WARN_STREAM_COND(alignWithAngleWithTimeout(Angle(90.f)), //@TODO compute angle
-                                 "Timeout while orienting");
+            ROS_WARN_STREAM_COND(
+              alignWithAngleWithTimeout(
+                Angle((m_goal_pose.getPosition() - m_current_pose.getPosition()).getAngle()
+                      + theThing.getAngle())), //@TODO check angle computation
+              "Timeout while orienting");
             theThing.grab(GrabberContent::ANY);
             break;
         default:

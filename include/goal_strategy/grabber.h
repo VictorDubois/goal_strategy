@@ -19,6 +19,7 @@ public:
     void release(GrabberContent type_to_release);
     void grab(GrabberContent type_to_catch);
     float getReach();
+    Angle getAngle();
 
 private:
     Position relative_position;

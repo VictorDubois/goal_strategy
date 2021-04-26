@@ -14,6 +14,11 @@ float Grabber::getReach()
     return this->relative_position.getNorme();
 }
 
+Angle Grabber::getAngle()
+{
+    return this->relative_position.getAngle();
+}
+
 void Grabber::release(GrabberContent type_to_release)
 {
     if (type_to_release == this->content || type_to_release == GrabberContent::ANY)
