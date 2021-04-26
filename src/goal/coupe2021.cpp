@@ -1,4 +1,5 @@
 #include "goal_strategy/coupe2021.h"
+#include "goal_strategy/grabber.h"
 #include "krabilib/pose.h"
 #include "krabilib/strategie/mancheAAir.h"
 #include "krabilib/strategie/mouillageNord.h"
@@ -79,7 +80,8 @@ Coupe2021::Coupe2021(const bool isYellow)
     Etape::get(waypoint_out_of_our_small_port)->addVoisins(waypoint_middle_ports);
 
     int waypoint_out_of_push_south_bouees = Etape::makeEtape(positionC(1.020, -0.3));
-    Etape::get(waypoint_out_of_push_south_bouees)->addVoisins(push_south_bouees, waypoint_south, out_of_second_air);
+    Etape::get(waypoint_out_of_push_south_bouees)
+      ->addVoisins(push_south_bouees, waypoint_south, out_of_second_air);
 
     int our_small_port = Etape::makeEtape(new Port(positionC(0.3, -0.750)));
     Etape::get(our_small_port)->addVoisins(waypoint_out_of_our_small_port);

@@ -1,10 +1,10 @@
 #pragma once
 
 #include <math.h>
+#include <memory>
 #include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <memory>
 
 #include <ros/ros.h>
 #include <std_msgs/Bool.h>
@@ -14,6 +14,7 @@
 #include <tf2_ros/transform_listener.h>
 
 #include "coupe2021.h"
+#include "goal_strategy/grabber.h"
 #include "krabi_msgs/servos_cmd.h"
 #include "krabi_msgs/strat_movement.h"
 #include "krabilib/pose.h"
@@ -38,7 +39,7 @@ public:
     GoalStrat();
     int loop();
     enum class State
-    {   
+    {
         INIT,
         WAIT_TIRETTE,
         RUN,
@@ -46,11 +47,9 @@ public:
     };
 
 private:
-
     void init();
     void stateRun();
     void stateExit();
-
 
     int chooseAngle();
     void chooseGear();
@@ -115,4 +114,6 @@ private:
     bool m_funny_action_counted;
     krabi_msgs::strat_movement m_strat_mvnt;
     bool m_tirette;
+
+    Grabber theThing;
 };

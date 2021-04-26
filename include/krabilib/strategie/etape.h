@@ -35,6 +35,7 @@ public:
         PORT = 0x13,
         MOUILLAGE_NORD = 0x14,
         MOUILLAGE_SUD = 0x15,
+        BOUEE = 0x16,
 
         POINT_PASSAGE = 0x20,
 

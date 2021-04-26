@@ -149,7 +149,13 @@ bool GoalStrat::isArrivedAtGoal()
                      << m_strat_graph->getEtapeEnCours()->getPosition().getY() << std::endl
                      << "Distance to objective: " << m_dist_to_goal);
 
-    if (m_dist_to_goal < REACH_DIST)
+    float l_reach_dist = REACH_DIST;
+    if (m_strat_graph->getEtapeEnCours()->getAction()->getType() == Etape::EtapeType::BOUEE)
+    {
+        l_reach_dist = theThing.getReach();
+    }
+
+    if (m_dist_to_goal < l_reach_dist)
     {
         return true;
     }
@@ -315,6 +321,7 @@ GoalStrat::GoalStrat()
     m_tirette_sub = m_nh.subscribe("tirette", 5, &GoalStrat::updateTirette, this);
     m_state = State::INIT;
     m_tirette = false;
+    theThing = Grabber(Position(Eigen::Vector2d(0.1, 0.08)));
 }
 
 /**
@@ -574,6 +581,13 @@ void GoalStrat::stateRun()
             moveArm(UP);
             usleep(1.5e6);
             ROS_INFO_STREAM("Phare Done" << std::endl);
+            break;
+        case Etape::EtapeType::BOUEE:
+            stopLinear();
+            ROS_INFO_STREAM("Orienting grabber" << std::endl);
+            ROS_WARN_STREAM_COND(alignWithAngleWithTimeout(Angle(90.f)), //@TODO compute angle
+                                 "Timeout while orienting");
+            theThing.grab(GrabberContent::ANY);
             break;
         default:
             ROS_INFO_STREAM("No special action here\n");
