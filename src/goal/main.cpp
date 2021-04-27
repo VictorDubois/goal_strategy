@@ -150,7 +150,7 @@ bool GoalStrat::isArrivedAtGoal()
                      << "Distance to objective: " << m_dist_to_goal);
 
     float l_reach_dist = REACH_DIST;
-    if (m_strat_graph->getEtapeEnCours()->getAction()->getType() == Etape::EtapeType::BOUEE)
+    if (m_strat_graph->getEtapeEnCours()->getEtapeType() == Etape::EtapeType::BOUEE)
     {
         l_reach_dist = theThing.getReach();
     }
@@ -591,6 +591,7 @@ void GoalStrat::stateRun()
                       + theThing.getAngle())), //@TODO check angle computation
               "Timeout while orienting");
             theThing.grab(GrabberContent::ANY);
+            ROS_INFO_STREAM("Bouee grabbed" << std::endl);
             break;
         default:
             ROS_INFO_STREAM("No special action here\n");

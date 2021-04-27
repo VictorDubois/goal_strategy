@@ -44,7 +44,7 @@ Coupe2021::Coupe2021(const bool isYellow)
     int out_of_main_port = Etape::makeEtape(positionC(0.8, 0));
 
     Etape::get(main_port)->addVoisins(out_of_main_port);
-    Etape::get(main_port)->addVoisins(bouee_test);
+    Etape::get(out_of_main_port)->addVoisins(bouee_test);
     Etape::get(lighthouse)->addVoisins(out_of_lighthouse);
     Etape::get(out_of_main_port)->addVoisins(out_of_lighthouse);
 
