@@ -34,7 +34,7 @@ Bouee::~Bouee()
 
 Etape::EtapeType Bouee::getType()
 {
-    return Etape::PHARE;
+    return Etape::BOUEE;
 }
 
 int Bouee::update()

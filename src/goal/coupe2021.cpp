@@ -37,12 +37,14 @@ Coupe2021::Coupe2021(const bool isYellow)
     int main_port = Etape::makeEtape(positionC(1.30, 0),
                                      Etape::DEPART); // départ au fond de la zone de départ
 
+    int bouee_test = Etape::makeEtape(new Bouee(positionC(0.0, 0.8), GrabberContent::RED_CUP));
     int lighthouse = Etape::makeEtape(new Phare(positionC(1.30, 0.8)));
     int out_of_lighthouse = Etape::makeEtape(positionC(1.30, 0.7));
 
     int out_of_main_port = Etape::makeEtape(positionC(0.8, 0));
 
     Etape::get(main_port)->addVoisins(out_of_main_port);
+    Etape::get(main_port)->addVoisins(bouee_test);
     Etape::get(lighthouse)->addVoisins(out_of_lighthouse);
     Etape::get(out_of_main_port)->addVoisins(out_of_lighthouse);
 
@@ -146,6 +148,11 @@ void etape_type_to_marker(visualization_msgs::Marker& m, const Etape::EtapeType&
         color.g = 255;
         color.b = 255;
         break;
+    case Etape::EtapeType::BOUEE:
+        color.r = 255;
+        color.g = 55;
+        color.b = 255;
+        break;
     case Etape::EtapeType::MOUILLAGE_NORD:
         color.r = 0;
         color.g = 255;
@@ -226,6 +233,9 @@ int Coupe2021::getScoreEtape(int i)
         break;
     case Etape::PHARE:
         l_score = 200;
+        break;
+    case Etape::BOUEE:
+        l_score = 2000;
         break;
     case Etape::MANCHE_A_AIR:
         l_score = 100;
