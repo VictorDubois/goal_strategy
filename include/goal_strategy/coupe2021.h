@@ -31,4 +31,6 @@ private:
     int m_south_id;
     int m_north_id;
     uint32_t m_seq;
+
+    Position positionCAbsolute(double x_yellow_from_top_left, double y_yellow_from_top_left);
 };
