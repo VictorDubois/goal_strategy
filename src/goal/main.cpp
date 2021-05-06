@@ -321,7 +321,7 @@ GoalStrat::GoalStrat()
     m_tirette_sub = m_nh.subscribe("tirette", 5, &GoalStrat::updateTirette, this);
     m_state = State::INIT;
     m_tirette = false;
-    theThing = Grabber(Position(Eigen::Vector2d(0.1, 0.08)));
+    theThing = Grabber(Position(Eigen::Vector2d(0.0, -0.5)));
 }
 
 /**
@@ -588,7 +588,7 @@ void GoalStrat::stateRun()
             ROS_WARN_STREAM_COND(
               alignWithAngleWithTimeout(
                 Angle((m_goal_pose.getPosition() - m_current_pose.getPosition()).getAngle()
-                      + theThing.getAngle())), //@TODO check angle computation
+                      - theThing.getAngle())),
               "Timeout while orienting");
             theThing.grab(GrabberContent::ANY);
             ROS_INFO_STREAM("Bouee grabbed" << std::endl);
