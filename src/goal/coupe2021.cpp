@@ -215,6 +215,7 @@ void Coupe2021::debugEtapes(visualization_msgs::MarkerArray& ma)
     {
         if (etape)
         {
+            // Display etape
             visualization_msgs::Marker m;
             m.header.frame_id = "/map";
             m.header.seq = m_seq++;
@@ -226,6 +227,40 @@ void Coupe2021::debugEtapes(visualization_msgs::MarkerArray& ma)
             m.lifetime = ros::Duration(0); // Does not disapear
             m.frame_locked = true;
             ma.markers.push_back(m);
+
+            // Display lines
+            int nb_children = etape->getNbChildren();
+
+            for (int child_id = 0; child_id < nb_children; child_id++)
+            {
+                // Are we going here?
+                Etape* child = etape->getChild(child_id);
+                Position l_segment = child->getPosition() - etape->getPosition();
+                Position mid_way = Position(
+                  Distance((child->getPosition().getX() + etape->getPosition().getX()) / 2),
+                  Distance((child->getPosition().getY() + etape->getPosition().getY()) / 2));
+                Angle l_direction = l_segment.getAngle();
+                double l_distance = l_segment.getNorme();
+
+                visualization_msgs::Marker line;
+                line.type = visualization_msgs::Marker::CUBE;
+                line.pose = Pose(mid_way, l_direction);
+                line.scale.x = l_distance;
+                line.scale.y = 0.01;
+                line.scale.z = 0.01;
+                line.color.r = 255;
+                line.color.g = 0;
+                line.color.b = 0;
+                line.color.a = 0.5;
+                line.lifetime = ros::Duration(0); // Does not disapear
+                line.frame_locked = true;
+                line.action = visualization_msgs::Marker::MODIFY;
+                line.ns = "debug_etapes";
+                line.header.frame_id = "/map";
+                line.header.seq = m_seq++;
+                line.id = i++;
+                ma.markers.push_back(line);
+            }
         }
     }
 }
