@@ -32,7 +32,7 @@ catkin_package(
 include_directories(include ${catkin_INCLUDE_DIRS})
 include_directories(SYSTEM ${EIGEN3_INCLUDE_DIR})
 
-add_executable(${PROJECT_NAME}_node src/goal/main.cpp src/goal/coupe2021.cpp src/goal/grabber.cpp)
+add_executable(${PROJECT_NAME}_node src/goal/main.cpp src/goal/coupe2021.cpp src/goal/grabber.cpp src/goal/servomotor.cpp src/goal/actuators.cpp src/goal/pump.cpp)
 
 file(GLOB_RECURSE krabilib_SRC "src/krabilib/*.cpp")
 

@@ -14,6 +14,7 @@
 #include <tf2_ros/transform_listener.h>
 
 #include "coupe2021.h"
+#include "goal_strategy/actuators.h"
 #include "goal_strategy/grabber.h"
 #include "krabi_msgs/servos_cmd.h"
 #include "krabi_msgs/strat_movement.h"
@@ -114,6 +115,7 @@ private:
     bool m_funny_action_counted;
     krabi_msgs::strat_movement m_strat_mvnt;
     bool m_tirette;
+    Actuators m_actuators;
 
     Grabber theThing;
 };

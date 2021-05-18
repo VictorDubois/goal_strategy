@@ -19,9 +19,7 @@ class Coupe2021 : public StrategieV3
 {
 public:
     Coupe2021(bool isYellow);
-
     void setGoodMouillage(Etape::EtapeType good_mouillage);
-
     void debugEtapes(visualization_msgs::MarkerArray& ma);
 
 private:

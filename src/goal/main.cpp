@@ -321,7 +321,22 @@ GoalStrat::GoalStrat()
     m_tirette_sub = m_nh.subscribe("tirette", 5, &GoalStrat::updateTirette, this);
     m_state = State::INIT;
     m_tirette = false;
-    theThing = Grabber(Position(Eigen::Vector2d(0.0, -0.5)));
+    std::string actuators_name = "actuators";
+    auto l_servo_balloon = std::make_shared<Servomotor>(10, 120);
+    auto l_pump_balloon = std::make_shared<Pump>(false);
+    auto l_servo_vacuum_left = std::make_shared<Servomotor>(10, 120);
+    auto l_servo_vacuum_middle = std::make_shared<Servomotor>(10, 120);
+    auto l_servo_vacuum_right = std::make_shared<Servomotor>(10, 120);
+
+    theThing = Grabber(Position(Eigen::Vector2d(0.0, -0.5)), l_servo_balloon, l_pump_balloon);
+    m_actuators = Actuators(&m_nh,
+                            actuators_name,
+                            l_servo_balloon,
+                            l_pump_balloon,
+                            l_servo_vacuum_left,
+                            l_servo_vacuum_middle,
+                            l_servo_vacuum_right);
+    m_actuators.start();
 }
 
 /**
@@ -592,6 +607,10 @@ void GoalStrat::stateRun()
               "Timeout while orienting");
             theThing.grab(GrabberContent::ANY);
             ROS_INFO_STREAM("Bouee grabbed" << std::endl);
+            break;
+        case Etape::EtapeType::PORT:
+            theThing.release(GrabberContent::ANY);
+            ROS_INFO_STREAM("Bouee released" << std::endl);
             break;
         default:
             ROS_INFO_STREAM("No special action here\n");
