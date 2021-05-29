@@ -288,7 +288,7 @@ int Coupe2021::getScoreEtape(int i)
         l_score = 200;
         break;
     case Etape::BOUEE:
-        l_score = 2000;
+        l_score = 0;
         break;
     case Etape::MANCHE_A_AIR:
         l_score = 100;
