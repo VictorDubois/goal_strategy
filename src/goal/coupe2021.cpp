@@ -169,7 +169,6 @@ void etape_type_to_marker(visualization_msgs::Marker& m, const Etape::EtapeType&
         color.r = 255;
         color.g = 55;
         color.b = 255;
-        m.scale.z = 2;
         break;
     case Etape::EtapeType::MOUILLAGE_NORD:
         color.r = 0;
