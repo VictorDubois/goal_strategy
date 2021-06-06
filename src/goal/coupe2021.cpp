@@ -74,8 +74,8 @@ Coupe2021::Coupe2021(const bool isYellow)
     Etape::get(first_air)->addVoisins(out_of_first_air);
     Etape::get(second_air)->addVoisins(out_of_second_air);
 
-    int m_south_id = Etape::makeEtape(new MouillageSud(positionC(1.350, -0.250)));
-    int m_north_id = Etape::makeEtape(new MouillageNord(positionC(1.350, 0.680)));
+    m_south_id = Etape::makeEtape(new MouillageSud(positionC(1.350, -0.250)));
+    m_north_id = Etape::makeEtape(new MouillageNord(positionC(1.350, 0.680)));
     m_numero_etape_garage = m_south_id;
 
     Etape::get(m_north_id)->addVoisins(out_of_lighthouse, lighthouse);
@@ -94,7 +94,7 @@ Coupe2021::Coupe2021(const bool isYellow)
     Etape::get(out_of_main_port)->addVoisins(waypoint_south, waypoint_out_of_enemy_small_port);
 
     int waypoint_middle_ports = Etape::makeEtape(positionC(0, -0.4));
-    int waypoint_out_of_our_small_port = Etape::makeEtape(positionC(0.3, -0.4));
+    int waypoint_out_of_our_small_port = Etape::makeEtape(positionCAbsolute(1.8, 1.5));
     Etape::get(waypoint_out_of_enemy_small_port)->addVoisins(waypoint_middle_ports, waypoint_south);
     Etape::get(waypoint_out_of_our_small_port)->addVoisins(waypoint_middle_ports);
 
@@ -102,8 +102,11 @@ Coupe2021::Coupe2021(const bool isYellow)
     Etape::get(waypoint_out_of_push_south_bouees)
       ->addVoisins(push_south_bouees, waypoint_south, out_of_second_air);
 
-    int our_small_port = Etape::makeEtape(new Port(positionC(0.3, -0.750)));
+    int our_small_port = Etape::makeEtape(new Port(positionCAbsolute(1.8, 1.75)));
     Etape::get(our_small_port)->addVoisins(waypoint_out_of_our_small_port);
+
+    m_numero_etape_garage = m_south_id; // Must be set!
+
 #ifdef QTGUI
     qDebug() << Etape::getTotalEtapes();
 #endif
@@ -223,6 +226,7 @@ void Coupe2021::debugEtapes(visualization_msgs::MarkerArray& ma)
             m.action = visualization_msgs::Marker::MODIFY;
             m.pose = Pose(etape->getPosition(), Angle(0));
             etape_type_to_marker(m, etape->getEtapeType());
+
             m.lifetime = ros::Duration(0); // Does not disapear
             m.frame_locked = true;
             ma.markers.push_back(m);
