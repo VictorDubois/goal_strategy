@@ -297,6 +297,13 @@ void GoalStrat::goToNextMission()
     m_action_aborted = false;
 
     int strat_graph_status = m_strat_graph->update();
+
+    ROS_INFO_STREAM("New intermediate: " << m_strat_graph->getEtapeEnCours()->getNumero()
+                                         << ", which is a "
+                                         << m_strat_graph->getEtapeEnCours()->getEtapeType());
+    ROS_INFO_STREAM("New objective: " << m_strat_graph->getGoal()->getNumero() << ", which is a "
+                                      << m_strat_graph->getGoal()->getEtapeType());
+
     if (strat_graph_status == -1)
     {
         ROS_DEBUG_STREAM("Graph status is -1: we're done");
@@ -358,6 +365,7 @@ void GoalStrat::updateTirette(std_msgs::Bool tirette)
 void GoalStrat::updateRemainingTime(std_msgs::Duration a_remaining_time_match)
 {
     m_remainig_time = a_remaining_time_match.data;
+    m_strat_graph->setRemainingTime(m_remainig_time.toSec() * 1000);
     checkFunnyAction();
     checkStopMatch();
 }
@@ -522,7 +530,16 @@ void GoalStrat::stateRun()
     m_strat_mvnt.reverse_gear = 2; // don't care
 
     bool girouette_south;
-    m_nh.param<bool>("/isWeathercockSouth", girouette_south, false);
+    m_nh.param<bool>("isWeathercockSouth", girouette_south, false);
+    if (girouette_south)
+    {
+        ROS_INFO_STREAM("Weathercock is South");
+    }
+    else
+    {
+        ROS_INFO_STREAM("Weathercock is North");
+    }
+
     auto good_mouillage = girouette_south ? Etape::MOUILLAGE_SUD : Etape::MOUILLAGE_NORD;
     m_strat_graph->setGoodMouillage(good_mouillage);
 

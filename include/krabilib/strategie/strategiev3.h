@@ -50,7 +50,7 @@ public:
      */
     Position positionC(Distance x_yellow, Distance y_yellow);
 
-        /**
+    /**
      * @brief Compute the absolute position based on if we are blue or yellow
      *
      * @param x_yellow x position if we were yellow
@@ -62,6 +62,13 @@ public:
     bool isYellow();
 
     double getRemainingTime();
+
+    Etape* getGoal()
+    {
+        return m_tableau_etapes_total[m_goal];
+    }
+
+    void setRemainingTime(int64_t time_in_ms);
 
 #ifdef QTGUI
     virtual void paint(QPainter* p);
@@ -107,7 +114,6 @@ protected:
 
     void updateStock();
     virtual int getScoreEtape(int i) = 0;
-    void setRemainingTime(int64_t time_in_ms);
 
 #ifdef QTGUI
     QColor colorLiaisonsEtapes;
