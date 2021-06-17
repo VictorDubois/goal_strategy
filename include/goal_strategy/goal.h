@@ -62,6 +62,8 @@ private:
     void hissezLesPavillons();
     void moveArm(enum PositionServo position);
     void setMaxSpeedAtArrival();
+    void stopAngular();
+    void startAngular();
     void stopActuators();
     void stopLinear();
     void startLinear();
@@ -118,7 +120,7 @@ private:
     krabi_msgs::strat_movement m_strat_mvnt;
     bool m_tirette;
     Actuators m_actuators;
-    bool goal_init_done;
+    bool m_goal_init_done;
 
     Grabber theThing;
 

@@ -68,13 +68,31 @@ void GoalStrat::hissezLesPavillons()
 }
 
 /**
+ * @brief Send cmd to disable angular motion
+ *
+ */
+void GoalStrat::stopAngular()
+{
+    m_strat_mvnt.max_speed.angular.z = 0;
+    m_strat_mvnt.orient = 2;
+}
+
+/**
+ * @brief Send cmd to enable angular motion
+ *
+ */
+void GoalStrat::startAngular()
+{
+    m_strat_mvnt.max_speed.angular.z = 1;
+    m_strat_mvnt.orient = 0;
+}
+
+/**
  * @brief Send cmd to disable linear motion
  *
  */
 void GoalStrat::stopLinear()
 {
-    std_msgs::Bool linear;
-    linear.data = true;
     m_strat_mvnt.max_speed.linear.x = 0;
     m_strat_mvnt.orient = 1;
 }
@@ -85,8 +103,6 @@ void GoalStrat::stopLinear()
  */
 void GoalStrat::startLinear()
 {
-    std_msgs::Bool linear;
-    linear.data = false;
     m_strat_mvnt.max_speed.linear.x = 1;
     m_strat_mvnt.orient = 0;
 }
@@ -318,7 +334,7 @@ void GoalStrat::goToNextMission()
 GoalStrat::GoalStrat()
   : m_tf_listener(m_tf_buffer)
 {
-    goal_init_done = false;
+    m_goal_init_done = false;
     m_remainig_time = ros::Duration(100, 0);
     m_strat_mvnt.max_speed_at_arrival = 0.1f;
     m_strat_mvnt.orient = 0;
@@ -362,7 +378,7 @@ void GoalStrat::publishAll()
         checkFunnyAction();
         checkStopMatch();
         publishScore();
-        if (goal_init_done)
+        if (m_goal_init_done)
         {
             publishGoal();
             publishDebugInfos();
@@ -607,6 +623,8 @@ void GoalStrat::stateRun()
             break;
         case Etape::EtapeType::MANCHE_A_AIR:
             stopLinear();
+            stopAngular();
+            ROS_INFO_STREAM("Start Manche A Air" << std::endl);
 
             if (!m_is_blue)
             {
@@ -670,7 +688,7 @@ void GoalStrat::stateRun()
         goToNextMission();
     }
     publishGoal();
-    goal_init_done = true;
+    m_goal_init_done = true;
 }
 
 /**
