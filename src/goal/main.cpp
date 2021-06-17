@@ -76,7 +76,7 @@ void GoalStrat::stopLinear()
     std_msgs::Bool linear;
     linear.data = true;
     m_strat_mvnt.max_speed.linear.x = 0;
-    m_strat_mvnt.orient = true;
+    m_strat_mvnt.orient = 1;
 }
 
 /**
@@ -88,7 +88,7 @@ void GoalStrat::startLinear()
     std_msgs::Bool linear;
     linear.data = false;
     m_strat_mvnt.max_speed.linear.x = 1;
-    m_strat_mvnt.orient = false;
+    m_strat_mvnt.orient = 0;
 }
 
 /**
@@ -128,7 +128,7 @@ void GoalStrat::alignWithAngle(Angle a_angle)
 
     m_strat_mvnt.goal_pose = l_posestamped;
     m_strat_mvnt.header.frame_id = "map";
-    m_strat_mvnt.orient = true;
+    m_strat_mvnt.orient = 1;
     m_strat_movement_pub.publish(m_strat_mvnt);
 }
 
@@ -203,7 +203,7 @@ void GoalStrat::publishGoal()
 
     m_strat_mvnt.goal_pose = l_posestamped;
     m_strat_mvnt.header.frame_id = "map";
-    m_strat_mvnt.orient = false;
+    m_strat_mvnt.orient = 0;
 
     m_strat_movement_pub.publish(m_strat_mvnt);
 }
@@ -346,6 +346,19 @@ GoalStrat::GoalStrat()
     m_actuators.start();
 }
 
+void GoalStrat::publishAll()
+{
+    while (true)
+    {
+        usleep(100000);
+        checkFunnyAction();
+        checkStopMatch();
+        publishScore();
+        publishGoal();
+        publishDebugInfos();
+    }
+}
+
 /**
  * @brief Update the tirette state
  *
@@ -419,7 +432,7 @@ bool GoalStrat::alignWithAngleWithTimeout(Angle angle)
     ros::Rate r(100); // Check at 100Hz the new pose msg
     while (!isAlignedWithAngle(angle) && ros::Time::now().toSec() < orientTimeoutDeadline.toSec())
     {
-        m_strat_mvnt.orient = true;
+        m_strat_mvnt.orient = 1;
         ros::spinOnce();
         r.sleep();
     }
@@ -524,7 +537,7 @@ void GoalStrat::stateRun()
     updateCurrentPose();
 
     m_strat_mvnt.max_speed_at_arrival = 0.1f;
-    m_strat_mvnt.orient = false;
+    m_strat_mvnt.orient = 0;
     m_strat_mvnt.max_speed.linear.x = 1.f;
     m_strat_mvnt.max_speed.angular.z = 1.f;
     m_strat_mvnt.reverse_gear = 2; // don't care
@@ -706,6 +719,8 @@ void GoalStrat::init()
     m_strat_graph->update();
     m_previous_etape_type = m_strat_graph->getEtapeEnCours()->getEtapeType();
     m_state = State::WAIT_TIRETTE;
+
+    m_running = std::thread(&GoalStrat::publishAll, this);
 }
 
 /**

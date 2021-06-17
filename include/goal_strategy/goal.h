@@ -5,6 +5,7 @@
 #include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <thread>
 
 #include <ros/ros.h>
 #include <std_msgs/Bool.h>
@@ -78,6 +79,7 @@ private:
     void printCurrentAction();
     void publishDebugInfos();
     void publishGoal();
+    void publishAll();
 
     State m_state = State::RUN;
     Distance m_dist_to_goal;
@@ -118,4 +120,6 @@ private:
     Actuators m_actuators;
 
     Grabber theThing;
+
+    std::thread m_running;
 };
