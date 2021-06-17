@@ -318,6 +318,14 @@ void GoalStrat::goToNextMission()
 GoalStrat::GoalStrat()
   : m_tf_listener(m_tf_buffer)
 {
+    goal_init_done = false;
+    m_remainig_time = ros::Duration(100, 0);
+    m_strat_mvnt.max_speed_at_arrival = 0.1f;
+    m_strat_mvnt.orient = 0;
+    m_strat_mvnt.max_speed.linear.x = 1.f;
+    m_strat_mvnt.max_speed.angular.z = 1.f;
+    m_strat_mvnt.reverse_gear = 2; // don't care
+
     m_goal_pose_pub = m_nh.advertise<geometry_msgs::PoseStamped>("goal_pose", 1000);
     m_arm_servo_pub = m_nh.advertise<krabi_msgs::servos_cmd>("cmd_servos", 1000);
     m_debug_ma_etapes_pub = m_nh.advertise<visualization_msgs::MarkerArray>("debug_etapes", 5);
@@ -354,8 +362,11 @@ void GoalStrat::publishAll()
         checkFunnyAction();
         checkStopMatch();
         publishScore();
-        publishGoal();
-        publishDebugInfos();
+        if (goal_init_done)
+        {
+            publishGoal();
+            publishDebugInfos();
+        }
     }
 }
 
@@ -659,6 +670,7 @@ void GoalStrat::stateRun()
         goToNextMission();
     }
     publishGoal();
+    goal_init_done = true;
 }
 
 /**

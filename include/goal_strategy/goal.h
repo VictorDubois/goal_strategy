@@ -118,6 +118,7 @@ private:
     krabi_msgs::strat_movement m_strat_mvnt;
     bool m_tirette;
     Actuators m_actuators;
+    bool goal_init_done;
 
     Grabber theThing;
 
