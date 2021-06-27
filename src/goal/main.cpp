@@ -579,14 +579,6 @@ void GoalStrat::stateRun()
 
     bool girouette_south;
     m_nh.param<bool>("isWeathercockSouth", girouette_south, false);
-    if (girouette_south)
-    {
-        ROS_INFO_STREAM("Weathercock is South");
-    }
-    else
-    {
-        ROS_INFO_STREAM("Weathercock is North");
-    }
 
     auto good_mouillage = girouette_south ? Etape::MOUILLAGE_SUD : Etape::MOUILLAGE_NORD;
     m_strat_graph->setGoodMouillage(good_mouillage);
