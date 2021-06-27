@@ -189,8 +189,15 @@ bool GoalStrat::isAlignedWithAngle(Angle angle)
     // Output a goal relative to the robot
     ROS_DEBUG_STREAM(m_current_pose.getPosition().getX() << std::endl);
 
+    // Is the tool on the back?
+    Angle toolAngle = m_current_pose.getAngle();
+    if (m_strat_mvnt.reverse_gear)
+    {
+        toolAngle += M_PI;
+    }
+
     // Compute angular diff
-    Angle angular_error = AngleTools::diffAngle(angle, m_current_pose.getAngle());
+    Angle angular_error = AngleTools::diffAngle(angle, toolAngle);
     ROS_DEBUG_STREAM("isAlignedWithAngle angle: "
                      << angle << " ? current: " << m_current_pose.getAngle()
                      << "angular_error = " << AngleTools::rad2deg(angular_error) << std::endl);
@@ -375,6 +382,7 @@ void GoalStrat::publishAll()
     while (true)
     {
         usleep(100000);
+        updateCurrentPose();
         checkFunnyAction();
         checkStopMatch();
         publishScore();
@@ -455,15 +463,15 @@ bool GoalStrat::alignWithAngleWithTimeout(Angle angle)
 {
     ros::Time orientTimeoutDeadline = ros::Time::now() + ros::Duration(m_timeout_orient);
 
-    alignWithAngle(angle);
     ros::Rate r(100); // Check at 100Hz the new pose msg
     while (!isAlignedWithAngle(angle) && ros::Time::now().toSec() < orientTimeoutDeadline.toSec())
     {
+        alignWithAngle(angle);
         m_strat_mvnt.orient = 1;
         ros::spinOnce();
         r.sleep();
     }
-    return ros::Time::now().toSec() > orientTimeoutDeadline.toSec();
+    return ros::Time::now().toSec() >= orientTimeoutDeadline.toSec();
 }
 
 /**
@@ -624,6 +632,7 @@ void GoalStrat::stateRun()
         case Etape::EtapeType::MANCHE_A_AIR:
             stopLinear();
             stopAngular();
+
             ROS_INFO_STREAM("Start Manche A Air" << std::endl);
 
             if (!m_is_blue)
@@ -640,12 +649,14 @@ void GoalStrat::stateRun()
             break;
         case Etape::EtapeType::PHARE:
             stopLinear();
+
             ROS_INFO_STREAM("In front of Phare, orienting" << std::endl);
             ROS_WARN_STREAM_COND(
               alignWithAngleWithTimeout(m_is_blue ? Angle(M_PI / 2) : Angle(-M_PI / 2)),
               "Timeout while orienting");
 
             ROS_INFO_STREAM("MOVING SERVO DOWN" << std::endl);
+            stopAngular();
             moveArm(DOWN);
             usleep(1e6);
             moveArm(DOWN);
