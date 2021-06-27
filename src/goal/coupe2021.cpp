@@ -42,25 +42,25 @@ Coupe2021::Coupe2021(const bool isYellow)
     int main_port = Etape::makeEtape(positionC(1.30, 0),
                                      Etape::DEPART); // départ au fond de la zone de départ
 
-    int bouee_our_port_1
+    /*int bouee_our_port_1
       = Etape::makeEtape(new Bouee(positionCAbsolute(0.3, 0.4), GrabberContent::RED_CUP));
     int bouee_our_port_2
       = Etape::makeEtape(new Bouee(positionCAbsolute(0.445, 0.515), GrabberContent::GREEN_CUP));
     int bouee_our_port_3
       = Etape::makeEtape(new Bouee(positionCAbsolute(0.445, 1.085), GrabberContent::RED_CUP));
     int bouee_our_port_4
-      = Etape::makeEtape(new Bouee(positionCAbsolute(0.3, 1.2), GrabberContent::GREEN_CUP));
+      = Etape::makeEtape(new Bouee(positionCAbsolute(0.3, 1.2), GrabberContent::GREEN_CUP));*/
 
     int lighthouse = Etape::makeEtape(new Phare(positionC(1.30, 0.8)));
-    int out_of_lighthouse = Etape::makeEtape(positionC(1.30, 0.7));
+    int out_of_lighthouse = Etape::makeEtape(positionCAbsolute(0.6, 0.3));
 
     int out_of_main_port = Etape::makeEtape(positionC(0.8, 0));
 
     Etape::get(main_port)->addVoisins(out_of_main_port);
-    Etape::get(out_of_main_port)->addVoisins(bouee_our_port_1);
+    /*Etape::get(out_of_main_port)->addVoisins(bouee_our_port_1);
     Etape::get(bouee_our_port_2)->addVoisins(bouee_our_port_1);
     Etape::get(out_of_main_port)->addVoisins(bouee_our_port_3);
-    Etape::get(bouee_our_port_4)->addVoisins(bouee_our_port_3);
+    Etape::get(bouee_our_port_4)->addVoisins(bouee_our_port_3);*/
 
     Etape::get(lighthouse)->addVoisins(out_of_lighthouse);
     Etape::get(out_of_main_port)->addVoisins(out_of_lighthouse);
