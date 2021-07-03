@@ -11,33 +11,33 @@ void GoalStrat::moveArm(enum PositionServo position)
     switch (position)
     {
     case FOLDED:
-        m_servos_cmd.brak_speed = 128;
-        m_servos_cmd.brak_angle = 10;
+        m_servos_cmd.s3_speed = 128;
+        m_servos_cmd.s3_angle = 170;
         ROS_DEBUG_STREAM("Actually fold servo" << std::endl);
         break;
     case IN:
-        m_servos_cmd.brak_speed = 128;
-        m_servos_cmd.brak_angle = 23;
+        m_servos_cmd.s3_speed = 128;
+        m_servos_cmd.s3_angle = 155;
         ROS_DEBUG_STREAM("Actually move servo IN" << std::endl);
         break;
     case OUT:
-        m_servos_cmd.brak_speed = 40;
-        m_servos_cmd.brak_angle = 156;
+        m_servos_cmd.s3_speed = 40;
+        m_servos_cmd.s3_angle = 23;
         ROS_DEBUG_STREAM("Actually move servo OUT" << std::endl);
         break;
     case UP:
-        m_servos_cmd.s3_speed = 128;
-        m_servos_cmd.s3_angle = 40;
+        m_servos_cmd.brak_speed = 128;
+        m_servos_cmd.brak_angle = 148;
         ROS_DEBUG_STREAM("Actually move servo UP" << std::endl);
         break;
     case RELEASE:
-        m_servos_cmd.brak_speed = 128;
-        m_servos_cmd.brak_angle = 128;
+        m_servos_cmd.s3_angle = 128;
+        m_servos_cmd.s3_angle = 128;
         ROS_DEBUG_STREAM("Actually release servo" << std::endl);
         break;
     case DOWN:
-        m_servos_cmd.s3_speed = 128;
-        m_servos_cmd.s3_angle = 120;
+        m_servos_cmd.brak_speed = 128;
+        m_servos_cmd.brak_angle = 42;
         ROS_DEBUG_STREAM("Actually move servo DOWN" << std::endl);
         break;
     default:
@@ -55,7 +55,7 @@ void GoalStrat::hissezLesPavillons()
 {
     ROS_INFO_STREAM("Hissez les pavillons!" << std::endl);
     m_servos_cmd.pavillon_speed = 128;
-    m_servos_cmd.pavillon_angle = 40;
+    m_servos_cmd.pavillon_angle = 155;
     m_servos_cmd.enable = true;
 
     if (!m_funny_action_counted)
@@ -717,9 +717,9 @@ void GoalStrat::init()
     m_score_match = 2; // phare posé
     m_servos_cmd.enable = true;
     m_servos_cmd.brak_speed = 10;
-    m_servos_cmd.brak_angle = 180;
+    m_servos_cmd.brak_angle = 148;
     m_servos_cmd.pavillon_speed = 10;
-    m_servos_cmd.pavillon_angle = 255;
+    m_servos_cmd.pavillon_angle = 0;
 
     m_dist_to_goal = 100.;
     m_state_msg_displayed = false;
