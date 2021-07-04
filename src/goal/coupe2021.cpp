@@ -301,21 +301,21 @@ int Coupe2021::getScoreEtape(int i)
         l_score = 0;
         break;
     case Etape::MANCHE_A_AIR:
-        l_score = 100;
+        l_score = 50;
         break;
     case Etape::PORT:
-        l_score = 10;
+        l_score = 1;
         break;
     case Etape::MOUILLAGE_NORD:
         l_score = 0;
-        if (m_good_mouillage == Etape::MOUILLAGE_NORD && getRemainingTime() < 15.f)
+        if (m_good_mouillage == Etape::MOUILLAGE_NORD && getRemainingTime() < 20.f)
         {
             l_score = 100;
         }
         break;
     case Etape::MOUILLAGE_SUD:
         l_score = 0;
-        if (m_good_mouillage == Etape::MOUILLAGE_SUD && getRemainingTime() < 15.f)
+        if (m_good_mouillage == Etape::MOUILLAGE_SUD && getRemainingTime() < 20.f)
         {
             l_score = 100;
         }
