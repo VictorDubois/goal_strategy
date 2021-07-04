@@ -481,14 +481,14 @@ bool GoalStrat::alignWithAngleWithTimeout(Angle angle)
 void GoalStrat::chooseGear()
 {
     std_msgs::Bool l_reverseGear;
-    if (m_strat_graph->getEtapeEnCours()->getEtapeType() == Etape::EtapeType::MANCHE_A_AIR
+    if (m_previous_etape_type == Etape::EtapeType::MANCHE_A_AIR
         || m_strat_graph->getEtapeEnCours()->getEtapeType() == Etape::EtapeType::PHARE
         || m_previous_etape_type == Etape::EtapeType::PORT)
     {
         l_reverseGear.data = true;
         m_strat_mvnt.reverse_gear = 1;
     }
-    else if (m_previous_etape_type == Etape::EtapeType::MANCHE_A_AIR
+    else if (m_strat_graph->getEtapeEnCours()->getEtapeType() == Etape::EtapeType::MANCHE_A_AIR
              || m_previous_etape_type == Etape::EtapeType::PHARE
              || m_strat_graph->getEtapeEnCours()->getEtapeType() == Etape::EtapeType::PORT)
     {
