@@ -68,6 +68,15 @@ void GoalStrat::hissezLesPavillons()
 }
 
 /**
+ * @brief Send cmd to clamp the robot to its position (used in 2021 for manches a air)
+ */
+void GoalStrat::clamp_mode()
+{
+    m_strat_mvnt.max_speed.angular.z = 0;
+    m_strat_mvnt.orient = 3;
+}
+
+/**
  * @brief Send cmd to disable angular motion
  *
  */
@@ -627,7 +636,7 @@ void GoalStrat::stateRun()
             ROS_INFO_STREAM("In front of Manche A Air, orienting" << std::endl);
             ROS_WARN_STREAM_COND(alignWithAngleWithTimeout(Angle(M_PI / 2)),
                                  "Timeout while orienting");
-            stopAngular();
+            clamp_mode();
 
             ROS_INFO_STREAM("Start Manche A Air" << std::endl);
 

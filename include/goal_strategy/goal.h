@@ -62,6 +62,7 @@ private:
     void hissezLesPavillons();
     void moveArm(enum PositionServo position);
     void setMaxSpeedAtArrival();
+    void clamp_mode();
     void stopAngular();
     void startAngular();
     void stopActuators();
