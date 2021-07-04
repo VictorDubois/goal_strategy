@@ -623,6 +623,10 @@ void GoalStrat::stateRun()
             break;
         case Etape::EtapeType::MANCHE_A_AIR:
             stopLinear();
+
+            ROS_INFO_STREAM("In front of Manche A Air, orienting" << std::endl);
+            ROS_WARN_STREAM_COND(alignWithAngleWithTimeout(Angle(M_PI / 2)),
+                                 "Timeout while orienting");
             stopAngular();
 
             ROS_INFO_STREAM("Start Manche A Air" << std::endl);
