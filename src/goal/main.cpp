@@ -634,7 +634,7 @@ void GoalStrat::stateRun()
             stopLinear();
 
             ROS_INFO_STREAM("In front of Manche A Air, orienting" << std::endl);
-            ROS_WARN_STREAM_COND(alignWithAngleWithTimeout(Angle(M_PI / 2)),
+            ROS_WARN_STREAM_COND(alignWithAngleWithTimeout(Angle(-M_PI / 2)),
                                  "Timeout while orienting");
             clamp_mode();
 
