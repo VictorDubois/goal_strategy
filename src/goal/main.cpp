@@ -643,9 +643,8 @@ void GoalStrat::stateRun()
             stopLinear();
 
             ROS_INFO_STREAM("In front of Phare, orienting" << std::endl);
-            ROS_WARN_STREAM_COND(
-              alignWithAngleWithTimeout(m_is_blue ? Angle(M_PI / 2) : Angle(-M_PI / 2)),
-              "Timeout while orienting");
+            ROS_WARN_STREAM_COND(alignWithAngleWithTimeout(Angle(-M_PI / 2)),
+                                 "Timeout while orienting");
 
             ROS_INFO_STREAM("MOVING SERVO DOWN" << std::endl);
             stopAngular();
