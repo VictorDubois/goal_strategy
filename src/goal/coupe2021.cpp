@@ -74,8 +74,8 @@ Coupe2021::Coupe2021(const bool isYellow)
     Etape::get(first_air)->addVoisins(out_of_first_air);
     Etape::get(second_air)->addVoisins(out_of_second_air);
 
-    m_south_id = Etape::makeEtape(new MouillageSud(positionC(1.350, -0.250)));
-    m_north_id = Etape::makeEtape(new MouillageNord(positionC(1.350, 0.680)));
+    m_south_id = Etape::makeEtape(new MouillageSud(positionC(1.250, -0.250)));
+    m_north_id = Etape::makeEtape(new MouillageNord(positionC(1.250, 0.680)));
     m_numero_etape_garage = m_south_id;
 
     Etape::get(m_north_id)->addVoisins(out_of_lighthouse, lighthouse);
@@ -308,14 +308,14 @@ int Coupe2021::getScoreEtape(int i)
         break;
     case Etape::MOUILLAGE_NORD:
         l_score = 0;
-        if (m_good_mouillage == Etape::MOUILLAGE_NORD && getRemainingTime() < 20.f)
+        if (m_good_mouillage == Etape::MOUILLAGE_NORD && getRemainingTime() < 25.f)
         {
             l_score = 100;
         }
         break;
     case Etape::MOUILLAGE_SUD:
         l_score = 0;
-        if (m_good_mouillage == Etape::MOUILLAGE_SUD && getRemainingTime() < 20.f)
+        if (m_good_mouillage == Etape::MOUILLAGE_SUD && getRemainingTime() < 25.f)
         {
             l_score = 100;
         }
