@@ -714,8 +714,7 @@ void GoalStrat::stateExit()
 {
     stopActuators();
     publishScore();
-    ROS_INFO_STREAM("Mission finished, turning off actuators and waiting for new mission");
-    m_state = State::INIT;
+    ROS_INFO_STREAM("Mission finished, turning off actuators");
 }
 
 /**
