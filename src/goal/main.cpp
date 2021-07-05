@@ -629,7 +629,7 @@ void GoalStrat::stateRun()
         {
         case Etape::MOUILLAGE_SUD:
         case Etape::MOUILLAGE_NORD:
-            m_score_match += 10;
+            m_score_match += 20;
             break;
         case Etape::EtapeType::MANCHE_A_AIR:
             stopLinear();
