@@ -44,7 +44,7 @@ void GoalStrat::moveArm(enum PositionServo position)
         break;
     }
     m_servos_cmd.enable = true;
-    m_arm_servo_pub.publish(m_servos_cmd);
+    // m_arm_servo_pub.publish(m_servos_cmd);
 }
 
 /**
@@ -395,6 +395,7 @@ void GoalStrat::publishAll()
         checkFunnyAction();
         checkStopMatch();
         publishScore();
+        m_arm_servo_pub.publish(m_servos_cmd);
         if (m_goal_init_done)
         {
             publishGoal();
@@ -727,10 +728,14 @@ void GoalStrat::init()
     m_first_manche_a_air_done = false;
     m_score_match = 2; // phare posé
     m_servos_cmd.enable = true;
-    m_servos_cmd.brak_speed = 10;
-    m_servos_cmd.brak_angle = 148;
+    /*m_servos_cmd.brak_speed = 10;
+    m_servos_cmd.brak_angle = 148;*/
     m_servos_cmd.pavillon_speed = 10;
     m_servos_cmd.pavillon_angle = 0;
+    /*m_servos_cmd.s3_speed = 10;
+    m_servos_cmd.s3_angle = 148;*/
+    moveArm(FOLDED);
+    moveArm(UP);
 
     m_dist_to_goal = 100.;
     m_state_msg_displayed = false;
