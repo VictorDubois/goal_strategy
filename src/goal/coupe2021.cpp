@@ -122,11 +122,12 @@ Coupe2021::Coupe2021(const bool isYellow)
  *
  * @param a_m_good_mouillage
  */
-void Coupe2021::setGoodMouillage(Etape::EtapeType a_m_good_mouillage)
+void Coupe2021::setGoodMouillage(Etape::EtapeType a_good_mouillage)
 {
-    m_good_mouillage = a_m_good_mouillage;
+    m_good_mouillage = a_good_mouillage;
     m_numero_etape_garage
-      = a_m_good_mouillage == Etape::EtapeType::MOUILLAGE_SUD ? m_south_id : m_north_id;
+      = a_good_mouillage == Etape::EtapeType::MOUILLAGE_SUD ? m_south_id : m_north_id;
+    ROS_WARN_STREAM("GOOD MOUILLAGE SET: " << m_good_mouillage << std::endl);
 }
 
 /**
@@ -283,6 +284,8 @@ void Coupe2021::debugEtapes(visualization_msgs::MarkerArray& ma)
  */
 int Coupe2021::getScoreEtape(int i)
 {
+    ROS_WARN_STREAM("getScoreEtape. Time: " << getRemainingTime() << ", GOOD MOUILLAGE = "
+                                            << m_good_mouillage << std::endl);
     int l_score = 0;
     switch (this->m_tableau_etapes_total[i]->getEtapeType())
     {
@@ -310,14 +313,14 @@ int Coupe2021::getScoreEtape(int i)
         l_score = 0;
         if (m_good_mouillage == Etape::MOUILLAGE_NORD && getRemainingTime() < 25.f)
         {
-            l_score = 100;
+            l_score = 200;
         }
         break;
     case Etape::MOUILLAGE_SUD:
         l_score = 0;
         if (m_good_mouillage == Etape::MOUILLAGE_SUD && getRemainingTime() < 25.f)
         {
-            l_score = 100;
+            l_score = 200;
         }
         break;
 

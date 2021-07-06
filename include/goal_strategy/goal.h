@@ -10,6 +10,7 @@
 #include <ros/ros.h>
 #include <std_msgs/Bool.h>
 #include <std_msgs/Duration.h>
+#include <std_msgs/Int32.h>
 
 #include <tf/transform_listener.h>
 #include <tf2_ros/transform_listener.h>
@@ -74,6 +75,7 @@ private:
     void updateCurrentPose();
     void updateRemainingTime(std_msgs::Duration remainingTime);
     void updateTirette(std_msgs::Bool tirette);
+    void updateWeathercockState(std_msgs::Int32 weathercock_state);
 
     bool isAlignedWithAngle(Angle angle);
     bool isArrivedAtGoal();
@@ -102,6 +104,7 @@ private:
 
     ros::Subscriber m_remaining_time_match_sub;
     ros::Subscriber m_tirette_sub;
+    ros::Subscriber m_weathercock_state_sub;
 
     tf2_ros::Buffer m_tf_buffer;
     tf2_ros::TransformListener m_tf_listener;

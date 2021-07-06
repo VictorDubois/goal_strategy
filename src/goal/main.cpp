@@ -366,6 +366,8 @@ GoalStrat::GoalStrat()
     m_remaining_time_match_sub
       = m_nh.subscribe("/remaining_time", 5, &GoalStrat::updateRemainingTime, this);
     m_tirette_sub = m_nh.subscribe("tirette", 5, &GoalStrat::updateTirette, this);
+    m_weathercock_state_sub
+      = m_nh.subscribe("weathercock_state", 5, &GoalStrat::updateWeathercockState, this);
     m_state = State::INIT;
     m_tirette = false;
     std::string actuators_name = "actuators";
@@ -402,6 +404,35 @@ void GoalStrat::publishAll()
             publishDebugInfos();
         }
     }
+}
+
+/**
+ * @brief Update the tirette state
+ *
+ * @param weathercock msg
+ */
+void GoalStrat::updateWeathercockState(std_msgs::Int32 weathercock_state)
+{
+    ROS_WARN_STREAM("updateWeathercockState: " << weathercock_state.data << std::endl);
+    if (weathercock_state.data == 0)
+    {
+        return;
+    }
+
+    Etape::EtapeType good_mouillage;
+    if (weathercock_state.data == 1)
+    {
+        good_mouillage = Etape::MOUILLAGE_SUD;
+    }
+    else if (weathercock_state.data == 2)
+    {
+        good_mouillage = Etape::MOUILLAGE_NORD;
+    }
+    else
+    {
+        ROS_WARN_STREAM("Error, unknown weathercock_state!" << std::endl);
+    }
+    m_strat_graph->setGoodMouillage(good_mouillage);
 }
 
 /**
@@ -587,12 +618,6 @@ void GoalStrat::stateRun()
     m_strat_mvnt.max_speed.angular.z = 1.f;
     m_strat_mvnt.reverse_gear = 2; // don't care
 
-    bool girouette_south;
-    m_nh.param<bool>("isWeathercockSouth", girouette_south, false);
-
-    auto good_mouillage = girouette_south ? Etape::MOUILLAGE_SUD : Etape::MOUILLAGE_NORD;
-    m_strat_graph->setGoodMouillage(good_mouillage);
-
     publishScore();
     publishDebugInfos();
     m_arm_servo_pub.publish(m_servos_cmd);
@@ -630,6 +655,10 @@ void GoalStrat::stateRun()
         case Etape::MOUILLAGE_SUD:
         case Etape::MOUILLAGE_NORD:
             m_score_match += 20;
+            stopLinear();
+            stopAngular();
+
+            m_state = State::EXIT;
             break;
         case Etape::EtapeType::MANCHE_A_AIR:
             stopLinear();
