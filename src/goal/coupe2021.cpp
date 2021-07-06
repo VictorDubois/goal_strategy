@@ -68,7 +68,7 @@ Coupe2021::Coupe2021(const bool isYellow)
     int first_air = Etape::makeEtape(new MancheAAir(positionC(1.270, -0.8)));
     int second_air = Etape::makeEtape(new MancheAAir(positionC(0.865, -0.8)));
     int out_of_first_air = Etape::makeEtape(positionC(1.270, -0.6));
-    int out_of_second_air = Etape::makeEtape(positionC(0.865, -0.6));
+    int out_of_second_air = Etape::makeEtape(positionC(0.9, -0.6));
 
     Etape::get(out_of_second_air)->addVoisins(out_of_first_air);
     Etape::get(first_air)->addVoisins(out_of_first_air);
