@@ -731,7 +731,7 @@ void GoalStrat::init()
     /*m_servos_cmd.brak_speed = 10;
     m_servos_cmd.brak_angle = 148;*/
     m_servos_cmd.pavillon_speed = 10;
-    m_servos_cmd.pavillon_angle = 0;
+    m_servos_cmd.pavillon_angle = 50;
     /*m_servos_cmd.s3_speed = 10;
     m_servos_cmd.s3_angle = 148;*/
     moveArm(FOLDED);

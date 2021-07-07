@@ -68,7 +68,7 @@ Coupe2021::Coupe2021(const bool isYellow)
     int first_air = Etape::makeEtape(new MancheAAir(positionC(1.270, -0.8)));
     int second_air = Etape::makeEtape(new MancheAAir(positionC(0.865, -0.8)));
     int out_of_first_air = Etape::makeEtape(positionC(1.270, -0.6));
-    int out_of_second_air = Etape::makeEtape(positionC(0.865, -0.6));
+    int out_of_second_air = Etape::makeEtape(positionC(0.9, -0.6));
 
     Etape::get(out_of_second_air)->addVoisins(out_of_first_air);
     Etape::get(first_air)->addVoisins(out_of_first_air);
@@ -308,16 +308,16 @@ int Coupe2021::getScoreEtape(int i)
         break;
     case Etape::MOUILLAGE_NORD:
         l_score = 0;
-        if (m_good_mouillage == Etape::MOUILLAGE_NORD && getRemainingTime() < 25.f)
+        if (m_good_mouillage == Etape::MOUILLAGE_NORD && getRemainingTime() < 50.f)
         {
-            l_score = 100;
+            l_score = 1000;
         }
         break;
     case Etape::MOUILLAGE_SUD:
         l_score = 0;
-        if (m_good_mouillage == Etape::MOUILLAGE_SUD && getRemainingTime() < 25.f)
+        if (m_good_mouillage == Etape::MOUILLAGE_SUD && getRemainingTime() < 50.f)
         {
-            l_score = 100;
+            l_score = 1000;
         }
         break;
 
