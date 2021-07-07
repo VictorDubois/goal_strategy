@@ -39,7 +39,7 @@ Coupe2021::Coupe2021(const bool isYellow)
 
     // Création des étapes
     // Les étapes correspondant à des actions sont créées automatiquement lors de l'ajout d'actions
-    int main_port = Etape::makeEtape(positionC(1.30, 0),
+    int main_port = Etape::makeEtape(positionC(1.30, 0.2),
                                      Etape::DEPART); // départ au fond de la zone de départ
 
     /*int bouee_our_port_1
@@ -55,14 +55,17 @@ Coupe2021::Coupe2021(const bool isYellow)
     int out_of_lighthouse = Etape::makeEtape(positionCAbsolute(0.6, 0.3));
 
     int out_of_main_port = Etape::makeEtape(positionC(0.8, 0));
+    int out_of_main_port_2 = Etape::makeEtape(positionCAbsolute(0.7, 0.7));
 
-    Etape::get(main_port)->addVoisins(out_of_main_port);
+    // Etape::get(main_port)->addVoisins(out_of_main_port);
+    Etape::get(main_port)->addVoisins(out_of_main_port_2);
     /*Etape::get(out_of_main_port)->addVoisins(bouee_our_port_1);
     Etape::get(bouee_our_port_2)->addVoisins(bouee_our_port_1);
     Etape::get(out_of_main_port)->addVoisins(bouee_our_port_3);
     Etape::get(bouee_our_port_4)->addVoisins(bouee_our_port_3);*/
 
     Etape::get(lighthouse)->addVoisins(out_of_lighthouse);
+    Etape::get(out_of_lighthouse)->addVoisins(out_of_main_port_2);
     Etape::get(out_of_main_port)->addVoisins(out_of_lighthouse);
 
     int first_air = Etape::makeEtape(new MancheAAir(positionC(1.270, -0.8)));
