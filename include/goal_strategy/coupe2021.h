@@ -20,7 +20,10 @@ class Coupe2021 : public StrategieV3
 public:
     Coupe2021(bool isYellow);
     void setGoodMouillage(Etape::EtapeType good_mouillage);
+    Etape::EtapeType getGoodMouillage();
     void debugEtapes(visualization_msgs::MarkerArray& ma);
+
+    Position positionCAbsolute(double x_yellow_from_top_left, double y_yellow_from_top_left);
 
 private:
     int getScoreEtape(int i);
@@ -29,6 +32,4 @@ private:
     int m_south_id;
     int m_north_id;
     uint32_t m_seq;
-
-    Position positionCAbsolute(double x_yellow_from_top_left, double y_yellow_from_top_left);
 };

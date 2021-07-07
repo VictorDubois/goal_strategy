@@ -349,6 +349,7 @@ void GoalStrat::goToNextMission()
 
 GoalStrat::GoalStrat()
   : m_tf_listener(m_tf_buffer)
+  , m_final_mouillage_checked(false)
 {
     m_goal_init_done = false;
     m_remainig_time = ros::Duration(100, 0);
@@ -654,7 +655,7 @@ void GoalStrat::stateRun()
         {
         case Etape::MOUILLAGE_SUD:
         case Etape::MOUILLAGE_NORD:
-            m_score_match += 20;
+            // m_score_match += 20;
             stopLinear();
             stopAngular();
 
@@ -743,6 +744,7 @@ void GoalStrat::stateRun()
 void GoalStrat::stateExit()
 {
     stopActuators();
+    checkFinalMouillage();
     publishScore();
     ROS_INFO_STREAM("Mission finished, turning off actuators");
 }
@@ -838,6 +840,65 @@ void GoalStrat::publishDebugInfos()
     visualization_msgs::MarkerArray ma;
     m_strat_graph->debugEtapes(ma);
     m_debug_ma_etapes_pub.publish(ma);
+}
+
+void GoalStrat::checkFinalMouillage()
+{
+    if (m_final_mouillage_checked)
+    {
+        return;
+    }
+    m_final_mouillage_checked = true;
+
+    Position mouillageNorthCenter = m_strat_graph->positionCAbsolute(0, 0.5f);
+    Position mouillageSouthCenter = m_strat_graph->positionCAbsolute(0, 1.1f);
+
+    bool l_good_mouillage = false;
+    bool l_bad_mouillage = false;
+
+    float l_robot_radius = 0.16f;
+    float l_mouillage_radius = 0.4f;
+
+    Distance l_dist_to_mouillage_center
+      = (m_current_pose.getPosition() - mouillageNorthCenter).getNorme();
+
+    if (l_dist_to_mouillage_center < l_robot_radius + l_mouillage_radius)
+    {
+        ROS_WARN("In MOUILLAGE_NORD!");
+        // SUCCESS!
+        if (m_strat_graph->getGoodMouillage() == Etape::EtapeType::MOUILLAGE_NORD)
+        {
+            l_good_mouillage = true;
+        }
+        else
+        {
+            l_bad_mouillage = true;
+        }
+    }
+
+    if ((m_current_pose.getPosition() - mouillageSouthCenter).getNorme()
+        < l_robot_radius + l_mouillage_radius)
+    {
+        ROS_WARN("In MOUILLAGE_SUD!");
+        // SUCCESS!
+        if (m_strat_graph->getGoodMouillage() == Etape::EtapeType::MOUILLAGE_SUD)
+        {
+            l_good_mouillage = true;
+        }
+        else
+        {
+            l_bad_mouillage = true;
+        }
+    }
+
+    if (l_good_mouillage)
+    {
+        m_score_match += 20;
+    }
+    else if (l_bad_mouillage)
+    {
+        m_score_match += 6;
+    }
 }
 
 // Entry point

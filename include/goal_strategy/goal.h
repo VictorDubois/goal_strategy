@@ -86,6 +86,8 @@ private:
     void publishGoal();
     void publishAll();
 
+    void checkFinalMouillage();
+
     State m_state = State::RUN;
     Distance m_dist_to_goal;
     bool m_state_msg_displayed;
@@ -125,6 +127,7 @@ private:
     bool m_tirette;
     Actuators m_actuators;
     bool m_goal_init_done;
+    bool m_final_mouillage_checked;
 
     Grabber theThing;
 

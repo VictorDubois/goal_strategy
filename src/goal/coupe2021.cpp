@@ -120,6 +120,11 @@ Coupe2021::Coupe2021(const bool isYellow)
     startDijkstra();
 }
 
+Etape::EtapeType Coupe2021::getGoodMouillage()
+{
+    return m_good_mouillage;
+}
+
 /**
  * @brief The the port where we should stop at the end
  *
