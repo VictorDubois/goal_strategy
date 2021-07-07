@@ -651,6 +651,7 @@ void GoalStrat::stateRun()
             moveArm(IN);
         }
 
+        bool l_has_timed_out;
         switch (m_strat_graph->getEtapeEnCours()->getEtapeType())
         {
         case Etape::MOUILLAGE_SUD:
@@ -666,10 +667,10 @@ void GoalStrat::stateRun()
 
             ROS_INFO_STREAM("In front of Manche A Air, orienting" << std::endl);
 
-            bool has_timed_out = alignWithAngleWithTimeout(Angle(-M_PI / 2))
-              ROS_WARN_STREAM_COND(has_timed_out, "Timeout while orienting");
+            l_has_timed_out = alignWithAngleWithTimeout(Angle(-M_PI / 2));
+            ROS_WARN_STREAM_COND(l_has_timed_out, "Timeout while orienting");
 
-            if (!has_timed_out)
+            if (!l_has_timed_out)
             {
                 clamp_mode();
             }
