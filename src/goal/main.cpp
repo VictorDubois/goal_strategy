@@ -713,6 +713,7 @@ void GoalStrat::stateRun()
                 moveArm(OUT);
             }
             usleep(2.5e6);
+            startLinear();
 
             ROS_INFO_STREAM("Manche A Air Done" << std::endl);
             break;
