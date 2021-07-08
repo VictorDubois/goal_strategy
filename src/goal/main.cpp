@@ -83,7 +83,7 @@ void GoalStrat::clamp_mode()
 void GoalStrat::stopAngular()
 {
     m_strat_mvnt.max_speed.angular.z = 0;
-    m_strat_mvnt.orient = 2;
+    m_strat_mvnt.orient = 4;
 }
 
 /**
@@ -711,6 +711,7 @@ void GoalStrat::stateRun()
             moveArm(UP);
             usleep(1.5e6);
             ROS_INFO_STREAM("Phare Done" << std::endl);
+            startAngular();
             break;
         case Etape::EtapeType::BOUEE:
             stopLinear();
