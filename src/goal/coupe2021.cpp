@@ -102,7 +102,7 @@ Coupe2021::Coupe2021(const bool isYellow)
     Etape::get(waypoint_out_of_push_south_bouees)
       ->addVoisins(push_south_bouees, waypoint_south, out_of_second_air);
 
-    int our_small_port = Etape::makeEtape(new Port(positionCAbsolute(1.8, 1.75)));
+    int our_small_port = Etape::makeEtape(positionCAbsolute(1.8, 1.75));
     Etape::get(our_small_port)->addVoisins(waypoint_out_of_our_small_port);
 
     m_numero_etape_garage = m_south_id; // Must be set!
@@ -316,14 +316,14 @@ int Coupe2021::getScoreEtape(int i)
         break;
     case Etape::MOUILLAGE_NORD:
         l_score = 0;
-        if (m_good_mouillage == Etape::MOUILLAGE_NORD && getRemainingTime() < 45.f)
+        if (m_good_mouillage == Etape::MOUILLAGE_NORD && getRemainingTime() < 50.f)
         {
             l_score = 200;
         }
         break;
     case Etape::MOUILLAGE_SUD:
         l_score = 0;
-        if (m_good_mouillage == Etape::MOUILLAGE_SUD && getRemainingTime() < 45.f)
+        if (m_good_mouillage == Etape::MOUILLAGE_SUD && getRemainingTime() < 50.f)
         {
             l_score = 200;
         }
