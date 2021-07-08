@@ -670,7 +670,11 @@ void GoalStrat::stateRun()
             l_has_timed_out = alignWithAngleWithTimeout(Angle(-M_PI / 2));
             ROS_WARN_STREAM_COND(l_has_timed_out, "Timeout while orienting");
 
-            if (!l_has_timed_out)
+            if (l_has_timed_out)
+            {
+                m_action_aborted = true;
+            }
+            else
             {
                 clamp_mode();
             }
