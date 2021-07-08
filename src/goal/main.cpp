@@ -77,6 +77,15 @@ void GoalStrat::clamp_mode()
 }
 
 /**
+ * @brief Send cmd to disable angular and over current per motor
+ */
+void GoalStrat::recalage_bordure()
+{
+    m_strat_mvnt.max_speed.angular.z = 0;
+    m_strat_mvnt.orient = 2;
+}
+
+/**
  * @brief Send cmd to disable angular motion
  *
  */
@@ -225,8 +234,7 @@ bool GoalStrat::isAlignedWithAngle(Angle angle)
  */
 void GoalStrat::publishGoal()
 {
-    Position goal_position = m_strat_graph->getEtapeEnCours()->getPosition();
-    m_goal_pose.setPosition(goal_position);
+
     geometry_msgs::PoseStamped l_posestamped;
 
     l_posestamped.pose = m_goal_pose;
@@ -652,6 +660,8 @@ void GoalStrat::stateRun()
         }
 
         bool l_has_timed_out;
+        ros::Time recalageTimeoutDeadline;
+        Position position_calage;
         switch (m_strat_graph->getEtapeEnCours()->getEtapeType())
         {
         case Etape::MOUILLAGE_SUD:
@@ -669,6 +679,19 @@ void GoalStrat::stateRun()
 
             l_has_timed_out = alignWithAngleWithTimeout(Angle(-M_PI / 2));
             ROS_WARN_STREAM_COND(l_has_timed_out, "Timeout while orienting");
+
+            startLinear();
+            recalage_bordure();
+            position_calage = m_goal_pose.getPosition();
+            position_calage.setY(Distance(position_calage.getY() - Distance(1)));
+            m_goal_pose.setPosition(position_calage);
+            recalageTimeoutDeadline = ros::Time::now() + ros::Duration(2);
+
+            while (ros::Time::now().toSec() < recalageTimeoutDeadline.toSec())
+            {
+                ros::spinOnce();
+                usleep(0.1e6);
+            }
 
             if (l_has_timed_out)
             {
@@ -744,6 +767,8 @@ void GoalStrat::stateRun()
         abortAction();
         goToNextMission();
     }
+    Position goal_position = m_strat_graph->getEtapeEnCours()->getPosition();
+    m_goal_pose.setPosition(goal_position);
     publishGoal();
     m_goal_init_done = true;
 }

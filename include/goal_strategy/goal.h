@@ -69,6 +69,7 @@ private:
     void stopActuators();
     void stopLinear();
     void startLinear();
+    void recalage_bordure();
     void checkStopMatch();
     void checkFunnyAction();
 
