@@ -730,7 +730,6 @@ void GoalStrat::stateRun()
                                  "Timeout while orienting");
 
             ROS_INFO_STREAM("MOVING SERVO DOWN" << std::endl);
-            stopAngular();
             moveArm(DOWN);
             usleep(1e6);
             moveArm(DOWN);
