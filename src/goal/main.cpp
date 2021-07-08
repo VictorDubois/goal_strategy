@@ -673,6 +673,7 @@ void GoalStrat::stateRun()
             m_state = State::EXIT;
             break;
         case Etape::EtapeType::MANCHE_A_AIR:
+
             stopLinear();
 
             ROS_INFO_STREAM("In front of Manche A Air, orienting" << std::endl);
@@ -693,12 +694,15 @@ void GoalStrat::stateRun()
                 usleep(0.1e6);
             }
 
+            usleep(1.1e6); // Wait for motors to be up again
+
             if (l_has_timed_out)
             {
                 m_action_aborted = true;
             }
             else
             {
+
                 clamp_mode();
             }
 
