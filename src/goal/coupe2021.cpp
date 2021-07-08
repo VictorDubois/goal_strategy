@@ -316,14 +316,14 @@ int Coupe2021::getScoreEtape(int i)
         break;
     case Etape::MOUILLAGE_NORD:
         l_score = 0;
-        if (m_good_mouillage == Etape::MOUILLAGE_NORD && getRemainingTime() < 30.f)
+        if (m_good_mouillage == Etape::MOUILLAGE_NORD && getRemainingTime() < 45.f)
         {
             l_score = 200;
         }
         break;
     case Etape::MOUILLAGE_SUD:
         l_score = 0;
-        if (m_good_mouillage == Etape::MOUILLAGE_SUD && getRemainingTime() < 30.f)
+        if (m_good_mouillage == Etape::MOUILLAGE_SUD && getRemainingTime() < 45.f)
         {
             l_score = 200;
         }
