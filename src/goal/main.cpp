@@ -673,7 +673,8 @@ void GoalStrat::stateRun()
             m_state = State::EXIT;
             break;
         case Etape::EtapeType::MANCHE_A_AIR:
-
+            m_action_aborted = true;
+            break;
             stopLinear();
 
             ROS_INFO_STREAM("In front of Manche A Air, orienting" << std::endl);
