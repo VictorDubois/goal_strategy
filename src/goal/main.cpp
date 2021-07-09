@@ -12,7 +12,7 @@ void GoalStrat::moveArm(enum PositionServo position)
     {
     case FOLDED:
         m_servos_cmd.s3_speed = 128;
-        m_servos_cmd.s3_angle = 170;
+        m_servos_cmd.s3_angle = 155;
         ROS_DEBUG_STREAM("Actually fold servo" << std::endl);
         break;
     case IN:
