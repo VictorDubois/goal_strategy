@@ -16,12 +16,12 @@ void GoalStrat::moveArm(enum PositionServo position)
         ROS_DEBUG_STREAM("Actually fold servo" << std::endl);
         break;
     case IN:
-        m_servos_cmd.s3_speed = 128;
+        m_servos_cmd.s3_speed = 255;
         m_servos_cmd.s3_angle = 155;
         ROS_DEBUG_STREAM("Actually move servo IN" << std::endl);
         break;
     case OUT:
-        m_servos_cmd.s3_speed = 40;
+        m_servos_cmd.s3_speed = 255;
         m_servos_cmd.s3_angle = 23;
         ROS_DEBUG_STREAM("Actually move servo OUT" << std::endl);
         break;
@@ -699,7 +699,7 @@ void GoalStrat::stateRun()
             position_calage = m_goal_pose.getPosition();
             position_calage.setY(Distance(position_calage.getY() - Distance(1)));
             m_goal_pose.setPosition(position_calage);
-            recalageTimeoutDeadline = ros::Time::now() + ros::Duration(2);
+            recalageTimeoutDeadline = ros::Time::now() + ros::Duration(6);
 
             while (ros::Time::now().toSec() < recalageTimeoutDeadline.toSec())
             {
