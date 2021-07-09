@@ -32,7 +32,7 @@ void GoalStrat::moveArm(enum PositionServo position)
         break;
     case RELEASE:
         m_servos_cmd.s3_angle = 128;
-        m_servos_cmd.s3_angle = 128;
+        m_servos_cmd.s3_angle = 155;
         ROS_DEBUG_STREAM("Actually release servo" << std::endl);
         break;
     case DOWN:
