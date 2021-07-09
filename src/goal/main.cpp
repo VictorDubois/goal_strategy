@@ -344,6 +344,12 @@ void GoalStrat::goToNextMission()
     ROS_INFO_STREAM("New objective: " << m_strat_graph->getGoal()->getNumero() << ", which is a "
                                       << m_strat_graph->getGoal()->getEtapeType());
 
+    if (m_strat_graph->getEtapeEnCours()->getEtapeType() == Etape::EtapeType::MOUILLAGE_NORD
+        || m_strat_graph->getEtapeEnCours()->getEtapeType() == Etape::EtapeType::MOUILLAGE_SUD)
+    {
+        m_moving_timeout_deadline = ros::Time::now() + ros::Duration(m_timeout_moving * 3);
+    }
+
     if (strat_graph_status == -1)
     {
         ROS_DEBUG_STREAM("Graph status is -1: we're done");
