@@ -74,8 +74,8 @@ Coupe2021::Coupe2021(const bool isYellow)
     Etape::get(first_air)->addVoisins(out_of_first_air);
     Etape::get(second_air)->addVoisins(out_of_second_air);
 
-    m_south_id = Etape::makeEtape(new MouillageSud(positionC(1.250, -0.250)));
-    m_north_id = Etape::makeEtape(new MouillageNord(positionC(1.250, 0.680)));
+    m_south_id = Etape::makeEtape(new MouillageSud(positionC(1.50, -0.250)));
+    m_north_id = Etape::makeEtape(new MouillageNord(positionC(1.50, 0.680)));
     m_numero_etape_garage = m_south_id;
 
     Etape::get(m_north_id)->addVoisins(out_of_lighthouse, lighthouse);
