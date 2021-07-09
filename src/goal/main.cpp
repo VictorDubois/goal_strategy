@@ -730,6 +730,21 @@ void GoalStrat::stateRun()
                 moveArm(OUT);
             }
             usleep(2.5e6);
+
+            m_strat_mvnt.reverse_gear = 1;
+
+            startLinear();
+            recalage_bordure();
+            position_calage.setY(Distance(position_calage.getY() + Distance(1.1)));
+            m_goal_pose.setPosition(position_calage);
+            recalageTimeoutDeadline = ros::Time::now() + ros::Duration(2);
+
+            while (ros::Time::now().toSec() < recalageTimeoutDeadline.toSec())
+            {
+                ros::spinOnce();
+                usleep(0.1e6);
+            }
+
             startLinear();
 
             ROS_INFO_STREAM("Manche A Air Done" << std::endl);
