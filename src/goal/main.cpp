@@ -673,10 +673,17 @@ void GoalStrat::stateRun()
         case Etape::MOUILLAGE_SUD:
         case Etape::MOUILLAGE_NORD:
             // m_score_match += 20;
-            stopLinear();
             stopAngular();
+            stopLinear();
 
-            m_state = State::EXIT;
+            while (true)
+            {
+                m_strat_mvnt.max_speed.angular.z = 0;
+                m_strat_mvnt.max_speed.linear.x = 0;
+                ros::spinOnce();
+                usleep(0.1e6);
+            }
+
             break;
         case Etape::EtapeType::MANCHE_A_AIR:
 
