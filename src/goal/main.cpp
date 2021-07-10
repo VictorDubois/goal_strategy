@@ -56,7 +56,10 @@ void GoalStrat::hissezLesPavillons()
     ROS_INFO_STREAM("Hissez les pavillons!" << std::endl);
     m_servos_cmd.pavillon_speed = 128;
     m_servos_cmd.pavillon_angle = 155;
-    m_servos_cmd.enable = true;
+    if (m_remainig_time.toSec() > 0.3)
+    {
+        m_servos_cmd.enable = true;
+    }
 
     if (!m_funny_action_counted)
     {
