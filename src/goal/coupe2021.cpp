@@ -52,7 +52,7 @@ Coupe2021::Coupe2021(const bool isYellow)
       = Etape::makeEtape(new Bouee(positionCAbsolute(0.3, 1.2), GrabberContent::GREEN_CUP));*/
 
     int lighthouse = Etape::makeEtape(new Phare(positionC(1.30, 0.8)));
-    int out_of_lighthouse = Etape::makeEtape(positionCAbsolute(0.6, 0.3));
+    int out_of_lighthouse = Etape::makeEtape(positionCAbsolute(0.6, 0.4));
 
     int out_of_main_port = Etape::makeEtape(positionC(0.8, 0));
 
