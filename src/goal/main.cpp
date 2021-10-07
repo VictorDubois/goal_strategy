@@ -1,6 +1,8 @@
 #include "goal_strategy/goal.h"
 #include <std_msgs/UInt16.h>
 
+#define goal_MAX_ALLOWED_ANGULAR_SPEED 2.f // rad/s
+
 /**
  * @brief Set the arm to a specified position
  *
@@ -104,7 +106,7 @@ void GoalStrat::stopAngular()
  */
 void GoalStrat::startAngular()
 {
-    m_strat_mvnt.max_speed.angular.z = 1;
+    m_strat_mvnt.max_speed.angular.z = goal_MAX_ALLOWED_ANGULAR_SPEED;
     m_strat_mvnt.orient = 0;
 }
 
@@ -373,7 +375,7 @@ GoalStrat::GoalStrat()
     m_strat_mvnt.max_speed_at_arrival = 0.1f;
     m_strat_mvnt.orient = 0;
     m_strat_mvnt.max_speed.linear.x = 1.f;
-    m_strat_mvnt.max_speed.angular.z = 1.f;
+    m_strat_mvnt.max_speed.angular.z = goal_MAX_ALLOWED_ANGULAR_SPEED;
     m_strat_mvnt.reverse_gear = 2; // don't care
 
     m_goal_pose_pub = m_nh.advertise<geometry_msgs::PoseStamped>("goal_pose", 1000);
@@ -633,7 +635,7 @@ void GoalStrat::stateRun()
     m_strat_mvnt.max_speed_at_arrival = 0.1f;
     m_strat_mvnt.orient = 0;
     m_strat_mvnt.max_speed.linear.x = 1.f;
-    m_strat_mvnt.max_speed.angular.z = 1.f;
+    m_strat_mvnt.max_speed.angular.z = goal_MAX_ALLOWED_ANGULAR_SPEED;
     m_strat_mvnt.reverse_gear = 2; // don't care
 
     publishScore();
