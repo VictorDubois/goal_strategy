@@ -56,6 +56,7 @@ private:
 
     int chooseAngle();
     void chooseGear();
+    void chooseEffector();
     void abortAction();
     void alignWithAngle(Angle a_angle);
     bool alignWithAngleWithTimeout(Angle angle);

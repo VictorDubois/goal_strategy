@@ -623,6 +623,15 @@ void GoalStrat::setMaxSpeedAtArrival()
     }
 }
 
+void GoalStrat::chooseEffector()
+{
+    m_strat_mvnt.endpoint_frame_id = "base_link";
+    if (m_strat_graph->getEtapeEnCours()->getEtapeType() == Etape::EtapeType::BOUEE)
+    {
+        m_strat_mvnt.endpoint_frame_id = "suction_cup";
+    }
+}
+
 /**
  * @brief RUN state of the state machine
  *
@@ -637,6 +646,8 @@ void GoalStrat::stateRun()
     m_strat_mvnt.max_speed.linear.x = 1.f;
     m_strat_mvnt.max_speed.angular.z = goal_MAX_ALLOWED_ANGULAR_SPEED;
     m_strat_mvnt.reverse_gear = 2; // don't care
+
+    chooseEffector();
 
     publishScore();
     publishDebugInfos();
