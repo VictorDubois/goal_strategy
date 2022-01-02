@@ -15,7 +15,7 @@
 #include <tf/transform_listener.h>
 #include <tf2_ros/transform_listener.h>
 
-#include "coupe2021.h"
+#include "coupe2022.h"
 #include "goal_strategy/actuators.h"
 #include "goal_strategy/grabber.h"
 #include "krabi_msgs/servos_cmd.h"
@@ -77,7 +77,6 @@ private:
     void updateCurrentPose();
     void updateRemainingTime(std_msgs::Duration remainingTime);
     void updateTirette(std_msgs::Bool tirette);
-    void updateWeathercockState(std_msgs::Int32 weathercock_state);
 
     bool isAlignedWithAngle(Angle angle);
     bool isArrivedAtGoal();
@@ -88,12 +87,10 @@ private:
     void publishGoal();
     void publishAll();
 
-    void checkFinalMouillage();
-
     State m_state = State::RUN;
     Distance m_dist_to_goal;
     bool m_state_msg_displayed;
-    std::unique_ptr<Coupe2021> m_strat_graph;
+    std::unique_ptr<Coupe2022> m_strat_graph;
     long m_timeout_moving, m_timeout_orient;
     bool m_is_first_action;
 
@@ -129,7 +126,6 @@ private:
     bool m_tirette;
     Actuators m_actuators;
     bool m_goal_init_done;
-    bool m_final_mouillage_checked;
 
     Grabber theThing;
 

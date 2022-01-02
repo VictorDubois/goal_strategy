@@ -50,29 +50,6 @@ void GoalStrat::moveArm(enum PositionServo position)
 }
 
 /**
- * @brief 2020/2021 Funny action: Move the servo to raise the flags
- *
- */
-void GoalStrat::hissezLesPavillons()
-{
-    ROS_INFO_STREAM("Hissez les pavillons!" << std::endl);
-    m_servos_cmd.pavillon_speed = 128;
-    m_servos_cmd.pavillon_angle = 155;
-    if (m_remainig_time.toSec() > 0.3)
-    {
-        m_servos_cmd.enable = true;
-    }
-
-    if (!m_funny_action_counted)
-    {
-        m_funny_action_counted = true;
-        m_score_match += 10;
-    }
-    m_arm_servo_pub.publish(m_servos_cmd);
-    publishScore();
-}
-
-/**
  * @brief Send cmd to clamp the robot to its position (used in 2021 for manches a air)
  */
 void GoalStrat::clamp_mode()
@@ -349,8 +326,9 @@ void GoalStrat::goToNextMission()
     ROS_INFO_STREAM("New objective: " << m_strat_graph->getGoal()->getNumero() << ", which is a "
                                       << m_strat_graph->getGoal()->getEtapeType());
 
-    if (m_strat_graph->getEtapeEnCours()->getEtapeType() == Etape::EtapeType::MOUILLAGE_NORD
-        || m_strat_graph->getEtapeEnCours()->getEtapeType() == Etape::EtapeType::MOUILLAGE_SUD)
+
+    // Long actions
+    if (false)
     {
         m_moving_timeout_deadline = ros::Time::now() + ros::Duration(m_timeout_moving * 3);
     }
@@ -368,7 +346,6 @@ void GoalStrat::goToNextMission()
 
 GoalStrat::GoalStrat()
   : m_tf_listener(m_tf_buffer)
-  , m_final_mouillage_checked(false)
 {
     m_goal_init_done = false;
     m_remainig_time = ros::Duration(100, 0);
@@ -386,8 +363,6 @@ GoalStrat::GoalStrat()
     m_remaining_time_match_sub
       = m_nh.subscribe("/remaining_time", 5, &GoalStrat::updateRemainingTime, this);
     m_tirette_sub = m_nh.subscribe("tirette", 5, &GoalStrat::updateTirette, this);
-    m_weathercock_state_sub
-      = m_nh.subscribe("weathercock_state", 5, &GoalStrat::updateWeathercockState, this);
     m_state = State::INIT;
     m_tirette = false;
     std::string actuators_name = "actuators";
@@ -424,35 +399,6 @@ void GoalStrat::publishAll()
             publishDebugInfos();
         }
     }
-}
-
-/**
- * @brief Update the tirette state
- *
- * @param weathercock msg
- */
-void GoalStrat::updateWeathercockState(std_msgs::Int32 weathercock_state)
-{
-    ROS_WARN_STREAM("updateWeathercockState: " << weathercock_state.data << std::endl);
-    if (weathercock_state.data == 0)
-    {
-        return;
-    }
-
-    Etape::EtapeType good_mouillage;
-    if (weathercock_state.data == 1)
-    {
-        good_mouillage = Etape::MOUILLAGE_SUD;
-    }
-    else if (weathercock_state.data == 2)
-    {
-        good_mouillage = Etape::MOUILLAGE_NORD;
-    }
-    else
-    {
-        ROS_WARN_STREAM("Error, unknown weathercock_state!" << std::endl);
-    }
-    m_strat_graph->setGoodMouillage(good_mouillage);
 }
 
 /**
@@ -508,7 +454,6 @@ void GoalStrat::checkFunnyAction()
     if (m_remainig_time.toSec() < funny_action_timing.toSec())
     {
         ROS_INFO_STREAM("Doing the funny action");
-        hissezLesPavillons();
     }
 }
 
@@ -831,7 +776,6 @@ void GoalStrat::stateRun()
 void GoalStrat::stateExit()
 {
     stopActuators();
-    checkFinalMouillage();
     publishScore();
     ROS_INFO_STREAM("Mission finished, turning off actuators");
 }
@@ -881,7 +825,7 @@ void GoalStrat::init()
 
     m_action_aborted = false;
 
-    m_strat_graph = std::make_unique<Coupe2021>(!m_is_blue);
+    m_strat_graph = std::make_unique<Coupe2022>(!m_is_blue);
 
     m_strat_graph->update();
     m_previous_etape_type = m_strat_graph->getEtapeEnCours()->getEtapeType();
@@ -927,65 +871,6 @@ void GoalStrat::publishDebugInfos()
     visualization_msgs::MarkerArray ma;
     m_strat_graph->debugEtapes(ma);
     m_debug_ma_etapes_pub.publish(ma);
-}
-
-void GoalStrat::checkFinalMouillage()
-{
-    if (m_final_mouillage_checked)
-    {
-        return;
-    }
-    m_final_mouillage_checked = true;
-
-    Position mouillageNorthCenter = m_strat_graph->positionCAbsolute(0, 0.5f);
-    Position mouillageSouthCenter = m_strat_graph->positionCAbsolute(0, 1.1f);
-
-    bool l_good_mouillage = false;
-    bool l_bad_mouillage = false;
-
-    float l_robot_radius = 0.16f;
-    float l_mouillage_radius = 0.4f;
-
-    Distance l_dist_to_mouillage_center
-      = (m_current_pose.getPosition() - mouillageNorthCenter).getNorme();
-
-    if (l_dist_to_mouillage_center < l_robot_radius + l_mouillage_radius)
-    {
-        ROS_WARN("In MOUILLAGE_NORD!");
-        // SUCCESS!
-        if (m_strat_graph->getGoodMouillage() == Etape::EtapeType::MOUILLAGE_NORD)
-        {
-            l_good_mouillage = true;
-        }
-        else
-        {
-            l_bad_mouillage = true;
-        }
-    }
-
-    if ((m_current_pose.getPosition() - mouillageSouthCenter).getNorme()
-        < l_robot_radius + l_mouillage_radius)
-    {
-        ROS_WARN("In MOUILLAGE_SUD!");
-        // SUCCESS!
-        if (m_strat_graph->getGoodMouillage() == Etape::EtapeType::MOUILLAGE_SUD)
-        {
-            l_good_mouillage = true;
-        }
-        else
-        {
-            l_bad_mouillage = true;
-        }
-    }
-
-    if (l_good_mouillage)
-    {
-        m_score_match += 20;
-    }
-    else if (l_bad_mouillage)
-    {
-        m_score_match += 6;
-    }
 }
 
 // Entry point
