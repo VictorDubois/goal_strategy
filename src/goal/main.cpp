@@ -535,6 +535,12 @@ bool GoalStrat::alignWithAngleWithTimeout(Angle angle)
     return ros::Time::now().toSec() >= orientTimeoutDeadline.toSec();
 }
 
+Angle GoalStrat::getAngleTowards(Position& a_position_to_go_towards_to)
+{
+    Position l_diff_position = a_position_to_go_towards_to - m_current_pose.getPosition();
+    return Angle(atan2(l_diff_position.getY(), l_diff_position.getX()));
+}
+
 /**
  * @brief Choose the best direction for the robot base on the current and future actions
  *
@@ -684,6 +690,7 @@ void GoalStrat::stateRun()
         bool l_has_timed_out;
         ros::Time recalageTimeoutDeadline;
         Position position_calage;
+        Position l_phare = m_strat_graph->positionCAbsolute(0.2f, 0);
         switch (m_strat_graph->getEtapeEnCours()->getEtapeType())
         {
         case Etape::MOUILLAGE_SUD:
@@ -706,7 +713,6 @@ void GoalStrat::stateRun()
             stopLinear();
 
             ROS_INFO_STREAM("In front of Manche A Air, orienting" << std::endl);
-
             l_has_timed_out = alignWithAngleWithTimeout(Angle(-M_PI / 2));
             ROS_WARN_STREAM_COND(l_has_timed_out, "Timeout while orienting");
 
@@ -769,8 +775,10 @@ void GoalStrat::stateRun()
             stopLinear();
 
             ROS_INFO_STREAM("In front of Phare, orienting" << std::endl);
-            ROS_WARN_STREAM_COND(alignWithAngleWithTimeout(Angle(-M_PI / 2)),
-                                 "Timeout while orienting");
+
+            ROS_WARN_STREAM_COND(
+              alignWithAngleWithTimeout(getAngleTowards(l_phare)), // Angle(-M_PI / 2)),
+              "Timeout while orienting");
 
             ROS_INFO_STREAM("MOVING SERVO DOWN" << std::endl);
             stopAngular();
