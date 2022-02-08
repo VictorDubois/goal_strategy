@@ -625,10 +625,10 @@ void GoalStrat::setMaxSpeedAtArrival()
 
 void GoalStrat::chooseEffector()
 {
-    m_strat_mvnt.endpoint_frame_id = "base_link";
+    m_strat_mvnt.endpoint_frame_id = tf::resolve(ros::this_node::getNamespace(), "base_link");
     if (m_strat_graph->getEtapeEnCours()->getEtapeType() == Etape::EtapeType::BOUEE)
     {
-        m_strat_mvnt.endpoint_frame_id = "suction_cup";
+        m_strat_mvnt.endpoint_frame_id = tf::resolve(ros::this_node::getNamespace(), "suction_cup");
     }
 }
 
