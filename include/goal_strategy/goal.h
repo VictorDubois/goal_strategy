@@ -60,7 +60,6 @@ private:
     void abortAction();
     void alignWithAngle(Angle a_angle);
     bool alignWithAngleWithTimeout(Angle angle);
-    Angle getAngleTowards(Position& position_to_go_towards_to);
     void goToNextMission();
     void hissezLesPavillons();
     void moveArm(enum PositionServo position);
