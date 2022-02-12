@@ -684,6 +684,7 @@ void GoalStrat::stateRun()
         bool l_has_timed_out;
         ros::Time recalageTimeoutDeadline;
         Position position_calage;
+        Position l_phare = m_strat_graph->positionCAbsolute(0.2f, 0);
         switch (m_strat_graph->getEtapeEnCours()->getEtapeType())
         {
         case Etape::MOUILLAGE_SUD:
@@ -769,8 +770,9 @@ void GoalStrat::stateRun()
             stopLinear();
 
             ROS_INFO_STREAM("In front of Phare, orienting" << std::endl);
-            ROS_WARN_STREAM_COND(alignWithAngleWithTimeout(Angle(-M_PI / 2)),
-                                 "Timeout while orienting");
+            ROS_WARN_STREAM_COND(
+              alignWithAngleWithTimeout((l_phare - m_current_pose.getPosition()).getAngle()),
+              "Timeout while orienting");
 
             ROS_INFO_STREAM("MOVING SERVO DOWN" << std::endl);
             stopAngular();
