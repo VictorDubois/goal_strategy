@@ -168,7 +168,7 @@ bool GoalStrat::isArrivedAtGoal()
     float l_reach_dist = REACH_DIST;
     if (m_strat_graph->getEtapeEnCours()->getEtapeType() == Etape::EtapeType::BOUEE)
     {
-        l_reach_dist = theThing.getReach();
+        l_reach_dist = theThing->getReach();
     }
 
     if (m_dist_to_goal < l_reach_dist)
@@ -326,7 +326,6 @@ void GoalStrat::goToNextMission()
     ROS_INFO_STREAM("New objective: " << m_strat_graph->getGoal()->getNumero() << ", which is a "
                                       << m_strat_graph->getGoal()->getEtapeType());
 
-
     // Long actions
     if (false)
     {
@@ -366,20 +365,28 @@ GoalStrat::GoalStrat()
     m_state = State::INIT;
     m_tirette = false;
     std::string actuators_name = "actuators";
-    auto l_servo_balloon = std::make_shared<Servomotor>(10, 120);
-    auto l_pump_balloon = std::make_shared<Pump>(false);
-    auto l_servo_vacuum_left = std::make_shared<Servomotor>(10, 120);
-    auto l_servo_vacuum_middle = std::make_shared<Servomotor>(10, 120);
-    auto l_servo_vacuum_right = std::make_shared<Servomotor>(10, 120);
+    auto l_servo_pusher = std::make_shared<Servomotor>(10, 120);
+    auto l_pump_arm = std::make_shared<Pump>(false, true);
+    auto l_fake_statuette_pump = std::make_shared<Pump>(false, true);
+    auto l_servo_arm_base = std::make_shared<Servomotor>(10, 120);
+    auto l_servo_arm_mid = std::make_shared<Servomotor>(10, 120);
+    auto l_servo_arm_suction_cup = std::make_shared<Servomotor>(10, 120);
 
-    theThing = Grabber(Position(Eigen::Vector2d(0.0, -0.5)), l_servo_balloon, l_pump_balloon);
+    theThing = std::make_shared<Grabber>(Position(Eigen::Vector2d(0.0, -0.5)),
+                                         l_servo_arm_base,
+                                         l_servo_arm_mid,
+                                         l_servo_arm_suction_cup,
+                                         l_pump_arm);
+
     m_actuators = Actuators(&m_nh,
                             actuators_name,
-                            l_servo_balloon,
-                            l_pump_balloon,
-                            l_servo_vacuum_left,
-                            l_servo_vacuum_middle,
-                            l_servo_vacuum_right);
+                            l_servo_pusher,
+                            l_fake_statuette_pump,
+                            l_servo_arm_base,
+                            l_servo_arm_mid,
+                            l_servo_arm_suction_cup,
+                            l_pump_arm);
+
     m_actuators.start();
 }
 
@@ -738,13 +745,13 @@ void GoalStrat::stateRun()
             ROS_WARN_STREAM_COND(
               alignWithAngleWithTimeout(
                 Angle((m_goal_pose.getPosition() - m_current_pose.getPosition()).getAngle()
-                      - theThing.getAngle())),
+                      - theThing->getAngle())),
               "Timeout while orienting");
-            theThing.grab(GrabberContent::ANY);
+            theThing->grab(GrabberContent::ANY);
             ROS_INFO_STREAM("Bouee grabbed" << std::endl);
             break;
         case Etape::EtapeType::PORT:
-            theThing.release(GrabberContent::ANY);
+            theThing->release(GrabberContent::ANY);
             ROS_INFO_STREAM("Bouee released" << std::endl);
             break;
         default:
@@ -839,7 +846,7 @@ void GoalStrat::init()
  *
  * @return int
  */
-int GoalStrat::loop()
+void GoalStrat::loop()
 {
     switch (m_state)
     {

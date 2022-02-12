@@ -2,32 +2,34 @@
 
 Actuators::Actuators(ros::NodeHandle* a_nh,
                      std::string a_name,
-                     std::shared_ptr<Servomotor> a_servo_balloon,
-                     std::shared_ptr<Pump> a_pump_balloon,
-                     std::shared_ptr<Servomotor> a_servo_vacuum_left,
-                     std::shared_ptr<Servomotor> a_servo_vacuum_middle,
-                     std::shared_ptr<Servomotor> a_servo_vacuum_right)
+                     std::shared_ptr<Servomotor> a_servo_pusher,
+                     std::shared_ptr<Pump> a_fake_statuette_pump,
+                     std::shared_ptr<Servomotor> a_grabber_servo_base,
+                     std::shared_ptr<Servomotor> a_grabber_servo_mid,
+                     std::shared_ptr<Servomotor> a_grabber_servo_suction_cup,
+                     std::shared_ptr<Pump> a_grabber_pump)
   : m_nh(a_nh)
-  , m_servo_balloon(a_servo_balloon)
-  , m_pump_balloon(a_pump_balloon)
-  , m_servo_vacuum_left(a_servo_vacuum_left)
-  , m_servo_vacuum_middle(a_servo_vacuum_middle)
-  , m_servo_vacuum_right(a_servo_vacuum_right)
+  , m_servo_pusher(a_servo_pusher)
+  , m_fake_statuette_pump(a_fake_statuette_pump)
+  , m_grabber_servo_base(a_grabber_servo_base)
+  , m_grabber_servo_mid(a_grabber_servo_mid)
+  , m_grabber_servo_suction_cup(a_grabber_servo_suction_cup)
+  , m_grabber_pump(a_grabber_pump)
 {
     m_pub = m_nh->advertise<krabi_msgs::actuators>(a_name, 5);
 
-    m_message.balloon_pump.enable_pump = false;
-    m_message.balloon_pump.inflate_green = true;
-    m_message.balloon_pump.inflate_red = true;
-    m_message.balloon_servo.angle = 128;
-    m_message.balloon_servo.speed = 0;
-    m_message.pavillons.angle = 128;
-    m_message.pavillons.speed = 0;
-    m_message.phare_arm.angle = 128;
-    m_message.phare_arm.speed = 0;
-    m_message.vacuum_pump_left.enable_pump = false;
-    m_message.vacuum_pump_middle.enable_pump = false;
-    m_message.vacuum_pump_right.enable_pump = false;
+    /*m_message.arm_base_servo =
+
+          m_message.balloon_pump.enable_pump = false;
+        m_message.balloon_servo.angle = 128;
+        m_message.balloon_servo.speed = 0;
+        m_message.pavillons.angle = 128;
+        m_message.pavillons.speed = 0;
+        m_message.phare_arm.angle = 128;
+        m_message.phare_arm.speed = 0;
+        m_message.vacuum_pump_left.enable_pump = false;
+        m_message.vacuum_pump_middle.enable_pump = false;
+        m_message.vacuum_pump_right.enable_pump = false;*/
 }
 
 void Actuators::start()
@@ -47,18 +49,23 @@ void Actuators::run()
 
 void Actuators::publish()
 {
-    m_message.balloon_servo.angle = m_servo_balloon->getAngle();
-    m_message.balloon_servo.speed = m_servo_balloon->getSpeed();
-    m_message.balloon_pump.enable_pump = m_pump_balloon->getPumping();
+    m_message.arm_base_servo.angle = m_grabber_servo_base->getAngle();
+    m_message.arm_base_servo.speed = m_grabber_servo_base->getSpeed();
 
-    m_message.vacuum_servo_left.angle = m_servo_vacuum_left->getAngle();
-    m_message.vacuum_servo_left.speed = m_servo_vacuum_left->getSpeed();
+    m_message.arm_mid_servo.angle = m_grabber_servo_mid->getAngle();
+    m_message.arm_mid_servo.speed = m_grabber_servo_mid->getSpeed();
 
-    m_message.vacuum_servo_middle.angle = m_servo_vacuum_middle->getAngle();
-    m_message.vacuum_servo_middle.speed = m_servo_vacuum_middle->getSpeed();
+    m_message.arm_suction_cup_servo.angle = m_grabber_servo_suction_cup->getAngle();
+    m_message.arm_suction_cup_servo.speed = m_grabber_servo_suction_cup->getSpeed();
 
-    m_message.vacuum_servo_right.angle = m_servo_vacuum_right->getAngle();
-    m_message.vacuum_servo_right.speed = m_servo_vacuum_right->getSpeed();
+    m_message.arm_vacuum.enable_pump = m_grabber_pump->getPumping();
+    m_message.arm_vacuum.release = m_grabber_pump->getRelease();
+
+    m_message.arm_suction_cup_servo.angle = m_grabber_servo_suction_cup->getAngle();
+    m_message.arm_suction_cup_servo.speed = m_grabber_servo_suction_cup->getSpeed();
+
+    m_message.arm_vacuum.enable_pump = m_grabber_pump->getPumping();
+    m_message.arm_vacuum.release = m_grabber_pump->getRelease();
 
     m_pub.publish(m_message);
 }

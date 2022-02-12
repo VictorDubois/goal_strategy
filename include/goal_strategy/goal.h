@@ -40,7 +40,7 @@ class GoalStrat
 {
 public:
     GoalStrat();
-    int loop();
+    void loop();
     enum class State
     {
         INIT,
@@ -127,7 +127,7 @@ private:
     Actuators m_actuators;
     bool m_goal_init_done;
 
-    Grabber theThing;
+    std::shared_ptr<Grabber> theThing;
 
     std::thread m_running;
 };
