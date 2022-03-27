@@ -87,6 +87,9 @@ private:
     void publishGoal();
     void publishAll();
 
+    void pushCarreFouille();
+    void retractePusher();
+
     State m_state = State::RUN;
     Distance m_dist_to_goal;
     bool m_state_msg_displayed;
@@ -127,7 +130,8 @@ private:
     Actuators m_actuators;
     bool m_goal_init_done;
 
-    std::shared_ptr<Grabber> theThing;
+    std::shared_ptr<Grabber> m_theThing;
+    std::shared_ptr<Servomotor> m_servo_pusher;
 
     std::thread m_running;
 };
