@@ -49,6 +49,11 @@ void Actuators::run()
 
 void Actuators::publish()
 {
+    m_message.arm_base_servo.enable = true;
+    m_message.arm_mid_servo.enable = true;
+    m_message.arm_suction_cup_servo.enable = true;
+    m_message.pusher_servo.enable = true;
+
     m_message.arm_base_servo.angle = m_grabber_servo_base->getAngle();
     m_message.arm_base_servo.speed = m_grabber_servo_base->getSpeed();
 
@@ -61,11 +66,11 @@ void Actuators::publish()
     m_message.arm_vacuum.enable_pump = m_grabber_pump->getPumping();
     m_message.arm_vacuum.release = m_grabber_pump->getRelease();
 
-    m_message.arm_suction_cup_servo.angle = m_grabber_servo_suction_cup->getAngle();
-    m_message.arm_suction_cup_servo.speed = m_grabber_servo_suction_cup->getSpeed();
+    m_message.pusher_servo.angle = m_servo_pusher->getAngle();
+    m_message.pusher_servo.speed = m_servo_pusher->getSpeed();
 
-    m_message.arm_vacuum.enable_pump = m_grabber_pump->getPumping();
-    m_message.arm_vacuum.release = m_grabber_pump->getRelease();
+    m_message.fake_statuette_vacuum.enable_pump = m_fake_statuette_pump->getPumping();
+    m_message.fake_statuette_vacuum.release = m_fake_statuette_pump->getRelease();
 
     m_pub.publish(m_message);
 }

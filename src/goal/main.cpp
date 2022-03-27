@@ -364,7 +364,7 @@ GoalStrat::GoalStrat()
     m_tirette_sub = m_nh.subscribe("tirette", 5, &GoalStrat::updateTirette, this);
     m_state = State::INIT;
     m_tirette = false;
-    std::string actuators_name = "actuators";
+    std::string actuators_name = "actuators_msg";
     auto l_servo_pusher = std::make_shared<Servomotor>(10, 120);
     auto l_pump_arm = std::make_shared<Pump>(false, true);
     auto l_fake_statuette_pump = std::make_shared<Pump>(false, true);
@@ -388,6 +388,18 @@ GoalStrat::GoalStrat()
                             l_pump_arm);
 
     m_actuators.start();
+
+    while (false) // Test the grabber
+    {
+
+        theThing->grab(GREEN_HEXA);
+
+        usleep(5000000);
+
+        theThing->release();
+
+        usleep(5000000);
+    }
 }
 
 void GoalStrat::publishAll()

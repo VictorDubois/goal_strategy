@@ -6,8 +6,9 @@
 enum GrabberContent
 {
     NOTHING,
-    GREEN_CUP,
-    RED_CUP,
+    GREEN_HEXA,
+    RED_HEXA,
+    BLUE_HEXA,
     UNKNOWN,
     ANY
 };
@@ -23,6 +24,7 @@ public:
             std::shared_ptr<Pump> a_pump);
 
     void release(GrabberContent type_to_release);
+    void release();
     void grab(GrabberContent type_to_catch);
     float getReach();
     Angle getAngle();
@@ -35,6 +37,5 @@ private:
     std::shared_ptr<Servomotor> m_servo_suction_cup;
     std::shared_ptr<Pump> m_pump;
 
-    void release();
     void grab();
 };
