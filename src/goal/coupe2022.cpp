@@ -41,11 +41,11 @@ Coupe2022::Coupe2022(const bool isYellow)
     int campement = Etape::makeEtape(positionCAbsolute(0.3f, 0.7f),
                                      Etape::DEPART); // départ au fond de la zone de départ
 
-    int fouille_safe = Etape::makeEtape(new CarreFouille(positionCAbsolute(0.8525f, 1.7f)));
-    int fouille_mixte_1 = Etape::makeEtape(new CarreFouille(positionCAbsolute(1.2225f, 1.7f)));
-    int fouille_mixte_2 = Etape::makeEtape(new CarreFouille(positionCAbsolute(1.4075f, 1.7f)));
-    int fouille_mixte_3 = Etape::makeEtape(new CarreFouille(positionCAbsolute(1.5925f, 1.7f)));
-    int fouille_mixte_4 = Etape::makeEtape(new CarreFouille(positionCAbsolute(1.7775f, 1.7f)));
+    int fouille_safe = Etape::makeEtape(new CarreFouille(positionCAbsolute(0.8525f, 1.775f)));
+    int fouille_mixte_1 = Etape::makeEtape(new CarreFouille(positionCAbsolute(1.2225f, 1.775f)));
+    int fouille_mixte_2 = Etape::makeEtape(new CarreFouille(positionCAbsolute(1.4075f, 1.775f)));
+    int fouille_mixte_3 = Etape::makeEtape(new CarreFouille(positionCAbsolute(1.5925f, 1.775f)));
+    int fouille_mixte_4 = Etape::makeEtape(new CarreFouille(positionCAbsolute(1.7775f, 1.775f)));
 
     Etape::get(campement)->addVoisins(fouille_safe);
     Etape::get(fouille_safe)->addVoisins(fouille_mixte_1);

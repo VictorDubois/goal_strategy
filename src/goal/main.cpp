@@ -375,7 +375,7 @@ GoalStrat::GoalStrat()
     m_state = State::INIT;
     m_tirette = false;
     std::string actuators_name = "actuators_msg";
-    m_servo_pusher = std::make_shared<Servomotor>(255, 70);
+    m_servo_pusher = std::make_shared<Servomotor>(255, 75);
     auto l_pump_arm = std::make_shared<Pump>(false, true);
     auto l_fake_statuette_pump = std::make_shared<Pump>(false, true);
     auto l_servo_arm_base = std::make_shared<Servomotor>(10, 40);
