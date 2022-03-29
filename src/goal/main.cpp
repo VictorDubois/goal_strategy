@@ -350,7 +350,7 @@ void GoalStrat::pushCarreFouille()
 
 void GoalStrat::retractePusher()
 {
-    m_servo_pusher->setAngle(70);
+    m_servo_pusher->setAngle(75);
 }
 
 GoalStrat::GoalStrat()
@@ -399,6 +399,7 @@ GoalStrat::GoalStrat()
 
     m_actuators.start();
 
+    retractePusher();
     while (false) // Test the grabber
     {
         m_theThing->grab(GREEN_HEXA);
