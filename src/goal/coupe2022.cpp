@@ -38,66 +38,30 @@ Coupe2022::Coupe2022(const bool isYellow)
 
     // Création des étapes
     // Les étapes correspondant à des actions sont créées automatiquement lors de l'ajout d'actions
-    int main_port = Etape::makeEtape(positionC(1.30, 0),
+    int campement = Etape::makeEtape(positionCAbsolute(0.3f, 0.7f),
                                      Etape::DEPART); // départ au fond de la zone de départ
 
-    /*int bouee_our_port_1
-      = Etape::makeEtape(new Bouee(positionCAbsolute(0.3, 0.4), GrabberContent::RED_CUP));
-    int bouee_our_port_2
-      = Etape::makeEtape(new Bouee(positionCAbsolute(0.445, 0.515), GrabberContent::GREEN_CUP));
-    int bouee_our_port_3
-      = Etape::makeEtape(new Bouee(positionCAbsolute(0.445, 1.085), GrabberContent::RED_CUP));
-    int bouee_our_port_4
-      = Etape::makeEtape(new Bouee(positionCAbsolute(0.3, 1.2), GrabberContent::GREEN_CUP));*/
+    int fouille_safe = Etape::makeEtape(new CarreFouille(positionCAbsolute(0.8525f, 1.7f)));
+    int fouille_mixte_1 = Etape::makeEtape(new CarreFouille(positionCAbsolute(1.2225f, 1.7f)));
+    int fouille_mixte_2 = Etape::makeEtape(new CarreFouille(positionCAbsolute(1.4075f, 1.7f)));
+    int fouille_mixte_3 = Etape::makeEtape(new CarreFouille(positionCAbsolute(1.5925f, 1.7f)));
+    int fouille_mixte_4 = Etape::makeEtape(new CarreFouille(positionCAbsolute(1.7775f, 1.7f)));
 
-    int lighthouse = Etape::makeEtape(new Phare(positionC(1.30, 0.8)));
-    int out_of_lighthouse = Etape::makeEtape(positionCAbsolute(0.6, 0.4));
+    Etape::get(campement)->addVoisins(fouille_safe);
+    Etape::get(fouille_safe)->addVoisins(fouille_mixte_1);
+    Etape::get(fouille_mixte_1)->addVoisins(fouille_mixte_2);
+    Etape::get(fouille_mixte_2)->addVoisins(fouille_mixte_3);
+    Etape::get(fouille_mixte_3)->addVoisins(fouille_mixte_4);
 
-    int out_of_main_port = Etape::makeEtape(positionC(0.8, 0));
+    // If we want to check the resistances
+    int fouille_risk_1 = Etape::makeEtape(positionCAbsolute(0.6675f, 1.7f));
+    int fouille_risk_2 = Etape::makeEtape(positionCAbsolute(1.0375f, 1.7f));
+    Etape::get(campement)->addVoisins(fouille_risk_1);
+    Etape::get(fouille_risk_1)->addVoisins(fouille_safe);
+    Etape::get(fouille_safe)->addVoisins(fouille_risk_2);
+    Etape::get(fouille_risk_2)->addVoisins(fouille_mixte_1);
 
-    Etape::get(main_port)->addVoisins(out_of_main_port);
-    /*Etape::get(out_of_main_port)->addVoisins(bouee_our_port_1);
-    Etape::get(bouee_our_port_2)->addVoisins(bouee_our_port_1);
-    Etape::get(out_of_main_port)->addVoisins(bouee_our_port_3);
-    Etape::get(bouee_our_port_4)->addVoisins(bouee_our_port_3);*/
-
-    Etape::get(lighthouse)->addVoisins(out_of_lighthouse);
-    Etape::get(out_of_main_port)->addVoisins(out_of_lighthouse);
-
-    int first_air = Etape::makeEtape(new MancheAAir(positionC(1.270, -0.8)));
-    int second_air = Etape::makeEtape(new MancheAAir(positionC(0.865, -0.8)));
-    int out_of_first_air = Etape::makeEtape(positionC(1.235, -0.6));
-    int out_of_second_air = Etape::makeEtape(positionC(0.9, -0.6));
-
-    Etape::get(out_of_second_air)->addVoisins(out_of_first_air);
-    Etape::get(first_air)->addVoisins(out_of_first_air);
-    Etape::get(second_air)->addVoisins(out_of_second_air);
-
-    int push_south_bouees = Etape::makeEtape(new Port(positionC(1.150, 0)));
-    int push_north_bouees = Etape::makeEtape(new Port(positionC(1.150, 0.4)));
-    Etape::get(out_of_lighthouse)->addVoisins(push_north_bouees);
-
-    // Points de passage
-    int waypoint_south = Etape::makeEtape(positionC(.860, -0.300));
-    int waypoint_out_of_enemy_small_port = Etape::makeEtape(positionC(0.4, -0.4));
-
-    Etape::get(out_of_first_air)->addVoisins(waypoint_south);
-    Etape::get(out_of_second_air)->addVoisins(waypoint_south, waypoint_out_of_enemy_small_port);
-    Etape::get(out_of_main_port)->addVoisins(waypoint_south, waypoint_out_of_enemy_small_port);
-
-    int waypoint_middle_ports = Etape::makeEtape(positionC(0, -0.4));
-    int waypoint_out_of_our_small_port = Etape::makeEtape(positionCAbsolute(1.8, 1.5));
-    Etape::get(waypoint_out_of_enemy_small_port)->addVoisins(waypoint_middle_ports, waypoint_south);
-    Etape::get(waypoint_out_of_our_small_port)->addVoisins(waypoint_middle_ports);
-
-    int waypoint_out_of_push_south_bouees = Etape::makeEtape(positionC(1.020, -0.3));
-    Etape::get(waypoint_out_of_push_south_bouees)
-      ->addVoisins(push_south_bouees, waypoint_south, out_of_second_air);
-
-    int our_small_port = Etape::makeEtape(positionCAbsolute(1.8, 1.75));
-    Etape::get(our_small_port)->addVoisins(waypoint_out_of_our_small_port);
-
-    m_numero_etape_garage = second_air; // Must be set!
+    m_numero_etape_garage = campement; // Must be set!
 
 #ifdef QTGUI
     qDebug() << Etape::getTotalEtapes();
@@ -133,12 +97,12 @@ void etape_type_to_marker(visualization_msgs::Marker& m, const Etape::EtapeType&
         m.scale.y = 0.01;
         m.scale.z = 0.01;
         break;
-    case Etape::EtapeType::PHARE:
+    case Etape::EtapeType::CARRE_FOUILLE:
         color.r = 255;
         color.g = 0;
         color.b = 0;
         break;
-    case Etape::EtapeType::MANCHE_A_AIR:
+    /*case Etape::EtapeType::MANCHE_A_AIR:
         color.r = 255;
         color.g = 255;
         color.b = 0;
@@ -162,7 +126,7 @@ void etape_type_to_marker(visualization_msgs::Marker& m, const Etape::EtapeType&
         color.r = 0;
         color.g = 0;
         color.b = 255;
-        break;
+        break;*/
     case Etape::EtapeType::POINT_PASSAGE:
         color.r = 0;
         color.g = 0;
@@ -275,17 +239,8 @@ int Coupe2022::getScoreEtape(int i)
     case Etape::POINT_PASSAGE:
         l_score = 0;
         break;
-    case Etape::PHARE:
-        l_score = 200;
-        break;
-    case Etape::BOUEE:
-        l_score = 0;
-        break;
-    case Etape::MANCHE_A_AIR:
-        l_score = 50;
-        break;
-    case Etape::PORT:
-        l_score = 1;
+    case Etape::CARRE_FOUILLE:
+        l_score = 5;
         break;
     default:
         return 0;

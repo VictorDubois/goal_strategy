@@ -518,14 +518,18 @@ void GoalStrat::chooseGear()
     std_msgs::Bool l_reverseGear;
     if (m_previous_etape_type == Etape::EtapeType::MANCHE_A_AIR
         || m_strat_graph->getEtapeEnCours()->getEtapeType() == Etape::EtapeType::PHARE
-        || m_previous_etape_type == Etape::EtapeType::PORT)
+        || m_previous_etape_type == Etape::EtapeType::PORT
+        || (m_strat_graph->getEtapeEnCours()->getEtapeType() == Etape::EtapeType::CARRE_FOUILLE
+            && m_is_blue))
     {
         l_reverseGear.data = true;
         m_strat_mvnt.reverse_gear = 1;
     }
     else if (m_strat_graph->getEtapeEnCours()->getEtapeType() == Etape::EtapeType::MANCHE_A_AIR
              || m_previous_etape_type == Etape::EtapeType::PHARE
-             || m_strat_graph->getEtapeEnCours()->getEtapeType() == Etape::EtapeType::PORT)
+             || m_strat_graph->getEtapeEnCours()->getEtapeType() == Etape::EtapeType::PORT
+             || (m_strat_graph->getEtapeEnCours()->getEtapeType() == Etape::EtapeType::CARRE_FOUILLE
+                 && !m_is_blue))
     {
         l_reverseGear.data = false;
         m_strat_mvnt.reverse_gear = 0;
@@ -659,6 +663,7 @@ void GoalStrat::stateRun()
         ros::Time recalageTimeoutDeadline;
         Position position_calage;
         Position l_phare = m_strat_graph->positionCAbsolute(0.2f, 0);
+        float target_angle = 0;
         switch (m_strat_graph->getEtapeEnCours()->getEtapeType())
         {
         case Etape::MOUILLAGE_SUD:
@@ -676,6 +681,38 @@ void GoalStrat::stateRun()
             }
 
             break;
+
+        case Etape::CARRE_FOUILLE:
+            ROS_INFO_STREAM("In front of CARRE_FOUILLE, orienting" << std::endl);
+            stopLinear();
+
+            if (!m_is_blue)
+            {
+                target_angle = M_PI;
+            }
+
+            l_has_timed_out = alignWithAngleWithTimeout(Angle(target_angle));
+
+            if (l_has_timed_out)
+            {
+                m_action_aborted = true;
+                ROS_WARN_STREAM("orienting toward CARRE_FOUILLE has timed out :(" << std::endl);
+            }
+            stopAngular();
+            clamp_mode();
+
+            ROS_INFO_STREAM("Pushing CARRE_FOUILLE" << std::endl);
+
+            pushCarreFouille();
+            usleep(2e6);
+            retractePusher();
+            usleep(1e6);
+            ROS_INFO_STREAM("CARRE_FOUILLE done" << std::endl);
+
+            startAngular();
+            startLinear();
+            break;
+
         case Etape::EtapeType::MANCHE_A_AIR:
 
             stopLinear();

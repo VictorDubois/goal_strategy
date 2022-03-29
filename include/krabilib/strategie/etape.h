@@ -37,6 +37,7 @@ public:
         MOUILLAGE_SUD = 0x15,
         BOUEE = 0x16,
         HEXAGON_PLAT = 0x17,
+        CARRE_FOUILLE = 0x18,
 
         POINT_PASSAGE = 0x20,
 

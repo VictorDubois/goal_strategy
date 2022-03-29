@@ -5,9 +5,10 @@
 #include "krabilib/strategie/abeille.h"
 #include "krabilib/strategie/accelerator.h"
 #include "krabilib/strategie/bouee.h"
-#include "krabilib/strategie/hexagon_plat.h"
+#include "krabilib/strategie/carreFouille.h"
 #include "krabilib/strategie/etape.h"
 #include "krabilib/strategie/goldenium.h"
+#include "krabilib/strategie/hexagon_plat.h"
 #include "krabilib/strategie/reservoirEau.h"
 #include "krabilib/strategie/strategiev3.h"
 #include <geometry_msgs/Point.h>
