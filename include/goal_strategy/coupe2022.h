@@ -10,6 +10,7 @@
 #include "krabilib/strategie/goldenium.h"
 #include "krabilib/strategie/hexagon_plat.h"
 #include "krabilib/strategie/reservoirEau.h"
+#include "krabilib/strategie/statuette.h"
 #include "krabilib/strategie/strategiev3.h"
 #include <geometry_msgs/Point.h>
 

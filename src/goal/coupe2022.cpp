@@ -6,6 +6,7 @@
 #include "krabilib/strategie/mouillageSud.h"
 #include "krabilib/strategie/phare.h"
 #include "krabilib/strategie/port.h"
+#include "krabilib/strategie/statuette.h"
 
 #include <cmath>
 #include <iostream>
@@ -41,6 +42,7 @@ Coupe2022::Coupe2022(const bool isYellow)
     int campement = Etape::makeEtape(positionCAbsolute(0.3f, 0.7f),
                                      Etape::DEPART); // départ au fond de la zone de départ
 
+    // Carre de fouille
     int fouille_safe = Etape::makeEtape(new CarreFouille(positionCAbsolute(0.8525f, 1.775f)));
     int fouille_mixte_1 = Etape::makeEtape(new CarreFouille(positionCAbsolute(1.2225f, 1.775f)));
     int fouille_mixte_2 = Etape::makeEtape(new CarreFouille(positionCAbsolute(1.4075f, 1.775f)));
@@ -53,13 +55,18 @@ Coupe2022::Coupe2022(const bool isYellow)
     Etape::get(fouille_mixte_2)->addVoisins(fouille_mixte_3);
     Etape::get(fouille_mixte_3)->addVoisins(fouille_mixte_4);
 
-    // If we want to check the resistances
+    // Carre de fouille that require to check the resistances
     int fouille_risk_1 = Etape::makeEtape(positionCAbsolute(0.6675f, 1.7f));
     int fouille_risk_2 = Etape::makeEtape(positionCAbsolute(1.0375f, 1.7f));
     Etape::get(campement)->addVoisins(fouille_risk_1);
     Etape::get(fouille_risk_1)->addVoisins(fouille_safe);
     Etape::get(fouille_safe)->addVoisins(fouille_risk_2);
     Etape::get(fouille_risk_2)->addVoisins(fouille_mixte_1);
+
+    // Statuette
+    int statuette = Etape::makeEtape(new Statuette(positionCAbsolute(1.6f, 0.4f)));
+    Etape::get(campement)->addVoisins(statuette);
+    Etape::get(fouille_safe)->addVoisins(statuette);
 
     m_numero_etape_garage = campement; // Must be set!
 

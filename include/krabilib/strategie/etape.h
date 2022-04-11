@@ -38,10 +38,11 @@ public:
         BOUEE = 0x16,
         HEXAGON_PLAT = 0x17,
         CARRE_FOUILLE = 0x18,
+        STATUETTE = 0x19,
 
-        POINT_PASSAGE = 0x20,
+        POINT_PASSAGE = 0x30,
 
-        ROBOT_VU_ICI = 0x40
+        ROBOT_VU_ICI = 0x60
 
     };
 
