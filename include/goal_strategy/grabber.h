@@ -23,9 +23,11 @@ public:
             std::shared_ptr<Servomotor> a_servo_suction_cup,
             std::shared_ptr<Pump> a_pump);
 
-    void release(GrabberContent type_to_release);
-    void release();
-    void grab(GrabberContent type_to_catch);
+    void release_hexagon_on_ground(GrabberContent type_to_release);
+    void release_hexagon_on_ground();
+    void grab_hexagon(GrabberContent type_to_catch);
+    void grab_statuette();
+    void release_statuette();
     float getReach();
     Angle getAngle();
 
@@ -37,5 +39,5 @@ private:
     std::shared_ptr<Servomotor> m_servo_suction_cup;
     std::shared_ptr<Pump> m_pump;
 
-    void grab();
+    void grab_hexagon();
 };

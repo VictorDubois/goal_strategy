@@ -17,19 +17,6 @@ Actuators::Actuators(ros::NodeHandle* a_nh,
   , m_grabber_pump(a_grabber_pump)
 {
     m_pub = m_nh->advertise<krabi_msgs::actuators>(a_name, 5);
-
-    /*m_message.arm_base_servo =
-
-          m_message.balloon_pump.enable_pump = false;
-        m_message.balloon_servo.angle = 128;
-        m_message.balloon_servo.speed = 0;
-        m_message.pavillons.angle = 128;
-        m_message.pavillons.speed = 0;
-        m_message.phare_arm.angle = 128;
-        m_message.phare_arm.speed = 0;
-        m_message.vacuum_pump_left.enable_pump = false;
-        m_message.vacuum_pump_middle.enable_pump = false;
-        m_message.vacuum_pump_right.enable_pump = false;*/
 }
 
 void Actuators::start()

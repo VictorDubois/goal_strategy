@@ -402,12 +402,12 @@ GoalStrat::GoalStrat()
     retractePusher();
     while (false) // Test the grabber
     {
-        m_theThing->grab(GREEN_HEXA);
+        m_theThing->grab_hexagon(GREEN_HEXA);
         pushCarreFouille();
 
         usleep(5000000);
 
-        m_theThing->release();
+        m_theThing->release_hexagon_on_ground();
         retractePusher();
         usleep(5000000);
     }
@@ -807,11 +807,11 @@ void GoalStrat::stateRun()
                 Angle((m_goal_pose.getPosition() - m_current_pose.getPosition()).getAngle()
                       - m_theThing->getAngle())),
               "Timeout while orienting");
-            m_theThing->grab(GrabberContent::ANY);
+            m_theThing->grab_hexagon(GrabberContent::ANY);
             ROS_INFO_STREAM("Bouee grabbed" << std::endl);
             break;
         case Etape::EtapeType::PORT:
-            m_theThing->release(GrabberContent::ANY);
+            m_theThing->release_hexagon_on_ground(GrabberContent::ANY);
             ROS_INFO_STREAM("Bouee released" << std::endl);
             break;
         default:
