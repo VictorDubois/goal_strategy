@@ -275,6 +275,14 @@ void GoalStrat::goToNextMission()
         // Check if we scored points
         switch (m_previous_etape_type)
         {
+        case Etape::EtapeType::CARRE_FOUILLE:
+            m_score_match += 5;
+            if (m_at_least_one_carre_fouille_done)
+            {
+                m_score_match += 5;
+            }
+            m_at_least_one_carre_fouille_done = true;
+            break;
         case Etape::EtapeType::PHARE:
             m_score_match += 3;
             // Will the phare have enough time to be raised?
@@ -310,6 +318,7 @@ void GoalStrat::goToNextMission()
             }
             m_first_manche_a_air_done = true;
             break;
+
         default:
             break;
         }
@@ -357,6 +366,7 @@ GoalStrat::GoalStrat()
   : m_tf_listener(m_tf_buffer)
 {
     m_goal_init_done = false;
+    m_at_least_one_carre_fouille_done = false;
     m_remainig_time = ros::Duration(100, 0);
     m_strat_mvnt.max_speed_at_arrival = 0.1f;
     m_strat_mvnt.orient = 0;

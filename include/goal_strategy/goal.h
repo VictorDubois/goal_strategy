@@ -129,6 +129,7 @@ private:
     bool m_tirette;
     Actuators m_actuators;
     bool m_goal_init_done;
+    bool m_at_least_one_carre_fouille_done;
 
     std::shared_ptr<Grabber> m_theThing;
     std::shared_ptr<Servomotor> m_servo_pusher;
