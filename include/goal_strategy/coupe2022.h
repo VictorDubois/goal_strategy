@@ -7,11 +7,13 @@
 #include "krabilib/strategie/bouee.h"
 #include "krabilib/strategie/carreFouille.h"
 #include "krabilib/strategie/etape.h"
+#include "krabilib/strategie/galerie.h"
 #include "krabilib/strategie/goldenium.h"
 #include "krabilib/strategie/hexagon_plat.h"
 #include "krabilib/strategie/reservoirEau.h"
 #include "krabilib/strategie/statuette.h"
 #include "krabilib/strategie/strategiev3.h"
+#include "krabilib/strategie/vitrine.h"
 #include <geometry_msgs/Point.h>
 
 #include <geometry_msgs/Pose.h>
@@ -24,10 +26,15 @@ public:
     Coupe2022(bool isYellow);
     void debugEtapes(visualization_msgs::MarkerArray& ma);
 
+    void catchStatuette();
+    void dropStatuette();
+
     Position positionCAbsolute(double x_yellow_from_top_left, double y_yellow_from_top_left);
 
 private:
     int getScoreEtape(int i);
+
+    bool statuette_held;
 
     uint32_t m_seq;
 };

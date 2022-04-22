@@ -1,12 +1,9 @@
 #include "goal_strategy/coupe2022.h"
 #include "goal_strategy/grabber.h"
 #include "krabilib/pose.h"
-#include "krabilib/strategie/mancheAAir.h"
-#include "krabilib/strategie/mouillageNord.h"
-#include "krabilib/strategie/mouillageSud.h"
-#include "krabilib/strategie/phare.h"
-#include "krabilib/strategie/port.h"
+#include "krabilib/strategie/galerie.h"
 #include "krabilib/strategie/statuette.h"
+#include "krabilib/strategie/vitrine.h"
 
 #include <cmath>
 #include <iostream>
@@ -33,6 +30,8 @@ Coupe2022::Coupe2022(const bool isYellow)
 {
     setRemainingTime(100 * 1000);
 
+    statuette_held = false;
+
     // Initialisation des tableaux d'étapes
     m_tableau_etapes_total
       = Etape::initTableauEtapeTotal(NOMBRE_ETAPES); // new Etape*[NOMBRE_ETAPES];
@@ -41,6 +40,9 @@ Coupe2022::Coupe2022(const bool isYellow)
     // Les étapes correspondant à des actions sont créées automatiquement lors de l'ajout d'actions
     int campement = Etape::makeEtape(positionCAbsolute(0.3f, 0.7f),
                                      Etape::DEPART); // départ au fond de la zone de départ
+
+    int out_of_campement = Etape::makeEtape(positionCAbsolute(0.5f, 0.7f), Etape::POINT_PASSAGE);
+    Etape::get(campement)->addVoisins(out_of_campement);
 
     // Carre de fouille
     int fouille_safe = Etape::makeEtape(new CarreFouille(positionCAbsolute(0.8525f, 1.775f)));
@@ -55,18 +57,37 @@ Coupe2022::Coupe2022(const bool isYellow)
     Etape::get(fouille_mixte_2)->addVoisins(fouille_mixte_3);
     Etape::get(fouille_mixte_3)->addVoisins(fouille_mixte_4);
 
+    Etape::get(out_of_campement)->addVoisins(fouille_safe);
+
     // Carre de fouille that require to check the resistances
-    int fouille_risk_1 = Etape::makeEtape(positionCAbsolute(0.6675f, 1.7f));
-    int fouille_risk_2 = Etape::makeEtape(positionCAbsolute(1.0375f, 1.7f));
+    int fouille_risk_1 = Etape::makeEtape(positionCAbsolute(0.6675f, 1.775f));
+    int fouille_risk_2 = Etape::makeEtape(positionCAbsolute(1.0375f, 1.775f));
     Etape::get(campement)->addVoisins(fouille_risk_1);
     Etape::get(fouille_risk_1)->addVoisins(fouille_safe);
     Etape::get(fouille_safe)->addVoisins(fouille_risk_2);
     Etape::get(fouille_risk_2)->addVoisins(fouille_mixte_1);
 
     // Statuette
-    int statuette = Etape::makeEtape(new Statuette(positionCAbsolute(1.6f, 0.4f)));
+    int statuette = Etape::makeEtape(new Statuette(positionCAbsolute(0.45f, 1.55f)));
     Etape::get(campement)->addVoisins(statuette);
     Etape::get(fouille_safe)->addVoisins(statuette);
+
+    int vitrine = Etape::makeEtape(new Vitrine(positionCAbsolute(0.25f, 0.2f)));
+    int galerie_bleu = Etape::makeEtape(new Galerie(positionCAbsolute(0.57f, 0.2f)));
+    int galerie_vert = Etape::makeEtape(new Galerie(positionCAbsolute(0.81f, 0.2f)));
+    int galerie_rouge = Etape::makeEtape(new Galerie(positionCAbsolute(1.05f, 0.2f)));
+
+    Etape::get(out_of_campement)->addVoisins(statuette);
+    Etape::get(out_of_campement)->addVoisins(vitrine);
+    Etape::get(statuette)->addVoisins(fouille_mixte_1);
+    Etape::get(statuette)->addVoisins(fouille_mixte_4);
+
+    Etape::get(out_of_campement)->addVoisins(galerie_bleu);
+    Etape::get(out_of_campement)->addVoisins(galerie_vert);
+    Etape::get(out_of_campement)->addVoisins(galerie_rouge);
+
+    Etape::get(galerie_vert)->addVoisins(galerie_bleu);
+    Etape::get(galerie_vert)->addVoisins(galerie_rouge);
 
     m_numero_etape_garage = campement; // Must be set!
 
@@ -108,6 +129,21 @@ void etape_type_to_marker(visualization_msgs::Marker& m, const Etape::EtapeType&
         color.r = 255;
         color.g = 0;
         color.b = 0;
+        break;
+    case Etape::EtapeType::VITRINE:
+        color.r = 255;
+        color.g = 255;
+        color.b = 0;
+        break;
+    case Etape::EtapeType::STATUETTE:
+        color.r = 255;
+        color.g = 0;
+        color.b = 255;
+        break;
+    case Etape::EtapeType::GALERIE:
+        color.r = 255;
+        color.g = 255;
+        color.b = 255;
         break;
     /*case Etape::EtapeType::MANCHE_A_AIR:
         color.r = 255;
@@ -249,8 +285,30 @@ int Coupe2022::getScoreEtape(int i)
     case Etape::CARRE_FOUILLE:
         l_score = 5;
         break;
+    case Etape::VITRINE:
+        l_score = 0;
+        if (statuette_held)
+        {
+            l_score = 5;
+        }
+        break;
+    case Etape::STATUETTE:
+        l_score = 5;
+        break;
+    case Etape::GALERIE:
+        l_score = 0;
+        break;
     default:
         return 0;
     }
     return l_score;
+}
+
+void Coupe2022::catchStatuette()
+{
+    statuette_held = true;
+}
+void Coupe2022::dropStatuette()
+{
+    statuette_held = false;
 }

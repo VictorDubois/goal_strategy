@@ -39,6 +39,8 @@ public:
         HEXAGON_PLAT = 0x17,
         CARRE_FOUILLE = 0x18,
         STATUETTE = 0x19,
+        VITRINE = 0x20,
+        GALERIE = 0x21,
 
         POINT_PASSAGE = 0x30,
 

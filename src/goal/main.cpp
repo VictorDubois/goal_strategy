@@ -283,6 +283,14 @@ void GoalStrat::goToNextMission()
             }
             m_at_least_one_carre_fouille_done = true;
             break;
+        case Etape::EtapeType::STATUETTE:
+            m_score_match += 15;
+            m_strat_graph->catchStatuette();
+            break;
+        case Etape::EtapeType::VITRINE:
+            m_score_match += 20;
+            m_strat_graph->dropStatuette();
+            break;
         case Etape::EtapeType::PHARE:
             m_score_match += 3;
             // Will the phare have enough time to be raised?
@@ -693,6 +701,37 @@ void GoalStrat::stateRun()
 
             break;
 
+        case Etape::STATUETTE:
+            ROS_INFO_STREAM("In front of STATUETTE, orienting" << std::endl);
+            stopLinear();
+
+            target_angle = M_PI / 2; // @TODO set correct angle
+
+            if (!m_is_blue)
+            {
+                target_angle = -M_PI / 2; // @TODO set correct angle
+            }
+
+            l_has_timed_out = alignWithAngleWithTimeout(Angle(target_angle));
+
+            if (l_has_timed_out)
+            {
+                m_action_aborted = true;
+                ROS_WARN_STREAM("orienting toward STATUETTE has timed out :(" << std::endl);
+            }
+            stopAngular();
+            clamp_mode();
+
+            ROS_INFO_STREAM("Grabing STATUETTE" << std::endl);
+
+            m_theThing->grab_statuette();
+            usleep(2e6);
+            ROS_INFO_STREAM("STATUETTE caught" << std::endl);
+
+            startAngular();
+            startLinear();
+            break;
+
         case Etape::CARRE_FOUILLE:
             ROS_INFO_STREAM("In front of CARRE_FOUILLE, orienting" << std::endl);
             stopLinear();
@@ -865,7 +904,7 @@ void GoalStrat::init()
 {
     m_funny_action_counted = false;
     m_first_manche_a_air_done = false;
-    m_score_match = 2; // phare posé
+    m_score_match = 4; // vitrine presente + replique presente
     m_servos_cmd.enable = true;
     /*m_servos_cmd.brak_speed = 10;
     m_servos_cmd.brak_angle = 148;*/
