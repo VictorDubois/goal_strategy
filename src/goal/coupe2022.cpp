@@ -270,7 +270,7 @@ void Coupe2022::debugEtapes(visualization_msgs::MarkerArray& ma)
  */
 int Coupe2022::getScoreEtape(int i)
 {
-    ROS_WARN_STREAM("getScoreEtape. Time: " << getRemainingTime() << std::endl);
+    ROS_INFO_STREAM("getScoreEtape. Time: " << getRemainingTime() << std::endl);
     int l_score = 0;
     switch (this->m_tableau_etapes_total[i]->getEtapeType())
     {

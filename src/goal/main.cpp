@@ -191,7 +191,7 @@ bool GoalStrat::isAlignedWithAngle(Angle angle)
 
     // Is the tool on the back?
     Angle toolAngle = m_current_pose.getAngle();
-    if (m_strat_mvnt.reverse_gear)
+    if (m_strat_mvnt.reverse_gear == 1)
     {
         toolAngle += M_PI;
     }
@@ -547,6 +547,8 @@ void GoalStrat::chooseGear()
     else if (m_strat_graph->getEtapeEnCours()->getEtapeType() == Etape::EtapeType::MANCHE_A_AIR
              || m_previous_etape_type == Etape::EtapeType::PHARE
              || m_strat_graph->getEtapeEnCours()->getEtapeType() == Etape::EtapeType::PORT
+             || m_strat_graph->getEtapeEnCours()->getEtapeType() == Etape::EtapeType::STATUETTE
+             || m_strat_graph->getEtapeEnCours()->getEtapeType() == Etape::EtapeType::VITRINE
              || (m_strat_graph->getEtapeEnCours()->getEtapeType() == Etape::EtapeType::CARRE_FOUILLE
                  && !m_is_blue))
     {
