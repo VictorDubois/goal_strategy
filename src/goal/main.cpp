@@ -684,6 +684,7 @@ void GoalStrat::stateRun()
         ros::Time recalageTimeoutDeadline;
         Position position_calage;
         Position l_phare = m_strat_graph->positionCAbsolute(0.2f, 0);
+        Position l_coin = m_strat_graph->positionCAbsolute(0.0f, 2.f);
         float target_angle = 0;
         switch (m_strat_graph->getEtapeEnCours()->getEtapeType())
         {
@@ -704,17 +705,14 @@ void GoalStrat::stateRun()
             break;
 
         case Etape::STATUETTE:
-            ROS_INFO_STREAM("In front of STATUETTE, orienting" << std::endl);
             stopLinear();
+            startAngular();
 
-            target_angle = M_PI / 2; // @TODO set correct angle
-
-            if (!m_is_blue)
-            {
-                target_angle = -M_PI / 2; // @TODO set correct angle
-            }
+            target_angle = (l_coin - m_current_pose.getPosition()).getAngle();
 
             l_has_timed_out = alignWithAngleWithTimeout(Angle(target_angle));
+            ROS_INFO_STREAM("In front of STATUETTE, orienting towards" << target_angle
+                                                                       << std::endl);
 
             if (l_has_timed_out)
             {
@@ -729,6 +727,32 @@ void GoalStrat::stateRun()
             m_theThing->grab_statuette();
             usleep(2e6);
             ROS_INFO_STREAM("STATUETTE caught" << std::endl);
+
+            startAngular();
+            startLinear();
+            break;
+
+        case Etape::VITRINE:
+            ROS_INFO_STREAM("In front of VITRINE, orienting" << std::endl);
+            stopLinear();
+
+            target_angle = -M_PI / 2;
+
+            l_has_timed_out = alignWithAngleWithTimeout(Angle(target_angle));
+
+            if (l_has_timed_out)
+            {
+                m_action_aborted = true;
+                ROS_WARN_STREAM("orienting toward VITRINE has timed out :(" << std::endl);
+            }
+            stopAngular();
+            clamp_mode();
+
+            ROS_INFO_STREAM("Droping STATUETTE" << std::endl);
+
+            m_theThing->release_statuette();
+            usleep(2e6);
+            ROS_INFO_STREAM("STATUETTE dropped" << std::endl);
 
             startAngular();
             startLinear();
