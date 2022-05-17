@@ -166,7 +166,8 @@ bool GoalStrat::isArrivedAtGoal()
                      << "Distance to objective: " << m_dist_to_goal);
 
     float l_reach_dist = REACH_DIST;
-    if (m_strat_graph->getEtapeEnCours()->getEtapeType() == Etape::EtapeType::BOUEE)
+    if (m_strat_graph->getEtapeEnCours()->getEtapeType() == Etape::EtapeType::BOUEE
+        || m_strat_graph->getEtapeEnCours()->getEtapeType() == Etape::EtapeType::HEXAGON_PLAT)
     {
         l_reach_dist = m_theThing->getReach();
     }
@@ -495,9 +496,9 @@ void GoalStrat::checkStopMatch()
  * @brief Check if it's time to perform the funny action and perfom it if required
  *
  */
-void GoalStrat::checkFunnyAction()
+bool GoalStrat::checkFunnyAction()
 {
-    const ros::Duration funny_action_timing = ros::Duration(4.); // 4s before T=0;
+    const ros::Duration funny_action_timing = ros::Duration(10.); // 5s before T=0;
 
     if (m_remainig_time.toSec() < funny_action_timing.toSec())
     {
@@ -656,6 +657,18 @@ void GoalStrat::stateRun()
 
     chooseGear(); // Go in reverse gear if needed
     setMaxSpeedAtArrival();
+
+    if (checkFunnyAction())
+    {
+        // runHome
+        m_strat_mvnt.max_speed_at_arrival = 0.1f;
+        m_strat_mvnt.max_speed.linear.x = 1.f;
+        m_strat_mvnt.max_speed.angular.z = goal_MAX_ALLOWED_ANGULAR_SPEED;
+        m_strat_mvnt.reverse_gear = 2; // don't care
+        m_goal_pose.setPosition(m_strat_graph->positionCAbsolute(1.375f, 0.975f));
+        publishGoal();
+        return;
+    }
 
     // prepare arm if needed
     if (!m_is_blue && !m_servo_out

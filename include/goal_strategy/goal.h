@@ -72,7 +72,7 @@ private:
     void startLinear();
     void recalage_bordure();
     void checkStopMatch();
-    void checkFunnyAction();
+    bool checkFunnyAction();
 
     void updateCurrentPose();
     void updateRemainingTime(std_msgs::Duration remainingTime);
