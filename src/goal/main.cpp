@@ -503,7 +503,9 @@ bool GoalStrat::checkFunnyAction()
     if (m_remainig_time.toSec() < funny_action_timing.toSec())
     {
         ROS_INFO_STREAM("Doing the funny action");
+        return true;
     }
+    return false;
 }
 
 /**
@@ -665,7 +667,10 @@ void GoalStrat::stateRun()
         m_strat_mvnt.max_speed.linear.x = 1.f;
         m_strat_mvnt.max_speed.angular.z = goal_MAX_ALLOWED_ANGULAR_SPEED;
         m_strat_mvnt.reverse_gear = 2; // don't care
-        m_goal_pose.setPosition(m_strat_graph->positionCAbsolute(1.375f, 0.975f));
+        // Zone de fouille
+        m_goal_pose.setPosition(m_strat_graph->positionCAbsolute(0.975f, 1.375f));
+        // Zone de départ
+        //m_goal_pose.setPosition(m_strat_graph->positionCAbsolute(0.3f, 0.7f));
         publishGoal();
         return;
     }
