@@ -34,8 +34,14 @@ void Actuators::run()
     }
 }
 
+void Actuators::set_score(int a_score)
+{
+    m_score = a_score;
+}
+
 void Actuators::publish()
 {
+    m_message.score = m_score;
     m_message.arm_base_servo.enable = true;
     m_message.arm_mid_servo.enable = true;
     m_message.arm_suction_cup_servo.enable = true;

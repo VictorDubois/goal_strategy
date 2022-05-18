@@ -22,6 +22,8 @@ private:
 
     std::thread m_running;
 
+    int m_score;
+
     void run();
 
 public:
@@ -37,4 +39,5 @@ public:
 
     void publish();
     void start();
+    void set_score(int a_score);
 };

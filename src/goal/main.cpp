@@ -588,13 +588,24 @@ void GoalStrat::abortAction()
  */
 void GoalStrat::publishScore()
 {
+    int l_score = m_score_match; // points définitivement marqués
+
     std_msgs::UInt16 l_score_match;
-    l_score_match.data = static_cast<uint16_t>(std::ceil(m_score_match));
+    l_score_match.data = static_cast<uint16_t>(std::ceil(l_score));
     // m_score_pub.publish(l_score_match);
 
-    // Hack to use only one arduino for both servos and LCD
-    m_servos_cmd.s4_angle = static_cast<uint16_t>(std::ceil(m_score_match));
-    m_servos_cmd.s4_speed = static_cast<uint16_t>(std::ceil(m_score_match));
+    // Is the robot in the right area at the end?
+    if (m_remainig_time < ros::Duration(4))
+    {
+        if ((m_current_pose.getPosition() - m_strat_graph->positionCAbsolute(0.975f, 1.375f)).getNorme() < 0.3f // 30cm du centre de la zone de fouille
+         || (m_current_pose.getPosition() - m_strat_graph->positionCAbsolute(0.3f, 0.7f)).getNorme() < 0.3f // 30cm du centre de la zone de départ
+         || (m_current_pose.getPosition() - m_strat_graph->positionCAbsolute(3-0.975f, 1.375f)).getNorme() < 0.3f) // 30cm du centre de la zone de fouille adverse
+        {
+            l_score += 20;
+        }
+    }
+
+    m_actuators.set_score(l_score);
 }
 
 /**
