@@ -363,12 +363,12 @@ void GoalStrat::goToNextMission()
 
 void GoalStrat::pushCarreFouille()
 {
-    m_servo_pusher->setAngle(140);
+    m_servo_pusher->setAngle(130);
 }
 
 void GoalStrat::retractePusher()
 {
-    m_servo_pusher->setAngle(75);
+    m_servo_pusher->setAngle(82);
 }
 
 GoalStrat::GoalStrat()
@@ -419,6 +419,8 @@ GoalStrat::GoalStrat()
     m_actuators.start();
 
     retractePusher();
+    m_theThing->release_hexagon_on_ground();
+
     while (false) // Test the grabber
     {
         m_theThing->grab_hexagon(GREEN_HEXA);
@@ -1003,6 +1005,8 @@ void GoalStrat::init()
     m_state = State::WAIT_TIRETTE;
 
     m_running = std::thread(&GoalStrat::publishAll, this);
+
+    
 }
 
 /**
