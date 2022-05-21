@@ -17,6 +17,7 @@ Actuators::Actuators(ros::NodeHandle* a_nh,
   , m_grabber_pump(a_grabber_pump)
 {
     m_pub = m_nh->advertise<krabi_msgs::actuators>(a_name, 5);
+    m_shutdown = false;
 }
 
 void Actuators::start()
@@ -37,6 +38,11 @@ void Actuators::run()
 void Actuators::set_score(int a_score)
 {
     m_score = a_score;
+}
+
+void Actuators::shutdown()
+{
+    m_shutdown = true;
 }
 
 void Actuators::publish()
@@ -64,6 +70,18 @@ void Actuators::publish()
 
     m_message.fake_statuette_vacuum.enable_pump = m_fake_statuette_pump->getPumping();
     m_message.fake_statuette_vacuum.release = m_fake_statuette_pump->getRelease();
+
+    if (m_shutdown)
+    {
+        m_message.arm_base_servo.enable = false;
+        m_message.arm_mid_servo.enable = false;
+        m_message.arm_suction_cup_servo.enable = false;
+        m_message.pusher_servo.enable = false;
+        m_message.arm_vacuum.enable_pump = false;
+        m_message.arm_vacuum.release = true;
+        m_message.fake_statuette_vacuum.enable_pump = false;
+        m_message.fake_statuette_vacuum.release = true;
+    }
 
     m_pub.publish(m_message);
 }

@@ -23,6 +23,7 @@ private:
     std::thread m_running;
 
     int m_score;
+    bool m_shutdown;
 
     void run();
 
@@ -39,5 +40,6 @@ public:
 
     void publish();
     void start();
+    void shutdown();
     void set_score(int a_score);
 };
