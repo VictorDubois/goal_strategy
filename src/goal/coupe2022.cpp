@@ -44,12 +44,20 @@ Coupe2022::Coupe2022(const bool isYellow)
     int out_of_campement = Etape::makeEtape(positionCAbsolute(0.5f, 0.7f), Etape::POINT_PASSAGE);
     Etape::get(campement)->addVoisins(out_of_campement);
 
+    float lateral_carre_fouille = 1.755f;//1.775f
+
     // Carre de fouille
-    int fouille_safe = Etape::makeEtape(new CarreFouille(positionCAbsolute(0.8525f, 1.775f)));
-    int fouille_mixte_1 = Etape::makeEtape(new CarreFouille(positionCAbsolute(1.2225f, 1.775f)));
-    int fouille_mixte_2 = Etape::makeEtape(new CarreFouille(positionCAbsolute(1.4075f, 1.775f)));
-    int fouille_mixte_3 = Etape::makeEtape(new CarreFouille(positionCAbsolute(1.5925f, 1.775f)));
-    int fouille_mixte_4 = Etape::makeEtape(new CarreFouille(positionCAbsolute(1.7775f, 1.775f)));
+    int fouille_safe = Etape::makeEtape(new CarreFouille(positionCAbsolute(0.8525f, lateral_carre_fouille)));
+    int fouille_mixte_1 = Etape::makeEtape(new CarreFouille(positionCAbsolute(1.2225f, lateral_carre_fouille)));
+    int fouille_mixte_2 = Etape::makeEtape(new CarreFouille(positionCAbsolute(1.4075f, lateral_carre_fouille)));
+    int fouille_mixte_3 = Etape::makeEtape(new CarreFouille(positionCAbsolute(1.5925f, lateral_carre_fouille)));
+    int fouille_mixte_4 = Etape::makeEtape(new CarreFouille(positionCAbsolute(1.7775f, lateral_carre_fouille)));
+
+    int out_of_fouille = Etape::makeEtape(positionCAbsolute(1.5f, 1.6f), Etape::POINT_PASSAGE);
+    Etape::get(out_of_fouille)->addVoisins(fouille_mixte_1);
+    Etape::get(out_of_fouille)->addVoisins(fouille_mixte_2);
+    Etape::get(out_of_fouille)->addVoisins(fouille_mixte_3);
+    Etape::get(out_of_fouille)->addVoisins(fouille_mixte_4);
 
     Etape::get(campement)->addVoisins(fouille_safe);
     Etape::get(fouille_safe)->addVoisins(fouille_mixte_1);
@@ -60,8 +68,8 @@ Coupe2022::Coupe2022(const bool isYellow)
     Etape::get(out_of_campement)->addVoisins(fouille_safe);
 
     // Carre de fouille that require to check the resistances
-    int fouille_risk_1 = Etape::makeEtape(positionCAbsolute(0.6675f, 1.775f));
-    int fouille_risk_2 = Etape::makeEtape(positionCAbsolute(1.0375f, 1.775f));
+    int fouille_risk_1 = Etape::makeEtape(positionCAbsolute(0.6675f, lateral_carre_fouille));
+    int fouille_risk_2 = Etape::makeEtape(positionCAbsolute(1.0375f, lateral_carre_fouille));
     Etape::get(campement)->addVoisins(fouille_risk_1);
     Etape::get(fouille_risk_1)->addVoisins(fouille_safe);
     Etape::get(fouille_safe)->addVoisins(fouille_risk_2);
@@ -80,7 +88,7 @@ Coupe2022::Coupe2022(const bool isYellow)
     Etape::get(out_of_campement)->addVoisins(statuette);
     Etape::get(out_of_campement)->addVoisins(vitrine);
     Etape::get(statuette)->addVoisins(fouille_mixte_1);
-    Etape::get(statuette)->addVoisins(fouille_mixte_4);
+    Etape::get(statuette)->addVoisins(out_of_fouille);
 
     Etape::get(out_of_campement)->addVoisins(galerie_bleu);
     Etape::get(out_of_campement)->addVoisins(galerie_vert);
