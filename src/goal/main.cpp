@@ -767,23 +767,24 @@ void GoalStrat::stateRun()
             }
 
             clamp_mode();
+            ROS_INFO_STREAM("waiting for motors to be back up" << std::endl);
+
+            usleep(2e6);// waiting for motors to be back up
 
             ROS_INFO_STREAM("Grabing STATUETTE" << std::endl);
 
             m_theThing->grab_statuette();
-            usleep(2e6);
+            usleep(2e6); // waiting for the grabber to grab
             ROS_INFO_STREAM("STATUETTE caught" << std::endl);
 
 
             stopAngular();
-
-
             ROS_INFO_STREAM("Ecartement bordure statuette" << std::endl);
             startLinear();
             recalage_bordure();
             m_strat_mvnt.reverse_gear = 1;
             publishGoal();
-            recalageTimeoutDeadline = ros::Time::now() + ros::Duration(6);
+            recalageTimeoutDeadline = ros::Time::now() + ros::Duration(2);
 
             while (ros::Time::now().toSec() < recalageTimeoutDeadline.toSec())
             {
