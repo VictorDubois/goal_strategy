@@ -752,6 +752,20 @@ void GoalStrat::stateRun()
                 ROS_WARN_STREAM("orienting toward STATUETTE has timed out :(" << std::endl);
             }
             stopAngular();
+
+
+            ROS_INFO_STREAM("Recalage bordure statuette" << std::endl);
+            startLinear();
+            recalage_bordure();
+            publishGoal();
+            recalageTimeoutDeadline = ros::Time::now() + ros::Duration(6);
+
+            while (ros::Time::now().toSec() < recalageTimeoutDeadline.toSec())
+            {
+                ros::spinOnce();
+                usleep(0.1e6);
+            }
+
             clamp_mode();
 
             ROS_INFO_STREAM("Grabing STATUETTE" << std::endl);
@@ -759,6 +773,24 @@ void GoalStrat::stateRun()
             m_theThing->grab_statuette();
             usleep(2e6);
             ROS_INFO_STREAM("STATUETTE caught" << std::endl);
+
+
+            stopAngular();
+
+
+            ROS_INFO_STREAM("Ecartement bordure statuette" << std::endl);
+            startLinear();
+            recalage_bordure();
+            m_strat_mvnt.reverse_gear = 1;
+            publishGoal();
+            recalageTimeoutDeadline = ros::Time::now() + ros::Duration(6);
+
+            while (ros::Time::now().toSec() < recalageTimeoutDeadline.toSec())
+            {
+                ros::spinOnce();
+                usleep(0.1e6);
+            }
+
 
             startAngular();
             startLinear();
