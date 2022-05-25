@@ -283,17 +283,17 @@ int Coupe2022::getScoreEtape(int i)
         l_score = 0;
         break;
     case Etape::CARRE_FOUILLE:
-        l_score = 5;
+        l_score = 15;
         break;
     case Etape::VITRINE:
         l_score = 0;
         if (statuette_held)
         {
-            l_score = 5;
+            l_score = 2;
         }
         break;
     case Etape::STATUETTE:
-        l_score = 5;
+        l_score = 2;
         break;
     case Etape::GALERIE:
         l_score = 0;
