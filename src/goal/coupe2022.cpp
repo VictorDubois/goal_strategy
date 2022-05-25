@@ -39,8 +39,12 @@ Coupe2022::Coupe2022(const bool isYellow)
     // Création des étapes
     // Les étapes correspondant à des actions sont créées automatiquement lors de l'ajout d'actions
     int campement = Etape::makeEtape(positionCAbsolute(0.3f, 0.7f),
-                                     Etape::DEPART); // départ au fond de la zone de départ
-
+                                  Etape::DEPART); // départ au fond de la zone de départ
+    /*
+    int campement = Etape::makeEtape(positionCAbsolute(0.35f, 0.7f),
+                                     Etape::POINT_PASSAGE); // départ au fond de la zone de départ
+    Etape::get(campement)->addVoisins(depart);                                     
+    */
     int out_of_campement = Etape::makeEtape(positionCAbsolute(0.5f, 0.7f), Etape::POINT_PASSAGE);
     Etape::get(campement)->addVoisins(out_of_campement);
 
@@ -55,7 +59,9 @@ Coupe2022::Coupe2022(const bool isYellow)
     Etape::get(fouille_safe)->addVoisins(fouille_mixte_1);
     Etape::get(fouille_mixte_1)->addVoisins(fouille_mixte_2);
     Etape::get(fouille_mixte_2)->addVoisins(fouille_mixte_3);
-    Etape::get(fouille_mixte_3)->addVoisins(fouille_mixte_4);
+    Etape::get(fouille_mixte_3)->addVoisins(fouille_mixte_4, false);
+    Etape::get(campement)->addVoisins(fouille_mixte_4);
+    
 
     Etape::get(out_of_campement)->addVoisins(fouille_safe);
 
@@ -80,7 +86,7 @@ Coupe2022::Coupe2022(const bool isYellow)
     Etape::get(out_of_campement)->addVoisins(statuette);
     Etape::get(out_of_campement)->addVoisins(vitrine);
     Etape::get(statuette)->addVoisins(fouille_mixte_1);
-    Etape::get(statuette)->addVoisins(fouille_mixte_4);
+    //Etape::get(statuette)->addVoisins(fouille_mixte_4);
 
     Etape::get(out_of_campement)->addVoisins(galerie_bleu);
     Etape::get(out_of_campement)->addVoisins(galerie_vert);
