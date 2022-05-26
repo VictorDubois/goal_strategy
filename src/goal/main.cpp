@@ -285,7 +285,8 @@ void GoalStrat::goToNextMission()
             m_at_least_one_carre_fouille_done = true;
             break;
         case Etape::EtapeType::STATUETTE:
-            //m_score_match += 15;
+            //m_score_match += 10;//replique
+            m_score_match += 5;//statuette gone
             m_strat_graph->catchStatuette();
             break;
         case Etape::EtapeType::VITRINE:
