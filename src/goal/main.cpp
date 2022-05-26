@@ -725,6 +725,8 @@ void GoalStrat::stateRun()
         Position position_calage;
         Position l_phare = m_strat_graph->positionCAbsolute(0.2f, 0);
         Position l_coin = m_strat_graph->positionCAbsolute(0.0f, 2.f);
+        Position l_position_vitrine = m_strat_graph->positionCAbsolute(0.3f, 0);
+        
         float target_angle = 0;
         switch (m_strat_graph->getEtapeEnCours()->getEtapeType())
         {
@@ -782,7 +784,7 @@ void GoalStrat::stateRun()
             ROS_INFO_STREAM("Grabing STATUETTE" << std::endl);
 
             m_theThing->grab_statuette();
-            usleep(2e6); // waiting for the grabber to grab
+            usleep(5e6); // waiting for the grabber to grab
             ROS_INFO_STREAM("STATUETTE caught" << std::endl);
 
 
@@ -806,12 +808,13 @@ void GoalStrat::stateRun()
             break;
 
         case Etape::VITRINE:
-            ROS_INFO_STREAM("In front of VITRINE, orienting" << std::endl);
             stopLinear();
 
-            target_angle = -M_PI / 2;
+            target_angle = (l_position_vitrine - m_current_pose.getPosition()).getAngle();
 
             l_has_timed_out = alignWithAngleWithTimeout(Angle(target_angle));
+            ROS_INFO_STREAM("In front of VITRINE, orienting towards" << target_angle
+                                                                       << std::endl);
 
             if (l_has_timed_out)
             {
@@ -819,13 +822,46 @@ void GoalStrat::stateRun()
                 ROS_WARN_STREAM("orienting toward VITRINE has timed out :(" << std::endl);
             }
             stopAngular();
-            clamp_mode();
 
-            ROS_INFO_STREAM("Droping STATUETTE" << std::endl);
+
+            ROS_INFO_STREAM("Recalage bordure statuette" << std::endl);
+            startLinear();
+            recalage_bordure();
+            publishGoal();
+            recalageTimeoutDeadline = ros::Time::now() + ros::Duration(6);
+
+            while (ros::Time::now().toSec() < recalageTimeoutDeadline.toSec())
+            {
+                ros::spinOnce();
+                usleep(0.1e6);
+            }
+
+            clamp_mode();
+            ROS_INFO_STREAM("waiting for motors to be back up" << std::endl);
+
+            usleep(2e6);// waiting for motors to be back up
+
+            ROS_INFO_STREAM("Dropping STATUETTE" << std::endl);
 
             m_theThing->release_statuette();
-            usleep(2e6);
+            usleep(5e6); // waiting for the grabber to grab
             ROS_INFO_STREAM("STATUETTE dropped" << std::endl);
+
+
+            stopAngular();
+            ROS_INFO_STREAM("Ecartement bordure vitrine" << std::endl);
+            startLinear();
+            recalage_bordure();
+            m_strat_mvnt.reverse_gear = 1;
+            publishGoal();
+            recalageTimeoutDeadline = ros::Time::now() + ros::Duration(2);
+
+            while (ros::Time::now().toSec() < recalageTimeoutDeadline.toSec())
+            {
+                ros::spinOnce();
+                usleep(0.1e6);
+            }
+
 
             startAngular();
             startLinear();
