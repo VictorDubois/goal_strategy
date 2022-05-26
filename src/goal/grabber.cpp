@@ -91,54 +91,49 @@ void Grabber::grab_hexagon()
 void Grabber::grab_statuette()
 {
     // do catch
-    m_servo_base->setAngle(55);
-    m_servo_mid->setAngle(140);
-    m_servo_suction_cup->setAngle(90);
+    // go down and pump
+    m_servo_base->setAngle(22);
+    m_servo_mid->setAngle(132);
+    m_servo_suction_cup->setAngle(160);
 
     m_servo_base->setSpeed(128);
     m_servo_mid->setSpeed(128);
     m_servo_suction_cup->setSpeed(128);
-    sleep(2);
     m_pump->setPumping(true);
-
-    m_servo_base->setAngle(90);
-    m_servo_mid->setAngle(100);
-    m_servo_suction_cup->setAngle(90);
-
-    m_servo_base->setSpeed(5);  
-    m_servo_mid->setSpeed(5);    
-    m_servo_suction_cup->setSpeed(5);
     sleep(2);
 
-    m_servo_base->setAngle(50);
-    m_servo_base->setSpeed(5);
-    m_servo_mid->setAngle(30);
-    m_servo_mid->setSpeed(5);
+    //go up and pump
+    m_servo_base->setAngle(16);
+    m_servo_mid->setAngle(36);
     m_servo_suction_cup->setAngle(160);
-    m_servo_suction_cup->setSpeed(5);
-    usleep(500000);
+
+    m_servo_base->setSpeed(3);  
+    m_servo_mid->setSpeed(3);    
+    m_servo_suction_cup->setSpeed(3);
+    sleep(2);
 }
 
 void Grabber::release_statuette()
 {
     // do release
-    m_servo_base->setAngle(65);
-    m_servo_base->setSpeed(128);
-    m_servo_mid->setAngle(100);
-    m_servo_mid->setSpeed(128);
-    m_servo_suction_cup->setAngle(90);
-    m_servo_suction_cup->setSpeed(128);
+    //down and stop pump
+    m_servo_base->setAngle(22);
+    m_servo_base->setSpeed(3);
+    m_servo_mid->setAngle(132);
+    m_servo_mid->setSpeed(3);
+    m_servo_suction_cup->setAngle(160);
+    m_servo_suction_cup->setSpeed(3);
     sleep(2);
 
     m_pump->setPumping(false);
     m_pump->release();
     usleep(500000);
 
-    m_servo_base->setAngle(50);
-    m_servo_base->setSpeed(128);
-    m_servo_mid->setAngle(30);
-    m_servo_mid->setSpeed(128);
+    m_servo_base->setAngle(16);
+    m_servo_base->setSpeed(3);
+    m_servo_mid->setAngle(36);
+    m_servo_mid->setSpeed(3);
     m_servo_suction_cup->setAngle(160);
-    m_servo_suction_cup->setSpeed(128);
+    m_servo_suction_cup->setSpeed(3);
     usleep(500000);
 }
