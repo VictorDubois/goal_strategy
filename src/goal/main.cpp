@@ -676,8 +676,13 @@ void GoalStrat::stateRun()
 
     if (checkFunnyAction())
     {
-        // monte le bras pusher, au cas où on est coincé
-        pushCarreFouille();
+        const ros::Duration funny_action_timing_2 = ros::Duration(7.); // 7s before T=0;
+
+        if (m_remainig_time.toSec() < funny_action_timing_2.toSec())
+        {
+            // monte le bras pusher, au cas où on est coincé
+            pushCarreFouille();
+        }
 
         // runHome
         m_strat_mvnt.max_speed_at_arrival = 0.1f;
@@ -958,6 +963,7 @@ void GoalStrat::stateRun()
             ROS_INFO_STREAM("Bouee released" << std::endl);
             break;
         default:
+            retractePusher();
             ROS_INFO_STREAM("No special action here\n");
             break;
         }
@@ -972,6 +978,10 @@ void GoalStrat::stateRun()
         ROS_INFO_STREAM("Timeout, probable obstacle on the way. Trying another path." << std::endl);
         abortAction();
         goToNextMission();
+
+        if (m_previous_etape_type == Etape::EtapeType::CARRE_FOUILLE) {
+            pushCarreFouille();
+        }
     }
     Position goal_position = m_strat_graph->getEtapeEnCours()->getPosition();
     m_goal_pose.setPosition(goal_position);
