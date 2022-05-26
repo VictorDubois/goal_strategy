@@ -40,4 +40,5 @@ private:
     std::shared_ptr<Pump> m_pump;
 
     void grab_hexagon();
+    void retract_arm();
 };
