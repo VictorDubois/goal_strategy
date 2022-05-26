@@ -285,11 +285,11 @@ void GoalStrat::goToNextMission()
             m_at_least_one_carre_fouille_done = true;
             break;
         case Etape::EtapeType::STATUETTE:
-            m_score_match += 15;
+            //m_score_match += 15;
             m_strat_graph->catchStatuette();
             break;
         case Etape::EtapeType::VITRINE:
-            m_score_match += 20;
+            //m_score_match += 20;
             m_strat_graph->dropStatuette();
             break;
         case Etape::EtapeType::PHARE:
