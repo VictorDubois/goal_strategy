@@ -780,9 +780,6 @@ void GoalStrat::stateRun()
             }
 
             clamp_mode();
-            ROS_INFO_STREAM("waiting for motors to be back up" << std::endl);
-
-            usleep(2e6);// waiting for motors to be back up
 
             ROS_INFO_STREAM("Grabing STATUETTE" << std::endl);
 
@@ -797,7 +794,7 @@ void GoalStrat::stateRun()
             recalage_bordure();
             m_strat_mvnt.reverse_gear = 1;
             m_strat_movement_pub.publish(m_strat_mvnt);
-            recalageTimeoutDeadline = ros::Time::now() + ros::Duration(2);
+            recalageTimeoutDeadline = ros::Time::now() + ros::Duration(4);
 
             while (ros::Time::now().toSec() < recalageTimeoutDeadline.toSec())
             {
@@ -840,16 +837,11 @@ void GoalStrat::stateRun()
             }
 
             clamp_mode();
-            ROS_INFO_STREAM("waiting for motors to be back up" << std::endl);
-
-            usleep(2e6);// waiting for motors to be back up
-
             ROS_INFO_STREAM("Dropping STATUETTE" << std::endl);
 
             m_theThing->release_statuette();
             usleep(5e6); // waiting for the grabber to grab
             ROS_INFO_STREAM("STATUETTE dropped" << std::endl);
-
 
             stopAngular();
             ROS_INFO_STREAM("Ecartement bordure vitrine" << std::endl);
@@ -857,7 +849,7 @@ void GoalStrat::stateRun()
             recalage_bordure();
             m_strat_mvnt.reverse_gear = 1;
             m_strat_movement_pub.publish(m_strat_mvnt);
-            recalageTimeoutDeadline = ros::Time::now() + ros::Duration(2);
+            recalageTimeoutDeadline = ros::Time::now() + ros::Duration(4);
 
             while (ros::Time::now().toSec() < recalageTimeoutDeadline.toSec())
             {
