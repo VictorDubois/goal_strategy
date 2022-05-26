@@ -1079,7 +1079,8 @@ void GoalStrat::init()
     m_strat_graph = std::make_unique<Coupe2022>(!m_is_blue);
 
     m_strat_graph->update();
-    m_previous_etape_type = m_strat_graph->getEtapeEnCours()->getEtapeType();
+    m_previous_etape_type = Etape::EtapeType::POINT_PASSAGE;
+    //m_strat_graph->getEtapeEnCours()->getEtapeType(); // Was shitting when the first action was one unidirectionnal
     m_state = State::WAIT_TIRETTE;
 
     m_running = std::thread(&GoalStrat::publishAll, this);
