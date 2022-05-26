@@ -420,7 +420,7 @@ GoalStrat::GoalStrat()
     m_actuators.start();
 
     retractePusher();
-    m_theThing->release_hexagon_on_ground();
+    m_theThing->release_statuette();
 
     while (false) // Test the grabber
     {
