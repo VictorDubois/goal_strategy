@@ -86,7 +86,7 @@ Coupe2022::Coupe2022(const bool isYellow)
     int galerie_rouge = Etape::makeEtape(new Galerie(positionCAbsolute(1.05f, 0.2f)));
 
     Etape::get(out_of_campement)->addVoisins(statuette);
-    Etape::get(out_of_campement)->addVoisins(vitrine);
+    Etape::get(campement)->addVoisins(vitrine);
     Etape::get(statuette)->addVoisins(fouille_mixte_1);
     Etape::get(statuette)->addVoisins(out_of_fouille);
 
@@ -291,17 +291,17 @@ int Coupe2022::getScoreEtape(int i)
         l_score = 0;
         break;
     case Etape::CARRE_FOUILLE:
-        l_score = 15;
+        l_score = 1;
         break;
     case Etape::VITRINE:
         l_score = 0;
         if (statuette_held)
         {
-            l_score = 2;
+            l_score = 20;
         }
         break;
     case Etape::STATUETTE:
-        l_score = 2;
+        l_score = 5;
         break;
     case Etape::GALERIE:
         l_score = 0;
