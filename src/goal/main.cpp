@@ -544,6 +544,8 @@ void GoalStrat::chooseGear()
     if (m_previous_etape_type == Etape::EtapeType::MANCHE_A_AIR
         || m_strat_graph->getEtapeEnCours()->getEtapeType() == Etape::EtapeType::PHARE
         || m_previous_etape_type == Etape::EtapeType::PORT
+        || m_previous_etape_type == Etape::EtapeType::STATUETTE
+        || m_previous_etape_type == Etape::EtapeType::VITRINE
         || (m_strat_graph->getEtapeEnCours()->getEtapeType() == Etape::EtapeType::CARRE_FOUILLE
             && m_is_blue))
     {
