@@ -80,7 +80,7 @@ Coupe2022::Coupe2022(const bool isYellow)
     Etape::get(campement)->addVoisins(statuette);
     Etape::get(fouille_safe)->addVoisins(statuette);
 
-    int vitrine = Etape::makeEtape(new Vitrine(positionCAbsolute(0.30f, 0.3f)));
+    int vitrine = Etape::makeEtape(new Vitrine(positionCAbsolute(0.15f, 0.3f)));
     int galerie_bleu = Etape::makeEtape(new Galerie(positionCAbsolute(0.57f, 0.2f)));
     int galerie_vert = Etape::makeEtape(new Galerie(positionCAbsolute(0.81f, 0.2f)));
     int galerie_rouge = Etape::makeEtape(new Galerie(positionCAbsolute(1.05f, 0.2f)));

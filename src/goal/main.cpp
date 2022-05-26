@@ -728,7 +728,7 @@ void GoalStrat::stateRun()
         Position position_calage;
         Position l_phare = m_strat_graph->positionCAbsolute(0.2f, 0);
         Position l_coin = m_strat_graph->positionCAbsolute(0.0f, 2.f);
-        Position l_position_vitrine = m_strat_graph->positionCAbsolute(0.3f, 0);
+        Position l_position_vitrine = m_strat_graph->positionCAbsolute(0.15f, 0);
         
         float target_angle = 0;
         switch (m_strat_graph->getEtapeEnCours()->getEtapeType())
