@@ -278,7 +278,7 @@ void GoalStrat::goToNextMission()
         {
         case Etape::EtapeType::CARRE_FOUILLE:
             m_score_match += 3; // 3 carres valides sur 5 rapportent 5 points
-            if (m_at_least_one_carre_fouille_done)
+            if (!m_at_least_one_carre_fouille_done)
             {
                 m_score_match += 5;
             }
