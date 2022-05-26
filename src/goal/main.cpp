@@ -500,7 +500,7 @@ void GoalStrat::checkStopMatch()
  */
 bool GoalStrat::checkFunnyAction()
 {
-    const ros::Duration funny_action_timing = ros::Duration(10.); // 5s before T=0;
+    const ros::Duration funny_action_timing = ros::Duration(10.); // 10s before T=0;
 
     if (m_remainig_time.toSec() < funny_action_timing.toSec())
     {
@@ -676,6 +676,9 @@ void GoalStrat::stateRun()
 
     if (checkFunnyAction())
     {
+        // monte le bras pusher, au cas où on est coincé
+        pushCarreFouille();
+
         // runHome
         m_strat_mvnt.max_speed_at_arrival = 0.1f;
         m_strat_mvnt.max_speed.linear.x = 1.f;
