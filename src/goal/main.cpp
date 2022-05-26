@@ -770,7 +770,7 @@ void GoalStrat::stateRun()
             ROS_INFO_STREAM("Recalage bordure statuette" << std::endl);
             startLinear();
             recalage_bordure();
-            publishGoal();
+            m_strat_movement_pub.publish(m_strat_mvnt);
             recalageTimeoutDeadline = ros::Time::now() + ros::Duration(6);
 
             while (ros::Time::now().toSec() < recalageTimeoutDeadline.toSec())
@@ -796,7 +796,7 @@ void GoalStrat::stateRun()
             startLinear();
             recalage_bordure();
             m_strat_mvnt.reverse_gear = 1;
-            publishGoal();
+            m_strat_movement_pub.publish(m_strat_mvnt);
             recalageTimeoutDeadline = ros::Time::now() + ros::Duration(2);
 
             while (ros::Time::now().toSec() < recalageTimeoutDeadline.toSec())
@@ -830,7 +830,7 @@ void GoalStrat::stateRun()
             ROS_INFO_STREAM("Recalage bordure statuette" << std::endl);
             startLinear();
             recalage_bordure();
-            publishGoal();
+            m_strat_movement_pub.publish(m_strat_mvnt);
             recalageTimeoutDeadline = ros::Time::now() + ros::Duration(6);
 
             while (ros::Time::now().toSec() < recalageTimeoutDeadline.toSec())
@@ -856,7 +856,7 @@ void GoalStrat::stateRun()
             startLinear();
             recalage_bordure();
             m_strat_mvnt.reverse_gear = 1;
-            publishGoal();
+            m_strat_movement_pub.publish(m_strat_mvnt);
             recalageTimeoutDeadline = ros::Time::now() + ros::Duration(2);
 
             while (ros::Time::now().toSec() < recalageTimeoutDeadline.toSec())
