@@ -102,13 +102,19 @@ void Grabber::release_statuette()
 {
     // do release
     //down and stop pump
+
     m_servo_base->setAngle(22);
-    m_servo_base->setSpeed(3);
+    m_servo_base->setSpeed(5);
     m_servo_mid->setAngle(132);
-    m_servo_mid->setSpeed(3);
+    m_servo_mid->setSpeed(5);
     m_servo_suction_cup->setAngle(160);
-    m_servo_suction_cup->setSpeed(3);
-    sleep(2);
+    m_servo_suction_cup->setSpeed(5);
+    usleep(1000000);
+
+    m_servo_base->setAngle(52);
+    m_servo_mid->setAngle(102);
+    usleep(1350000);
+   
 
     m_pump->setPumping(false);
     m_pump->release();

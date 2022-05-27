@@ -424,12 +424,12 @@ GoalStrat::GoalStrat()
 
     while (false) // Test the grabber
     {
-        m_theThing->grab_hexagon(GREEN_HEXA);
+        m_theThing->grab_statuette();
         pushCarreFouille();
 
         usleep(5000000);
 
-        m_theThing->release_hexagon_on_ground();
+        m_theThing->release_statuette();
         retractePusher();
         usleep(5000000);
     }
