@@ -48,10 +48,10 @@ Coupe2022::Coupe2022(const bool isYellow)
 
     // Carre de fouille
     int fouille_safe = Etape::makeEtape(new CarreFouille(positionCAbsolute(0.8525f, lateral_carre_fouille)));
-    int fouille_mixte_1 = Etape::makeEtape(new CarreFouille(positionCAbsolute(1.2225f, lateral_carre_fouille)));
-    int fouille_mixte_2 = Etape::makeEtape(new CarreFouille(positionCAbsolute(1.4075f, lateral_carre_fouille)));
-    int fouille_mixte_3 = Etape::makeEtape(new CarreFouille(positionCAbsolute(1.5925f, lateral_carre_fouille)));
-    int fouille_mixte_4 = Etape::makeEtape(new CarreFouille(positionCAbsolute(1.7775f, lateral_carre_fouille)));
+    int fouille_mixte_1 = Etape::makeEtape(positionCAbsolute(1.2225f, lateral_carre_fouille));
+    int fouille_mixte_2 = Etape::makeEtape(positionCAbsolute(1.4075f, lateral_carre_fouille));
+    int fouille_mixte_3 = Etape::makeEtape(positionCAbsolute(1.5925f, lateral_carre_fouille));
+    int fouille_mixte_4 = Etape::makeEtape(positionCAbsolute(1.7775f, lateral_carre_fouille));
 
     int out_of_fouille = Etape::makeEtape(positionCAbsolute(1.5f, 1.65f), Etape::POINT_PASSAGE);
     Etape::get(out_of_fouille)->addVoisins(fouille_mixte_1);
