@@ -84,7 +84,7 @@ Coupe2022::Coupe2022(const bool isYellow)
     Etape::get(fouille_risk_2)->addVoisins(fouille_mixte_1);
 
     // Statuette
-    int statuette = Etape::makeEtape(new Statuette(positionCAbsolute(0.5f, 1.5f)));
+    int statuette = Etape::makeEtape(new Statuette(positionCAbsolute(0.5f, 1.48f)));
     Etape::get(campement)->addVoisins(statuette);
     Etape::get(fouille_safe)->addVoisins(statuette);
 
