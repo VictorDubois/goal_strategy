@@ -290,7 +290,8 @@ void GoalStrat::goToNextMission()
             m_strat_graph->catchStatuette();
             break;
         case Etape::EtapeType::VITRINE:
-            //m_score_match += 20;
+            m_score_match += 10; // drop statuette
+            m_score_match += 10; // allume vitrine
             m_strat_graph->dropStatuette();
             break;
         case Etape::EtapeType::PHARE:
