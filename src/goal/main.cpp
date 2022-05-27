@@ -281,6 +281,7 @@ void GoalStrat::goToNextMission()
             if (!m_at_least_one_carre_fouille_done)
             {
                 m_score_match += 5;
+                m_score_match += 2; // first is always good
             }
             m_at_least_one_carre_fouille_done = true;
             break;
