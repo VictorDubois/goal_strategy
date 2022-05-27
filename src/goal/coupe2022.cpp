@@ -55,20 +55,20 @@ Coupe2022::Coupe2022(const bool isYellow)
 
     int out_of_fouille = Etape::makeEtape(positionCAbsolute(1.5f, 1.65f), Etape::POINT_PASSAGE);
     Etape::get(out_of_fouille)->addVoisins(fouille_mixte_1);
-    Etape::get(out_of_fouille)->addVoisins(fouille_mixte_2);
-    Etape::get(out_of_fouille)->addVoisins(fouille_mixte_3);
+    //Etape::get(out_of_fouille)->addVoisins(fouille_mixte_2);
+    //Etape::get(out_of_fouille)->addVoisins(fouille_mixte_3);
     Etape::get(out_of_fouille)->addVoisins(fouille_mixte_4);
 
-    Etape::get(campement)->addVoisins(fouille_safe);
+    //Etape::get(campement)->addVoisins(fouille_safe);
     Etape::get(fouille_safe)->addVoisins(fouille_mixte_1);
     Etape::get(fouille_mixte_1)->addVoisins(fouille_mixte_2);
     Etape::get(fouille_mixte_2)->addVoisins(fouille_mixte_3);
     Etape::get(fouille_mixte_3)->addVoisins(fouille_mixte_4);
 
-    Etape::get(out_of_campement)->addVoisins(fouille_safe);
+    //Etape::get(out_of_campement)->addVoisins(fouille_safe);
 
     // Carre de fouille that require to check the resistances
-    int fouille_risk_1 = Etape::makeEtape(positionCAbsolute(0.6675f, lateral_carre_fouille));
+    int fouille_risk_1 = Etape::makeEtape(new Galerie(positionCAbsolute(0.6675f, lateral_carre_fouille - 0.03f))); // Hack pour approcher doucement sur le côté
     int fouille_risk_2 = Etape::makeEtape(positionCAbsolute(1.0375f, lateral_carre_fouille));
     Etape::get(campement)->addVoisins(fouille_risk_1);
     Etape::get(fouille_risk_1)->addVoisins(fouille_safe);
