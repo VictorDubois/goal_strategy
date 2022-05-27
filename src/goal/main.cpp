@@ -484,7 +484,7 @@ void GoalStrat::updateRemainingTime(std_msgs::Duration a_remaining_time_match)
  */
 void GoalStrat::checkStopMatch()
 {
-    const ros::Duration stop_timing = ros::Duration(1.); // 1s before T=0;
+    const ros::Duration stop_timing = ros::Duration(0.2); // in seconds before the end of match;
 
     if (m_remainig_time.toSec() < stop_timing.toSec())
     {
