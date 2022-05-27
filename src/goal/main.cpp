@@ -290,7 +290,8 @@ void GoalStrat::goToNextMission()
             m_strat_graph->catchStatuette();
             break;
         case Etape::EtapeType::VITRINE:
-            //m_score_match += 20;
+            m_score_match += 10; // drop statuette
+            m_score_match += 10; // allume vitrine
             m_strat_graph->dropStatuette();
             break;
         case Etape::EtapeType::PHARE:
@@ -365,11 +366,13 @@ void GoalStrat::goToNextMission()
 void GoalStrat::pushCarreFouille()
 {
     m_servo_pusher->setAngle(130);
+    usleep(0.6e6); // takes 330ms, with a x2 margin
 }
 
 void GoalStrat::retractePusher()
 {
     m_servo_pusher->setAngle(82);
+    usleep(0.6e6); // takes 330ms, with a x2 margin
 }
 
 GoalStrat::GoalStrat()
@@ -427,11 +430,9 @@ GoalStrat::GoalStrat()
         m_theThing->grab_statuette();
         pushCarreFouille();
 
-        usleep(5000000);
 
         m_theThing->release_statuette();
         retractePusher();
-        usleep(5000000);
     }
 }
 
@@ -679,7 +680,7 @@ void GoalStrat::stateRun()
 
     if (checkFunnyAction())
     {
-        const ros::Duration funny_action_timing_2 = ros::Duration(7.); // 7s before T=0;
+        const ros::Duration funny_action_timing_2 = ros::Duration(1.); // 1s before T=0;
 
         if (m_remainig_time.toSec() < funny_action_timing_2.toSec())
         {
@@ -784,7 +785,6 @@ void GoalStrat::stateRun()
             ROS_INFO_STREAM("Grabing STATUETTE" << std::endl);
 
             m_theThing->grab_statuette();
-            usleep(5e6); // waiting for the grabber to grab
             ROS_INFO_STREAM("STATUETTE caught" << std::endl);
 
 
@@ -840,7 +840,7 @@ void GoalStrat::stateRun()
             ROS_INFO_STREAM("Dropping STATUETTE" << std::endl);
 
             m_theThing->release_statuette();
-            usleep(5e6); // waiting for the grabber to grab
+
             ROS_INFO_STREAM("STATUETTE dropped" << std::endl);
 
             stopAngular();
@@ -884,9 +884,9 @@ void GoalStrat::stateRun()
             ROS_INFO_STREAM("Pushing CARRE_FOUILLE" << std::endl);
 
             pushCarreFouille();
-            usleep(2e6);
+            
             retractePusher();
-            usleep(1e6);
+            
             ROS_INFO_STREAM("CARRE_FOUILLE done" << std::endl);
 
             startAngular();
