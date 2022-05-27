@@ -548,7 +548,7 @@ void GoalStrat::chooseGear()
         || m_previous_etape_type == Etape::EtapeType::STATUETTE
         || m_previous_etape_type == Etape::EtapeType::VITRINE
         || (m_strat_graph->getEtapeEnCours()->getEtapeType() == Etape::EtapeType::CARRE_FOUILLE
-            && !m_is_blue))// on veut maintenant repartir dans l'autre sens après avoir poussé le seul carre fouille
+            && m_is_blue))
     {
         l_reverseGear.data = true;
         m_strat_mvnt.reverse_gear = 1;
