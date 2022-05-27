@@ -366,11 +366,13 @@ void GoalStrat::goToNextMission()
 void GoalStrat::pushCarreFouille()
 {
     m_servo_pusher->setAngle(130);
+    usleep(0.6e6); // takes 330ms, with a x2 margin
 }
 
 void GoalStrat::retractePusher()
 {
     m_servo_pusher->setAngle(82);
+    usleep(0.6e6); // takes 330ms, with a x2 margin
 }
 
 GoalStrat::GoalStrat()
@@ -881,9 +883,9 @@ void GoalStrat::stateRun()
             ROS_INFO_STREAM("Pushing CARRE_FOUILLE" << std::endl);
 
             pushCarreFouille();
-            usleep(2e6);
+            
             retractePusher();
-            usleep(1e6);
+            
             ROS_INFO_STREAM("CARRE_FOUILLE done" << std::endl);
 
             startAngular();
