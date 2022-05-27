@@ -679,7 +679,7 @@ void GoalStrat::stateRun()
 
     if (checkFunnyAction())
     {
-        const ros::Duration funny_action_timing_2 = ros::Duration(7.); // 7s before T=0;
+        const ros::Duration funny_action_timing_2 = ros::Duration(1.); // 1s before T=0;
 
         if (m_remainig_time.toSec() < funny_action_timing_2.toSec())
         {
