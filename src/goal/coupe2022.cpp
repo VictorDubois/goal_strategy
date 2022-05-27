@@ -44,7 +44,7 @@ Coupe2022::Coupe2022(const bool isYellow)
     int out_of_campement = Etape::makeEtape(positionCAbsolute(0.5f, 0.7f), Etape::POINT_PASSAGE);
     Etape::get(campement)->addVoisins(out_of_campement);
 
-    float lateral_carre_fouille = 1.740f;//1.705f//1.755f//1.775f
+    float lateral_carre_fouille = 1.710f;//1.740f;//1.705f//1.755f//1.775f
 
     // Carre de fouille
     int fouille_safe = Etape::makeEtape(new CarreFouille(positionCAbsolute(0.8525f, lateral_carre_fouille)));
