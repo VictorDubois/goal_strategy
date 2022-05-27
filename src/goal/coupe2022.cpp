@@ -68,9 +68,17 @@ Coupe2022::Coupe2022(const bool isYellow)
     //Etape::get(out_of_campement)->addVoisins(fouille_safe);
 
     // Carre de fouille that require to check the resistances
-    int fouille_risk_1 = Etape::makeEtape(new Galerie(positionCAbsolute(0.6675f, lateral_carre_fouille - 0.03f))); // Hack pour approcher doucement sur le côté
+
+    float offset_assymetrie_robot_quand_tourne = 0.0f;
+    float marge_ecartement_bordure = 0.03f;
+    if (isYellow) {// Violet en 2022
+        offset_assymetrie_robot_quand_tourne = 0.04f;
+    }
+    int calage_carre_fouille = Etape::makeEtape(new Galerie(positionCAbsolute(0.6675f + offset_assymetrie_robot_quand_tourne, lateral_carre_fouille - marge_ecartement_bordure))); // Hack pour approcher doucement sur le côté
+    int fouille_risk_1 = Etape::makeEtape(positionCAbsolute(0.6675f, lateral_carre_fouille));
     int fouille_risk_2 = Etape::makeEtape(positionCAbsolute(1.0375f, lateral_carre_fouille));
-    Etape::get(campement)->addVoisins(fouille_risk_1);
+    Etape::get(campement)->addVoisins(calage_carre_fouille);
+    Etape::get(calage_carre_fouille)->addVoisins(fouille_safe);
     Etape::get(fouille_risk_1)->addVoisins(fouille_safe);
     Etape::get(fouille_safe)->addVoisins(fouille_risk_2);
     Etape::get(fouille_risk_2)->addVoisins(fouille_mixte_1);
