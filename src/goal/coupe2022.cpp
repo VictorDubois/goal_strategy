@@ -105,7 +105,7 @@ Coupe2022::Coupe2022(const bool isYellow)
     Etape::get(galerie_vert)->addVoisins(galerie_bleu);
     Etape::get(galerie_vert)->addVoisins(galerie_rouge);
 
-    m_numero_etape_garage = campement; // Must be set!
+    m_numero_etape_garage = out_of_campement; // Must be set!
 
 #ifdef QTGUI
     qDebug() << Etape::getTotalEtapes();
