@@ -427,11 +427,8 @@ GoalStrat::GoalStrat()
         m_theThing->grab_hexagon(GREEN_HEXA);
         pushCarreFouille();
 
-        usleep(5000000);
-
         m_theThing->release_hexagon_on_ground();
         retractePusher();
-        usleep(5000000);
     }
 }
 
@@ -784,7 +781,6 @@ void GoalStrat::stateRun()
             ROS_INFO_STREAM("Grabing STATUETTE" << std::endl);
 
             m_theThing->grab_statuette();
-            usleep(5e6); // waiting for the grabber to grab
             ROS_INFO_STREAM("STATUETTE caught" << std::endl);
 
 
@@ -840,7 +836,7 @@ void GoalStrat::stateRun()
             ROS_INFO_STREAM("Dropping STATUETTE" << std::endl);
 
             m_theThing->release_statuette();
-            usleep(5e6); // waiting for the grabber to grab
+
             ROS_INFO_STREAM("STATUETTE dropped" << std::endl);
 
             stopAngular();
