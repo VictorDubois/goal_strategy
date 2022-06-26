@@ -118,10 +118,10 @@ void Grabber::release_statuette()
 
     m_pump->setPumping(false);
     m_pump->release();
-    usleep(500000);
+    usleep(100000);
 
     retract_arm();
-    usleep(500000);
+    //usleep(500000);
 }
 
 void Grabber::retract_arm()

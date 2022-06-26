@@ -1,5 +1,6 @@
 #include "goal_strategy/goal.h"
 #include <std_msgs/UInt16.h>
+#include <std_msgs/Float32.h>
 
 #define goal_MAX_ALLOWED_ANGULAR_SPEED 2.f // rad/s
 
@@ -387,17 +388,23 @@ GoalStrat::GoalStrat()
     m_strat_mvnt.max_speed.linear.x = 1.f;
     m_strat_mvnt.max_speed.angular.z = goal_MAX_ALLOWED_ANGULAR_SPEED;
     m_strat_mvnt.reverse_gear = 2; // don't care
+    m_state = State::INIT;
+    m_tirette = false;
+    m_vacuum_level = 0.f;
+    m_vacuum_state = OPEN_AIR;
 
     m_goal_pose_pub = m_nh.advertise<geometry_msgs::PoseStamped>("goal_pose", 1000);
     m_arm_servo_pub = m_nh.advertise<krabi_msgs::servos_cmd>("cmd_servos", 1000);
     m_debug_ma_etapes_pub = m_nh.advertise<visualization_msgs::MarkerArray>("debug_etapes", 5);
     m_strat_movement_pub = m_nh.advertise<krabi_msgs::strat_movement>("strat_movement", 5);
 
+
+
     m_remaining_time_match_sub
       = m_nh.subscribe("/remaining_time", 5, &GoalStrat::updateRemainingTime, this);
     m_tirette_sub = m_nh.subscribe("tirette", 5, &GoalStrat::updateTirette, this);
-    m_state = State::INIT;
-    m_tirette = false;
+    m_vacuum_sub = m_nh.subscribe("vacuum", 5, &GoalStrat::updateVacuum, this);
+
     std::string actuators_name = "actuators_msg";
     m_servo_pusher = std::make_shared<Servomotor>(255, 75);
     auto l_pump_arm = std::make_shared<Pump>(false, true);
@@ -463,6 +470,25 @@ void GoalStrat::publishAll()
 void GoalStrat::updateTirette(std_msgs::Bool tirette)
 {
     m_tirette = tirette.data;
+}
+
+/**
+ * @brief Update the vacuum level
+ *
+ * @param vacuum_msg the ROS message
+ */
+void GoalStrat::updateVacuum(std_msgs::Float32 vacuum_msg)
+{
+    m_vacuum_level = vacuum_msg.data;
+    m_vacuum_state = OPEN_AIR;
+    if (abs(m_vacuum_level) > 5000)// Pa
+    {
+        m_vacuum_state = WEAK_VACUUM;
+    }
+    if (abs(m_vacuum_level) > 10000)// Pa
+    {
+        m_vacuum_state = STRONG_VACUUM;
+    }
 }
 
 /**
@@ -679,6 +705,15 @@ void GoalStrat::stateRun()
     chooseGear(); // Go in reverse gear if needed
     setMaxSpeedAtArrival();
 
+    if (m_vacuum_state == OPEN_AIR)
+    {
+        m_strat_graph->dropStatuette(); // Count it as dropped, do not attempt to put it in the vitrine
+        if (m_strat_graph->getEtapeEnCours()->getEtapeType() == Etape::EtapeType::VITRINE) {
+            m_action_aborted = true;
+            goToNextMission();
+        }
+    }
+
     if (checkFunnyAction())
     {
         const ros::Duration funny_action_timing_2 = ros::Duration(1.); // 1s before T=0;
@@ -803,6 +838,14 @@ void GoalStrat::stateRun()
                 usleep(0.1e6);
             }
 
+            if (m_vacuum_state != STRONG_VACUUM)
+            {
+                m_action_aborted = true;
+                if (m_vacuum_state == OPEN_AIR)
+                {
+                    m_strat_graph->dropStatuette(); // Count it as dropped, do not attempt to put it in the vitrine
+                }
+            }
 
             startAngular();
             startLinear();

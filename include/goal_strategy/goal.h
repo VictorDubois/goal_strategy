@@ -11,6 +11,7 @@
 #include <std_msgs/Bool.h>
 #include <std_msgs/Duration.h>
 #include <std_msgs/Int32.h>
+#include <std_msgs/Float32.h>
 
 #include <tf/transform_listener.h>
 #include <tf2_ros/transform_listener.h>
@@ -35,6 +36,14 @@ enum PositionServo
     IN,
     FOLDED
 };
+
+enum VacuumState
+{
+    OPEN_AIR,
+    WEAK_VACUUM,
+    STRONG_VACUUM
+};
+
 
 class GoalStrat
 {
@@ -77,6 +86,7 @@ private:
     void updateCurrentPose();
     void updateRemainingTime(std_msgs::Duration remainingTime);
     void updateTirette(std_msgs::Bool tirette);
+    void updateVacuum(std_msgs::Float32 vacuum_msg);
 
     bool isAlignedWithAngle(Angle angle);
     bool isArrivedAtGoal();
@@ -108,6 +118,7 @@ private:
 
     ros::Subscriber m_remaining_time_match_sub;
     ros::Subscriber m_tirette_sub;
+    ros::Subscriber m_vacuum_sub;
     ros::Subscriber m_weathercock_state_sub;
 
     tf2_ros::Buffer m_tf_buffer;
@@ -127,6 +138,8 @@ private:
     bool m_funny_action_counted;
     krabi_msgs::strat_movement m_strat_mvnt;
     bool m_tirette;
+    float m_vacuum_level;
+    int m_vacuum_state;
     Actuators m_actuators;
     bool m_goal_init_done;
     bool m_at_least_one_carre_fouille_done;
