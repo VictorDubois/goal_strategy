@@ -224,7 +224,7 @@ void Coupe2022::debugEtapes(visualization_msgs::MarkerArray& ma)
 
             // Display etape
             visualization_msgs::Marker m;
-            m.header.frame_id = "/map";
+            m.header.frame_id = "map";
             m.header.seq = m_seq++;
             m.ns = "debug_etapes";
             m.id = i++;
@@ -269,7 +269,7 @@ void Coupe2022::debugEtapes(visualization_msgs::MarkerArray& ma)
                 line.frame_locked = true;
                 line.action = visualization_msgs::Marker::MODIFY;
                 line.ns = "debug_etapes";
-                line.header.frame_id = "/map";
+                line.header.frame_id = "map";
                 line.header.seq = m_seq++;
                 line.id = i++;
                 ma.markers.push_back(line);
