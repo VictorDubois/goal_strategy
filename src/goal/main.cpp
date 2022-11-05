@@ -1,6 +1,6 @@
 #include "goal_strategy/goal.h"
-#include <std_msgs/UInt16.h>
 #include <std_msgs/Float32.h>
+#include <std_msgs/UInt16.h>
 
 #define goal_MAX_ALLOWED_ANGULAR_SPEED 2.f // rad/s
 
@@ -287,8 +287,8 @@ void GoalStrat::goToNextMission()
             m_at_least_one_carre_fouille_done = true;
             break;
         case Etape::EtapeType::STATUETTE:
-            //m_score_match += 10;//replique
-            m_score_match += 5;//statuette gone
+            // m_score_match += 10;//replique
+            m_score_match += 5; // statuette gone
             m_strat_graph->catchStatuette();
             break;
         case Etape::EtapeType::VITRINE:
@@ -398,8 +398,6 @@ GoalStrat::GoalStrat()
     m_debug_ma_etapes_pub = m_nh.advertise<visualization_msgs::MarkerArray>("debug_etapes", 5);
     m_strat_movement_pub = m_nh.advertise<krabi_msgs::strat_movement>("strat_movement", 5);
 
-
-
     m_remaining_time_match_sub
       = m_nh.subscribe("/remaining_time", 5, &GoalStrat::updateRemainingTime, this);
     m_tirette_sub = m_nh.subscribe("tirette", 5, &GoalStrat::updateTirette, this);
@@ -437,7 +435,6 @@ GoalStrat::GoalStrat()
     {
         m_theThing->grab_statuette();
         pushCarreFouille();
-
 
         m_theThing->release_statuette();
         retractePusher();
@@ -481,11 +478,11 @@ void GoalStrat::updateVacuum(std_msgs::Float32 vacuum_msg)
 {
     m_vacuum_level = vacuum_msg.data;
     m_vacuum_state = OPEN_AIR;
-    if (abs(m_vacuum_level) > 5000)// Pa
+    if (abs(m_vacuum_level) > 5000) // Pa
     {
         m_vacuum_state = WEAK_VACUUM;
     }
-    if (abs(m_vacuum_level) > 10000)// Pa
+    if (abs(m_vacuum_level) > 10000) // Pa
     {
         m_vacuum_state = STRONG_VACUUM;
     }
@@ -630,9 +627,15 @@ void GoalStrat::publishScore()
     // Is the robot in the right area at the end?
     if (m_remainig_time < ros::Duration(4))
     {
-        if ((m_current_pose.getPosition() - m_strat_graph->positionCAbsolute(0.975f, 1.375f)).getNorme() < 0.3f // 30cm du centre de la zone de fouille
-         || (m_current_pose.getPosition() - m_strat_graph->positionCAbsolute(0.3f, 0.7f)).getNorme() < 0.3f // 30cm du centre de la zone de départ
-         || (m_current_pose.getPosition() - m_strat_graph->positionCAbsolute(3-0.975f, 1.375f)).getNorme() < 0.3f) // 30cm du centre de la zone de fouille adverse
+        if ((m_current_pose.getPosition() - m_strat_graph->positionCAbsolute(0.975f, 1.375f))
+                .getNorme()
+              < 0.3f // 30cm du centre de la zone de fouille
+            || (m_current_pose.getPosition() - m_strat_graph->positionCAbsolute(0.3f, 0.7f))
+                   .getNorme()
+                 < 0.3f // 30cm du centre de la zone de départ
+            || (m_current_pose.getPosition() - m_strat_graph->positionCAbsolute(3 - 0.975f, 1.375f))
+                   .getNorme()
+                 < 0.3f) // 30cm du centre de la zone de fouille adverse
         {
             l_score += 20;
         }
@@ -707,8 +710,10 @@ void GoalStrat::stateRun()
 
     if (m_vacuum_state == OPEN_AIR)
     {
-        m_strat_graph->dropStatuette(); // Count it as dropped, do not attempt to put it in the vitrine
-        if (m_strat_graph->getEtapeEnCours()->getEtapeType() == Etape::EtapeType::VITRINE) {
+        m_strat_graph
+          ->dropStatuette(); // Count it as dropped, do not attempt to put it in the vitrine
+        if (m_strat_graph->getEtapeEnCours()->getEtapeType() == Etape::EtapeType::VITRINE)
+        {
             m_action_aborted = true;
             goToNextMission();
         }
@@ -730,7 +735,7 @@ void GoalStrat::stateRun()
         m_strat_mvnt.max_speed.angular.z = goal_MAX_ALLOWED_ANGULAR_SPEED;
         m_strat_mvnt.reverse_gear = 2; // don't care
         // Zone de fouille
-        //m_goal_pose.setPosition(m_strat_graph->positionCAbsolute(0.975f, 1.375f));
+        // m_goal_pose.setPosition(m_strat_graph->positionCAbsolute(0.975f, 1.375f));
         // Zone de départ
         m_goal_pose.setPosition(m_strat_graph->positionCAbsolute(0.45f, 0.7f));
         publishGoal();
@@ -766,7 +771,7 @@ void GoalStrat::stateRun()
         Position l_phare = m_strat_graph->positionCAbsolute(0.2f, 0);
         Position l_coin = m_strat_graph->positionCAbsolute(0.0f, 2.f);
         Position l_position_vitrine = m_strat_graph->positionCAbsolute(0.15f, 0);
-        
+
         float target_angle = 0;
         switch (m_strat_graph->getEtapeEnCours()->getEtapeType())
         {
@@ -803,7 +808,6 @@ void GoalStrat::stateRun()
             }
             stopAngular();
 
-
             ROS_INFO_STREAM("Recalage bordure statuette" << std::endl);
             startLinear();
             recalage_bordure();
@@ -822,7 +826,6 @@ void GoalStrat::stateRun()
 
             m_theThing->grab_statuette();
             ROS_INFO_STREAM("STATUETTE caught" << std::endl);
-
 
             stopAngular();
             ROS_INFO_STREAM("Ecartement bordure statuette" << std::endl);
@@ -843,7 +846,8 @@ void GoalStrat::stateRun()
                 m_action_aborted = true;
                 if (m_vacuum_state == OPEN_AIR)
                 {
-                    m_strat_graph->dropStatuette(); // Count it as dropped, do not attempt to put it in the vitrine
+                    m_strat_graph->dropStatuette(); // Count it as dropped, do not attempt to put it
+                                                    // in the vitrine
                 }
             }
 
@@ -857,8 +861,7 @@ void GoalStrat::stateRun()
             target_angle = (l_position_vitrine - m_current_pose.getPosition()).getAngle();
 
             l_has_timed_out = alignWithAngleWithTimeout(Angle(target_angle));
-            ROS_INFO_STREAM("In front of VITRINE, orienting towards" << target_angle
-                                                                       << std::endl);
+            ROS_INFO_STREAM("In front of VITRINE, orienting towards" << target_angle << std::endl);
 
             if (l_has_timed_out)
             {
@@ -866,7 +869,6 @@ void GoalStrat::stateRun()
                 ROS_WARN_STREAM("orienting toward VITRINE has timed out :(" << std::endl);
             }
             stopAngular();
-
 
             ROS_INFO_STREAM("Recalage bordure statuette" << std::endl);
             startLinear();
@@ -901,7 +903,6 @@ void GoalStrat::stateRun()
                 usleep(0.1e6);
             }
 
-
             startAngular();
             startLinear();
             break;
@@ -928,9 +929,9 @@ void GoalStrat::stateRun()
             ROS_INFO_STREAM("Pushing CARRE_FOUILLE" << std::endl);
 
             pushCarreFouille();
-            
+
             retractePusher();
-            
+
             ROS_INFO_STREAM("CARRE_FOUILLE done" << std::endl);
 
             startAngular();
@@ -1054,7 +1055,8 @@ void GoalStrat::stateRun()
         abortAction();
         goToNextMission();
 
-        if (m_previous_etape_type == Etape::EtapeType::CARRE_FOUILLE) {
+        if (m_previous_etape_type == Etape::EtapeType::CARRE_FOUILLE)
+        {
             pushCarreFouille();
         }
     }
@@ -1120,16 +1122,15 @@ void GoalStrat::init()
 
     m_action_aborted = false;
 
-    m_strat_graph = std::make_unique<Coupe2022>(!m_is_blue);
+    m_strat_graph = std::make_unique<Coupe2023>(!m_is_blue);
 
     m_strat_graph->update();
     m_previous_etape_type = Etape::EtapeType::POINT_PASSAGE;
-    //m_strat_graph->getEtapeEnCours()->getEtapeType(); // Was shitting when the first action was one unidirectionnal
+    // m_strat_graph->getEtapeEnCours()->getEtapeType(); // Was shitting when the first action was
+    // one unidirectionnal
     m_state = State::WAIT_TIRETTE;
 
     m_running = std::thread(&GoalStrat::publishAll, this);
-
-    
 }
 
 /**

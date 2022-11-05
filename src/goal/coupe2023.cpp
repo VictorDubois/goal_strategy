@@ -1,4 +1,4 @@
-#include "goal_strategy/coupe2022.h"
+#include "goal_strategy/coupe2023.h"
 #include "goal_strategy/grabber.h"
 #include "krabilib/pose.h"
 #include "krabilib/strategie/galerie.h"
@@ -15,7 +15,7 @@
 #include <QDebug>
 #endif
 
-Position Coupe2022::positionCAbsolute(double x_yellow_from_top_left, double y_yellow_from_top_left)
+Position Coupe2023::positionCAbsolute(double x_yellow_from_top_left, double y_yellow_from_top_left)
 {
     return positionC(1.5 - x_yellow_from_top_left, 1 - y_yellow_from_top_left);
 }
@@ -25,12 +25,10 @@ Position Coupe2022::positionCAbsolute(double x_yellow_from_top_left, double y_ye
  *
  * @param isYellow
  */
-Coupe2022::Coupe2022(const bool isYellow)
-  : StrategieV3(isYellow, true)
+Coupe2023::Coupe2023(const bool isYellow)
+  : StrategieV3(isYellow, false)
 {
     setRemainingTime(100 * 1000);
-
-    statuette_held = false;
 
     // Initialisation des tableaux d'étapes
     m_tableau_etapes_total
@@ -132,7 +130,7 @@ Coupe2022::Coupe2022(const bool isYellow)
  * @param m output marker
  * @param e input etape
  */
-void Coupe2022::etape_type_to_marker(visualization_msgs::Marker& m, const Etape::EtapeType& e)
+void Coupe2023::etape_type_to_marker(visualization_msgs::Marker& m, const Etape::EtapeType& e)
 {
     auto& color = m.color;
     m.scale.x = 0.05;
@@ -170,31 +168,6 @@ void Coupe2022::etape_type_to_marker(visualization_msgs::Marker& m, const Etape:
         color.g = 255;
         color.b = 255;
         break;
-    /*case Etape::EtapeType::MANCHE_A_AIR:
-        color.r = 255;
-        color.g = 255;
-        color.b = 0;
-        break;
-    case Etape::EtapeType::PORT:
-        color.r = 0;
-        color.g = 255;
-        color.b = 255;
-        break;
-    case Etape::EtapeType::BOUEE:
-        color.r = 255;
-        color.g = 55;
-        color.b = 255;
-        break;
-    case Etape::EtapeType::MOUILLAGE_NORD:
-        color.r = 0;
-        color.g = 255;
-        color.b = 0;
-        break;
-    case Etape::EtapeType::MOUILLAGE_SUD:
-        color.r = 0;
-        color.g = 0;
-        color.b = 255;
-        break;*/
     case Etape::EtapeType::POINT_PASSAGE:
         color.r = 0;
         color.g = 0;
@@ -222,7 +195,7 @@ void Coupe2022::etape_type_to_marker(visualization_msgs::Marker& m, const Etape:
  *
  * @param ma marker array
  */
-void Coupe2022::debugEtapes(visualization_msgs::MarkerArray& ma)
+void Coupe2023::debugEtapes(visualization_msgs::MarkerArray& ma)
 {
 
     uint i = 0;
@@ -293,7 +266,7 @@ void Coupe2022::debugEtapes(visualization_msgs::MarkerArray& ma)
  * @param i
  * @return int
  */
-int Coupe2022::getScoreEtape(int i)
+int Coupe2023::getScoreEtape(int i)
 {
     ROS_INFO_STREAM("getScoreEtape. Time: " << getRemainingTime() << std::endl);
     int l_score = 0;
@@ -312,10 +285,6 @@ int Coupe2022::getScoreEtape(int i)
         break;
     case Etape::VITRINE:
         l_score = 0;
-        if (statuette_held)
-        {
-            l_score = 20;
-        }
         break;
     case Etape::STATUETTE:
         l_score = 5;
@@ -327,13 +296,4 @@ int Coupe2022::getScoreEtape(int i)
         return 0;
     }
     return l_score;
-}
-
-void Coupe2022::catchStatuette()
-{
-    statuette_held = true;
-}
-void Coupe2022::dropStatuette()
-{
-    statuette_held = false;
 }

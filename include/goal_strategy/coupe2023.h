@@ -20,22 +20,20 @@
 #include <visualization_msgs/Marker.h>
 #include <visualization_msgs/MarkerArray.h>
 
-class Coupe2022 : public StrategieV3
+class Coupe2023 : public StrategieV3
 {
 public:
-    Coupe2022(bool isYellow);
+    Coupe2023(bool isYellow);
     void debugEtapes(visualization_msgs::MarkerArray& ma);
     void etape_type_to_marker(visualization_msgs::Marker& m, const Etape::EtapeType& e);
 
-    void catchStatuette();
-    void dropStatuette();
+    void catchStatuette(){};
+    void dropStatuette(){};
 
     Position positionCAbsolute(double x_yellow_from_top_left, double y_yellow_from_top_left);
 
 private:
     int getScoreEtape(int i);
-
-    bool statuette_held;
 
     uint32_t m_seq;
 };

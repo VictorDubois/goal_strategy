@@ -10,13 +10,13 @@
 #include <ros/ros.h>
 #include <std_msgs/Bool.h>
 #include <std_msgs/Duration.h>
-#include <std_msgs/Int32.h>
 #include <std_msgs/Float32.h>
+#include <std_msgs/Int32.h>
 
 #include <tf/transform_listener.h>
 #include <tf2_ros/transform_listener.h>
 
-#include "coupe2022.h"
+#include "coupe2023.h"
 #include "goal_strategy/actuators.h"
 #include "goal_strategy/grabber.h"
 #include "krabi_msgs/servos_cmd.h"
@@ -43,7 +43,6 @@ enum VacuumState
     WEAK_VACUUM,
     STRONG_VACUUM
 };
-
 
 class GoalStrat
 {
@@ -103,7 +102,7 @@ private:
     State m_state = State::RUN;
     Distance m_dist_to_goal;
     bool m_state_msg_displayed;
-    std::unique_ptr<Coupe2022> m_strat_graph;
+    std::unique_ptr<Coupe2023> m_strat_graph;
     long m_timeout_moving, m_timeout_orient;
     bool m_is_first_action;
 
