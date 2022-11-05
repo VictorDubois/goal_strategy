@@ -26,7 +26,7 @@ Position Coupe2022::positionCAbsolute(double x_yellow_from_top_left, double y_ye
  * @param isYellow
  */
 Coupe2022::Coupe2022(const bool isYellow)
-  : StrategieV3(isYellow)
+  : StrategieV3(isYellow, true)
 {
     setRemainingTime(100 * 1000);
 
@@ -44,37 +44,46 @@ Coupe2022::Coupe2022(const bool isYellow)
     int out_of_campement = Etape::makeEtape(positionCAbsolute(0.5f, 0.7f), Etape::POINT_PASSAGE);
     Etape::get(campement)->addVoisins(out_of_campement);
 
-    float lateral_carre_fouille = 1.710f;//1.740f;//1.705f//1.755f//1.775f
+    float lateral_carre_fouille = 1.710f; // 1.740f;//1.705f//1.755f//1.775f
 
     // Carre de fouille
-    int fouille_safe = Etape::makeEtape(new CarreFouille(positionCAbsolute(0.8525f, lateral_carre_fouille)));
-    int fouille_mixte_1 = Etape::makeEtape(new CarreFouille(positionCAbsolute(1.2225f, lateral_carre_fouille)));
-    int fouille_mixte_2 = Etape::makeEtape(new CarreFouille(positionCAbsolute(1.4075f, lateral_carre_fouille)));
-    int fouille_mixte_3 = Etape::makeEtape(new CarreFouille(positionCAbsolute(1.5925f, lateral_carre_fouille)));
-    int fouille_mixte_4 = Etape::makeEtape(new CarreFouille(positionCAbsolute(1.7775f, lateral_carre_fouille)));
+    int fouille_safe
+      = Etape::makeEtape(new CarreFouille(positionCAbsolute(0.8525f, lateral_carre_fouille)));
+    int fouille_mixte_1
+      = Etape::makeEtape(new CarreFouille(positionCAbsolute(1.2225f, lateral_carre_fouille)));
+    int fouille_mixte_2
+      = Etape::makeEtape(new CarreFouille(positionCAbsolute(1.4075f, lateral_carre_fouille)));
+    int fouille_mixte_3
+      = Etape::makeEtape(new CarreFouille(positionCAbsolute(1.5925f, lateral_carre_fouille)));
+    int fouille_mixte_4
+      = Etape::makeEtape(new CarreFouille(positionCAbsolute(1.7775f, lateral_carre_fouille)));
 
     int out_of_fouille = Etape::makeEtape(positionCAbsolute(1.5f, 1.65f), Etape::POINT_PASSAGE);
     Etape::get(out_of_fouille)->addVoisins(fouille_mixte_1);
-    //Etape::get(out_of_fouille)->addVoisins(fouille_mixte_2);
-    //Etape::get(out_of_fouille)->addVoisins(fouille_mixte_3);
+    // Etape::get(out_of_fouille)->addVoisins(fouille_mixte_2);
+    // Etape::get(out_of_fouille)->addVoisins(fouille_mixte_3);
     Etape::get(out_of_fouille)->addVoisins(fouille_mixte_4);
 
-    //Etape::get(campement)->addVoisins(fouille_safe);
+    // Etape::get(campement)->addVoisins(fouille_safe);
     Etape::get(fouille_safe)->addVoisins(fouille_mixte_1);
     Etape::get(fouille_mixte_1)->addVoisins(fouille_mixte_2);
     Etape::get(fouille_mixte_2)->addVoisins(fouille_mixte_3);
     Etape::get(fouille_mixte_3)->addVoisins(fouille_mixte_4);
 
-    //Etape::get(out_of_campement)->addVoisins(fouille_safe);
+    // Etape::get(out_of_campement)->addVoisins(fouille_safe);
 
     // Carre de fouille that require to check the resistances
 
     float offset_assymetrie_robot_quand_tourne = 0.0f;
     float marge_ecartement_bordure = 0.03f;
-    if (isYellow) {// Violet en 2022
+    if (isYellow)
+    { // Violet en 2022
         offset_assymetrie_robot_quand_tourne = 0.04f;
     }
-    int calage_carre_fouille = Etape::makeEtape(new Galerie(positionCAbsolute(0.6675f + offset_assymetrie_robot_quand_tourne, lateral_carre_fouille - marge_ecartement_bordure))); // Hack pour approcher doucement sur le côté
+    int calage_carre_fouille = Etape::makeEtape(new Galerie(positionCAbsolute(
+      0.6675f + offset_assymetrie_robot_quand_tourne,
+      lateral_carre_fouille
+        - marge_ecartement_bordure))); // Hack pour approcher doucement sur le côté
     int fouille_risk_1 = Etape::makeEtape(positionCAbsolute(0.6675f, lateral_carre_fouille));
     int fouille_risk_2 = Etape::makeEtape(positionCAbsolute(1.0375f, lateral_carre_fouille));
     Etape::get(campement)->addVoisins(calage_carre_fouille);

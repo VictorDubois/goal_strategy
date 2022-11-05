@@ -15,7 +15,7 @@
 #include <QDebug>
 #endif
 
-StrategieV3::StrategieV3(bool isYellow)
+StrategieV3::StrategieV3(bool isYellow, bool useXSymetry)
   : m_tableau_etapes_total(Etape::getTableauEtapesTotal())
 {
     m_avoiding = false;
@@ -25,6 +25,7 @@ StrategieV3::StrategieV3(bool isYellow)
     m_en_train_eviter_avancant = false;
     m_remaining_time_ms = 90 * 1000;
     m_yellow = isYellow;
+    m_use_x_symetry = useXSymetry;
 
 #ifdef QTGUI
     colorLiaisonsEtapes = QColor(150, 100, 50);
@@ -43,7 +44,17 @@ Etape* StrategieV3::getEtapeEnCours()
 
 Position StrategieV3::positionC(Distance x_yellow, Distance y_yellow)
 {
-    return isYellow() ? Position(x_yellow, y_yellow) : Position(Distance(-x_yellow), y_yellow);
+    if (isYellow())
+    {
+        return Position(x_yellow, y_yellow);
+    }
+
+    if (useXSymetry())
+    {
+        return Position(Distance(-x_yellow), y_yellow);
+    }
+
+    return Position(x_yellow, Distance(-y_yellow));
 }
 
 Position StrategieV3::positionC(double x_yellow, double y_yellow)
@@ -64,6 +75,11 @@ void StrategieV3::setRemainingTime(int64_t time_in_ms)
 bool StrategieV3::isYellow()
 {
     return m_yellow;
+}
+
+bool StrategieV3::useXSymetry()
+{
+    return m_use_x_symetry;
 }
 
 int StrategieV3::update()

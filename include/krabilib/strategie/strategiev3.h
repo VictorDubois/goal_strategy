@@ -19,8 +19,10 @@ class StrategieV3
 
 public:
     /** @brief Constructeur de la stratégie *
-     * @param isYellow le côté de départ */
-    StrategieV3(bool isYellow);
+     * @param isYellow le côté de départ
+     * @param useXSymetry est ce que la symetrie entre les deux couleur est selon l'axe X (true) ou
+     * Y (false, comme en 2023) */
+    StrategieV3(bool isYellow, bool useXSymetry = true);
 
     /** @brief Update la stratégie, soit parceque le robot est arrivé à une étape, soit parcequ'il
      * vient d'éviter un autre robot *
@@ -61,6 +63,8 @@ public:
 
     bool isYellow();
 
+    bool useXSymetry();
+
     double getRemainingTime();
 
     Etape* getGoal()
@@ -76,6 +80,7 @@ public:
 
 protected:
     bool m_yellow;
+    bool m_use_x_symetry;
     /** @brief le numéro de l'étape en cours */
     int m_etape_en_cours;
     int m_nombre_etapes;
