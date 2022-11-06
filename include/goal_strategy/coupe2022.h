@@ -29,6 +29,8 @@ public:
 
     void catchStatuette();
     void dropStatuette();
+    void grabGateau(Etape*){}; // 2023 only
+    void dropGateau(Etape*){}; // 2023 only
 
     Position positionCAbsolute(double x_yellow_from_top_left, double y_yellow_from_top_left);
 

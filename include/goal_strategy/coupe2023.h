@@ -28,8 +28,8 @@ public:
     void debugEtapes(visualization_msgs::MarkerArray& ma);
     void etape_type_to_marker(visualization_msgs::Marker& m, Etape* e);
 
-    void catchStatuette(){};
-    void dropStatuette(){};
+    void catchStatuette(){}; // 2022 only
+    void dropStatuette(){};  // 2022 only
 
     void grabGateau(Etape* e);
     void dropGateau(Etape* e);
