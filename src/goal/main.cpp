@@ -168,7 +168,9 @@ bool GoalStrat::isArrivedAtGoal()
 
     float l_reach_dist = REACH_DIST;
     if (m_strat_graph->getEtapeEnCours()->getEtapeType() == Etape::EtapeType::BOUEE
-        || m_strat_graph->getEtapeEnCours()->getEtapeType() == Etape::EtapeType::HEXAGON_PLAT)
+        || m_strat_graph->getEtapeEnCours()->getEtapeType() == Etape::EtapeType::HEXAGON_PLAT
+        || m_strat_graph->getEtapeEnCours()->getEtapeType() == Etape::EtapeType::PILE_GATEAU
+        || m_strat_graph->getEtapeEnCours()->getEtapeType() == Etape::EtapeType::ASSIETTE)
     {
         l_reach_dist = m_theThing->getReach();
     }
@@ -1041,11 +1043,21 @@ void GoalStrat::stateRun()
 
         case Etape::EtapeType::ASSIETTE:
             m_strat_graph->dropGateau(m_strat_graph->getEtapeEnCours());
+            // m_theThing->release_hexagon_on_ground(); // @todo code that
+
             ROS_INFO_STREAM("Assiete" << std::endl);
             break;
 
         case Etape::EtapeType::PILE_GATEAU:
             m_strat_graph->grabGateau(m_strat_graph->getEtapeEnCours());
+            stopLinear();
+            ROS_INFO_STREAM("Orienting grabber" << std::endl);
+            ROS_WARN_STREAM_COND(
+              alignWithAngleWithTimeout(
+                Angle((m_goal_pose.getPosition() - m_current_pose.getPosition()).getAngle()
+                      - m_theThing->getAngle())),
+              "Timeout while orienting");
+            // m_theThing->grab_hexagon(GrabberContent::ANY); // @todo code that
             ROS_INFO_STREAM("Pile Gateau" << std::endl);
             break;
         default:
