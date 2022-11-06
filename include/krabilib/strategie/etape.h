@@ -41,6 +41,8 @@ public:
         STATUETTE = 0x19,
         VITRINE = 0x20,
         GALERIE = 0x21,
+        PILE_GATEAU = 0x22,
+        ASSIETTE = 0x23,
 
         POINT_PASSAGE = 0x30,
 

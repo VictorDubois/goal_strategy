@@ -2,6 +2,7 @@
 #include "goal_strategy/grabber.h"
 #include "krabilib/pose.h"
 #include "krabilib/strategie/galerie.h"
+#include "krabilib/strategie/pileGateau.h"
 #include "krabilib/strategie/statuette.h"
 #include "krabilib/strategie/vitrine.h"
 
@@ -39,80 +40,69 @@ Coupe2023::Coupe2023(const bool isYellow)
     int campement = Etape::makeEtape(positionCAbsolute(0.3f, 0.7f),
                                      Etape::DEPART); // départ au fond de la zone de départ
 
-    int out_of_campement = Etape::makeEtape(positionCAbsolute(0.5f, 0.7f), Etape::POINT_PASSAGE);
-    Etape::get(campement)->addVoisins(out_of_campement);
+    //////////// Trio départ ////////////
+    int pile_glacage_depart = Etape::makeEtape(
+      new PileGateau(positionCAbsolute(0.45f + 0.125f, 0.25f), CoucheGateau::glacage_rose));
 
-    float lateral_carre_fouille = 1.710f; // 1.740f;//1.705f//1.755f//1.775f
+    int pile_creme_depart = Etape::makeEtape(
+      new PileGateau(positionCAbsolute(0.45f + 0.125f + 0.2f, 0.25f), CoucheGateau::creme_jaune));
 
-    // Carre de fouille
-    int fouille_safe
-      = Etape::makeEtape(new CarreFouille(positionCAbsolute(0.8525f, lateral_carre_fouille)));
-    int fouille_mixte_1
-      = Etape::makeEtape(new CarreFouille(positionCAbsolute(1.2225f, lateral_carre_fouille)));
-    int fouille_mixte_2
-      = Etape::makeEtape(new CarreFouille(positionCAbsolute(1.4075f, lateral_carre_fouille)));
-    int fouille_mixte_3
-      = Etape::makeEtape(new CarreFouille(positionCAbsolute(1.5925f, lateral_carre_fouille)));
-    int fouille_mixte_4
-      = Etape::makeEtape(new CarreFouille(positionCAbsolute(1.7775f, lateral_carre_fouille)));
+    int pile_genoise_depart = Etape::makeEtape(
+      new PileGateau(positionCAbsolute(1.125f, 0.675f), CoucheGateau::genoise_marron));
 
-    int out_of_fouille = Etape::makeEtape(positionCAbsolute(1.5f, 1.65f), Etape::POINT_PASSAGE);
-    Etape::get(out_of_fouille)->addVoisins(fouille_mixte_1);
-    // Etape::get(out_of_fouille)->addVoisins(fouille_mixte_2);
-    // Etape::get(out_of_fouille)->addVoisins(fouille_mixte_3);
-    Etape::get(out_of_fouille)->addVoisins(fouille_mixte_4);
+    Etape::get(pile_glacage_depart)->addVoisins(pile_creme_depart);
+    Etape::get(pile_genoise_depart)->addVoisins(pile_creme_depart);
 
-    // Etape::get(campement)->addVoisins(fouille_safe);
-    Etape::get(fouille_safe)->addVoisins(fouille_mixte_1);
-    Etape::get(fouille_mixte_1)->addVoisins(fouille_mixte_2);
-    Etape::get(fouille_mixte_2)->addVoisins(fouille_mixte_3);
-    Etape::get(fouille_mixte_3)->addVoisins(fouille_mixte_4);
+    Etape::get(pile_glacage_depart)->addVoisins(campement);
 
-    // Etape::get(out_of_campement)->addVoisins(fouille_safe);
+    //////////// Trio symetrique X ////////////
+    int pile_glacage_loin = Etape::makeEtape(new PileGateau(
+      positionCAbsolute(3.0f - (0.45f + 0.125f), 0.25f), CoucheGateau::glacage_rose));
 
-    // Carre de fouille that require to check the resistances
+    int pile_creme_loin = Etape::makeEtape(new PileGateau(
+      positionCAbsolute(3.0f - (0.45f + 0.125f + 0.2f), 0.25f), CoucheGateau::creme_jaune));
 
-    float offset_assymetrie_robot_quand_tourne = 0.0f;
-    float marge_ecartement_bordure = 0.03f;
-    if (isYellow)
-    { // Violet en 2022
-        offset_assymetrie_robot_quand_tourne = 0.04f;
-    }
-    int calage_carre_fouille = Etape::makeEtape(new Galerie(positionCAbsolute(
-      0.6675f + offset_assymetrie_robot_quand_tourne,
-      lateral_carre_fouille
-        - marge_ecartement_bordure))); // Hack pour approcher doucement sur le côté
-    int fouille_risk_1 = Etape::makeEtape(positionCAbsolute(0.6675f, lateral_carre_fouille));
-    int fouille_risk_2 = Etape::makeEtape(positionCAbsolute(1.0375f, lateral_carre_fouille));
-    Etape::get(campement)->addVoisins(calage_carre_fouille);
-    Etape::get(calage_carre_fouille)->addVoisins(fouille_safe);
-    Etape::get(fouille_risk_1)->addVoisins(fouille_safe);
-    Etape::get(fouille_safe)->addVoisins(fouille_risk_2);
-    Etape::get(fouille_risk_2)->addVoisins(fouille_mixte_1);
+    int pile_genoise_loin = Etape::makeEtape(
+      new PileGateau(positionCAbsolute(3.0f - 1.125f, 0.675f), CoucheGateau::genoise_marron));
+    Etape::get(pile_genoise_loin)->addVoisins(pile_genoise_depart);
 
-    // Statuette
-    int statuette = Etape::makeEtape(new Statuette(positionCAbsolute(0.5f, 1.47f)));
-    Etape::get(campement)->addVoisins(statuette);
-    Etape::get(fouille_safe)->addVoisins(statuette);
+    Etape::get(pile_glacage_loin)->addVoisins(pile_creme_loin);
+    Etape::get(pile_genoise_loin)->addVoisins(pile_creme_loin);
 
-    int vitrine = Etape::makeEtape(new Vitrine(positionCAbsolute(0.15f, 0.3f)));
-    int galerie_bleu = Etape::makeEtape(new Galerie(positionCAbsolute(0.57f, 0.2f)));
-    int galerie_vert = Etape::makeEtape(new Galerie(positionCAbsolute(0.81f, 0.2f)));
-    int galerie_rouge = Etape::makeEtape(new Galerie(positionCAbsolute(1.05f, 0.2f)));
+    //////////// Trio symetrique Y (depart adversaire) ////////////
+    int pile_glacage_depart_adv = Etape::makeEtape(
+      new PileGateau(positionCAbsolute(0.45f + 0.125f, 2 - 0.25f), CoucheGateau::glacage_rose));
 
-    Etape::get(out_of_campement)->addVoisins(statuette);
-    Etape::get(campement)->addVoisins(vitrine);
-    Etape::get(statuette)->addVoisins(fouille_mixte_1);
-    Etape::get(statuette)->addVoisins(out_of_fouille);
+    int pile_creme_depart_adv = Etape::makeEtape(new PileGateau(
+      positionCAbsolute(0.45f + 0.125f + 0.2f, 2 - 0.25f), CoucheGateau::creme_jaune));
 
-    Etape::get(out_of_campement)->addVoisins(galerie_bleu);
-    Etape::get(out_of_campement)->addVoisins(galerie_vert);
-    Etape::get(out_of_campement)->addVoisins(galerie_rouge);
+    int pile_genoise_depart_adv = Etape::makeEtape(
+      new PileGateau(positionCAbsolute(1.125f, 2 - 0.675f), CoucheGateau::genoise_marron));
 
-    Etape::get(galerie_vert)->addVoisins(galerie_bleu);
-    Etape::get(galerie_vert)->addVoisins(galerie_rouge);
+    Etape::get(pile_glacage_depart_adv)->addVoisins(pile_creme_depart_adv);
+    Etape::get(pile_genoise_depart_adv)->addVoisins(pile_creme_depart_adv);
 
-    m_numero_etape_garage = out_of_campement; // Must be set!
+    Etape::get(pile_glacage_depart)->addVoisins(pile_glacage_depart_adv);
+
+    //////////// Trio symetrique X+Y ////////////
+    int pile_glacage_loin_adv = Etape::makeEtape(new PileGateau(
+      positionCAbsolute(3 - (0.45f + 0.125f), 2 - 0.25f), CoucheGateau::glacage_rose));
+
+    int pile_creme_loin_adv = Etape::makeEtape(new PileGateau(
+      positionCAbsolute(3 - (0.45f + 0.125f + 0.2f), 2 - 0.25f), CoucheGateau::creme_jaune));
+
+    int pile_genoise_loin_adv = Etape::makeEtape(
+      new PileGateau(positionCAbsolute(3 - 1.125f, 2 - 0.675f), CoucheGateau::genoise_marron));
+
+    Etape::get(pile_glacage_loin_adv)->addVoisins(pile_creme_loin_adv);
+    Etape::get(pile_genoise_loin_adv)->addVoisins(pile_creme_loin_adv);
+
+    Etape::get(pile_genoise_loin_adv)->addVoisins(pile_genoise_loin);
+    Etape::get(pile_genoise_loin_adv)->addVoisins(pile_genoise_depart);
+    Etape::get(pile_genoise_loin_adv)->addVoisins(pile_genoise_depart_adv);
+    Etape::get(pile_genoise_depart_adv)->addVoisins(pile_genoise_depart);
+
+    m_numero_etape_garage = campement; // Must be set!
 
 #ifdef QTGUI
     qDebug() << Etape::getTotalEtapes();
@@ -130,48 +120,62 @@ Coupe2023::Coupe2023(const bool isYellow)
  * @param m output marker
  * @param e input etape
  */
-void Coupe2023::etape_type_to_marker(visualization_msgs::Marker& m, const Etape::EtapeType& e)
+void Coupe2023::etape_type_to_marker(visualization_msgs::Marker& m, Etape* a_etape)
 {
-    auto& color = m.color;
+    // auto& color = m.color;
     m.scale.x = 0.05;
     m.scale.y = 0.05;
     m.scale.z = 0.05;
     m.type = visualization_msgs::Marker::CUBE;
+    CoucheGateau type_couche = CoucheGateau::glacage_rose;
+
+    const Etape::EtapeType& e = a_etape->getEtapeType();
+    m.color.a = 1;
 
     switch (e)
     {
     case Etape::EtapeType::DEPART:
-        color.r = 0;
-        color.g = 0;
-        color.b = 0;
+        m.color.r = 0;
+        m.color.g = 0;
+        m.color.b = 0;
         m.scale.x = 0.01;
         m.scale.y = 0.01;
         m.scale.z = 0.01;
         break;
-    case Etape::EtapeType::CARRE_FOUILLE:
-        color.r = 255;
-        color.g = 0;
-        color.b = 0;
-        break;
-    case Etape::EtapeType::VITRINE:
-        color.r = 255;
-        color.g = 255;
-        color.b = 0;
-        break;
-    case Etape::EtapeType::STATUETTE:
-        color.r = 255;
-        color.g = 0;
-        color.b = 255;
-        break;
-    case Etape::EtapeType::GALERIE:
-        color.r = 255;
-        color.g = 255;
-        color.b = 255;
+    case Etape::EtapeType::PILE_GATEAU:
+        m.type = visualization_msgs::Marker::CYLINDER;
+        m.scale.x = 0.12;
+        m.scale.y = 0.12;
+        type_couche = static_cast<PileGateau*>(a_etape->getAction())->getTypeCouche();
+        switch (type_couche)
+        {
+        case CoucheGateau::genoise_marron:
+            m.color.r = 76.f / 255.f;
+            m.color.g = 43.f / 255.f;
+            m.color.b = 32.f / 255.f;
+            break;
+        case CoucheGateau::creme_jaune:
+            m.color.r = 247.f / 255.f;
+            m.color.g = 181.f / 255.f;
+            m.color.b = 0;
+            break;
+        case CoucheGateau::glacage_rose:
+            m.color.r = 188.f / 255.f;
+            m.color.g = 64.f / 255.f;
+            m.color.b = 119.f / 255.f;
+            break;
+        default:
+            m.color.r = 0;
+            m.color.g = 1;
+            m.color.b = 0;
+            break;
+        }
+
         break;
     case Etape::EtapeType::POINT_PASSAGE:
-        color.r = 0;
-        color.g = 0;
-        color.b = 255;
+        m.color.r = 0;
+        m.color.g = 0;
+        m.color.b = 1;
         m.scale.x = 0.01;
         m.scale.y = 0.01;
         m.scale.z = 0.01;
@@ -179,15 +183,14 @@ void Coupe2023::etape_type_to_marker(visualization_msgs::Marker& m, const Etape:
 
         break;
     case Etape::EtapeType::ROBOT_VU_ICI:
-        color.r = 255;
-        color.g = 255;
-        color.b = 255;
+        m.color.r = 1;
+        m.color.g = 1;
+        m.color.b = 1;
         m.scale.x = 0.2;
         m.scale.y = 0.2;
         m.scale.z = 0.2;
         break;
     }
-    color.a = 1;
 }
 
 /**
@@ -199,7 +202,7 @@ void Coupe2023::debugEtapes(visualization_msgs::MarkerArray& ma)
 {
 
     uint i = 0;
-    for (const auto& etape : Etape::getTableauEtapesTotal())
+    for (auto& etape : Etape::getTableauEtapesTotal())
     {
         if (etape)
         {
@@ -212,7 +215,7 @@ void Coupe2023::debugEtapes(visualization_msgs::MarkerArray& ma)
             m.id = i++;
             m.action = visualization_msgs::Marker::MODIFY;
             m.pose = Pose(etape->getPosition(), Angle(0));
-            etape_type_to_marker(m, etape->getEtapeType());
+            etape_type_to_marker(m, etape);
 
             if (etape->getNumero() == this->getGoal()->getNumero())
             {
@@ -243,7 +246,7 @@ void Coupe2023::debugEtapes(visualization_msgs::MarkerArray& ma)
                 line.scale.x = l_distance;
                 line.scale.y = 0.01;
                 line.scale.z = 0.01;
-                line.color.r = 255;
+                line.color.r = 1;
                 line.color.g = 0;
                 line.color.b = 0;
                 line.color.a = 0.5;
@@ -276,6 +279,9 @@ int Coupe2023::getScoreEtape(int i)
 
     case Etape::DEPART:
         l_score = 0;
+        break;
+    case Etape::PILE_GATEAU:
+        l_score = 3;
         break;
     case Etape::POINT_PASSAGE:
         l_score = 0;

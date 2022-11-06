@@ -10,6 +10,7 @@
 #include "krabilib/strategie/galerie.h"
 #include "krabilib/strategie/goldenium.h"
 #include "krabilib/strategie/hexagon_plat.h"
+#include "krabilib/strategie/pileGateau.h"
 #include "krabilib/strategie/reservoirEau.h"
 #include "krabilib/strategie/statuette.h"
 #include "krabilib/strategie/strategiev3.h"
@@ -25,7 +26,7 @@ class Coupe2023 : public StrategieV3
 public:
     Coupe2023(bool isYellow);
     void debugEtapes(visualization_msgs::MarkerArray& ma);
-    void etape_type_to_marker(visualization_msgs::Marker& m, const Etape::EtapeType& e);
+    void etape_type_to_marker(visualization_msgs::Marker& m, Etape* e);
 
     void catchStatuette(){};
     void dropStatuette(){};
@@ -36,4 +37,6 @@ private:
     int getScoreEtape(int i);
 
     uint32_t m_seq;
+
+    std::vector<CoucheGateau> m_stock;
 };
