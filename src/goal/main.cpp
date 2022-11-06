@@ -1038,6 +1038,16 @@ void GoalStrat::stateRun()
             m_theThing->release_hexagon_on_ground(GrabberContent::ANY);
             ROS_INFO_STREAM("Bouee released" << std::endl);
             break;
+
+        case Etape::EtapeType::ASSIETTE:
+            m_strat_graph->dropGateau(m_strat_graph->getEtapeEnCours());
+            ROS_INFO_STREAM("Assiete" << std::endl);
+            break;
+
+        case Etape::EtapeType::PILE_GATEAU:
+            m_strat_graph->grabGateau(m_strat_graph->getEtapeEnCours());
+            ROS_INFO_STREAM("Pile Gateau" << std::endl);
+            break;
         default:
             retractePusher();
             ROS_INFO_STREAM("No special action here\n");

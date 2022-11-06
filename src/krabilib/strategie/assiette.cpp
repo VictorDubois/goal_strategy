@@ -22,7 +22,7 @@ Assiette::Assiette()
 
 Assiette::Assiette(Position goalPosition, Owner us_or_them)
   : MediumLevelAction(goalPosition)
-  , us_or_them(us_or_them)
+  , m_us_or_them(us_or_them)
 {
     goalPosition = this->goalPosition;
     position_depart = goalPosition;
@@ -34,12 +34,27 @@ Assiette::~Assiette()
 
 Owner Assiette::getOwner()
 {
-    return us_or_them;
+    return m_us_or_them;
 }
 
 Etape::EtapeType Assiette::getType()
 {
     return Etape::ASSIETTE;
+}
+
+void Assiette::addGateau(CoucheGateau flavor)
+{
+    m_stock.push_back(flavor);
+}
+
+std::vector<CoucheGateau> Assiette::getGateaux()
+{
+    return m_stock;
+}
+
+unsigned int Assiette::getNumberOFGateaux()
+{
+    return m_stock.size();
 }
 
 int Assiette::update()

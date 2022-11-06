@@ -1,6 +1,7 @@
 #include "goal_strategy/coupe2023.h"
 #include "goal_strategy/grabber.h"
 #include "krabilib/pose.h"
+#include "krabilib/strategie/assiette.h"
 #include "krabilib/strategie/galerie.h"
 #include "krabilib/strategie/pileGateau.h"
 #include "krabilib/strategie/statuette.h"
@@ -37,8 +38,41 @@ Coupe2023::Coupe2023(const bool isYellow)
 
     // Création des étapes
     // Les étapes correspondant à des actions sont créées automatiquement lors de l'ajout d'actions
-    int campement = Etape::makeEtape(positionCAbsolute(0.3f, 0.7f),
+    int campement = Etape::makeEtape(positionCAbsolute(0.225f, 0.225f),
                                      Etape::DEPART); // départ au fond de la zone de départ
+
+    int assiete_us_0 = Etape::makeEtape(new Assiette(positionCAbsolute(0.25f, 0.25f), Owner::us));
+
+    int assiete_them_1
+      = Etape::makeEtape(new Assiette(positionCAbsolute(1.5f - 0.375f, 0.25f), Owner::them));
+
+    int assiete_us_2
+      = Etape::makeEtape(new Assiette(positionCAbsolute(1.5f + 0.375f, 0.25f), Owner::us));
+    Etape::get(assiete_them_1)->addVoisins(assiete_us_2);
+
+    int assiete_them_3
+      = Etape::makeEtape(new Assiette(positionCAbsolute(3.f - 0.225f, 0.25f), Owner::them));
+    Etape::get(assiete_them_3)->addVoisins(assiete_us_2);
+
+    int assiete_us_4
+      = Etape::makeEtape(new Assiette(positionCAbsolute(3.f - 0.225f, 0.75f), Owner::us));
+    Etape::get(assiete_them_3)->addVoisins(assiete_us_4);
+
+    int assiete_them_5
+      = Etape::makeEtape(new Assiette(positionCAbsolute(3.f - 0.225f, 2.f - 0.75f), Owner::them));
+    Etape::get(assiete_them_5)->addVoisins(assiete_us_4);
+
+    int assiete_us_6
+      = Etape::makeEtape(new Assiette(positionCAbsolute(3.f - 0.225f, 2.f - 0.25f), Owner::us));
+    Etape::get(assiete_them_5)->addVoisins(assiete_us_6);
+
+    int assiete_them_7
+      = Etape::makeEtape(new Assiette(positionCAbsolute(1.5f + 0.375f, 2.f - 0.25f), Owner::them));
+    Etape::get(assiete_them_7)->addVoisins(assiete_us_6);
+
+    int assiete_us_8
+      = Etape::makeEtape(new Assiette(positionCAbsolute(1.5f - 0.375f, 2.f - 0.25f), Owner::us));
+    Etape::get(assiete_them_7)->addVoisins(assiete_us_8);
 
     //////////// Trio départ ////////////
     int pile_glacage_depart = Etape::makeEtape(
@@ -102,6 +136,8 @@ Coupe2023::Coupe2023(const bool isYellow)
     Etape::get(pile_genoise_loin_adv)->addVoisins(pile_genoise_depart_adv);
     Etape::get(pile_genoise_depart_adv)->addVoisins(pile_genoise_depart);
 
+    Etape::get(assiete_us_4)->addVoisins(pile_genoise_depart);
+
     m_numero_etape_garage = campement; // Must be set!
 
 #ifdef QTGUI
@@ -112,6 +148,62 @@ Coupe2023::Coupe2023(const bool isYellow)
 
     // Lancer Dijkstra
     startDijkstra();
+}
+
+void Coupe2023::grabGateau(Etape* e)
+{
+    Assiette* l_assiette;
+    PileGateau* l_pile;
+    std::vector<CoucheGateau> l_stock_assiette;
+    Owner l_owner;
+
+    switch (e->getEtapeType())
+    {
+        // A faire : remplacer la priorite par le nombre de points obtenables a l'etape
+
+    case Etape::PILE_GATEAU:
+        l_pile = static_cast<PileGateau*>(e->getAction());
+        m_stock.push_back(l_pile->getTypeCouche());
+        break;
+    case Etape::ASSIETTE:
+        l_assiette = static_cast<Assiette*>(e->getAction());
+        l_owner = l_assiette->getOwner();
+        l_stock_assiette = l_assiette->getGateaux();
+
+        m_stock.push_back(l_stock_assiette.back());
+        l_stock_assiette.pop_back();
+        break;
+
+    default:
+        std::cerr << "Not supposed to grab a gateau from here!" << std::endl;
+    }
+}
+
+void Coupe2023::dropGateau(Etape* e)
+{
+    Assiette* l_assiette;
+    PileGateau* l_pile;
+    std::vector<CoucheGateau> l_stock_assiette;
+    Owner l_owner;
+    switch (e->getEtapeType())
+    {
+        // A faire : remplacer la priorite par le nombre de points obtenables a l'etape
+
+    case Etape::PILE_GATEAU:
+        l_pile = static_cast<PileGateau*>(e->getAction());
+        m_stock.push_back(l_pile->getTypeCouche());
+        break;
+    case Etape::ASSIETTE:
+        l_assiette = static_cast<Assiette*>(e->getAction());
+        l_owner = l_assiette->getOwner();
+
+        l_assiette->addGateau(m_stock.back());
+        m_stock.pop_back();
+        break;
+
+    default:
+        std::cerr << "Not supposed to drop a gateau top there!" << std::endl;
+    }
 }
 
 /**
@@ -128,6 +220,7 @@ void Coupe2023::etape_type_to_marker(visualization_msgs::Marker& m, Etape* a_eta
     m.scale.z = 0.05;
     m.type = visualization_msgs::Marker::CUBE;
     CoucheGateau type_couche = CoucheGateau::glacage_rose;
+    Owner owner;
 
     const Etape::EtapeType& e = a_etape->getEtapeType();
     m.color.a = 1;
@@ -141,6 +234,26 @@ void Coupe2023::etape_type_to_marker(visualization_msgs::Marker& m, Etape* a_eta
         m.scale.x = 0.01;
         m.scale.y = 0.01;
         m.scale.z = 0.01;
+        break;
+
+    case Etape::EtapeType::ASSIETTE:
+        m.type = visualization_msgs::Marker::CUBE;
+        m.scale.z = 0.01f;
+        m.color.a = 0.5f;
+        m.scale.x = 0.45f;
+        m.scale.y = 0.45f;
+        owner = static_cast<Assiette*>(a_etape->getAction())->getOwner();
+
+        m.color.r = 0.f / 255.f;
+        m.color.g = 91.f / 255.f;
+        m.color.b = 140.f / 255.f;
+        if (isYellow() == (owner == Owner::them))
+        {
+            m.color.r = 0.f / 255.f;
+            m.color.g = 111.f / 255.f;
+            m.color.b = 61.f / 255.f;
+        }
+
         break;
     case Etape::EtapeType::PILE_GATEAU:
         m.type = visualization_msgs::Marker::CYLINDER;
@@ -273,6 +386,9 @@ int Coupe2023::getScoreEtape(int i)
 {
     ROS_INFO_STREAM("getScoreEtape. Time: " << getRemainingTime() << std::endl);
     int l_score = 0;
+    Assiette* l_assiette;
+    Owner l_owner;
+    unsigned int l_stock_assiette;
     switch (this->m_tableau_etapes_total[i]->getEtapeType())
     {
         // A faire : remplacer la priorite par le nombre de points obtenables a l'etape
@@ -282,20 +398,31 @@ int Coupe2023::getScoreEtape(int i)
         break;
     case Etape::PILE_GATEAU:
         l_score = 3;
+
+        if (m_stock.size() > 1)
+        {
+            l_score = -3;
+        }
+        break;
+    case Etape::ASSIETTE:
+        l_assiette = static_cast<Assiette*>(this->m_tableau_etapes_total[i]->getAction());
+        l_owner = l_assiette->getOwner();
+        l_stock_assiette = l_assiette->getNumberOFGateaux();
+
+        if (m_stock.size() && l_owner == Owner::us && l_stock_assiette < 3)
+        {
+            l_score = 3;
+            if (m_stock.size() >= 2 && l_stock_assiette <= 1)
+            {
+                l_score = 6;
+            }
+            if (m_stock.size() >= 4 && l_stock_assiette == 0)
+            {
+                l_score = 9;
+            }
+        }
         break;
     case Etape::POINT_PASSAGE:
-        l_score = 0;
-        break;
-    case Etape::CARRE_FOUILLE:
-        l_score = 1;
-        break;
-    case Etape::VITRINE:
-        l_score = 0;
-        break;
-    case Etape::STATUETTE:
-        l_score = 5;
-        break;
-    case Etape::GALERIE:
         l_score = 0;
         break;
     default:
