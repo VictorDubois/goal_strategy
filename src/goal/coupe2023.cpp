@@ -60,7 +60,7 @@ Coupe2023::Coupe2023(const bool isYellow)
 
     int assiete_them_5
       = Etape::makeEtape(new Assiette(positionCAbsolute(3.f - 0.225f, 2.f - 0.75f), Owner::them));
-    Etape::get(assiete_them_5)->addVoisins(assiete_us_4);
+    // Etape::get(assiete_them_5)->addVoisins(assiete_us_4);// Attention: cerises sur le chemin
 
     int assiete_us_6
       = Etape::makeEtape(new Assiette(positionCAbsolute(3.f - 0.225f, 2.f - 0.25f), Owner::us));
@@ -202,7 +202,7 @@ void Coupe2023::dropGateau(Etape* e)
         break;
 
     default:
-        std::cerr << "Not supposed to drop a gateau top there!" << std::endl;
+        std::cerr << "Not supposed to drop a gateau there!" << std::endl;
     }
 }
 
