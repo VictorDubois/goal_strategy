@@ -46,15 +46,15 @@ Position StrategieV3::positionC(Distance x_yellow, Distance y_yellow)
 {
     if (isYellow())
     {
-        return Position(x_yellow, y_yellow);
+        return Position(Distance(-x_yellow), y_yellow);
     }
 
     if (useXSymetry())
     {
-        return Position(Distance(-x_yellow), y_yellow);
+        return Position(Distance(x_yellow), y_yellow);
     }
 
-    return Position(x_yellow, Distance(-y_yellow));
+    return Position(Distance(-x_yellow), Distance(-y_yellow));
 }
 
 Position StrategieV3::positionC(double x_yellow, double y_yellow)

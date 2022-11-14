@@ -333,6 +333,10 @@ void Coupe2023::debugEtapes(visualization_msgs::MarkerArray& ma)
             if (etape->getNumero() == this->getGoal()->getNumero())
             {
                 m.scale.z *= 10;
+                if (etape->getEtapeType() == Etape::EtapeType::ASSIETTE)
+                {
+                    m.scale.z = 1;
+                }
             }
 
             m.lifetime = ros::Duration(0); // Does not disapear
