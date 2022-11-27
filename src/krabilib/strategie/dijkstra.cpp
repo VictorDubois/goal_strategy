@@ -23,9 +23,7 @@ int Dijkstra::calculDistanceDirect(Etape* etapeDepart, Etape* etapeArrivee)
     // Une solution, vu que le STM32-H405 a plein de mémoire, serait de pré-calculer les distances,
     // et de les stocker. Cela permettrait aussi d'ajuster certaines distances si besoin, pour
     // préférer certains passages à d'autres
-    return sqrt(
-      pow(fabs((int)etapeDepart->getPosition().getX() - etapeArrivee->getPosition().getX()), 2)
-      + pow(fabs((int)etapeDepart->getPosition().getY() - etapeArrivee->getPosition().getY()), 2));
+    return (etapeDepart->getPosition() - etapeArrivee->getPosition()).getNorme();
 }
 
 void Dijkstra::setEtapeCourante(int numeroEtapeCourante)

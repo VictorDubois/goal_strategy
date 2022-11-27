@@ -7,6 +7,7 @@
 #include <stdlib.h>
 #include <thread>
 
+#include <geometry_msgs/PoseArray.h>
 #include <ros/ros.h>
 #include <std_msgs/Bool.h>
 #include <std_msgs/Duration.h>
@@ -86,6 +87,7 @@ private:
     void updateRemainingTime(std_msgs::Duration remainingTime);
     void updateTirette(std_msgs::Bool tirette);
     void updateVacuum(std_msgs::Float32 vacuum_msg);
+    void updateOtherRobots(geometry_msgs::PoseArray);
 
     bool isAlignedWithAngle(Angle angle);
     bool isArrivedAtGoal();
@@ -98,6 +100,8 @@ private:
 
     void pushCarreFouille();
     void retractePusher();
+
+    void setDistancesFromRobotsToEtapes();
 
     State m_state = State::RUN;
     Distance m_dist_to_goal;
@@ -119,6 +123,7 @@ private:
     ros::Subscriber m_tirette_sub;
     ros::Subscriber m_vacuum_sub;
     ros::Subscriber m_weathercock_state_sub;
+    ros::Subscriber m_other_robots_sub;
 
     tf2_ros::Buffer m_tf_buffer;
     tf2_ros::TransformListener m_tf_listener;
@@ -142,6 +147,7 @@ private:
     Actuators m_actuators;
     bool m_goal_init_done;
     bool m_at_least_one_carre_fouille_done;
+    std::vector<Position> m_potential_other_robots;
 
     std::shared_ptr<Grabber> m_theThing;
     std::shared_ptr<Servomotor> m_servo_pusher;

@@ -519,3 +519,23 @@ bool StrategieV3::updateScores()
     }
     return resteDesChosesAFaire;
 }
+
+void StrategieV3::setDistancesFromRobotsToEtapes(std::vector<Position> a_potential_other_robots)
+{
+    for (int i = 0; i < m_nombre_etapes; i++)
+    {
+        auto l_etape = m_tableau_etapes_total[i];
+
+        float min_dist = 5000; // more than the size of the table
+        for (auto l_potential_other_robot : a_potential_other_robots)
+        {
+            float relative_distance = (l_potential_other_robot - l_etape->getPosition()).getNorme();
+
+            if (relative_distance < min_dist)
+            {
+                min_dist = relative_distance;
+            }
+        }
+        l_etape->setDistanceToPotentialObstacle(min_dist);
+    }
+}

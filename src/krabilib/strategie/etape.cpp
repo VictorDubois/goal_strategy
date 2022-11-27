@@ -23,6 +23,7 @@ Etape::Etape(Position position, EtapeType type)
     this->numero = idx;
     this->numeroEtapeFinAction = idx;
     this->nombreEtapesLieesParFinirEtape = 0;
+    this->distanceToPotentialObstacle = 5000;
 
     this->actionGoTo = new ActionGoTo(getPosition());
 
@@ -178,6 +179,11 @@ void Etape::computeChildDistances()
     for (int i = 0; i < this->nbChildren; ++i)
     {
         this->distances[i] = Dijkstra::calculDistanceDirect(this->children[i], this);
+
+        if (this->children[i]->getDistanceToPotentialObstacle() < 0.1f)
+        {
+            this->distances[i] += 100; // mm?
+        }
     }
 }
 

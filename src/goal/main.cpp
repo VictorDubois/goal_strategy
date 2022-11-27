@@ -2,7 +2,7 @@
 #include <std_msgs/Float32.h>
 #include <std_msgs/UInt16.h>
 
-#define goal_MAX_ALLOWED_ANGULAR_SPEED 2.f // rad/s
+#define goal_MAX_ALLOWED_ANGULAR_SPEED 5.f // rad/s
 
 /**
  * @brief Set the arm to a specified position
@@ -404,6 +404,8 @@ GoalStrat::GoalStrat()
       = m_nh.subscribe("/remaining_time", 5, &GoalStrat::updateRemainingTime, this);
     m_tirette_sub = m_nh.subscribe("tirette", 5, &GoalStrat::updateTirette, this);
     m_vacuum_sub = m_nh.subscribe("vacuum", 5, &GoalStrat::updateVacuum, this);
+    m_other_robots_sub
+      = m_nh.subscribe("dynamic_obstacles", 5, &GoalStrat::updateOtherRobots, this);
 
     std::string actuators_name = "actuators_msg";
     m_servo_pusher = std::make_shared<Servomotor>(255, 75);
@@ -469,6 +471,22 @@ void GoalStrat::publishAll()
 void GoalStrat::updateTirette(std_msgs::Bool tirette)
 {
     m_tirette = tirette.data;
+}
+
+/**
+ * @brief Update the positions of the potential other robots
+ *
+ * @param a_potential_other_robots geometry_msgs::PoseArray
+ *
+ */
+void GoalStrat::updateOtherRobots(geometry_msgs::PoseArray a_potential_other_robots)
+{
+    for (auto l_potential_robot : a_potential_other_robots.poses)
+    {
+        m_potential_other_robots.push_back(Pose(l_potential_robot).getPosition());
+    }
+
+    m_strat_graph->setDistancesFromRobotsToEtapes(m_potential_other_robots);
 }
 
 /**

@@ -74,6 +74,13 @@ public:
 
     void setRemainingTime(int64_t time_in_ms);
 
+    /**
+     * @brief set the Distances from Robots to Etapes
+     *
+     * @param a_potential_other_robots
+     */
+    void setDistancesFromRobotsToEtapes(std::vector<Position> a_potential_other_robots);
+
 #ifdef QTGUI
     virtual void paint(QPainter* p);
 #endif

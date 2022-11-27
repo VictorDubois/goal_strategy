@@ -175,6 +175,16 @@ public:
 
     void setGoBack(bool val);
 
+    void setDistanceToPotentialObstacle(float distance)
+    {
+        distanceToPotentialObstacle = distance;
+    };
+
+    float getDistanceToPotentialObstacle()
+    {
+        return distanceToPotentialObstacle;
+    };
+
     static int getTotalEtapes();
 
     static std::vector<Etape*>& initTableauEtapeTotal(int number);
@@ -231,6 +241,9 @@ private:
 
     /** @brief Etape à laquelle on fini l'action de l'étape */
     int numeroEtapeFinAction;
+
+    /** @brief Distance à l'obstacle (potentiel autre robot) le plus proche */
+    float distanceToPotentialObstacle;
 
     ActionGoTo* actionGoTo;
 
