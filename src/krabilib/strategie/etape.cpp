@@ -1,9 +1,9 @@
 #include "krabilib/strategie/etape.h"
-#include "krabilib/strategie/dijkstra.h"
 #include "krabilib/strategie/actionGoTo.h"
+#include "krabilib/strategie/dijkstra.h"
 
 #ifdef QTGUI
-    #include <QDebug>
+#include <QDebug>
 #endif
 
 std::vector<Etape*> Etape::tableauEtapesTotal;
@@ -13,20 +13,20 @@ Etape::Etape(Position position, EtapeType type)
 {
     int idx = (Etape::totalEtapesInstanciated++);
 
-    this->position      = position;
-    this->type          = type;
-    this->state         = -1;
-    this->action        = 0;
-    this->nbChildren    = 0;
-    this->distance      = -1;
-    this->score         = 0;
-    this->numero        = idx;
+    this->position = position;
+    this->type = type;
+    this->state = -1;
+    this->action = 0;
+    this->nbChildren = 0;
+    this->distance = -1;
+    this->score = 0;
+    this->numero = idx;
     this->numeroEtapeFinAction = idx;
     this->nombreEtapesLieesParFinirEtape = 0;
 
     this->actionGoTo = new ActionGoTo(getPosition());
 
-    if(idx != ETAPE_INVALID_IDX)
+    if (idx != ETAPE_INVALID_IDX)
         tableauEtapesTotal[idx] = this;
 }
 
@@ -34,7 +34,7 @@ int Etape::makeEtape(MediumLevelAction* action)
 {
     int idx = Etape::makeEtape(Position(), Etape::POINT_PASSAGE);
 
-    if(idx == ETAPE_INVALID_IDX)
+    if (idx == ETAPE_INVALID_IDX)
         return idx;
 
     Etape::get(idx)->setAction(action);
@@ -48,7 +48,7 @@ int Etape::makeEtape(Position position, EtapeType type)
 
     int idx = e->getNumero();
 
-    if(idx == ETAPE_INVALID_IDX)
+    if (idx == ETAPE_INVALID_IDX)
         delete e;
 
     return idx;
@@ -59,16 +59,18 @@ int Etape::getTotalEtapes()
     return Etape::totalEtapesInstanciated;
 }
 
-
-Etape* Etape::getChild(int nb){
+Etape* Etape::getChild(int nb)
+{
     return this->children[nb];
 }
 
-Etape** Etape::getChildren(){
+Etape** Etape::getChildren()
+{
     return this->children;
 }
 
-Etape* Etape::getParent(){
+Etape* Etape::getParent()
+{
     return this->parent;
 }
 
@@ -77,27 +79,33 @@ Position Etape::getPosition()
     return this->position;
 }
 
-int Etape::getState(){
+int Etape::getState()
+{
     return this->state;
 }
 
-void Etape::setState(int state){
+void Etape::setState(int state)
+{
     this->state = state;
 }
 
-int Etape::getDistance(){
+int Etape::getDistance()
+{
     return this->distance;
 }
 
-void Etape::setDistance(int distance){
+void Etape::setDistance(int distance)
+{
     this->distance = distance;
 }
 
-void Etape::setParent(Etape* parent){
+void Etape::setParent(Etape* parent)
+{
     this->parent = parent;
 }
 
-int Etape::getNbChildren(){
+int Etape::getNbChildren()
+{
     return this->nbChildren;
 }
 
@@ -118,7 +126,7 @@ void Etape::setEtapeType(Etape::EtapeType type)
 
 void Etape::robotVu()
 {
-    if(!aEviter())
+    if (!aEviter())
     {
         this->type = (EtapeType)(this->type + ROBOT_VU_ICI);
     }
@@ -131,7 +139,7 @@ int Etape::getNumero()
 
 bool Etape::aEviter()
 {
-    if(((int) this->getEtapeType()) > ROBOT_VU_ICI-1)
+    if (((int)this->getEtapeType()) > ROBOT_VU_ICI - 1)
     {
         return true;
     }
@@ -143,10 +151,10 @@ bool Etape::aEviter()
 
 void Etape::oublieRobotVu()
 {
-    if(this->aEviter())
+    if (this->aEviter())
     {
-        //On oublie qu'on a vu un robot
-        this->setEtapeType((EtapeType) ((int)this->getEtapeType() - ROBOT_VU_ICI));
+        // On oublie qu'on a vu un robot
+        this->setEtapeType((EtapeType)((int)this->getEtapeType() - ROBOT_VU_ICI));
     }
 }
 
@@ -162,12 +170,12 @@ void Etape::setDistances(int* distances)
 
 void Etape::computeChildDistances()
 {
-    if(nbChildren == 0)
+    if (nbChildren == 0)
         return;
 
     this->distances = new int[this->nbChildren];
 
-    for(int i=0; i<this->nbChildren; ++i)
+    for (int i = 0; i < this->nbChildren; ++i)
     {
         this->distances[i] = Dijkstra::calculDistanceDirect(this->children[i], this);
     }
@@ -203,7 +211,7 @@ int Etape::getScore()
     return this->score;
 }
 
-void Etape::setAction(MediumLevelAction *action)
+void Etape::setAction(MediumLevelAction* action)
 {
     this->action = action;
 
@@ -230,7 +238,7 @@ ActionGoTo* Etape::getActionGoTo()
 
 void Etape::addVoisin(Etape* newVoisin, bool autreSens)
 {
-    if(this->nbChildren==0)
+    if (this->nbChildren == 0)
     {
         this->children = new Etape*[1];
         this->children[0] = newVoisin;
@@ -239,12 +247,12 @@ void Etape::addVoisin(Etape* newVoisin, bool autreSens)
     else
     {
         Etape** temp = new Etape*[nbChildren];
-        for(int i=0; i<nbChildren; i++)
+        for (int i = 0; i < nbChildren; i++)
         {
             temp[i] = this->children[i];
         }
-        this->children = new Etape*[nbChildren+1];
-        for(int i=0; i<nbChildren; i++)
+        this->children = new Etape*[nbChildren + 1];
+        for (int i = 0; i < nbChildren; i++)
         {
             this->children[i] = temp[i];
         }
@@ -266,7 +274,6 @@ void Etape::reset()
     if (this->actionGoTo != 0)
         this->actionGoTo->reset();
 }
-
 
 void Etape::setGoBack(bool val)
 {
@@ -297,7 +304,7 @@ int Etape::getNumeroEtapeFinAction()
 
 std::vector<Etape*>& Etape::initTableauEtapeTotal(int number)
 {
-    tableauEtapesTotal.resize(number,nullptr);
+    tableauEtapesTotal.resize(number, nullptr);
 
     return tableauEtapesTotal;
 }
@@ -319,55 +326,55 @@ std::vector<Etape*>& Etape::getTableauEtapesTotal()
 #ifdef QTGUI
 QString Etape::getNameType(EtapeType type)
 {
-    switch(type)
+    switch (type)
     {
-        case POINT_PASSAGE:
-            return "Passage";
-        case DEPART:
-            return "Départ";
-//#ifdef GOLDO2018
-        case ABEILLE:
-            return "Abeille";
-//#elif KRABI2016
-        case CABINE:
-            return "Cabine";
-        case DUNE:
-            return "Dune";
-        case ZONE_CONSTRUCTION:
-            return "Zone de construction";
+    case POINT_PASSAGE:
+        return "Passage";
+    case DEPART:
+        return "Départ";
+        //#ifdef GOLDO2018
+    case ABEILLE:
+        return "Abeille";
+        //#elif KRABI2016
+    case CABINE:
+        return "Cabine";
+    case DUNE:
+        return "Dune";
+    case ZONE_CONSTRUCTION:
+        return "Zone de construction";
 
-        case CUBE_DEBUT:
-            return "Pousser les cubes a l'init";
-//#endif
-        default:
-            return QString::number(type);
+    case CUBE_DEBUT:
+        return "Pousser les cubes a l'init";
+        //#endif
+    default:
+        return QString::number(type);
     }
 }
 
 QString Etape::getShortNameType(EtapeType type)
 {
-    switch(type)
+    switch (type)
     {
-        case POINT_PASSAGE:
-            return "";
-        case DEPART:
-            return "Start";
-//#ifdef GOLDO2018
-        case ABEILLE:
-            return "Abeille";
-//#elif KRABI2016
-        case CABINE:
-            return "Cabine";
-        case DUNE:
-            return "Dune";
-        case ZONE_CONSTRUCTION:
-            return "Z.C";
+    case POINT_PASSAGE:
+        return "";
+    case DEPART:
+        return "Start";
+        //#ifdef GOLDO2018
+    case ABEILLE:
+        return "Abeille";
+        //#elif KRABI2016
+    case CABINE:
+        return "Cabine";
+    case DUNE:
+        return "Dune";
+    case ZONE_CONSTRUCTION:
+        return "Z.C";
 
-        case CUBE_DEBUT:
-            return "Cube debut";
-//#endif
-        default:
-            return "";
+    case CUBE_DEBUT:
+        return "Cube debut";
+        //#endif
+    default:
+        return "";
     }
 }
 
