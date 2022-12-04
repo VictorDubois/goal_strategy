@@ -4,6 +4,7 @@
 
 #include "krabilib/strategie/abeille.h"
 #include "krabilib/strategie/accelerator.h"
+#include "krabilib/strategie/assiette.h"
 #include "krabilib/strategie/bouee.h"
 #include "krabilib/strategie/carreFouille.h"
 #include "krabilib/strategie/etape.h"

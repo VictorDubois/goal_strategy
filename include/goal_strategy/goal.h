@@ -19,6 +19,8 @@
 
 #include "coupe2023.h"
 #include "goal_strategy/actuators.h"
+#include "goal_strategy/actuators2023.h"
+#include "goal_strategy/claws.h"
 #include "goal_strategy/grabber.h"
 #include "krabi_msgs/servos_cmd.h"
 #include "krabi_msgs/strat_movement.h"
@@ -100,6 +102,8 @@ private:
 
     void pushCarreFouille();
     void retractePusher();
+    void dropCherries();
+    void closeCherriesDispenser();
 
     void setDistancesFromRobotsToEtapes();
 
@@ -145,12 +149,17 @@ private:
     float m_vacuum_level;
     int m_vacuum_state;
     Actuators m_actuators;
+    Actuators2023 m_actuators2023;
     bool m_goal_init_done;
     bool m_at_least_one_carre_fouille_done;
     std::vector<Position> m_potential_other_robots;
 
+    int m_year;
+
     std::shared_ptr<Grabber> m_theThing;
+    std::shared_ptr<Claws> m_claws;
     std::shared_ptr<Servomotor> m_servo_pusher;
+    std::shared_ptr<Servomotor> m_servo_cherries;
 
     std::thread m_running;
 };

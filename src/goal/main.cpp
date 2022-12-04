@@ -379,6 +379,19 @@ void GoalStrat::retractePusher()
     usleep(0.6e6); // takes 330ms, with a x2 margin
 }
 
+void GoalStrat::dropCherries()
+{
+    m_servo_cherries->setAngle(82); //@todo tune
+    usleep(1.0e6);                  //@todo tune
+    closeCherriesDispenser();
+}
+
+void GoalStrat::closeCherriesDispenser()
+{
+    m_servo_cherries->setAngle(82); //@todo tune
+    usleep(1.0e6);                  //@todo tune
+}
+
 GoalStrat::GoalStrat()
   : m_tf_listener(m_tf_buffer)
 {
@@ -408,6 +421,9 @@ GoalStrat::GoalStrat()
       = m_nh.subscribe("dynamic_obstacles", 5, &GoalStrat::updateOtherRobots, this);
 
     std::string actuators_name = "actuators_msg";
+
+    m_year = 2022;
+
     m_servo_pusher = std::make_shared<Servomotor>(255, 75);
     auto l_pump_arm = std::make_shared<Pump>(false, true);
     auto l_fake_statuette_pump = std::make_shared<Pump>(false, true);
@@ -430,7 +446,10 @@ GoalStrat::GoalStrat()
                             l_servo_arm_suction_cup,
                             l_pump_arm);
 
-    m_actuators.start();
+    if (m_year == 2022)
+    {
+        m_actuators.start();
+    }
 
     retractePusher();
     m_theThing->release_statuette();
@@ -443,6 +462,23 @@ GoalStrat::GoalStrat()
         m_theThing->release_statuette();
         retractePusher();
     }
+
+    m_servo_cherries = std::make_shared<Servomotor>(255, 75);
+    auto l_servo_left_claw = std::make_shared<Servomotor>(10, 90);
+    auto l_servo_right_claw = std::make_shared<Servomotor>(10, 90);
+
+    m_actuators2023 = Actuators2023(
+      &m_nh, actuators_name, m_servo_cherries, l_servo_left_claw, l_servo_right_claw);
+
+    if (m_year == 2023)
+    {
+        m_actuators2023.start();
+    }
+
+    m_claws = std::make_shared<Claws>(
+      Position(Eigen::Vector2d(0.1, 0)), l_servo_left_claw, l_servo_right_claw);
+    m_claws->retract();
+    closeCherriesDispenser();
 }
 
 void GoalStrat::publishAll()
@@ -647,21 +683,43 @@ void GoalStrat::publishScore()
     // Is the robot in the right area at the end?
     if (m_remainig_time < ros::Duration(4))
     {
-        if ((m_current_pose.getPosition() - m_strat_graph->positionCAbsolute(0.975f, 1.375f))
-                .getNorme()
-              < 0.3f // 30cm du centre de la zone de fouille
-            || (m_current_pose.getPosition() - m_strat_graph->positionCAbsolute(0.3f, 0.7f))
-                   .getNorme()
-                 < 0.3f // 30cm du centre de la zone de départ
-            || (m_current_pose.getPosition() - m_strat_graph->positionCAbsolute(3 - 0.975f, 1.375f))
-                   .getNorme()
-                 < 0.3f) // 30cm du centre de la zone de fouille adverse
+        std::vector<Position> l_valid_end_locations;
+        if (m_year == 2022)
         {
-            l_score += 20;
+            l_valid_end_locations.push_back(m_strat_graph->positionCAbsolute(0.975f, 1.375f));
+            l_valid_end_locations.push_back(m_strat_graph->positionCAbsolute(0.3, 0.7f));
+            l_valid_end_locations.push_back(m_strat_graph->positionCAbsolute(3 - 0.975f, 1.375f));
+        }
+        else if (m_year == 2023)
+        {
+            // Auto add all of our assiettes as valid end locations
+            for (auto& etape : Etape::getTableauEtapesTotal())
+            {
+                if (etape)
+                {
+                    if (etape->getEtapeType() == Etape::EtapeType::ASSIETTE)
+                    {
+                        auto assiette = static_cast<Assiette&>(*(etape->getAction()));
+                        if (assiette.getOwner() == Owner::us)
+                        {
+                            l_valid_end_locations.push_back(etape->getPosition());
+                        }
+                    }
+                }
+            }
+        }
+
+        for (auto l_position : l_valid_end_locations)
+        {
+            if ((m_current_pose.getPosition() - l_position).getNorme() < 0.3f)
+            {
+                l_score += 20;
+            }
         }
     }
 
     m_actuators.set_score(l_score);
+    m_actuators2023.set_score(l_score);
 }
 
 /**
@@ -673,6 +731,7 @@ void GoalStrat::stopActuators()
     m_servos_cmd.enable = false;
     m_arm_servo_pub.publish(m_servos_cmd);
     m_actuators.shutdown();
+    m_actuators2023.shutdown();
 }
 
 /**
@@ -1189,6 +1248,7 @@ void GoalStrat::loop()
         if (m_state == State::WAIT_TIRETTE && m_tirette && m_remainig_time > ros::Duration(1, 0))
         {
             m_state = State::RUN;
+            dropCherries();
         }
         break;
     case State::RUN:
