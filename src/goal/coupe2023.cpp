@@ -256,11 +256,13 @@ void Coupe2023::etape_type_to_marker(visualization_msgs::Marker& m, Etape* a_eta
         m.scale.y = 0.45f;
         owner = static_cast<Assiette*>(a_etape->getAction())->getOwner();
 
+        // Assiete bleue
         m.color.r = 0.f / 255.f;
         m.color.g = 91.f / 255.f;
         m.color.b = 140.f / 255.f;
-        if (isYellow() == (owner == Owner::them))
+        if (isYellow() == (owner == Owner::us))
         {
+            // Assiete verte
             m.color.r = 0.f / 255.f;
             m.color.g = 111.f / 255.f;
             m.color.b = 61.f / 255.f;

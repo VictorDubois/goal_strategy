@@ -168,11 +168,14 @@ bool GoalStrat::isArrivedAtGoal()
 
     float l_reach_dist = REACH_DIST;
     if (m_strat_graph->getEtapeEnCours()->getEtapeType() == Etape::EtapeType::BOUEE
-        || m_strat_graph->getEtapeEnCours()->getEtapeType() == Etape::EtapeType::HEXAGON_PLAT
-        || m_strat_graph->getEtapeEnCours()->getEtapeType() == Etape::EtapeType::PILE_GATEAU
-        || m_strat_graph->getEtapeEnCours()->getEtapeType() == Etape::EtapeType::ASSIETTE)
+        || m_strat_graph->getEtapeEnCours()->getEtapeType() == Etape::EtapeType::HEXAGON_PLAT)
     {
         l_reach_dist = m_theThing->getReach();
+    }
+    if (m_strat_graph->getEtapeEnCours()->getEtapeType() == Etape::EtapeType::PILE_GATEAU
+        || m_strat_graph->getEtapeEnCours()->getEtapeType() == Etape::EtapeType::ASSIETTE)
+    {
+        l_reach_dist = m_claws->getReach();
     }
 
     if (m_dist_to_goal < l_reach_dist)
