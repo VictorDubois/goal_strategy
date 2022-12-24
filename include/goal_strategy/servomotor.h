@@ -18,4 +18,5 @@ public:
     float getAngle();
     void setAngle(float a_angle);
     void setSpeed(float a_speed);
+    void set(float a_angle, float a_speed);
 };

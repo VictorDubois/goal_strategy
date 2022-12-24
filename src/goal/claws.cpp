@@ -24,30 +24,35 @@ Angle Claws::getAngle()
 
 void Claws::grab_pile()
 {
-    m_left_servo->setAngle(16);
-    m_right_servo->setAngle(36);
+    m_right_servo->set(140, 3);
 
-    m_left_servo->setSpeed(3);
-    m_right_servo->setSpeed(3);
-    usleep(1000000);
+    // Pour ne pas s'emmeler les pinces
+    if (m_left_servo->getAngle() < 70)
+    {
+        usleep(1e6);
+    }
+    m_left_servo->set(70, 3);
+    usleep(1e6);
 }
 
 void Claws::release_pile()
 {
-    m_left_servo->setAngle(16);
-    m_right_servo->setAngle(36);
+    m_right_servo->set(90, 3);
 
-    m_left_servo->setSpeed(3);
-    m_right_servo->setSpeed(3);
-    usleep(1000000);
+    // Pour ne pas s'emmeler les pinces
+    if (m_left_servo->getAngle() < 70)
+    {
+        usleep(1e6);
+    }
+    m_left_servo->set(120, 3);
+    usleep(1e6);
 }
 
 void Claws::retract()
 {
-    m_left_servo->setAngle(16);
-    m_right_servo->setAngle(36);
+    m_left_servo->set(16, 3);
+    usleep(1e6); // Pour ne pas s'emmeler les pinces
 
-    m_left_servo->setSpeed(3);
-    m_right_servo->setSpeed(3);
-    usleep(1000000);
+    m_right_servo->set(180, 3);
+    usleep(1e6);
 }

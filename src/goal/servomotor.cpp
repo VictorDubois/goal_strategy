@@ -15,6 +15,12 @@ void Servomotor::setAngle(float a_angle)
     m_angle = a_angle;
 }
 
+void Servomotor::set(float a_angle, float a_speed)
+{
+    m_angle = a_angle;
+    m_speed = a_speed;
+}
+
 float Servomotor::getSpeed()
 {
     return m_speed;
