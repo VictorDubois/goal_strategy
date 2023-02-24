@@ -449,7 +449,7 @@ GoalStrat::GoalStrat()
                             l_servo_arm_suction_cup,
                             l_pump_arm);
 
-    if (true || m_year == 2022)
+    if (m_year == 2022)
     {
         m_actuators.start();
     }
@@ -466,7 +466,7 @@ GoalStrat::GoalStrat()
         retractePusher();
     }
 
-    /*m_servo_cherries = std::make_shared<Servomotor>(255, 75);
+    m_servo_cherries = std::make_shared<Servomotor>(255, 75);
     auto l_servo_left_claw = std::make_shared<Servomotor>(10, 90);
     auto l_servo_right_claw = std::make_shared<Servomotor>(10, 90);
 
@@ -476,7 +476,7 @@ GoalStrat::GoalStrat()
     if (m_year == 2023)
     {
         m_actuators2023.start();
-    }*/
+    }
 
     m_claws = std::make_shared<Claws>(
       // Position(Eigen::Vector2d(0.1, 0)), l_servo_left_claw, l_servo_right_claw);
