@@ -479,10 +479,7 @@ GoalStrat::GoalStrat()
     }
 
     m_claws = std::make_shared<Claws>(
-      // Position(Eigen::Vector2d(0.1, 0)), l_servo_left_claw, l_servo_right_claw);
-      Position(Eigen::Vector2d(0.1, 0)),
-      l_servo_arm_base,
-      l_servo_arm_mid);
+      Position(Eigen::Vector2d(0.1, 0)), l_servo_left_claw, l_servo_right_claw);
     m_claws->retract();
     closeCherriesDispenser();
 }
@@ -1126,7 +1123,7 @@ void GoalStrat::stateRun()
 
         case Etape::EtapeType::ASSIETTE:
             m_strat_graph->dropGateau(m_strat_graph->getEtapeEnCours());
-            // m_theThing->release_hexagon_on_ground(); // @todo code that
+            m_claws->release_pile();
 
             ROS_INFO_STREAM("Assiete" << std::endl);
             break;
@@ -1138,9 +1135,9 @@ void GoalStrat::stateRun()
             ROS_WARN_STREAM_COND(
               alignWithAngleWithTimeout(
                 Angle((m_goal_pose.getPosition() - m_current_pose.getPosition()).getAngle()
-                      - m_theThing->getAngle())),
+                      - m_claws->getAngle())),
               "Timeout while orienting");
-            // m_theThing->grab_hexagon(GrabberContent::ANY); // @todo code that
+            m_claws->grab_pile();
             ROS_INFO_STREAM("Pile Gateau" << std::endl);
             break;
         default:
