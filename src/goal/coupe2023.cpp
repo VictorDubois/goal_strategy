@@ -51,39 +51,39 @@ Coupe2023::Coupe2023(const bool isYellow)
     }
     else
     {
-        int assiete_them_0
-          = Etape::makeEtape(new Assiette(positionCAbsolute(0.25f, 0.25f), Owner::them));
+        int assiete_us_0
+          = Etape::makeEtape(new Assiette(positionCAbsolute(0.25f, 0.25f), Owner::us));
 
-        int assiete_us_1
-          = Etape::makeEtape(new Assiette(positionCAbsolute(1.5f - 0.375f, 0.25f), Owner::us));
+        int assiete_them_1
+          = Etape::makeEtape(new Assiette(positionCAbsolute(1.5f - 0.375f, 0.25f), Owner::them));
 
-        int assiete_them_2
-          = Etape::makeEtape(new Assiette(positionCAbsolute(1.5f + 0.375f, 0.25f), Owner::them));
-        Etape::get(assiete_us_1)->addVoisins(assiete_them_2);
+        int assiete_us_2
+          = Etape::makeEtape(new Assiette(positionCAbsolute(1.5f + 0.375f, 0.25f), Owner::us));
+        Etape::get(assiete_them_1)->addVoisins(assiete_us_2);
 
-        int assiete_us_3
-          = Etape::makeEtape(new Assiette(positionCAbsolute(3.f - 0.225f, 0.25f), Owner::us));
-        Etape::get(assiete_us_3)->addVoisins(assiete_them_2);
+        int assiete_them_3
+          = Etape::makeEtape(new Assiette(positionCAbsolute(3.f - 0.225f, 0.25f), Owner::them));
+        Etape::get(assiete_them_3)->addVoisins(assiete_us_2);
 
-        int assiete_them_4
-          = Etape::makeEtape(new Assiette(positionCAbsolute(3.f - 0.225f, 0.75f), Owner::them));
-        Etape::get(assiete_us_3)->addVoisins(assiete_them_4);
+        int assiete_us_4
+          = Etape::makeEtape(new Assiette(positionCAbsolute(3.f - 0.225f, 0.75f), Owner::us));
+        Etape::get(assiete_them_3)->addVoisins(assiete_us_4);
 
-        int assiete_us_5
-          = Etape::makeEtape(new Assiette(positionCAbsolute(3.f - 0.225f, 2.f - 0.75f), Owner::us));
-        // Etape::get(assiete_us_5)->addVoisins(assiete_them_4);// Attention: cerises sur le chemin
+        int assiete_them_5 = Etape::makeEtape(
+          new Assiette(positionCAbsolute(3.f - 0.225f, 2.f - 0.75f), Owner::them));
+        // Etape::get(assiete_them_5)->addVoisins(assiete_us_4);// Attention: cerises sur le chemin
 
-        int assiete_them_6 = Etape::makeEtape(
-          new Assiette(positionCAbsolute(3.f - 0.225f, 2.f - 0.25f), Owner::them));
-        Etape::get(assiete_us_5)->addVoisins(assiete_them_6);
+        int assiete_us_6
+          = Etape::makeEtape(new Assiette(positionCAbsolute(3.f - 0.225f, 2.f - 0.25f), Owner::us));
+        Etape::get(assiete_them_5)->addVoisins(assiete_us_6);
 
-        int assiete_us_7 = Etape::makeEtape(
-          new Assiette(positionCAbsolute(1.5f + 0.375f, 2.f - 0.25f), Owner::us));
-        Etape::get(assiete_us_7)->addVoisins(assiete_them_6);
+        int assiete_them_7 = Etape::makeEtape(
+          new Assiette(positionCAbsolute(1.5f + 0.375f, 2.f - 0.25f), Owner::them));
+        Etape::get(assiete_them_7)->addVoisins(assiete_us_6);
 
-        int assiete_them_8 = Etape::makeEtape(
-          new Assiette(positionCAbsolute(1.5f - 0.375f, 2.f - 0.25f), Owner::them));
-        Etape::get(assiete_us_7)->addVoisins(assiete_them_8);
+        int assiete_us_8 = Etape::makeEtape(
+          new Assiette(positionCAbsolute(1.5f - 0.375f, 2.f - 0.25f), Owner::us));
+        Etape::get(assiete_them_7)->addVoisins(assiete_us_8);
 
         //////////// Trio départ ////////////
         int pile_glacage_depart = Etape::makeEtape(
@@ -147,7 +147,7 @@ Coupe2023::Coupe2023(const bool isYellow)
         Etape::get(pile_genoise_loin_adv)->addVoisins(pile_genoise_depart_adv);
         Etape::get(pile_genoise_depart_adv)->addVoisins(pile_genoise_depart);
 
-        Etape::get(assiete_them_4)->addVoisins(pile_genoise_depart);
+        Etape::get(assiete_us_4)->addVoisins(pile_genoise_depart);
     }
 
     m_numero_etape_garage = campement; // Must be set!
