@@ -68,6 +68,22 @@ void GoalStrat::recalage_bordure()
     m_strat_mvnt.orient = 2;
 }
 
+void GoalStrat::recule(ros::Duration a_time)
+{
+    ROS_INFO_STREAM("recule !!");
+    recalage_bordure();
+    m_strat_mvnt.reverse_gear = 1;
+
+    m_strat_movement_pub.publish(m_strat_mvnt);
+    auto recalageTimeoutDeadline = ros::Time::now() + a_time;
+
+    while (ros::Time::now().toSec() < recalageTimeoutDeadline.toSec())
+    {
+        ros::spinOnce();
+        usleep(0.1e6);
+    }
+}
+
 /**
  * @brief Send cmd to disable angular motion
  *
@@ -149,12 +165,17 @@ void GoalStrat::alignWithAngle(Angle a_angle)
     m_strat_movement_pub.publish(m_strat_mvnt);
 }
 
+bool GoalStrat::isArrivedAtGoal()
+{
+    return isArrivedAtGoal(Distance(0));
+}
+
 /**
  * @brief Check if the robot reached the goal position
  *
  * @return true if the robot center is closer than REACH_DIST
  */
-bool GoalStrat::isArrivedAtGoal()
+bool GoalStrat::isArrivedAtGoal(Distance a_offset)
 {
     updateCurrentPose();
     m_dist_to_goal
@@ -175,7 +196,7 @@ bool GoalStrat::isArrivedAtGoal()
     if (m_strat_graph->getEtapeEnCours()->getEtapeType() == Etape::EtapeType::PILE_GATEAU
         || m_strat_graph->getEtapeEnCours()->getEtapeType() == Etape::EtapeType::ASSIETTE)
     {
-        l_reach_dist = m_claws->getReach();
+        l_reach_dist = m_claws->getReach() + Distance(0.1f);
     }
 
     if (m_dist_to_goal < l_reach_dist)
@@ -479,7 +500,7 @@ GoalStrat::GoalStrat()
     }
 
     m_claws = std::make_shared<Claws>(
-      Position(Eigen::Vector2d(0.1, 0)), l_servo_left_claw, l_servo_right_claw);
+      Position(Eigen::Vector2d(0.2, 0)), l_servo_left_claw, l_servo_right_claw);
     m_claws->retract();
     closeCherriesDispenser();
 }
@@ -1123,20 +1144,37 @@ void GoalStrat::stateRun()
 
         case Etape::EtapeType::ASSIETTE:
             m_strat_graph->dropGateau(m_strat_graph->getEtapeEnCours());
-            m_claws->release_pile();
 
-            ROS_INFO_STREAM("Assiete" << std::endl);
-            break;
-
-        case Etape::EtapeType::PILE_GATEAU:
-            m_strat_graph->grabGateau(m_strat_graph->getEtapeEnCours());
-            stopLinear();
             ROS_INFO_STREAM("Orienting grabber" << std::endl);
             ROS_WARN_STREAM_COND(
               alignWithAngleWithTimeout(
                 Angle((m_goal_pose.getPosition() - m_current_pose.getPosition()).getAngle()
                       - m_claws->getAngle())),
               "Timeout while orienting");
+            m_claws->release_pile();
+
+            recule(ros::Duration(2));
+
+            ROS_INFO_STREAM("Assiete" << std::endl);
+            break;
+
+        case Etape::EtapeType::PILE_GATEAU:
+            m_strat_graph->grabGateau(m_strat_graph->getEtapeEnCours());
+
+            // Ouvre la pince + orientation
+            stopLinear();
+            m_claws->release_pile();
+            ROS_INFO_STREAM("Orienting grabber" << std::endl);
+            ROS_WARN_STREAM_COND(
+              alignWithAngleWithTimeout(
+                Angle((m_goal_pose.getPosition() - m_current_pose.getPosition()).getAngle()
+                      - m_claws->getAngle())),
+              "Timeout while orienting");
+
+            // Approche
+            startLinear(); // est ce que ça suffit à le faire avancer ?
+            ROS_INFO_STREAM("Grabber approching" << std::endl);
+            ROS_WARN_STREAM_COND(isArrivedAtGoal(Distance(-0.1f)), "Timeout while advancing");
             m_claws->grab_pile();
             ROS_INFO_STREAM("Pile Gateau" << std::endl);
             break;

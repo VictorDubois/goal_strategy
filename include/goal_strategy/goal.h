@@ -76,6 +76,7 @@ private:
     void moveArm(enum PositionServo position);
     void setMaxSpeedAtArrival();
     void clamp_mode();
+    void recule(ros::Duration a_time);
     void stopAngular();
     void startAngular();
     void stopActuators();
@@ -93,6 +94,7 @@ private:
 
     bool isAlignedWithAngle(Angle angle);
     bool isArrivedAtGoal();
+    bool isArrivedAtGoal(Distance a_offset);
 
     void publishScore();
     void printCurrentAction();
