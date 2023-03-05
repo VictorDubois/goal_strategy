@@ -500,7 +500,7 @@ GoalStrat::GoalStrat()
     }
 
     m_claws = std::make_shared<Claws>(
-      Position(Eigen::Vector2d(0.2, 0)), l_servo_left_claw, l_servo_right_claw);
+      Position(Eigen::Vector2d(0.3, 0)),Position(Eigen::Vector2d(0.1, 0)), l_servo_left_claw, l_servo_right_claw);
     m_claws->retract();
     closeCherriesDispenser();
 }
@@ -1155,6 +1155,8 @@ void GoalStrat::stateRun()
 
             recule(ros::Duration(2));
 
+            m_claws->setInFront();
+
             ROS_INFO_STREAM("Assiete" << std::endl);
             break;
 
@@ -1171,10 +1173,12 @@ void GoalStrat::stateRun()
                       - m_claws->getAngle())),
               "Timeout while orienting");
 
+            m_claws->setInside();
+
             // Approche
             startLinear(); // est ce que ça suffit à le faire avancer ?
             ROS_INFO_STREAM("Grabber approching" << std::endl);
-            ROS_WARN_STREAM_COND(isArrivedAtGoal(Distance(-0.1f)), "Timeout while advancing");
+            ROS_WARN_STREAM_COND(isArrivedAtGoal(), "Timeout while advancing");
             m_claws->grab_pile();
             ROS_INFO_STREAM("Pile Gateau" << std::endl);
             break;

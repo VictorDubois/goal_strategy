@@ -1,12 +1,24 @@
 #include <goal_strategy/claws.h>
 
-Claws::Claws(Position a_relative_position,
+Claws::Claws(Position a_relative_position_in_front,
+             Position a_relative_position_inside,
              std::shared_ptr<Servomotor> a_left_servo,
              std::shared_ptr<Servomotor> a_right_servo)
-  : m_relative_position(a_relative_position)
+  : m_relative_position_in_front(a_relative_position_in_front)
+  , m_relative_position_inside(a_relative_position_inside)
+  , m_relative_position(a_relative_position_in_front)
   , m_left_servo(a_left_servo)
   , m_right_servo(a_right_servo)
 {
+}
+
+void Claws::setInFront()
+{
+    m_relative_position = m_relative_position_in_front;
+}
+void Claws::setInside()
+{
+    m_relative_position = m_relative_position_inside;
 }
 
 /*
