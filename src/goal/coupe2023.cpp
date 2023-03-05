@@ -41,6 +41,7 @@ Coupe2023::Coupe2023(const bool isYellow)
     int campement = Etape::makeEtape(positionCAbsolute(0.225f, 0.225f),
                                      Etape::DEPART); // départ au fond de la zone de départ
 
+
     bool test_contournement = false;
 
     if (test_contournement)
@@ -56,6 +57,9 @@ Coupe2023::Coupe2023(const bool isYellow)
 
         int assiete_them_1
           = Etape::makeEtape(new Assiette(positionCAbsolute(1.5f - 0.375f, 0.25f), Owner::them));
+
+        Etape::get(assiete_us_0)->addVoisins(assiete_them_1);
+        Etape::get(assiete_us_0)->addVoisins(campement);
 
         int assiete_us_2
           = Etape::makeEtape(new Assiette(positionCAbsolute(1.5f + 0.375f, 0.25f), Owner::us));
@@ -99,6 +103,10 @@ Coupe2023::Coupe2023(const bool isYellow)
         Etape::get(pile_genoise_depart)->addVoisins(pile_creme_depart);
 
         Etape::get(pile_glacage_depart)->addVoisins(campement);
+
+        Etape::get(assiete_us_0)->addVoisins(pile_glacage_depart);
+        Etape::get(assiete_us_0)->addVoisins(pile_genoise_depart);
+
 
         //////////// Trio symetrique X ////////////
         int pile_glacage_loin = Etape::makeEtape(new PileGateau(
@@ -147,7 +155,17 @@ Coupe2023::Coupe2023(const bool isYellow)
         Etape::get(pile_genoise_loin_adv)->addVoisins(pile_genoise_depart_adv);
         Etape::get(pile_genoise_depart_adv)->addVoisins(pile_genoise_depart);
 
-        Etape::get(assiete_us_4)->addVoisins(pile_genoise_depart);
+        //Etape::get(assiete_us_4)->addVoisins(pile_genoise_depart);
+
+
+        Etape::get(assiete_us_2)->addVoisins(pile_genoise_depart);
+        Etape::get(assiete_us_2)->addVoisins(pile_genoise_loin);
+        Etape::get(assiete_us_2)->addVoisins(pile_creme_depart);
+
+
+        Etape::get(assiete_us_4)->addVoisins(pile_genoise_loin);
+        Etape::get(assiete_us_4)->addVoisins(pile_creme_loin);
+        Etape::get(assiete_us_4)->addVoisins(pile_glacage_loin);
     }
 
     m_numero_etape_garage = campement; // Must be set!
