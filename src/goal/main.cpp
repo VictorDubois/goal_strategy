@@ -70,6 +70,13 @@ void GoalStrat::recalage_bordure()
 
 void GoalStrat::recule(ros::Duration a_time)
 {
+    recule(a_time, Distance(1000));
+}
+void GoalStrat::recule(ros::Duration a_time, Distance a_distance)
+{
+    updateCurrentPose();
+    auto l_initial_pose = m_current_pose.getPosition();
+
     ROS_INFO_STREAM("recule !!");
     recalage_bordure();
     m_strat_mvnt.reverse_gear = 1;
@@ -77,9 +84,13 @@ void GoalStrat::recule(ros::Duration a_time)
     m_strat_movement_pub.publish(m_strat_mvnt);
     auto recalageTimeoutDeadline = ros::Time::now() + a_time;
 
-    while (ros::Time::now().toSec() < recalageTimeoutDeadline.toSec())
+    Distance l_distance_parcourue = Distance(0);
+
+    while (ros::Time::now().toSec() < recalageTimeoutDeadline.toSec() && l_distance_parcourue < a_distance)
     {
         ros::spinOnce();
+        updateCurrentPose();
+        l_distance_parcourue = (l_initial_pose - m_current_pose.getPosition()).getNorme();
         usleep(0.1e6);
     }
 }
@@ -1153,7 +1164,7 @@ void GoalStrat::stateRun()
               "Timeout while orienting");
             m_claws->release_pile();
 
-            recule(ros::Duration(2));
+            recule(ros::Duration(5), Distance(0.15));
 
             m_claws->setInFront();
 

@@ -77,6 +77,7 @@ private:
     void setMaxSpeedAtArrival();
     void clamp_mode();
     void recule(ros::Duration a_time);
+    void recule(ros::Duration a_time, Distance a_distance);
     void stopAngular();
     void startAngular();
     void stopActuators();
