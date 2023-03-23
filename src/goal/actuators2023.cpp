@@ -18,7 +18,7 @@ Actuators2023::Actuators2023(ros::NodeHandle* a_nh,
 void Actuators2023::start()
 {
     m_running = std::thread(&Actuators2023::run, this);
-    ROS_INFO("actuators running");
+    ROS_INFO("actuators 2023 running");
 }
 
 void Actuators2023::run()

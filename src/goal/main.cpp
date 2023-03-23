@@ -457,7 +457,7 @@ GoalStrat::GoalStrat()
 
     std::string actuators_name = "actuators_msg";
 
-    m_year = 2022;
+    m_year = 2023;
 
     m_servo_pusher = std::make_shared<Servomotor>(255, 75);
     auto l_pump_arm = std::make_shared<Pump>(false, true);
@@ -473,7 +473,7 @@ GoalStrat::GoalStrat()
                                            l_pump_arm);
 
     m_actuators = Actuators(&m_nh,
-                            actuators_name,
+                            actuators_name + "old",
                             m_servo_pusher,
                             l_fake_statuette_pump,
                             l_servo_arm_base,
@@ -512,12 +512,25 @@ GoalStrat::GoalStrat()
 
     m_claws = std::make_shared<Claws>(
       Position(Eigen::Vector2d(0.3, 0)),Position(Eigen::Vector2d(0.1, 0)), l_servo_left_claw, l_servo_right_claw);
+    /* servo check */
     m_claws->retract();
+    usleep(1000000);
+    m_claws->release_pile();
+    usleep(2000000);
+    m_claws->grab_pile();
+    usleep(2000000);
+
+    /* servo init */
+    m_claws->retract();
+
     closeCherriesDispenser();
 }
 
 void GoalStrat::publishAll()
 {
+    std::string s = "mainPubAll";
+    
+     pthread_setname_np(pthread_self(), s.c_str());
     while (true)
     {
         usleep(100000);
