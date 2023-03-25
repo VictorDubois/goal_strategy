@@ -207,7 +207,7 @@ bool GoalStrat::isArrivedAtGoal(Distance a_offset)
     if (m_strat_graph->getEtapeEnCours()->getEtapeType() == Etape::EtapeType::PILE_GATEAU
         || m_strat_graph->getEtapeEnCours()->getEtapeType() == Etape::EtapeType::ASSIETTE)
     {
-        l_reach_dist = m_claws->getReach() + Distance(0.1f);
+        l_reach_dist = m_claws->getReach();
     }
 
     if (m_dist_to_goal < l_reach_dist)
