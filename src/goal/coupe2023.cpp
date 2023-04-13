@@ -345,7 +345,6 @@ void Coupe2023::etape_type_to_marker(visualization_msgs::Marker& m, Etape* a_eta
  */
 void Coupe2023::debugEtapes(visualization_msgs::MarkerArray& ma)
 {
-
     uint i = 0;
     for (auto& etape : Etape::getTableauEtapesTotal())
     {
@@ -361,6 +360,11 @@ void Coupe2023::debugEtapes(visualization_msgs::MarkerArray& ma)
             m.action = visualization_msgs::Marker::MODIFY;
             m.pose = Pose(etape->getPosition(), Angle(0));
             etape_type_to_marker(m, etape);
+
+            if (etape->getEtapeType() == Etape::EtapeType::ASSIETTE)
+            {
+                m.pose = Pose(static_cast<Assiette*>(etape->getAction())->getAssietteCenter(), Angle(0));
+            }
 
             if (etape->getNumero() == this->getGoal()->getNumero())
             {

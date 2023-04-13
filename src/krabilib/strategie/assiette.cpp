@@ -20,9 +20,16 @@ Assiette::Assiette()
 {
 }
 
-Assiette::Assiette(Position goalPosition, Owner us_or_them)
+Assiette::Assiette(Position goalPosition, Owner us_or_them) : Assiette(goalPosition, goalPosition, us_or_them)
+{
+    
+}
+
+
+Assiette::Assiette(Position goalPosition, Position assiette_center, Owner us_or_them)
   : MediumLevelAction(goalPosition)
   , m_us_or_them(us_or_them)
+  , m_assiette_center(assiette_center)
 {
     goalPosition = this->goalPosition;
     position_depart = goalPosition;
@@ -55,6 +62,11 @@ std::vector<CoucheGateau> Assiette::getGateaux()
 unsigned int Assiette::getNumberOFGateaux()
 {
     return m_stock.size();
+}
+
+Position Assiette::getAssietteCenter()
+{
+    return m_assiette_center;
 }
 
 int Assiette::update()

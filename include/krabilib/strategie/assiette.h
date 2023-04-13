@@ -19,6 +19,7 @@ class Assiette : public MediumLevelAction
 public:
     Assiette();
 
+    Assiette(Position position, Position assiette_center, Owner us_or_them);
     Assiette(Position position, Owner us_or_them);
 
     ~Assiette();
@@ -34,9 +35,12 @@ public:
 
     unsigned int getNumberOFGateaux();
 
+    Position getAssietteCenter();
+
 protected:
     Position position;
     Position position_depart;
+    Position m_assiette_center;
     Owner m_us_or_them;
 
     std::vector<CoucheGateau> m_stock;
