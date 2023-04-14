@@ -21,6 +21,7 @@ private:
 
     int m_score;
     bool m_shutdown;
+    bool m_disguise;
 
     void run();
 
@@ -36,4 +37,5 @@ public:
     void start();
     void shutdown();
     void set_score(int a_score);
+    void disguise();
 };

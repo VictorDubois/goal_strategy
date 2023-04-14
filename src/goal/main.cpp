@@ -778,6 +778,8 @@ void GoalStrat::stopActuators()
 {
     m_servos_cmd.enable = false;
     m_arm_servo_pub.publish(m_servos_cmd);
+
+    m_actuators2023.disguise();
     m_actuators.shutdown();
     m_actuators2023.shutdown();
 }

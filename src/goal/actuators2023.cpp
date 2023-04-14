@@ -11,6 +11,7 @@ Actuators2023::Actuators2023(ros::NodeHandle* a_nh,
   , m_claw_servo_right(a_claw_servo_right)
 
 {
+    m_disguise = false;
     m_pub = m_nh->advertise<krabi_msgs::actuators>(a_name, 5);
     m_shutdown = false;
 }
@@ -40,6 +41,11 @@ void Actuators2023::shutdown()
     m_shutdown = true;
 }
 
+void Actuators2023::disguise()
+{
+    m_disguise = true;
+}
+
 void Actuators2023::publish()
 {
     m_message.score = m_score;
@@ -63,7 +69,7 @@ void Actuators2023::publish()
     m_message.pusher_servo.angle = m_servo_cherries->getAngle();
     m_message.pusher_servo.speed = m_servo_cherries->getSpeed();
 
-    m_message.fake_statuette_vacuum.enable_pump = false;
+    m_message.fake_statuette_vacuum.enable_pump = m_disguise;
     m_message.fake_statuette_vacuum.release = false;
 
     if (m_shutdown)
@@ -74,7 +80,7 @@ void Actuators2023::publish()
         m_message.pusher_servo.enable = false;
         m_message.arm_vacuum.enable_pump = false;
         m_message.arm_vacuum.release = true;
-        m_message.fake_statuette_vacuum.enable_pump = false;
+        m_message.fake_statuette_vacuum.enable_pump = m_disguise;
         m_message.fake_statuette_vacuum.release = true;
     }
 
