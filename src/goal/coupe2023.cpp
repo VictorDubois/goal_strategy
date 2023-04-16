@@ -439,7 +439,7 @@ int Coupe2023::getScoreEtape(int i)
     case Etape::PILE_GATEAU:
         l_score = 3;
 
-        if (m_stock.size() > 1)
+        if (m_stock.size() > 0)
         {
             l_score = -3;
         }
