@@ -81,7 +81,7 @@ void GoalStrat::recule(ros::Duration a_time, Distance a_distance)
     recalage_bordure();
     m_strat_mvnt.reverse_gear = 1;
 
-    m_strat_movement_pub.publish(m_strat_mvnt);
+    publishStratMovement();
     auto recalageTimeoutDeadline = ros::Time::now() + a_time;
 
     Distance l_distance_parcourue = Distance(0);
@@ -173,7 +173,7 @@ void GoalStrat::alignWithAngle(Angle a_angle)
     m_strat_mvnt.goal_pose = l_posestamped;
     m_strat_mvnt.header.frame_id = "map";
     m_strat_mvnt.orient = 1;
-    m_strat_movement_pub.publish(m_strat_mvnt);
+    publishStratMovement();
 }
 
 bool GoalStrat::isArrivedAtGoal()
@@ -263,11 +263,19 @@ void GoalStrat::publishGoal()
     m_goal_pose_pub.publish(l_posestamped);
 
     m_strat_mvnt.goal_pose = l_posestamped;
-    m_strat_mvnt.header.frame_id = "map";
+    
     m_strat_mvnt.orient = 0;
 
+    publishStratMovement();
+}
+
+void GoalStrat::publishStratMovement()
+{
+    m_strat_mvnt.header.frame_id = "map";
+    m_strat_mvnt.header.stamp =ros::Time::now();
     m_strat_movement_pub.publish(m_strat_mvnt);
 }
+
 
 /**
  * @brief Update the robot pose and the various transforms
@@ -513,15 +521,15 @@ GoalStrat::GoalStrat()
     m_claws = std::make_shared<Claws>(
       Position(Eigen::Vector2d(0.3, 0)),Position(Eigen::Vector2d(0.1, 0)), l_servo_left_claw, l_servo_right_claw);
     /* servo check */
-    m_claws->retract();
+    /*m_claws->retract();
     usleep(1000000);
     m_claws->release_pile();
     usleep(2000000);
     m_claws->grab_pile();
-    usleep(2000000);
+    usleep(2000000);*/
 
     /* servo init */
-    m_claws->retract();
+    //m_claws->retract();
 
     closeCherriesDispenser();
 }
@@ -900,6 +908,7 @@ void GoalStrat::stateRun()
         Position l_phare = m_strat_graph->positionCAbsolute(0.2f, 0);
         Position l_coin = m_strat_graph->positionCAbsolute(0.0f, 2.f);
         Position l_position_vitrine = m_strat_graph->positionCAbsolute(0.15f, 0);
+        
 
         float target_angle = 0;
         switch (m_strat_graph->getEtapeEnCours()->getEtapeType())
@@ -940,7 +949,7 @@ void GoalStrat::stateRun()
             ROS_INFO_STREAM("Recalage bordure statuette" << std::endl);
             startLinear();
             recalage_bordure();
-            m_strat_movement_pub.publish(m_strat_mvnt);
+            publishStratMovement();
             recalageTimeoutDeadline = ros::Time::now() + ros::Duration(6);
 
             while (ros::Time::now().toSec() < recalageTimeoutDeadline.toSec())
@@ -961,7 +970,7 @@ void GoalStrat::stateRun()
             startLinear();
             recalage_bordure();
             m_strat_mvnt.reverse_gear = 1;
-            m_strat_movement_pub.publish(m_strat_mvnt);
+            publishStratMovement();
             recalageTimeoutDeadline = ros::Time::now() + ros::Duration(4);
 
             while (ros::Time::now().toSec() < recalageTimeoutDeadline.toSec())
@@ -1002,7 +1011,7 @@ void GoalStrat::stateRun()
             ROS_INFO_STREAM("Recalage bordure statuette" << std::endl);
             startLinear();
             recalage_bordure();
-            m_strat_movement_pub.publish(m_strat_mvnt);
+            publishStratMovement();
             recalageTimeoutDeadline = ros::Time::now() + ros::Duration(6);
 
             while (ros::Time::now().toSec() < recalageTimeoutDeadline.toSec())
@@ -1023,7 +1032,7 @@ void GoalStrat::stateRun()
             startLinear();
             recalage_bordure();
             m_strat_mvnt.reverse_gear = 1;
-            m_strat_movement_pub.publish(m_strat_mvnt);
+            publishStratMovement();
             recalageTimeoutDeadline = ros::Time::now() + ros::Duration(4);
 
             while (ros::Time::now().toSec() < recalageTimeoutDeadline.toSec())
@@ -1209,6 +1218,7 @@ void GoalStrat::stateRun()
             ROS_INFO_STREAM("Pile Gateau" << std::endl);
             break;
         default:
+            //stopAngular();
             retractePusher();
             ROS_INFO_STREAM("No special action here\n");
             break;
