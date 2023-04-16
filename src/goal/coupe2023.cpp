@@ -38,7 +38,7 @@ Coupe2023::Coupe2023(const bool isYellow)
 
     // Création des étapes
     // Les étapes correspondant à des actions sont créées automatiquement lors de l'ajout d'actions
-    int campement = Etape::makeEtape(positionCAbsolute(0.225f, 0.225f),
+    int campement = Etape::makeEtape(positionCAbsolute(0.3f, 0.3f),
                                      Etape::DEPART); // départ au fond de la zone de départ
 
 
@@ -52,42 +52,44 @@ Coupe2023::Coupe2023(const bool isYellow)
     }
     else
     {
+        float distance_to_wall = 0.35f;
         int assiete_us_0
-          = Etape::makeEtape(new Assiette(positionCAbsolute(0.25f, 0.25f), Owner::us));
+          = Etape::makeEtape(new Assiette(positionCAbsolute(0.25f, distance_to_wall), Owner::us));
 
         int assiete_them_1
           = Etape::makeEtape(new Assiette(positionCAbsolute(1.5f - 0.375f, 0.25f), Owner::them));
 
-        Etape::get(assiete_us_0)->addVoisins(assiete_them_1);
-        Etape::get(assiete_us_0)->addVoisins(campement);
+        //Etape::get(assiete_us_0)->addVoisins(assiete_them_1);
+        //Etape::get(campement)->addVoisins(assiete_them_1);
+        //Etape::get(assiete_us_0)->addVoisins(campement);
 
         int assiete_us_2
-          = Etape::makeEtape(new Assiette(positionCAbsolute(1.5f + 0.375f, 0.25f), Owner::us));
-        Etape::get(assiete_them_1)->addVoisins(assiete_us_2);
+          = Etape::makeEtape(new Assiette(positionCAbsolute(1.5f + 0.375f, distance_to_wall), Owner::us));
+        //Etape::get(assiete_them_1)->addVoisins(assiete_us_2);
 
         int assiete_them_3
           = Etape::makeEtape(new Assiette(positionCAbsolute(3.f - 0.225f, 0.25f), Owner::them));
-        Etape::get(assiete_them_3)->addVoisins(assiete_us_2);
+        //Etape::get(assiete_them_3)->addVoisins(assiete_us_2);
 
         int assiete_us_4
-          = Etape::makeEtape(new Assiette(positionCAbsolute(3.f - 0.225f, 0.75f), Owner::us));
-        Etape::get(assiete_them_3)->addVoisins(assiete_us_4);
+          = Etape::makeEtape(new Assiette(positionCAbsolute(3.f - distance_to_wall, 0.75f), Owner::us));
+        //Etape::get(assiete_them_3)->addVoisins(assiete_us_4);
 
         int assiete_them_5 = Etape::makeEtape(
           new Assiette(positionCAbsolute(3.f - 0.225f, 2.f - 0.75f), Owner::them));
         // Etape::get(assiete_them_5)->addVoisins(assiete_us_4);// Attention: cerises sur le chemin
 
         int assiete_us_6
-          = Etape::makeEtape(new Assiette(positionCAbsolute(3.f - 0.225f, 2.f - 0.25f), Owner::us));
-        Etape::get(assiete_them_5)->addVoisins(assiete_us_6);
+          = Etape::makeEtape(new Assiette(positionCAbsolute(3.f - distance_to_wall, 2.f - distance_to_wall), Owner::us));
+        //Etape::get(assiete_them_5)->addVoisins(assiete_us_6);
 
         int assiete_them_7 = Etape::makeEtape(
           new Assiette(positionCAbsolute(1.5f + 0.375f, 2.f - 0.25f), Owner::them));
-        Etape::get(assiete_them_7)->addVoisins(assiete_us_6);
+        //Etape::get(assiete_them_7)->addVoisins(assiete_us_6);
 
         int assiete_us_8 = Etape::makeEtape(
-          new Assiette(positionCAbsolute(1.5f - 0.375f, 2.f - 0.25f), Owner::us));
-        Etape::get(assiete_them_7)->addVoisins(assiete_us_8);
+          new Assiette(positionCAbsolute(1.5f - distance_to_wall, 2.f - distance_to_wall), Owner::us));
+        //Etape::get(assiete_them_7)->addVoisins(assiete_us_8);
 
         //////////// Trio départ ////////////
         int pile_glacage_depart = Etape::makeEtape(
@@ -99,13 +101,25 @@ Coupe2023::Coupe2023(const bool isYellow)
         int pile_genoise_depart = Etape::makeEtape(
           new PileGateau(positionCAbsolute(1.125f, 0.675f), CoucheGateau::genoise_marron));
 
-        Etape::get(pile_glacage_depart)->addVoisins(pile_creme_depart);
-        Etape::get(pile_genoise_depart)->addVoisins(pile_creme_depart);
+        int intemediaire_depart = Etape::makeEtape(positionCAbsolute(0.6f, 0.5f));
 
-        Etape::get(pile_glacage_depart)->addVoisins(campement);
+        Etape::get(intemediaire_depart)->addVoisins(assiete_us_0);
+        Etape::get(intemediaire_depart)->addVoisins(campement);
+        Etape::get(intemediaire_depart)->addVoisins(pile_glacage_depart);
+        Etape::get(intemediaire_depart)->addVoisins(pile_genoise_depart);
+        Etape::get(intemediaire_depart)->addVoisins(pile_creme_depart);
 
-        Etape::get(assiete_us_0)->addVoisins(pile_glacage_depart);
-        Etape::get(assiete_us_0)->addVoisins(pile_genoise_depart);
+
+        //Etape::get(pile_glacage_depart)->addVoisins(pile_creme_depart);
+        //Etape::get(pile_genoise_depart)->addVoisins(pile_creme_depart);
+
+        //Etape::get(pile_glacage_depart)->addVoisins(campement);
+        //Etape::get(pile_glacage_depart)->addVoisins(assiete_us_0);
+
+        //Etape::get(assiete_us_0)->addVoisins(pile_glacage_depart);
+        //Etape::get(assiete_us_0)->addVoisins(pile_genoise_depart);
+        //Etape::get(campement)->addVoisins(pile_glacage_depart);
+        Etape::get(campement)->addVoisins(pile_genoise_depart);
 
 
         //////////// Trio symetrique X ////////////
@@ -119,7 +133,7 @@ Coupe2023::Coupe2023(const bool isYellow)
           new PileGateau(positionCAbsolute(3.0f - 1.125f, 0.675f), CoucheGateau::genoise_marron));
         Etape::get(pile_genoise_loin)->addVoisins(pile_genoise_depart);
 
-        Etape::get(pile_glacage_loin)->addVoisins(pile_creme_loin);
+        //Etape::get(pile_glacage_loin)->addVoisins(pile_creme_loin);
         Etape::get(pile_genoise_loin)->addVoisins(pile_creme_loin);
 
         //////////// Trio symetrique Y (depart adversaire) ////////////
@@ -132,10 +146,10 @@ Coupe2023::Coupe2023(const bool isYellow)
         int pile_genoise_depart_adv = Etape::makeEtape(
           new PileGateau(positionCAbsolute(1.125f, 2 - 0.675f), CoucheGateau::genoise_marron));
 
-        Etape::get(pile_glacage_depart_adv)->addVoisins(pile_creme_depart_adv);
+        //Etape::get(pile_glacage_depart_adv)->addVoisins(pile_creme_depart_adv);
         Etape::get(pile_genoise_depart_adv)->addVoisins(pile_creme_depart_adv);
 
-        Etape::get(pile_glacage_depart)->addVoisins(pile_glacage_depart_adv);
+        //Etape::get(pile_glacage_depart)->addVoisins(pile_glacage_depart_adv);
 
         //////////// Trio symetrique X+Y ////////////
         int pile_glacage_loin_adv = Etape::makeEtape(new PileGateau(
@@ -147,7 +161,7 @@ Coupe2023::Coupe2023(const bool isYellow)
         int pile_genoise_loin_adv = Etape::makeEtape(
           new PileGateau(positionCAbsolute(3 - 1.125f, 2 - 0.675f), CoucheGateau::genoise_marron));
 
-        Etape::get(pile_glacage_loin_adv)->addVoisins(pile_creme_loin_adv);
+        //Etape::get(pile_glacage_loin_adv)->addVoisins(pile_creme_loin_adv);
         Etape::get(pile_genoise_loin_adv)->addVoisins(pile_creme_loin_adv);
 
         Etape::get(pile_genoise_loin_adv)->addVoisins(pile_genoise_loin);
@@ -158,14 +172,17 @@ Coupe2023::Coupe2023(const bool isYellow)
         //Etape::get(assiete_us_4)->addVoisins(pile_genoise_depart);
 
 
-        Etape::get(assiete_us_2)->addVoisins(pile_genoise_depart);
+        //Etape::get(assiete_us_2)->addVoisins(pile_genoise_depart);
         Etape::get(assiete_us_2)->addVoisins(pile_genoise_loin);
-        Etape::get(assiete_us_2)->addVoisins(pile_creme_depart);
+        //Etape::get(assiete_us_2)->addVoisins(pile_creme_depart);
+        //Etape::get(assiete_us_2)->addVoisins(pile_glacage_loin);
+        //Etape::get(assiete_us_2)->addVoisins(pile_creme_loin);
+
 
 
         Etape::get(assiete_us_4)->addVoisins(pile_genoise_loin);
-        Etape::get(assiete_us_4)->addVoisins(pile_creme_loin);
-        Etape::get(assiete_us_4)->addVoisins(pile_glacage_loin);
+        //Etape::get(assiete_us_4)->addVoisins(pile_creme_loin);
+        //Etape::get(assiete_us_4)->addVoisins(pile_glacage_loin);
     }
 
     m_numero_etape_garage = campement; // Must be set!
@@ -416,6 +433,12 @@ void Coupe2023::debugEtapes(visualization_msgs::MarkerArray& ma)
     }
 }
 
+    std::vector<Assiette*> Coupe2023::getAssiettes()
+    {
+      
+    }
+
+
 /**
  * @brief Get the score for the current step
  *
@@ -448,6 +471,7 @@ int Coupe2023::getScoreEtape(int i)
         l_assiette = static_cast<Assiette*>(this->m_tableau_etapes_total[i]->getAction());
         l_owner = l_assiette->getOwner();
         l_stock_assiette = l_assiette->getNumberOFGateaux();
+
 
         if (m_stock.size() && l_owner == Owner::us && l_stock_assiette < 3)
         {
