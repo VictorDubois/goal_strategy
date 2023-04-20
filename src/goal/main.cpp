@@ -683,6 +683,7 @@ void GoalStrat::chooseGear()
         || m_previous_etape_type == Etape::EtapeType::PORT
         || m_previous_etape_type == Etape::EtapeType::STATUETTE
         || m_previous_etape_type == Etape::EtapeType::VITRINE
+        || m_previous_etape_type == Etape::EtapeType::ASSIETTE
         || (m_strat_graph->getEtapeEnCours()->getEtapeType() == Etape::EtapeType::CARRE_FOUILLE
             && m_is_blue))
     {
@@ -1188,7 +1189,7 @@ void GoalStrat::stateRun()
               "Timeout while orienting");
             m_claws->release_pile();
 
-            recule(ros::Duration(5), Distance(0.15));
+            //recule(ros::Duration(5), Distance(0.15));
 
             m_claws->setInFront();
 
@@ -1201,6 +1202,7 @@ void GoalStrat::stateRun()
             // Ouvre la pince + orientation
             stopLinear();
             m_claws->release_pile();
+            m_strat_mvnt.reverse_gear = 0;
             ROS_INFO_STREAM("Orienting grabber" << std::endl);
             ROS_WARN_STREAM_COND(
               alignWithAngleWithTimeout(
