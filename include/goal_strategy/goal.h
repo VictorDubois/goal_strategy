@@ -167,4 +167,6 @@ private:
     std::shared_ptr<Servomotor> m_servo_cherries;
 
     std::thread m_running;
+
+    int override_gear;
 };

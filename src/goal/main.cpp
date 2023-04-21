@@ -79,7 +79,8 @@ void GoalStrat::recule(ros::Duration a_time, Distance a_distance)
 
     ROS_INFO_STREAM("recule !!");
     recalage_bordure();
-    m_strat_mvnt.reverse_gear = 1;
+    //m_strat_mvnt.reverse_gear = 1;
+    override_gear = 1;
 
     publishStratMovement();
     auto recalageTimeoutDeadline = ros::Time::now() + a_time;
@@ -93,6 +94,7 @@ void GoalStrat::recule(ros::Duration a_time, Distance a_distance)
         l_distance_parcourue = (l_initial_pose - m_current_pose.getPosition()).getNorme();
         usleep(0.1e6);
     }
+    override_gear = 2;
 }
 
 /**
@@ -271,6 +273,7 @@ void GoalStrat::publishGoal()
 
 void GoalStrat::publishStratMovement()
 {
+    chooseGear();
     m_strat_mvnt.header.frame_id = "map";
     m_strat_mvnt.header.stamp =ros::Time::now();
     m_strat_movement_pub.publish(m_strat_mvnt);
@@ -678,6 +681,12 @@ bool GoalStrat::alignWithAngleWithTimeout(Angle angle)
 void GoalStrat::chooseGear()
 {
     std_msgs::Bool l_reverseGear;
+    if (override_gear != 2)
+    {
+        m_strat_mvnt.reverse_gear = override_gear;
+        l_reverseGear.data = (override_gear == 1);
+    }
+    
     if (m_previous_etape_type == Etape::EtapeType::MANCHE_A_AIR
         || m_strat_graph->getEtapeEnCours()->getEtapeType() == Etape::EtapeType::PHARE
         || m_previous_etape_type == Etape::EtapeType::PORT
@@ -970,7 +979,8 @@ void GoalStrat::stateRun()
             ROS_INFO_STREAM("Ecartement bordure statuette" << std::endl);
             startLinear();
             recalage_bordure();
-            m_strat_mvnt.reverse_gear = 1;
+            //m_strat_mvnt.reverse_gear = 1;
+            override_gear = 1;
             publishStratMovement();
             recalageTimeoutDeadline = ros::Time::now() + ros::Duration(4);
 
@@ -979,6 +989,7 @@ void GoalStrat::stateRun()
                 ros::spinOnce();
                 usleep(0.1e6);
             }
+            override_gear = 2;
 
             if (m_vacuum_state != STRONG_VACUUM)
             {
@@ -1032,7 +1043,8 @@ void GoalStrat::stateRun()
             ROS_INFO_STREAM("Ecartement bordure vitrine" << std::endl);
             startLinear();
             recalage_bordure();
-            m_strat_mvnt.reverse_gear = 1;
+            //m_strat_mvnt.reverse_gear = 1;
+            override_gear = 1;
             publishStratMovement();
             recalageTimeoutDeadline = ros::Time::now() + ros::Duration(4);
 
@@ -1041,6 +1053,7 @@ void GoalStrat::stateRun()
                 ros::spinOnce();
                 usleep(0.1e6);
             }
+            override_gear = 2;
 
             startAngular();
             startLinear();
@@ -1123,7 +1136,8 @@ void GoalStrat::stateRun()
             }
             usleep(2.5e6);
 
-            m_strat_mvnt.reverse_gear = 1;
+            //m_strat_mvnt.reverse_gear = 1;
+            override_gear = 1;
 
             startLinear();
             recalage_bordure();
@@ -1136,6 +1150,7 @@ void GoalStrat::stateRun()
                 ros::spinOnce();
                 usleep(0.1e6);
             }
+            override_gear = 2;
 
             startLinear();
 
@@ -1202,7 +1217,8 @@ void GoalStrat::stateRun()
             // Ouvre la pince + orientation
             stopLinear();
             m_claws->release_pile();
-            m_strat_mvnt.reverse_gear = 0;
+            //m_strat_mvnt.reverse_gear = 0;
+            override_gear = 0;
             ROS_INFO_STREAM("Orienting grabber" << std::endl);
             ROS_WARN_STREAM_COND(
               alignWithAngleWithTimeout(
@@ -1218,6 +1234,7 @@ void GoalStrat::stateRun()
             ROS_WARN_STREAM_COND(isArrivedAtGoal(), "Timeout while advancing");
             m_claws->grab_pile();
             ROS_INFO_STREAM("Pile Gateau" << std::endl);
+            override_gear = 2;
             break;
         default:
             //stopAngular();
