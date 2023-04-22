@@ -693,6 +693,7 @@ void GoalStrat::chooseGear()
         || m_previous_etape_type == Etape::EtapeType::STATUETTE
         || m_previous_etape_type == Etape::EtapeType::VITRINE
         || m_previous_etape_type == Etape::EtapeType::ASSIETTE
+        || (m_previous_etape_type == Etape::EtapeType::PILE_GATEAU && m_strat_graph->getEtapeEnCours()->getEtapeType() != Etape::EtapeType::ASSIETTE)
         || (m_strat_graph->getEtapeEnCours()->getEtapeType() == Etape::EtapeType::CARRE_FOUILLE
             && m_is_blue))
     {
