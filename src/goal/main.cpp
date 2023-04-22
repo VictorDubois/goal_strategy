@@ -811,7 +811,7 @@ void GoalStrat::setMaxSpeedAtArrival()
     if (m_strat_graph->getEtapeEnCours()->getEtapeType() == Etape::EtapeType::POINT_PASSAGE)
     {
         // No need for complete stop at intermediate stops
-        m_strat_mvnt.max_speed_at_arrival = 0.1f;
+        m_strat_mvnt.max_speed_at_arrival = 0;//0.1f;
     }
     else
     {
@@ -1372,16 +1372,36 @@ void GoalStrat::publishDebugInfos()
     m_debug_ma_etapes_pub.publish(ma);
 }
 
+void GoalStrat::stop()
+{
+    m_strat_mvnt.max_speed.angular.z = 0;
+    m_strat_mvnt.max_speed.linear.x = 0;
+    publishStratMovement();
+}
+
+
 // Entry point
 int main(int argc, char* argv[])
 {
     ros::init(argc, argv, "goalStrat");
     GoalStrat goal_strat;
 
-    ros::Rate r(10); // 10 hz
+    ros::Rate r(ros::Duration(0.01)); // 100 hz
+    int i = 0;
+    goal_strat.loop();
     while (ros::ok())
     {
-        goal_strat.loop();
+        if(goal_strat.isArrivedAtGoal())
+        {
+            goal_strat.stop();
+            goal_strat.loop();
+        }
+        if(i > 10)
+        {
+            goal_strat.loop();
+            i = 0;
+        }
+        i++;
         r.sleep();
     }
 }

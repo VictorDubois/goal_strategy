@@ -59,6 +59,8 @@ public:
         RUN,
         EXIT
     };
+    bool isArrivedAtGoal();
+    void stop();
 
 private:
     void init();
@@ -94,7 +96,6 @@ private:
     void updateOtherRobots(geometry_msgs::PoseArray);
 
     bool isAlignedWithAngle(Angle angle);
-    bool isArrivedAtGoal();
     bool isArrivedAtGoal(Distance a_offset);
 
     void publishScore();
