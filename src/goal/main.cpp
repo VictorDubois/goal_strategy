@@ -435,7 +435,7 @@ void GoalStrat::dropCherries()
 void GoalStrat::closeCherriesDispenser()
 {
     m_servo_cherries->setAngle(82); //@todo tune
-    usleep(1.0e6);                  //@todo tune
+    //usleep(1.0e6);                  //@todo tune
 }
 
 GoalStrat::GoalStrat()
@@ -532,7 +532,7 @@ GoalStrat::GoalStrat()
     usleep(2000000);*/
 
     /* servo init */
-    //m_claws->retract();
+    m_claws->retract();
 
     closeCherriesDispenser();
 }

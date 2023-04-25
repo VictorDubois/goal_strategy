@@ -63,6 +63,7 @@ void Claws::release_pile()
 void Claws::retract()
 {
     // Do nothing, retracting is dangerous if there is a pile stuck :/
+    grab_pile();
     /*m_left_servo->set(16, 20);
     usleep(1e6); // Pour ne pas s'emmeler les pinces
 
