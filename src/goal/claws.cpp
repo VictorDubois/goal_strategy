@@ -36,14 +36,14 @@ Angle Claws::getAngle()
 
 void Claws::grab_pile()
 {
-    m_right_servo->set(140, 10);
+    m_right_servo->set(130, 10);
 
     // Pour ne pas s'emmeler les pinces
     if (m_left_servo->getAngle() < 70)
     {
         usleep(1e6);
     }
-    m_left_servo->set(70, 10);
+    m_left_servo->set(80, 10);
     usleep(1e6);
 }
 
@@ -62,9 +62,10 @@ void Claws::release_pile()
 
 void Claws::retract()
 {
-    m_left_servo->set(16, 20);
+    // Do nothing, retracting is dangerous if there is a pile stuck :/
+    /*m_left_servo->set(16, 20);
     usleep(1e6); // Pour ne pas s'emmeler les pinces
 
     m_right_servo->set(180, 20);
-    usleep(1e6);
+    usleep(1e6);*/
 }
