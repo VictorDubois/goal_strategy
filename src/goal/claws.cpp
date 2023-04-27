@@ -34,39 +34,47 @@ Angle Claws::getAngle()
     return m_relative_position.getAngle();
 }
 
-void Claws::grab_pile()
+void Claws::grab_pile(bool a_do_sleep)
 {
     m_right_servo->set(130, 10);
 
     // Pour ne pas s'emmeler les pinces
     if (m_left_servo->getAngle() < 70)
     {
-        usleep(1e6);
+        conditionnal_sleep(1e6, a_do_sleep);
     }
     m_left_servo->set(80, 10);
-    usleep(1e6);
+    conditionnal_sleep(1e6, a_do_sleep);
 }
 
-void Claws::release_pile()
+void Claws::release_pile(bool a_do_sleep)
 {
     m_right_servo->set(90, 10);
 
     // Pour ne pas s'emmeler les pinces
     if (m_left_servo->getAngle() < 70)
     {
-        usleep(1e6);
+        conditionnal_sleep(1e6, a_do_sleep);
     }
     m_left_servo->set(120, 10);
-    usleep(1e6);
+    conditionnal_sleep(1e6, a_do_sleep);
 }
 
-void Claws::retract()
+void Claws::retract(bool a_do_sleep)
 {
     // Do nothing, retracting is dangerous if there is a pile stuck :/
-    grab_pile();
+    grab_pile(a_do_sleep);
     /*m_left_servo->set(16, 20);
     usleep(1e6); // Pour ne pas s'emmeler les pinces
 
     m_right_servo->set(180, 20);
     usleep(1e6);*/
+}
+
+void Claws::conditionnal_sleep(uint a_microseconds, bool a_do_sleep)
+{
+    if (a_do_sleep)
+    {
+        usleep(a_microseconds);
+    }
 }

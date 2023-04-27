@@ -532,7 +532,7 @@ GoalStrat::GoalStrat()
     usleep(2000000);*/
 
     /* servo init */
-    m_claws->retract();
+    m_claws->retract(false);
 
     closeCherriesDispenser();
 }
