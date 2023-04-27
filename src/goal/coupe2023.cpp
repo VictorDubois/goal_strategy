@@ -52,9 +52,9 @@ Coupe2023::Coupe2023(const bool isYellow)
     }
     else
     {
-        float distance_to_wall = 0.35f;
+        float distance_to_wall = 0.4f;
         int assiete_us_0
-          = Etape::makeEtape(new Assiette(positionCAbsolute(0.25f, distance_to_wall), positionCAbsolute(0.25f, 0.225f), Owner::us));
+          = Etape::makeEtape(new Assiette(positionCAbsolute(0.4f, distance_to_wall), positionCAbsolute(0.25f, 0.225f), Owner::us));
 
         int assiete_them_1
           = Etape::makeEtape(new Assiette(positionCAbsolute(1.5f - 0.375f, 0.25f), Owner::them));
@@ -88,7 +88,7 @@ Coupe2023::Coupe2023(const bool isYellow)
         //Etape::get(assiete_them_7)->addVoisins(assiete_us_6);
 
         int assiete_us_8 = Etape::makeEtape(
-          new Assiette(positionCAbsolute(1.5f - distance_to_wall, 2.f - distance_to_wall), positionCAbsolute(1.5f-0.225f, 2-0.225f), Owner::us));
+          new Assiette(positionCAbsolute(1.5f - 0.375f, 2.f - distance_to_wall), positionCAbsolute(1.5f-0.375f, 2-0.225f), Owner::us));
         //Etape::get(assiete_them_7)->addVoisins(assiete_us_8);
 
         //////////// Trio départ ////////////
