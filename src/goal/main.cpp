@@ -1392,17 +1392,8 @@ int main(int argc, char* argv[])
     goal_strat.loop();
     while (ros::ok())
     {
-        if(goal_strat.isArrivedAtGoal())
-        {
-            goal_strat.stop();
-            goal_strat.loop();
-        }
-        if(i > 10)
-        {
-            goal_strat.loop();
-            i = 0;
-        }
-        i++;
+        goal_strat.loop();
+
         r.sleep();
     }
 }
