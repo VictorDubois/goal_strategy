@@ -885,7 +885,7 @@ void GoalStrat::stateRun()
         // Zone de fouille
         // m_goal_pose.setPosition(m_strat_graph->positionCAbsolute(0.975f, 1.375f));
         // Zone de départ
-        m_goal_pose.setPosition(Position(Distance(-0.375f), Distance(0.525f)));
+        m_goal_pose.setPosition(m_strat_graph->positionCAbsolute(Distance(1.5f-0.375f), Distance(1.525f)));
         publishGoal();
         return;
     }
