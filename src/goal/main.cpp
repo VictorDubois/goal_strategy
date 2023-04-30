@@ -459,6 +459,9 @@ GoalStrat::GoalStrat()
     m_debug_ma_etapes_pub = m_nh.advertise<visualization_msgs::MarkerArray>("debug_etapes", 5);
     m_strat_movement_pub = m_nh.advertise<krabi_msgs::strat_movement>("strat_movement", 5);
 
+    m_are_we_there_yet_serv = m_nh.advertiseService("are_we_there_yet", &GoalStrat::areWeThereYet, this);
+
+
     m_remaining_time_match_sub
       = m_nh.subscribe("/remaining_time", 5, &GoalStrat::updateRemainingTime, this);
     m_tirette_sub = m_nh.subscribe("tirette", 5, &GoalStrat::updateTirette, this);
@@ -556,6 +559,17 @@ void GoalStrat::publishAll()
             publishDebugInfos();
         }
     }
+}
+/**
+ * @brief Answers if the robot has reached its goal, and wether it has overshot
+*/
+bool GoalStrat::areWeThereYet(krabi_msgs::areWeThereYet::Request  &req,
+         krabi_msgs::areWeThereYet::Response &res)
+{
+    res.reverse_because_overshooting = false;
+    res.yes_we_are_there = false;
+
+    return true;
 }
 
 /**
@@ -884,7 +898,7 @@ void GoalStrat::stateRun()
         m_strat_mvnt.reverse_gear = 2; // don't care
         // Zone de fouille
         // m_goal_pose.setPosition(m_strat_graph->positionCAbsolute(0.975f, 1.375f));
-        // Zone de départ
+        // Zone milieu en face
         m_goal_pose.setPosition(m_strat_graph->positionCAbsolute(Distance(1.5f-0.375f), Distance(1.525f)));
         publishGoal();
         return;

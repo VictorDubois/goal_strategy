@@ -24,6 +24,7 @@
 #include "goal_strategy/grabber.h"
 #include "krabi_msgs/servos_cmd.h"
 #include "krabi_msgs/strat_movement.h"
+#include "krabi_msgs/areWeThereYet.h"
 #include "krabilib/pose.h"
 
 // The distance to a goal (in m)
@@ -95,6 +96,9 @@ private:
     void updateVacuum(std_msgs::Float32 vacuum_msg);
     void updateOtherRobots(geometry_msgs::PoseArray);
 
+    bool areWeThereYet(krabi_msgs::areWeThereYet::Request  &req,
+         krabi_msgs::areWeThereYet::Response &res);
+
     bool isAlignedWithAngle(Angle angle);
     bool isArrivedAtGoal(Distance a_offset);
 
@@ -128,6 +132,8 @@ private:
     ros::Publisher m_score_pub;
     ros::Publisher m_debug_ma_etapes_pub;
     ros::Publisher m_strat_movement_pub;
+
+    ros::ServiceServer m_are_we_there_yet_serv;
 
     ros::Subscriber m_remaining_time_match_sub;
     ros::Subscriber m_tirette_sub;
