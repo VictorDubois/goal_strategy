@@ -223,8 +223,9 @@ void Coupe2023::grabGateau(Etape* e)
     }
 }
 
-void Coupe2023::dropGateau(Etape* e)
+int Coupe2023::dropGateau(Etape* e)
 {
+    int l_scored = 0;
     Assiette* l_assiette;
     PileGateau* l_pile;
     std::vector<CoucheGateau> l_stock_assiette;
@@ -241,13 +242,19 @@ void Coupe2023::dropGateau(Etape* e)
         l_assiette = static_cast<Assiette*>(e->getAction());
         l_owner = l_assiette->getOwner();
 
-        l_assiette->addGateau(m_stock.back());
-        m_stock.pop_back();
+        if (m_stock.size())
+        {
+          l_assiette->addGateau(m_stock.back());
+          m_stock.pop_back();
+          l_scored = 3;
+        }  
         break;
 
     default:
         std::cerr << "Not supposed to drop a gateau there!" << std::endl;
     }
+
+    return l_scored;
 }
 
 /**

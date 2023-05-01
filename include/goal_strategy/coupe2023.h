@@ -33,7 +33,7 @@ public:
     void dropStatuette(){};  // 2022 only
 
     void grabGateau(Etape* e);
-    void dropGateau(Etape* e);
+    int dropGateau(Etape* e);
 
     Position positionCAbsolute(double x_yellow_from_top_left, double y_yellow_from_top_left);
 

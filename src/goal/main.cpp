@@ -749,6 +749,7 @@ void GoalStrat::publishScore()
     // Is the robot in the right area at the end?
     if (m_remainig_time < ros::Duration(4))
     {
+        l_score += 5; // deguisement
         std::vector<Position> l_valid_end_locations;
         if (m_year == 2022)
         {
@@ -779,7 +780,7 @@ void GoalStrat::publishScore()
         {
             if ((m_current_pose.getPosition() - l_position).getNorme() < 0.3f)
             {
-                l_score += 20;
+                l_score += 15;
             }
         }
     }
@@ -1194,7 +1195,7 @@ void GoalStrat::stateRun()
             break;
 
         case Etape::EtapeType::ASSIETTE:
-            m_strat_graph->dropGateau(m_strat_graph->getEtapeEnCours());
+            m_score_match += m_strat_graph->dropGateau(m_strat_graph->getEtapeEnCours());
 
             ROS_INFO_STREAM("Orienting grabber" << std::endl);
             ROS_WARN_STREAM_COND(
@@ -1284,7 +1285,10 @@ void GoalStrat::init()
 {
     m_funny_action_counted = false;
     m_first_manche_a_air_done = false;
-    m_score_match = 4; // vitrine presente + replique presente
+    m_score_match = 5; // panier present
+    m_score_match += 10; // 10 cerises
+    m_score_match += 5; // comptage correct
+
     m_servos_cmd.enable = true;
     /*m_servos_cmd.brak_speed = 10;
     m_servos_cmd.brak_angle = 148;*/
