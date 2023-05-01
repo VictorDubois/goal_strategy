@@ -161,12 +161,17 @@ Coupe2023::Coupe2023(const bool isYellow)
         //Etape::get(pile_glacage_loin_adv)->addVoisins(pile_creme_loin_adv);
         Etape::get(pile_genoise_loin_adv)->addVoisins(pile_creme_loin_adv);
 
-        Etape::get(pile_genoise_loin_adv)->addVoisins(pile_genoise_loin);
-        Etape::get(pile_genoise_loin_adv)->addVoisins(pile_genoise_depart);
-        Etape::get(pile_genoise_loin_adv)->addVoisins(pile_genoise_depart_adv);
-        Etape::get(pile_genoise_depart_adv)->addVoisins(pile_genoise_depart);
+        Etape::get(pile_genoise_loin_adv)->addVoisins(pile_genoise_loin, pile_genoise_depart, pile_genoise_depart_adv);
+        Etape::get(pile_genoise_depart_adv)->addVoisins(pile_genoise_depart, pile_genoise_loin);
 
         //Etape::get(assiete_us_4)->addVoisins(pile_genoise_depart);
+
+
+        int in_front_of_tower = Etape::makeEtape(positionCAbsolute(0.6f, 1.f));
+        Etape::get(in_front_of_tower)->addVoisins(pile_genoise_depart, pile_genoise_depart_adv, intermediaire_depart, pile_glacage_depart, pile_creme_depart, pile_creme_depart_adv);
+
+        int in_front_of_tower_loin = Etape::makeEtape(positionCAbsolute(2.4f, 1.f));
+        Etape::get(in_front_of_tower_loin)->addVoisins(pile_genoise_loin, pile_genoise_loin_adv, pile_glacage_loin, pile_glacage_loin_adv, pile_creme_loin, pile_creme_loin_adv);
 
 
         //Etape::get(assiete_us_2)->addVoisins(pile_genoise_depart);
