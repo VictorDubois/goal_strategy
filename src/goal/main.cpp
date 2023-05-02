@@ -691,7 +691,7 @@ void GoalStrat::chooseGear()
         || m_previous_etape_type == Etape::EtapeType::PORT
         || m_previous_etape_type == Etape::EtapeType::STATUETTE
         || m_previous_etape_type == Etape::EtapeType::VITRINE
-        || m_previous_etape_type == Etape::EtapeType::ASSIETTE
+        || (m_previous_etape_type == Etape::EtapeType::ASSIETTE && (m_strat_graph->getEtapeEnCours()->getEtapeType() != Etape::EtapeType::PILE_GATEAU || isArrivedAtGoal(Distance(0.1f))))
         || (m_previous_etape_type == Etape::EtapeType::PILE_GATEAU && m_strat_graph->getEtapeEnCours()->getEtapeType() != Etape::EtapeType::ASSIETTE)
         || (m_strat_graph->getEtapeEnCours()->getEtapeType() == Etape::EtapeType::CARRE_FOUILLE
             && m_is_blue))
@@ -704,6 +704,7 @@ void GoalStrat::chooseGear()
              || m_strat_graph->getEtapeEnCours()->getEtapeType() == Etape::EtapeType::PORT
              || m_strat_graph->getEtapeEnCours()->getEtapeType() == Etape::EtapeType::STATUETTE
              || m_strat_graph->getEtapeEnCours()->getEtapeType() == Etape::EtapeType::VITRINE
+             || m_strat_graph->getEtapeEnCours()->getEtapeType() == Etape::EtapeType::PILE_GATEAU
              || (m_strat_graph->getEtapeEnCours()->getEtapeType() == Etape::EtapeType::CARRE_FOUILLE
                  && !m_is_blue))
     {
@@ -875,6 +876,7 @@ void GoalStrat::stateRun()
         {
             // monte le bras pusher, au cas où on est coincé
             pushCarreFouille();
+
         }
 
         // runHome
@@ -1235,7 +1237,26 @@ void GoalStrat::stateRun()
             ROS_WARN_STREAM_COND(isArrivedAtGoal(), "Timeout while advancing");
             m_claws->grab_pile();
             ROS_INFO_STREAM("Pile Gateau" << std::endl);
+
+            if (abs(m_current_pose.getPosition().getY()) < 0.7f)
+            {
+                override_gear = 2;
+                // On est loin du bord, on continue normalement
+                break;
+            }
+            // Sinon, on est trop proche du bord
+
+            // Alors on veut écarter les claws (pinces) du bord, pour ne pas qu'elles se le mangent en tournant
+            stopLinear();
+            ROS_INFO_STREAM("Turning away from borders" << std::endl);
+            ROS_WARN_STREAM_COND(
+              alignWithAngleWithTimeout(
+                Angle(-M_PI/2 - m_claws->getAngle())),
+              "Timeout while turning away from borders");
+
+            // Du coup, on tourne les claws vers l'intérieur
             override_gear = 2;
+            startLinear(); 
             break;
         default:
             //stopAngular();
