@@ -99,7 +99,7 @@ Coupe2023::Coupe2023(const bool isYellow)
           positionCAbsolute(0.45f + 0.125f + 0.2f, 0.25f), CoucheGateau::creme_jaune));
 
         int pile_genoise_depart = Etape::makeEtape(
-          new PileGateau(positionCAbsolute(1.125f, 0.675f), CoucheGateau::genoise_marron));
+          new PileGateau(positionCAbsolute(1.125f, 0.725f), CoucheGateau::genoise_marron));
 
         int intermediaire_depart = Etape::makeEtape(positionCAbsolute(0.6f, 0.6f));
         int out_of_depose_cerise = Etape::makeEtape(positionCAbsolute(0.3f, 0.3f));
@@ -127,7 +127,7 @@ Coupe2023::Coupe2023(const bool isYellow)
           positionCAbsolute(3.0f - (0.45f + 0.125f + 0.2f), 0.25f), CoucheGateau::creme_jaune));
 
         int pile_genoise_loin = Etape::makeEtape(
-          new PileGateau(positionCAbsolute(3.0f - 1.125f, 0.675f), CoucheGateau::genoise_marron));
+          new PileGateau(positionCAbsolute(3.0f - 1.125f, 0.725f), CoucheGateau::genoise_marron));
         Etape::get(pile_genoise_loin)->addVoisins(pile_genoise_depart);
 
         //Etape::get(pile_glacage_loin)->addVoisins(pile_creme_loin);
@@ -141,7 +141,7 @@ Coupe2023::Coupe2023(const bool isYellow)
           positionCAbsolute(0.45f + 0.125f + 0.2f, 2 - 0.25f), CoucheGateau::creme_jaune));
 
         int pile_genoise_depart_adv = Etape::makeEtape(
-          new PileGateau(positionCAbsolute(1.125f, 2 - 0.675f), CoucheGateau::genoise_marron));
+          new PileGateau(positionCAbsolute(1.125f, 2 - 0.725f), CoucheGateau::genoise_marron));
 
         //Etape::get(pile_glacage_depart_adv)->addVoisins(pile_creme_depart_adv);
         Etape::get(pile_genoise_depart_adv)->addVoisins(pile_creme_depart_adv);
@@ -156,7 +156,7 @@ Coupe2023::Coupe2023(const bool isYellow)
           positionCAbsolute(3 - (0.45f + 0.125f + 0.2f), 2 - 0.25f), CoucheGateau::creme_jaune));
 
         int pile_genoise_loin_adv = Etape::makeEtape(
-          new PileGateau(positionCAbsolute(3 - 1.125f, 2 - 0.675f), CoucheGateau::genoise_marron));
+          new PileGateau(positionCAbsolute(3 - 1.125f, 2 - 0.725f), CoucheGateau::genoise_marron));
 
         //Etape::get(pile_glacage_loin_adv)->addVoisins(pile_creme_loin_adv);
         Etape::get(pile_genoise_loin_adv)->addVoisins(pile_creme_loin_adv);
