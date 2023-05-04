@@ -1365,6 +1365,7 @@ void GoalStrat::loop()
         {
             m_state = State::RUN;
             dropCherries();
+            m_claws->release_pile();
         }
         break;
     case State::RUN:
