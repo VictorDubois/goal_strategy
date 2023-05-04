@@ -522,6 +522,8 @@ GoalStrat::GoalStrat()
 
     m_claws = std::make_shared<Claws>(
       Position(Eigen::Vector2d(0.32f, 0.f)),Position(Eigen::Vector2d(0.2f, 0.f)), l_servo_left_claw, l_servo_right_claw);
+
+    m_claws->setInFront();
     /* servo check */
     /*m_claws->retract();
     usleep(1000000);
@@ -701,6 +703,8 @@ void GoalStrat::chooseGear()
     }
     else if (m_strat_graph->getEtapeEnCours()->getEtapeType() == Etape::EtapeType::MANCHE_A_AIR
              || m_previous_etape_type == Etape::EtapeType::PHARE
+             || m_strat_graph->getEtapeEnCours()->getEtapeType() == Etape::EtapeType::PILE_GATEAU
+             || m_strat_graph->getEtapeEnCours()->getEtapeType() == Etape::EtapeType::ASSIETTE
              || m_strat_graph->getEtapeEnCours()->getEtapeType() == Etape::EtapeType::PORT
              || m_strat_graph->getEtapeEnCours()->getEtapeType() == Etape::EtapeType::STATUETTE
              || m_strat_graph->getEtapeEnCours()->getEtapeType() == Etape::EtapeType::VITRINE
@@ -1196,16 +1200,18 @@ void GoalStrat::stateRun()
 
         case Etape::EtapeType::ASSIETTE:
             m_score_match += m_strat_graph->dropGateau(m_strat_graph->getEtapeEnCours());
+            stopLinear();
 
-            ROS_INFO_STREAM("Orienting grabber" << std::endl);
+            /*ROS_INFO_STREAM("Orienting grabber" << std::endl);
             ROS_WARN_STREAM_COND(
               alignWithAngleWithTimeout(
                 Angle((m_goal_pose.getPosition() - m_current_pose.getPosition()).getAngle()
                       - m_claws->getAngle())),
-              "Timeout while orienting");
+              "Timeout while orienting");*/
             m_claws->release_pile();
 
             //recule(ros::Duration(5), Distance(0.15));
+            startLinear();
 
             m_claws->setInFront();
 
@@ -1214,8 +1220,9 @@ void GoalStrat::stateRun()
 
         case Etape::EtapeType::PILE_GATEAU:
             m_strat_graph->grabGateau(m_strat_graph->getEtapeEnCours());
+            stopLinear();
 
-            // Ouvre la pince + orientation
+            /*// Ouvre la pince + orientation
             stopLinear();
             m_claws->release_pile();
             //m_strat_mvnt.reverse_gear = 0;
@@ -1235,7 +1242,12 @@ void GoalStrat::stateRun()
             ROS_WARN_STREAM_COND(isArrivedAtGoal(), "Timeout while advancing");
             m_claws->grab_pile();
             ROS_INFO_STREAM("Pile Gateau" << std::endl);
-            override_gear = 2;
+            override_gear = 2;*/
+            m_claws->grab_pile();
+            m_claws->setInside();
+            ROS_INFO_STREAM("Pile Gateau caught" << std::endl);
+            startLinear();
+
             break;
         default:
             //stopAngular();
