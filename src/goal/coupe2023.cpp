@@ -38,7 +38,7 @@ Coupe2023::Coupe2023(const bool isYellow)
 
     // Création des étapes
     // Les étapes correspondant à des actions sont créées automatiquement lors de l'ajout d'actions
-    int campement = Etape::makeEtape(positionCAbsolute(0.15f, 0.225f),
+    int campement = Etape::makeEtape(positionCAbsolute(0.15f, 0.285f),
                                      Etape::DEPART); // départ au fond de la zone de départ
 
 
@@ -101,8 +101,8 @@ Coupe2023::Coupe2023(const bool isYellow)
         int pile_genoise_depart = Etape::makeEtape(
           new PileGateau(positionCAbsolute(1.125f, 0.725f), CoucheGateau::genoise_marron));
 
-        int intermediaire_depart = Etape::makeEtape(positionCAbsolute(0.6f, 0.6f));
-        int out_of_depose_cerise = Etape::makeEtape(positionCAbsolute(0.3f, 0.3f));
+        int intermediaire_depart = Etape::makeEtape(positionCAbsolute(0.4f, 0.6f));
+        int out_of_depose_cerise = Etape::makeEtape(positionCAbsolute(0.3f, 0.285f));
         Etape::get(campement)->addVoisins(out_of_depose_cerise, false);
 
         Etape::get(intermediaire_depart)->addVoisins(out_of_depose_cerise, assiete_us_0, pile_glacage_depart, pile_genoise_depart, pile_creme_depart);
