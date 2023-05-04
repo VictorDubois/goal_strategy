@@ -54,7 +54,7 @@ Coupe2023::Coupe2023(const bool isYellow)
     {
         float distance_to_wall = 0.4f;
         int assiete_us_0
-          = Etape::makeEtape(new Assiette(positionCAbsolute(0.4f, distance_to_wall), positionCAbsolute(0.25f, 0.225f), Owner::us));
+          = Etape::makeEtape(new Assiette(positionCAbsolute(0.3f, 0.3f), positionCAbsolute(0.25f, 0.225f), Owner::us));
 
         int assiete_them_1
           = Etape::makeEtape(new Assiette(positionCAbsolute(1.5f - 0.375f, 0.25f), Owner::them));
