@@ -521,7 +521,7 @@ GoalStrat::GoalStrat()
     }
 
     m_claws = std::make_shared<Claws>(
-      Position(Eigen::Vector2d(0.3, 0)),Position(Eigen::Vector2d(0.1, 0)), l_servo_left_claw, l_servo_right_claw);
+      Position(Eigen::Vector2d(0.32f, 0.f)),Position(Eigen::Vector2d(0.2f, 0.f)), l_servo_left_claw, l_servo_right_claw);
     /* servo check */
     /*m_claws->retract();
     usleep(1000000);
