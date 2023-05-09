@@ -124,7 +124,7 @@ void GoalStrat::startAngular()
 void GoalStrat::stopLinear()
 {
     m_strat_mvnt.max_speed.linear.x = 0;
-    m_strat_mvnt.orient = 1;
+    //m_strat_mvnt.orient = 1;
 }
 
 /**
@@ -134,7 +134,7 @@ void GoalStrat::stopLinear()
 void GoalStrat::startLinear()
 {
     m_strat_mvnt.max_speed.linear.x = 1;
-    m_strat_mvnt.orient = 0;
+    //m_strat_mvnt.orient = 0;
 }
 
 /**
@@ -266,7 +266,7 @@ void GoalStrat::publishGoal()
 
     m_strat_mvnt.goal_pose = l_posestamped;
     
-    m_strat_mvnt.orient = 0;
+    //m_strat_mvnt.orient = 0;
 
     publishStratMovement();
 }
@@ -274,6 +274,7 @@ void GoalStrat::publishGoal()
 void GoalStrat::publishStratMovement()
 {
     chooseGear();
+    m_strat_mvnt.goal_pose.pose = m_goal_pose;
     m_strat_mvnt.header.frame_id = "map";
     m_strat_mvnt.header.stamp =ros::Time::now();
     m_strat_movement_pub.publish(m_strat_mvnt);
@@ -443,11 +444,12 @@ GoalStrat::GoalStrat()
     m_goal_init_done = false;
     m_at_least_one_carre_fouille_done = false;
     m_remainig_time = ros::Duration(100, 0);
-    m_strat_mvnt.max_speed_at_arrival = 0.1f;
+    m_strat_mvnt.max_speed_at_arrival = 0.0f;
     m_strat_mvnt.orient = 0;
-    m_strat_mvnt.max_speed.linear.x = 1.f;
+    m_strat_mvnt.max_speed.linear.x = 0.5f;
     m_strat_mvnt.max_speed.angular.z = goal_MAX_ALLOWED_ANGULAR_SPEED;
     m_strat_mvnt.reverse_gear = 2; // don't care
+
     m_state = State::INIT;
     m_tirette = false;
     m_vacuum_level = 0.f;
@@ -545,7 +547,7 @@ void GoalStrat::publishAll()
      pthread_setname_np(pthread_self(), s.c_str());
     while (true)
     {
-        usleep(100000);
+        usleep(10000);
         updateCurrentPose();
         checkFunnyAction();
         checkStopMatch();
@@ -553,7 +555,7 @@ void GoalStrat::publishAll()
         m_arm_servo_pub.publish(m_servos_cmd);
         if (m_goal_init_done)
         {
-            publishGoal();
+            //publishGoal();
             publishDebugInfos();
         }
     }
@@ -816,7 +818,7 @@ void GoalStrat::setMaxSpeedAtArrival()
     if (m_strat_graph->getEtapeEnCours()->getEtapeType() == Etape::EtapeType::POINT_PASSAGE)
     {
         // No need for complete stop at intermediate stops
-        m_strat_mvnt.max_speed_at_arrival = 0;//0.1f;
+        m_strat_mvnt.max_speed_at_arrival = 0.0f;//0.1f;
     }
     else
     {
@@ -841,13 +843,18 @@ void GoalStrat::chooseEffector()
  */
 void GoalStrat::stateRun()
 {
+    m_strat_mvnt.max_speed_at_arrival = 0.0f;
+    m_strat_mvnt.orient = 0;
+    m_strat_mvnt.max_speed.linear.x = 0.5f;
+    m_strat_mvnt.max_speed.angular.z = goal_MAX_ALLOWED_ANGULAR_SPEED;
+    m_strat_mvnt.reverse_gear = 2; // don't care
     updateCurrentPose();
 
-    m_strat_mvnt.max_speed_at_arrival = 0.1f;
+    /*m_strat_mvnt.max_speed_at_arrival = 0.1f;
     m_strat_mvnt.orient = 0;
     m_strat_mvnt.max_speed.linear.x = 1.f;
     m_strat_mvnt.max_speed.angular.z = goal_MAX_ALLOWED_ANGULAR_SPEED;
-    m_strat_mvnt.reverse_gear = 2; // don't care
+    m_strat_mvnt.reverse_gear = 2; // don't care*/
 
     chooseEffector();
 
@@ -934,10 +941,13 @@ void GoalStrat::stateRun()
             stopAngular();
             stopLinear();
 
+            
+
             while (true)
             {
                 m_strat_mvnt.max_speed.angular.z = 0;
                 m_strat_mvnt.max_speed.linear.x = 0;
+                publishStratMovement();
                 ros::spinOnce();
                 usleep(0.1e6);
             }
@@ -974,6 +984,7 @@ void GoalStrat::stateRun()
             }
 
             clamp_mode();
+            publishStratMovement();
 
             ROS_INFO_STREAM("Grabing STATUETTE" << std::endl);
 
@@ -1038,6 +1049,7 @@ void GoalStrat::stateRun()
             }
 
             clamp_mode();
+            publishStratMovement();
             ROS_INFO_STREAM("Dropping STATUETTE" << std::endl);
 
             m_theThing->release_statuette();
@@ -1082,6 +1094,7 @@ void GoalStrat::stateRun()
             }
             stopAngular();
             clamp_mode();
+            publishStratMovement();
 
             ROS_INFO_STREAM("Pushing CARRE_FOUILLE" << std::endl);
 
@@ -1109,6 +1122,7 @@ void GoalStrat::stateRun()
             position_calage = m_goal_pose.getPosition();
             position_calage.setY(Distance(position_calage.getY() - Distance(1)));
             m_goal_pose.setPosition(position_calage);
+            publishStratMovement();
             recalageTimeoutDeadline = ros::Time::now() + ros::Duration(6);
 
             while (ros::Time::now().toSec() < recalageTimeoutDeadline.toSec())
@@ -1128,6 +1142,7 @@ void GoalStrat::stateRun()
 
                 clamp_mode();
             }
+            publishStratMovement();
 
             ROS_INFO_STREAM("Start Manche A Air" << std::endl);
 
@@ -1149,6 +1164,7 @@ void GoalStrat::stateRun()
             position_calage.setY(Distance(position_calage.getY() + Distance(1.1)));
             m_goal_pose.setPosition(position_calage);
             recalageTimeoutDeadline = ros::Time::now() + ros::Duration(2);
+            publishStratMovement();
 
             while (ros::Time::now().toSec() < recalageTimeoutDeadline.toSec())
             {
@@ -1171,6 +1187,7 @@ void GoalStrat::stateRun()
 
             ROS_INFO_STREAM("MOVING SERVO DOWN" << std::endl);
             stopAngular();
+            publishStratMovement();
             moveArm(DOWN);
             usleep(1e6);
             moveArm(DOWN);
@@ -1208,6 +1225,7 @@ void GoalStrat::stateRun()
                 Angle((m_goal_pose.getPosition() - m_current_pose.getPosition()).getAngle()
                       - m_claws->getAngle())),
               "Timeout while orienting");*/
+            publishStratMovement();
             m_claws->release_pile();
 
             //recule(ros::Duration(5), Distance(0.15));
@@ -1243,6 +1261,7 @@ void GoalStrat::stateRun()
             m_claws->grab_pile();
             ROS_INFO_STREAM("Pile Gateau" << std::endl);
             override_gear = 2;*/
+            publishStratMovement();
             m_claws->grab_pile();
             m_claws->setInside();
             ROS_INFO_STREAM("Pile Gateau caught" << std::endl);
