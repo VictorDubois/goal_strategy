@@ -523,7 +523,7 @@ GoalStrat::GoalStrat()
     m_claws = std::make_shared<Claws>(
       Position(Eigen::Vector2d(0.32f, 0.f)),Position(Eigen::Vector2d(0.2f, 0.f)), l_servo_left_claw, l_servo_right_claw);
 
-    m_claws->setInFront();
+    m_claws->setInside();
     /* servo check */
     /*m_claws->retract();
     usleep(1000000);
@@ -1213,7 +1213,7 @@ void GoalStrat::stateRun()
             //recule(ros::Duration(5), Distance(0.15));
             startLinear();
 
-            m_claws->setInFront();
+            m_claws->setInside();
 
             ROS_INFO_STREAM("Assiete" << std::endl);
             break;
