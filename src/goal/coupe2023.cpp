@@ -172,7 +172,7 @@ Coupe2023::Coupe2023(const bool isYellow)
 
         int in_front_of_tower_loin = Etape::makeEtape(positionCAbsolute(2.4f, 1.f));
         Etape::get(in_front_of_tower_loin)->addVoisins(pile_genoise_loin, pile_genoise_loin_adv, pile_glacage_loin, pile_glacage_loin_adv, pile_creme_loin, pile_creme_loin_adv);
-
+        Etape::get(in_front_of_tower_loin)->addVoisins(assiete_us_4, assiete_us_6, pile_glacage_loin, pile_glacage_loin_adv);
 
         //Etape::get(assiete_us_2)->addVoisins(pile_genoise_depart);
         Etape::get(assiete_us_2)->addVoisins(pile_genoise_loin);
