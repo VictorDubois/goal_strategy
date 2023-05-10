@@ -834,6 +834,11 @@ void GoalStrat::chooseEffector()
     {
         m_strat_mvnt.endpoint_frame_id = tf::resolve(ros::this_node::getNamespace(), "suction_cup");
     }
+    if (m_strat_graph->getEtapeEnCours()->getEtapeType() == Etape::EtapeType::ASSIETTE ||
+        m_strat_graph->getEtapeEnCours()->getEtapeType() == Etape::EtapeType::PILE_GATEAU )
+    {
+        m_strat_mvnt.endpoint_frame_id = tf::resolve(ros::this_node::getNamespace(), "claws_inside");
+    }
 }
 
 /**
