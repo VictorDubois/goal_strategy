@@ -579,6 +579,7 @@ void GoalStrat::updateTirette(std_msgs::Bool tirette)
  */
 void GoalStrat::updateOtherRobots(geometry_msgs::PoseArray a_potential_other_robots)
 {
+    m_potential_other_robots.clear();
     for (auto l_potential_robot : a_potential_other_robots.poses)
     {
         m_potential_other_robots.push_back(Pose(l_potential_robot).getPosition());
