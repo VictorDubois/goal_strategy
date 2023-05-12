@@ -1389,8 +1389,8 @@ void GoalStrat::loop()
         if (m_state == State::WAIT_TIRETTE && m_tirette && m_remainig_time > ros::Duration(1, 0))
         {
             m_state = State::RUN;
+            m_claws->release_pile(false);
             dropCherries();
-            m_claws->release_pile();
         }
         break;
     case State::RUN:
