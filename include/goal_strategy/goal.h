@@ -69,7 +69,7 @@ private:
 
     int chooseAngle();
     void chooseGear();
-    void chooseEffector();
+    void chooseEffector(bool enable = true);
     void abortAction();
     void alignWithAngle(Angle a_angle);
     bool alignWithAngleWithTimeout(Angle angle);
@@ -80,6 +80,7 @@ private:
     void clamp_mode();
     void recule(ros::Duration a_time);
     void recule(ros::Duration a_time, Distance a_distance);
+    void reculeDroit(ros::Duration a_time, Distance a_distance);
     void stopAngular();
     void startAngular();
     void stopActuators();

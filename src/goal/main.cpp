@@ -96,7 +96,40 @@ void GoalStrat::recule(ros::Duration a_time, Distance a_distance)
     }
     override_gear = 2;
 }
+void GoalStrat::reculeDroit(ros::Duration a_time, Distance a_distance)
+{
+    updateCurrentPose();
+    auto l_initial_pose = m_current_pose.getPosition();
 
+    ROS_INFO_STREAM("recule !!");
+    //recalage_bordure();
+    //m_strat_mvnt.reverse_gear = 1;
+    override_gear = 1;
+
+    Position l_position_recule = m_current_pose.getPosition();
+    l_position_recule.setX(Distance(l_position_recule.getX()
+                           - a_distance * cos(m_current_pose.getAngle())));
+    l_position_recule.setY(Distance(l_position_recule.getY()
+                           - a_distance * sin(m_current_pose.getAngle())));
+
+    m_goal_pose.setPosition(l_position_recule);
+
+    chooseEffector(false);
+    publishStratMovement();
+    
+    auto recalageTimeoutDeadline = ros::Time::now() + a_time;
+
+    Distance l_distance_parcourue = Distance(0);
+
+    while (ros::Time::now().toSec() < recalageTimeoutDeadline.toSec() && l_distance_parcourue < a_distance)
+    {
+        ros::spinOnce();
+        updateCurrentPose();
+        l_distance_parcourue = (l_initial_pose - m_current_pose.getPosition()).getNorme();
+        usleep(0.1e6);
+    }
+    override_gear = 2;
+}
 /**
  * @brief Send cmd to disable angular motion
  *
@@ -691,7 +724,7 @@ void GoalStrat::chooseGear()
         l_reverseGear.data = (override_gear == 1);
     }
     
-    if (m_previous_etape_type == Etape::EtapeType::MANCHE_A_AIR
+    else if (m_previous_etape_type == Etape::EtapeType::MANCHE_A_AIR
         || m_strat_graph->getEtapeEnCours()->getEtapeType() == Etape::EtapeType::PHARE
         || m_previous_etape_type == Etape::EtapeType::PORT
         || m_previous_etape_type == Etape::EtapeType::STATUETTE
@@ -828,9 +861,14 @@ void GoalStrat::setMaxSpeedAtArrival()
     }
 }
 
-void GoalStrat::chooseEffector()
+void GoalStrat::chooseEffector(bool enable)
 {
     m_strat_mvnt.endpoint_frame_id = tf::resolve(ros::this_node::getNamespace(), "base_link");
+    if (!enable)
+    {
+        return;
+    }
+
     if (m_strat_graph->getEtapeEnCours()->getEtapeType() == Etape::EtapeType::BOUEE)
     {
         m_strat_mvnt.endpoint_frame_id = tf::resolve(ros::this_node::getNamespace(), "suction_cup");
@@ -899,6 +937,7 @@ void GoalStrat::stateRun()
         m_strat_mvnt.max_speed.linear.x = 1.f;
         m_strat_mvnt.max_speed.angular.z = goal_MAX_ALLOWED_ANGULAR_SPEED;
         m_strat_mvnt.reverse_gear = 2; // don't care
+        chooseEffector(false);
         // Zone de fouille
         // m_goal_pose.setPosition(m_strat_graph->positionCAbsolute(0.975f, 1.375f));
         // Zone de départ
@@ -1238,6 +1277,8 @@ void GoalStrat::stateRun()
             startLinear();
 
             m_claws->setInside();
+
+            reculeDroit(ros::Duration(3), Distance(0.14));
 
             ROS_INFO_STREAM("Assiete" << std::endl);
             break;
