@@ -854,7 +854,7 @@ void GoalStrat::setMaxSpeedAtArrival()
     if (m_strat_graph->getEtapeEnCours()->getEtapeType() == Etape::EtapeType::POINT_PASSAGE)
     {
         // No need for complete stop at intermediate stops
-        m_strat_mvnt.max_speed_at_arrival = 0.0f;//0.1f;
+        m_strat_mvnt.max_speed_at_arrival = 0.1f;//0.1f;
     }
     else
     {

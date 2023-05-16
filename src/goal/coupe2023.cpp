@@ -497,3 +497,27 @@ int Coupe2023::getScoreEtape(int i)
     }
     return l_score;
 }
+
+void Coupe2023::getBestAssietteForFunny()
+{
+    for (auto& l_etape : Etape::getTableauEtapesTotal())
+    {
+        if (l_etape && l_etape->getEtapeType() == Etape::EtapeType::ASSIETTE)
+        {
+            auto l_assiette = static_cast<Assiette*>(l_etape->getAction());
+            if (l_assiette->getOwner() != Owner::us)
+            {
+                // Pas la peine de mettre les roues dans le plat de l'adversaire
+                continue;
+            }
+
+            if (l_assiette->getNumberOFGateaux())
+            {
+                // Pas top de mettre les roues dans les gateaux (mais dans certains cas désespérés ça pourrait le faire)
+                continue;
+            }
+
+            // Trier par distance aux adversaires
+        }
+    }
+}
