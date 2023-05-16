@@ -488,6 +488,8 @@ GoalStrat::GoalStrat()
     m_vacuum_level = 0.f;
     m_vacuum_state = OPEN_AIR;
 
+    override_gear = 2; // don't care
+
     m_goal_pose_pub = m_nh.advertise<geometry_msgs::PoseStamped>("goal_pose", 1000);
     m_arm_servo_pub = m_nh.advertise<krabi_msgs::servos_cmd>("cmd_servos", 1000);
     m_debug_ma_etapes_pub = m_nh.advertise<visualization_msgs::MarkerArray>("debug_etapes", 5);
