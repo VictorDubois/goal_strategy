@@ -943,10 +943,18 @@ void GoalStrat::stateRun()
         // Zone de fouille
         // m_goal_pose.setPosition(m_strat_graph->positionCAbsolute(0.975f, 1.375f));
         // Zone de départ
-        Etape* l_etape_funny = m_strat_graph->getBestAssietteForFunny();
+        Assiette* l_etape_funny = m_strat_graph->getBestAssietteForFunny();
 
-        //m_goal_pose.setPosition(m_strat_graph->positionCAbsolute(Distance(1.5f-0.375f), Distance(1.525f)));
-        m_goal_pose.setPosition(l_etape_funny->getPosition());
+        if(l_etape_funny == nullptr)
+        {
+            ROS_ERROR_STREAM("FAIL getting best assiette for funny action, revert to default");
+            m_goal_pose.setPosition(m_strat_graph->positionCAbsolute(Distance(1.5f-0.375f), Distance(1.525f)));
+        }
+        else
+        {
+            ROS_WARN_STREAM("best assiette found for funny: " << l_etape_funny->getGoalPosition());
+            m_goal_pose.setPosition(l_etape_funny->getGoalPosition());
+        }
         publishGoal();
         return;
     }
