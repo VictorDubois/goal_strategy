@@ -827,8 +827,14 @@ void GoalStrat::publishScore()
         }
     }
 
-    m_actuators.set_score(l_score);
-    m_actuators2023.set_score(l_score);
+    if (m_remainig_time.toSec() > 0.0f)
+    {
+        m_score_match_at_end = l_score;
+    }
+
+    m_actuators.set_score(m_score_match_at_end);
+    m_actuators2023.set_score(m_score_match_at_end);
+    
 }
 
 /**
