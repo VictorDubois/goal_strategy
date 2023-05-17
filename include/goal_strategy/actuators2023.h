@@ -16,6 +16,10 @@ private:
     std::shared_ptr<Servomotor> m_servo_cherries;
     std::shared_ptr<Servomotor> m_claw_servo_left;
     std::shared_ptr<Servomotor> m_claw_servo_right;
+    std::shared_ptr<Servomotor> m_grabber_servo_base;
+    std::shared_ptr<Servomotor> m_grabber_servo_mid;
+    std::shared_ptr<Servomotor> m_grabber_servo_suction_cup;
+    std::shared_ptr<Pump> m_grabber_pump;
 
     std::thread m_running;
 
@@ -31,7 +35,11 @@ public:
                   std::string a_name,
                   std::shared_ptr<Servomotor> a_servo_cherries,
                   std::shared_ptr<Servomotor> a_claw_servo_left,
-                  std::shared_ptr<Servomotor> a_claw_servo_right);
+                  std::shared_ptr<Servomotor> a_claw_servo_right,
+                  std::shared_ptr<Servomotor> a_grabber_servo_base,
+                  std::shared_ptr<Servomotor> a_grabber_servo_mid,
+                  std::shared_ptr<Servomotor> a_grabber_servo_suction_cup,
+                  std::shared_ptr<Pump> a_grabber_pump);
 
     void publish();
     void start();
