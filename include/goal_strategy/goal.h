@@ -172,4 +172,5 @@ private:
     std::thread m_running;
 
     int override_gear;
+    Assiette* m_assiette_funny = nullptr;
 };
