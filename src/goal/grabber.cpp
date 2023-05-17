@@ -134,3 +134,17 @@ void Grabber::retract_arm()
     m_servo_mid->setSpeed(3);    
     m_servo_suction_cup->setSpeed(3);
 }
+
+
+void Grabber::check_full_stack()
+{
+
+}
+void Grabber::check_two_high_stack()
+{
+
+}
+void Grabber::check_one_high_stack()
+{
+
+}

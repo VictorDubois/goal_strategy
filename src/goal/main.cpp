@@ -550,7 +550,7 @@ GoalStrat::GoalStrat()
     auto l_servo_right_claw = std::make_shared<Servomotor>(10, 90);
 
     m_actuators2023 = Actuators2023(
-      &m_nh, actuators_name, m_servo_cherries, l_servo_left_claw, l_servo_right_claw);
+      &m_nh, actuators_name, m_servo_cherries, l_servo_left_claw, l_servo_right_claw, l_servo_arm_base, l_servo_arm_mid, l_servo_arm_suction_cup, l_pump_arm);
 
     if (m_year == 2023)
     {

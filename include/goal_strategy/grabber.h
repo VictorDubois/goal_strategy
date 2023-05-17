@@ -30,6 +30,9 @@ public:
     void release_statuette();
     float getReach();
     Angle getAngle();
+    void check_full_stack();
+    void check_two_high_stack();
+    void check_one_high_stack();
 
 private:
     Position m_relative_position;

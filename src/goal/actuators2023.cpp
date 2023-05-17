@@ -4,11 +4,19 @@ Actuators2023::Actuators2023(ros::NodeHandle* a_nh,
                              std::string a_name,
                              std::shared_ptr<Servomotor> a_servo_cherries,
                              std::shared_ptr<Servomotor> a_claw_servo_left,
-                             std::shared_ptr<Servomotor> a_claw_servo_right)
+                             std::shared_ptr<Servomotor> a_claw_servo_right,
+                             std::shared_ptr<Servomotor> a_grabber_servo_base,
+                             std::shared_ptr<Servomotor> a_grabber_servo_mid,
+                             std::shared_ptr<Servomotor> a_grabber_servo_suction_cup,
+                             std::shared_ptr<Pump> a_grabber_pump)
   : m_nh(a_nh)
   , m_servo_cherries(a_servo_cherries)
   , m_claw_servo_left(a_claw_servo_left)
   , m_claw_servo_right(a_claw_servo_right)
+  , m_grabber_servo_base(a_grabber_servo_base)
+  , m_grabber_servo_mid(a_grabber_servo_mid)
+  , m_grabber_servo_suction_cup(a_grabber_servo_suction_cup)
+  , m_grabber_pump(a_grabber_pump)
 
 {
     m_disguise = false;
@@ -53,24 +61,31 @@ void Actuators2023::publish()
     m_message.arm_mid_servo.enable = true;
     m_message.arm_suction_cup_servo.enable = true;
     m_message.pusher_servo.enable = true;
+    m_message.additionnal_servo_1.enable = true;
+    m_message.additionnal_servo_2.enable = true;
 
-    m_message.arm_base_servo.angle = m_claw_servo_right->getAngle();
-    m_message.arm_base_servo.speed = m_claw_servo_right->getSpeed();
+    m_message.arm_base_servo.angle = m_grabber_servo_base->getAngle();
+    m_message.arm_base_servo.speed = m_grabber_servo_base->getSpeed();
 
-    m_message.arm_mid_servo.angle = m_claw_servo_left->getAngle();
-    m_message.arm_mid_servo.speed = m_claw_servo_left->getSpeed();
+    m_message.arm_mid_servo.angle = m_grabber_servo_mid->getAngle();
+    m_message.arm_mid_servo.speed = m_grabber_servo_mid->getSpeed();
 
-    m_message.arm_suction_cup_servo.angle = 90;
-    m_message.arm_suction_cup_servo.speed = 0;
+    m_message.arm_suction_cup_servo.angle = m_grabber_servo_suction_cup->getAngle();
+    m_message.arm_suction_cup_servo.speed = m_grabber_servo_suction_cup->getSpeed();
 
-    m_message.arm_vacuum.enable_pump = false;
-    m_message.arm_vacuum.release = false;
+    m_message.arm_vacuum.enable_pump = m_grabber_pump->getPumping();
+    m_message.arm_vacuum.release = m_grabber_pump->getRelease();
 
     m_message.pusher_servo.angle = m_servo_cherries->getAngle();
     m_message.pusher_servo.speed = m_servo_cherries->getSpeed();
 
     m_message.fake_statuette_vacuum.enable_pump = m_disguise;
     m_message.fake_statuette_vacuum.release = false;
+
+    m_message.additionnal_servo_1.angle = m_claw_servo_right->getAngle();
+    m_message.additionnal_servo_1.speed = m_claw_servo_right->getSpeed(); 
+    m_message.additionnal_servo_2.angle = m_claw_servo_left->getAngle();
+    m_message.additionnal_servo_2.speed = m_claw_servo_left->getSpeed();
 
     if (m_shutdown)
     {
