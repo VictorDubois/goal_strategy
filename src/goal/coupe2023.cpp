@@ -498,8 +498,10 @@ int Coupe2023::getScoreEtape(int i)
     return l_score;
 }
 
-void Coupe2023::getBestAssietteForFunny()
+Etape* Coupe2023::getBestAssietteForFunny()
 {
+    Etape* l_farthest_assiette_to_obstacles = nullptr;
+    Distance l_farthest_distance_to_obstacles = Distance(0);
     for (auto& l_etape : Etape::getTableauEtapesTotal())
     {
         if (l_etape && l_etape->getEtapeType() == Etape::EtapeType::ASSIETTE)
@@ -516,8 +518,14 @@ void Coupe2023::getBestAssietteForFunny()
                 // Pas top de mettre les roues dans les gateaux (mais dans certains cas désespérés ça pourrait le faire)
                 continue;
             }
-
+            auto l_current_distance = Distance(l_etape->getDistanceToPotentialObstacle());
             // Trier par distance aux adversaires
+            if (l_current_distance > l_farthest_distance_to_obstacles)
+            {
+                l_farthest_distance_to_obstacles =  l_current_distance;
+                l_farthest_assiette_to_obstacles = l_etape;
+            }
         }
     }
+    return l_farthest_assiette_to_obstacles;
 }

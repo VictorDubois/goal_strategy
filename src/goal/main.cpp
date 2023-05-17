@@ -939,11 +939,14 @@ void GoalStrat::stateRun()
         m_strat_mvnt.max_speed.linear.x = 1.f;
         m_strat_mvnt.max_speed.angular.z = goal_MAX_ALLOWED_ANGULAR_SPEED;
         m_strat_mvnt.reverse_gear = 2; // don't care
-        chooseEffector(false);
+        chooseEffector(false); // We want the center of the robot to be positionned
         // Zone de fouille
         // m_goal_pose.setPosition(m_strat_graph->positionCAbsolute(0.975f, 1.375f));
         // Zone de départ
-        m_goal_pose.setPosition(m_strat_graph->positionCAbsolute(Distance(1.5f-0.375f), Distance(1.525f)));
+        Etape* l_etape_funny = m_strat_graph->getBestAssietteForFunny();
+
+        //m_goal_pose.setPosition(m_strat_graph->positionCAbsolute(Distance(1.5f-0.375f), Distance(1.525f)));
+        m_goal_pose.setPosition(l_etape_funny->getPosition());
         publishGoal();
         return;
     }
