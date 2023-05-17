@@ -101,7 +101,7 @@ Coupe2023::Coupe2023(const bool isYellow)
         int pile_genoise_depart = Etape::makeEtape(
           new PileGateau(positionCAbsolute(1.125f, 0.725f), CoucheGateau::genoise_marron));
 
-        int intermediaire_depart = Etape::makeEtape(positionCAbsolute(0.4f, 0.6f));
+        int intermediaire_depart = Etape::makeEtape(positionCAbsolute(0.4f, 0.65f));
         int out_of_depose_cerise = Etape::makeEtape(positionCAbsolute(0.25f, 0.285f));
         Etape::get(campement)->addVoisins(out_of_depose_cerise, false);
 
