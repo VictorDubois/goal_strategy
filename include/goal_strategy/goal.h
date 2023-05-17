@@ -147,6 +147,7 @@ private:
     Etape::EtapeType m_previous_etape_type;
     bool m_action_aborted;
     float m_score_match;
+    float m_score_match_at_end;
     bool m_first_manche_a_air_done;
     bool m_servo_out;
     ros::Time m_moving_timeout_deadline;
@@ -171,4 +172,5 @@ private:
     std::thread m_running;
 
     int override_gear;
+    Assiette* m_assiette_funny = nullptr;
 };

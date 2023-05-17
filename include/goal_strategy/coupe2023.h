@@ -37,6 +37,8 @@ public:
 
     Position positionCAbsolute(double x_yellow_from_top_left, double y_yellow_from_top_left);
 
+    Assiette* getBestAssietteForFunny();
+
 private:
     int getScoreEtape(int i);
 

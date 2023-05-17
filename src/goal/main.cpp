@@ -827,8 +827,14 @@ void GoalStrat::publishScore()
         }
     }
 
-    m_actuators.set_score(l_score);
-    m_actuators2023.set_score(l_score);
+    if (m_remainig_time.toSec() > 0.0f)
+    {
+        m_score_match_at_end = l_score;
+    }
+
+    m_actuators.set_score(m_score_match_at_end);
+    m_actuators2023.set_score(m_score_match_at_end);
+    
 }
 
 /**
@@ -854,7 +860,7 @@ void GoalStrat::setMaxSpeedAtArrival()
     if (m_strat_graph->getEtapeEnCours()->getEtapeType() == Etape::EtapeType::POINT_PASSAGE)
     {
         // No need for complete stop at intermediate stops
-        m_strat_mvnt.max_speed_at_arrival = 0.0f;//0.1f;
+        m_strat_mvnt.max_speed_at_arrival = 0.1f;//0.1f;
     }
     else
     {
@@ -939,11 +945,29 @@ void GoalStrat::stateRun()
         m_strat_mvnt.max_speed.linear.x = 1.f;
         m_strat_mvnt.max_speed.angular.z = goal_MAX_ALLOWED_ANGULAR_SPEED;
         m_strat_mvnt.reverse_gear = 2; // don't care
-        chooseEffector(false);
+        chooseEffector(false); // We want the center of the robot to be positionned
         // Zone de fouille
         // m_goal_pose.setPosition(m_strat_graph->positionCAbsolute(0.975f, 1.375f));
         // Zone de départ
-        m_goal_pose.setPosition(m_strat_graph->positionCAbsolute(Distance(1.5f-0.375f), Distance(1.525f)));
+        if(m_assiette_funny == nullptr) // Not initialized yet
+        {
+            // try to update
+            m_assiette_funny = m_strat_graph->getBestAssietteForFunny();
+            if (m_assiette_funny != nullptr) // If no error
+            {
+                ROS_WARN_STREAM("best assiette found for funny: " << m_assiette_funny->getGoalPosition());
+            }
+        }
+
+        if(m_assiette_funny == nullptr)
+        {
+            ROS_ERROR_STREAM("FAIL getting best assiette for funny action, revert to default");
+            m_goal_pose.setPosition(m_strat_graph->positionCAbsolute(Distance(1.5f-0.375f), Distance(1.525f)));
+        }
+        else
+        {
+            m_goal_pose.setPosition(m_assiette_funny->getGoalPosition());
+        }
         publishGoal();
         return;
     }
@@ -1387,8 +1411,8 @@ void GoalStrat::init()
      *************************************************/
 
     // Initialize time
-    m_timeout_moving = 15; // sec
-    m_timeout_orient = 10; // sec
+    m_timeout_moving = 10; // sec
+    m_timeout_orient = 5; // sec
     m_is_first_action = true;
     m_servo_out = false;
 
