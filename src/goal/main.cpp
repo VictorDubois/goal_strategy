@@ -462,7 +462,7 @@ void GoalStrat::retractePusher()
 void GoalStrat::dropCherries()
 {
     m_servo_cherries->setAngle(110);
-    usleep(1.0e6);
+    usleep(5.0e6);
 }
 
 void GoalStrat::closeCherriesDispenser()
