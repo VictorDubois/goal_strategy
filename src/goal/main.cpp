@@ -455,8 +455,8 @@ void GoalStrat::pushCarreFouille()
 
 void GoalStrat::retractePusher()
 {
-    m_servo_pusher->setAngle(82);
-    usleep(0.6e6); // takes 330ms, with a x2 margin
+    //m_servo_pusher->setAngle(82);
+    //usleep(0.6e6); // takes 330ms, with a x2 margin
 }
 
 void GoalStrat::dropCherries()
@@ -531,10 +531,10 @@ GoalStrat::GoalStrat()
     if (m_year == 2022)
     {
         m_actuators.start();
+        retractePusher();
+        m_theThing->release_statuette();
     }
 
-    retractePusher();
-    m_theThing->release_statuette();
 
     while (false) // Test the grabber
     {
@@ -1343,7 +1343,6 @@ void GoalStrat::stateRun()
             break;
         default:
             //stopAngular();
-            retractePusher();
             ROS_INFO_STREAM("No special action here\n");
             break;
         }
