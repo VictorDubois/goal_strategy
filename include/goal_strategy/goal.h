@@ -173,4 +173,6 @@ private:
 
     int override_gear;
     Assiette* m_assiette_funny = nullptr;
+
+    bool m_claws_openned_once = false;
 };

@@ -444,6 +444,12 @@ void GoalStrat::goToNextMission()
         return;
     }
 
+    if (!m_claws_openned_once && m_strat_graph->getEtapeEnCours()->getEtapeType() == Etape::EtapeType::PILE_GATEAU)
+    {
+        m_claws->release_pile(false);
+        m_claws_openned_once = true;
+    }
+
     return;
 }
 
@@ -1455,7 +1461,6 @@ void GoalStrat::loop()
         if (m_state == State::WAIT_TIRETTE && m_tirette && m_remainig_time > ros::Duration(1, 0))
         {
             m_state = State::RUN;
-            m_claws->release_pile(false);
             dropCherries();
         }
         break;
