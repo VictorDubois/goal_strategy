@@ -56,7 +56,7 @@ void Claws::release_pile(bool a_do_sleep)
     {
         conditionnal_sleep(1e6, a_do_sleep);
     }
-    m_left_servo->set(120, 100);
+    m_left_servo->set(125, 100);
     conditionnal_sleep(1e6, a_do_sleep);
 }
 
