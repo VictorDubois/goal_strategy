@@ -582,7 +582,7 @@ void GoalStrat::publishAll()
      pthread_setname_np(pthread_self(), s.c_str());
     while (true)
     {
-        usleep(10000);
+        usleep(50000);
         updateCurrentPose();
         checkFunnyAction();
         checkStopMatch();
@@ -1495,7 +1495,7 @@ int main(int argc, char* argv[])
     ros::init(argc, argv, "goalStrat");
     GoalStrat goal_strat;
 
-    ros::Rate r(ros::Duration(0.01)); // 100 hz
+    ros::Rate r(ros::Duration(0.033)); // 100 hz
     int i = 0;
     goal_strat.loop();
     while (ros::ok())
