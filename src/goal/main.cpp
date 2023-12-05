@@ -172,7 +172,7 @@ void GoalStrat::write_stop_distance_modulation(std::string distanceToWrite) {
         }
 }
 
-void GoalStrat::updateCurrentPose(geometry_msgs::Pose newPose) {
+void GoalStrat::updateCurrentPose(geometry_msgs::msg::Pose newPose) {
 	currentPosition = PositionPlusAngle(newPose);
 }
 
@@ -236,11 +236,11 @@ GoalStrat::GoalStrat() {
 	ard_goToPosition(SERVO_RIGHT, UP);
 	ard_goToPosition(SERVO_LEFT, UP);
 
-	geometry_msgs::Point point1 = geometry_msgs::Point();
+	geometry_msgs::msg::Point point1 = geometry_msgs::msg::Point();
 	point1.x = 0;
 	point1.y = 0;
 	point1.z = 0;
-	std::vector<geometry_msgs::Point> etapes;
+	std::vector<geometry_msgs::msg::Point> etapes;
 	etapes.push_back(point1);
 
 	strat_graph = new Coupe2019(false, etapes);
@@ -255,7 +255,7 @@ GoalStrat::GoalStrat() {
 	timeoutOrient = 50;// sec
 	isFirstAction = true;
 	ros::NodeHandle n;
-    goal_pose_pub = n.advertise<geometry_msgs::Pose>("goal_pose", 1000);
+    goal_pose_pub = n.advertise<geometry_msgs::msg::Pose>("goal_pose", 1000);
 	current_pose_sub = n.subscribe("current_pose", 1000, &GoalStrat::updateCurrentPose, this);
 }
 

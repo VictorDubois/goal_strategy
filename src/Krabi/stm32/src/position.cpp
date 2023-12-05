@@ -153,16 +153,16 @@ Angle Position::getAngle() const
 }
 
 #ifdef USE_ROS
-geometry_msgs::Point Position::getPoint() const
+geometry_msgs::msg::Point Position::getPoint() const
 {
-	geometry_msgs::Point point;
+	geometry_msgs::msg::Point point;
         point.x = this->getX();
         point.y = this->getY();
         point.z = 0;
         return point;
 }
 
-Position::Position(const geometry_msgs::Point& position, bool colorDependent):Position(position.x, position.y, colorDependent)
+Position::Position(const geometry_msgs::msg::Point& position, bool colorDependent):Position(position.x, position.y, colorDependent)
 {
 	
 }

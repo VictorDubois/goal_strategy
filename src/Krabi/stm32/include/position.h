@@ -7,7 +7,7 @@
 
 #ifdef USE_IOSTREAM
 #include <iostream>
-#include "geometry_msgs/Point.h"
+#include "geometry_msgs/msg/point.hpp"
 #endif // USE_IOSTREAM
 
 class StrategieV2;
@@ -94,11 +94,11 @@ class Position
         Distance y;
 
 	#ifdef USE_ROS
-	/// @brief Conversion vers geometry_msgs::Point
-	geometry_msgs::Point getPoint() const;
+	/// @brief Conversion vers geometry_msgs::msg::Point
+	geometry_msgs::msg::Point getPoint() const;
 
-        /// @brief Constructeur depuis geometry_msgs::Point
-        Position(const geometry_msgs::Point&, bool colorDependent = false);
+        /// @brief Constructeur depuis geometry_msgs::msg::Point
+        Position(const geometry_msgs::msg::Point&, bool colorDependent = false);
 	#endif
 };
 

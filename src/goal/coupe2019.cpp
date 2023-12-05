@@ -104,8 +104,8 @@ void createEtapes(bool is_blue) {
 
 }
 
-Coupe2019::Coupe2019(const bool isYellow, const std::vector<geometry_msgs::Pose> etapesAsPoses) : StrategieV3(isYellow) {
-	std::vector<geometry_msgs::Point> etapesAsPoints;
+Coupe2019::Coupe2019(const bool isYellow, const std::vector<geometry_msgs::msg::Pose> etapesAsPoses) : StrategieV3(isYellow) {
+	std::vector<geometry_msgs::msg::Point> etapesAsPoints;
 	for (auto pose: etapesAsPoses) {
 		etapesAsPoints.push_back(pose.position);
 	}	
@@ -113,7 +113,7 @@ Coupe2019::Coupe2019(const bool isYellow, const std::vector<geometry_msgs::Pose>
 }
 
 //Coupe2019::Coupe2019(bool isYellow, Attractor* attractors, unsigned int sizeofAttractors) : StrategieV3(isYellow)
-Coupe2019::Coupe2019(const bool isYellow, const std::vector<geometry_msgs::Point> etapes_as_points) : StrategieV3(isYellow) {
+Coupe2019::Coupe2019(const bool isYellow, const std::vector<geometry_msgs::msg::Point> etapes_as_points) : StrategieV3(isYellow) {
 	//m_attractors = attractors;
 	
 	//Initialisation des tableaux d'étapes

@@ -22,8 +22,8 @@ public:
 	/** @brief Constructeur de la stratégie *
 	* @param isBlue le côté de départ */
 	//Coupe2019(bool isYellow, Attractor* attractors, unsigned int sizeofAttractors);
-	Coupe2019(bool isYellow, std::vector<geometry_msgs::Pose> etapes);
-	Coupe2019(bool isYellow, std::vector<geometry_msgs::Point> etapes);
+	Coupe2019(bool isYellow, std::vector<geometry_msgs::msg::Pose> etapes);
+	Coupe2019(bool isYellow, std::vector<geometry_msgs::msg::Point> etapes);
 
 private:
 

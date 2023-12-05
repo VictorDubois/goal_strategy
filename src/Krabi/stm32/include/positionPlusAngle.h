@@ -6,7 +6,7 @@
 #include "Krabi/vec3d.h"
 
 #ifdef USE_ROS
-#include "geometry_msgs/Pose.h"
+#include "geometry_msgs/msg/pose.hpp"
 #endif
 
 /// @brief Classe permettant d'avoir la position du robot par rapport à l'angle de la table et son angle par rapport à l'absisse.
@@ -78,11 +78,11 @@ class PositionPlusAngle
         Angle angle;
 
 	#ifdef USE_ROS
-	/// @brief Conversion vers geometry_msgs::Pose
-        geometry_msgs::Pose getPose() const;
+	/// @brief Conversion vers geometry_msgs::msg::Pose
+        geometry_msgs::msg::Pose getPose() const;
 
-        /// @brief Constructeur depuis geometry_msgs::Pose
-        PositionPlusAngle(const geometry_msgs::Pose&, bool colorDependent = false);
+        /// @brief Constructeur depuis geometry_msgs::msg::Pose
+        PositionPlusAngle(const geometry_msgs::msg::Pose&, bool colorDependent = false);
         #endif
 };
 
