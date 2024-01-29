@@ -106,6 +106,16 @@ PositionPlusAngle PositionPlusAngle::operator-(const Vec3d &vec3d) const
     return resultat;
 }
 
+geometry_msgs::msg::Quaternion createQuaternionMsgFromYaw(double yaw)
+{
+  geometry_msgs::msg::Quaternion q;
+  q.x = 0;
+  q.y = 0;
+  q.z = sin(0.5 * yaw);
+  q.w = cos(0.5 * yaw);
+  return q;
+}
+
 #ifdef USE_ROS
 geometry_msgs::msg::Pose PositionPlusAngle::getPose() const
 {
@@ -115,13 +125,13 @@ geometry_msgs::msg::Pose PositionPlusAngle::getPose() const
     point.y = position.getY();
     point.z = 0;
     pose.position = point;
-    pose.orientation = tf::createQuaternionMsgFromYaw(angle);
+    pose.orientation = createQuaternionMsgFromYaw(angle);
     return pose;
 }
 
 PositionPlusAngle::PositionPlusAngle(const geometry_msgs::msg::Pose& pose, bool colorDependent)
 {
     position = Position(pose.position, colorDependent);
-    angle = tf::getYaw(pose.orientation);
+    angle = 2*asin(pose.orientation.z);
 }
 #endif

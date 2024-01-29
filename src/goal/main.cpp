@@ -8,9 +8,9 @@
 //#include "Krabi/../../stratV3/include/strategie/etape.h"
 #include "Krabi/constantes.h"
 #include "goal_strategy/goal.h"
-#include "geometry_msgs/Pose.h"
-#include "geometry_msgs/Point.h"
-#include "tf/transform_datatypes.h"
+#include "geometry_msgs/msg/pose.hpp"
+#include "geometry_msgs/msg/point.hpp"
+//#include "tf/transform_datatypes.h"
 
 #define SERVO_RIGHT 0
 #define SERVO_LEFT  1
@@ -58,7 +58,7 @@ void GoalStrat::printCurrentAction() {
 
 // Entry point
 int main (int argc, char * argv[]) {
-	ros::init(argc, argv, "goalStrat");
+	rclcpp::init(argc, argv);
 	GoalStrat* goalStrat = new GoalStrat{};
 
 	goalStrat->loop();
@@ -115,7 +115,7 @@ void GoalStrat::move_toward_goal() {
 	Position goal_position = strat_graph->getEtapeEnCours()->getPosition();
 	goal_pose.setX(goal_position.getX());
 	goal_pose.setY(goal_position.getY());
-	goal_pose_pub.publish(goal_pose.getPose());
+	goal_pose_pub->publish(goal_pose.getPose());
 }
 
 unsigned int GoalStrat::get_angular_diff() {
@@ -202,7 +202,8 @@ void GoalStrat::go_to_next_mission() {
 	return;
 }
 
-GoalStrat::GoalStrat() {
+GoalStrat::GoalStrat() 
+: Node("goalStrat"){
 	// Initialize stop distance modulation
 	write_stop_distance_modulation("1");
 
@@ -254,9 +255,9 @@ GoalStrat::GoalStrat() {
 	timeoutMoving = 100;// sec
 	timeoutOrient = 50;// sec
 	isFirstAction = true;
-	ros::NodeHandle n;
-    goal_pose_pub = n.advertise<geometry_msgs::msg::Pose>("goal_pose", 1000);
-	current_pose_sub = n.subscribe("current_pose", 1000, &GoalStrat::updateCurrentPose, this);
+	//n= rclcpp::Node::make_shared("goalStrat");
+    goal_pose_pub = this->create_publisher<geometry_msgs::msg::Pose>("goal_pose", 1000);
+	current_pose_sub = this->create_subscription<geometry_msgs::msg::Pose>("current_pose", 1000, std::bind(&GoalStrat::updateCurrentPose, this, std::placeholders::_1));
 }
 
 
@@ -280,7 +281,7 @@ int GoalStrat::sendNewMission(StrategieV3* strat) {
 }
 
 int GoalStrat::loop() {	
-	while (state != EXIT && ros::ok()) {
+	while (state != EXIT && rclcpp::ok()) {
 		bool isLate = false;
 		printCurrentAction();
 		update_selected_attractor();
@@ -359,7 +360,7 @@ int GoalStrat::loop() {
 
 		usleep(20000);
 		
-		ros::spinOnce();
+		rclcpp::spin_some();
 	}
 	std::cout << "Mission accomplished, shutting down" << std::endl;	
 	fflush(stdout);

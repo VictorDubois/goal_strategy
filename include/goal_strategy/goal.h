@@ -14,7 +14,7 @@
 #include <ctime>
 //#include "goldo2018.h"
 #include "coupe2019.h"
-#include "ros/ros.h"
+#include "rclcpp/rclcpp.hpp"
 #define TRUE 1
 #define FALSE 0
 
@@ -47,7 +47,7 @@ enum PositionServo {
 	RELEASE
 };
 
-class GoalStrat
+class GoalStrat : public rclcpp::Node
 {
 public:
 	GoalStrat(); 
@@ -77,8 +77,9 @@ private:
 	bool is_baffe_action();
 	std::string read_stop_distance_modulation();
 	void write_stop_distance_modulation(std::string distanceToWrite);
-	ros::Publisher goal_pose_pub;
-	ros::Subscriber current_pose_sub;
+	//rclcpp::Node::SharedPtr n;
+	rclcpp::Publisher<geometry_msgs::msg::Pose>::SharedPtr goal_pose_pub;
+	rclcpp::Subscription<geometry_msgs::msg::Pose>::SharedPtr current_pose_sub;
 	PositionPlusAngle currentPosition;
 	PositionPlusAngle goal_pose;
 	void updateCurrentPose(geometry_msgs::msg::Pose);

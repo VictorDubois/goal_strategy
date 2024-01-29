@@ -12,9 +12,9 @@
 #include "Krabi/strategie/goldenium.h"
 #include "Krabi/strategie/accelerator.h"
 #include "Krabi/strategie/reservoirEau.h"
-#include <geometry_msgs/Point.h>
+#include <geometry_msgs/msg/point.hpp>
 
-#include <geometry_msgs/Pose.h>
+#include <geometry_msgs/msg/pose.hpp>
 
 class Coupe2019 : public StrategieV3
 {

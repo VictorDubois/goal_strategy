@@ -3,7 +3,7 @@
 #include <cmath>
 #define NB_NEURONS 360
 #define PI 3.14159265
-#include "ros/ros.h"
+#include "rclcpp/rclcpp.hpp"
 #include <cstdlib>
 
 #ifdef QTGUI
