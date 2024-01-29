@@ -203,7 +203,7 @@ void GoalStrat::go_to_next_mission() {
 }
 
 GoalStrat::GoalStrat() 
-: Node("goalStrat"){
+{
 	// Initialize stop distance modulation
 	write_stop_distance_modulation("1");
 
@@ -255,9 +255,9 @@ GoalStrat::GoalStrat()
 	timeoutMoving = 100;// sec
 	timeoutOrient = 50;// sec
 	isFirstAction = true;
-	//n= rclcpp::Node::make_shared("goalStrat");
-    goal_pose_pub = this->create_publisher<geometry_msgs::msg::Pose>("goal_pose", 1000);
-	current_pose_sub = this->create_subscription<geometry_msgs::msg::Pose>("current_pose", 1000, std::bind(&GoalStrat::updateCurrentPose, this, std::placeholders::_1));
+	node = rclcpp::Node::make_shared("goalStrat");
+    goal_pose_pub = node->create_publisher<geometry_msgs::msg::Pose>("goal_pose", 1000);
+	current_pose_sub = node->create_subscription<geometry_msgs::msg::Pose>("current_pose", 1000, std::bind(&GoalStrat::updateCurrentPose, this, std::placeholders::_1));
 }
 
 
@@ -360,7 +360,7 @@ int GoalStrat::loop() {
 
 		usleep(20000);
 		
-		rclcpp::spin_some();
+		rclcpp::spin_some(node);
 	}
 	std::cout << "Mission accomplished, shutting down" << std::endl;	
 	fflush(stdout);

@@ -47,7 +47,7 @@ enum PositionServo {
 	RELEASE
 };
 
-class GoalStrat : public rclcpp::Node
+class GoalStrat 
 {
 public:
 	GoalStrat(); 
@@ -77,7 +77,7 @@ private:
 	bool is_baffe_action();
 	std::string read_stop_distance_modulation();
 	void write_stop_distance_modulation(std::string distanceToWrite);
-	//rclcpp::Node::SharedPtr n;
+	rclcpp::Node::SharedPtr node;
 	rclcpp::Publisher<geometry_msgs::msg::Pose>::SharedPtr goal_pose_pub;
 	rclcpp::Subscription<geometry_msgs::msg::Pose>::SharedPtr current_pose_sub;
 	PositionPlusAngle currentPosition;
