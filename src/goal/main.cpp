@@ -1,6 +1,6 @@
 #include "goal_strategy/goal.h"
-#include <std_msgs/Float32.h>
-#include <std_msgs/UInt16.h>
+#include <std_msgs/msg/float32.hpp>
+#include <std_msgs/msg/uint16.hpp>
 
 #define goal_MAX_ALLOWED_ANGULAR_SPEED 5.f // rad/s
 

@@ -4,7 +4,7 @@
 #include "krabilib/position.h"
 
 #ifdef USE_ROS
-#include <geometry_msgs/Pose.h>
+#include <geometry_msgs/msg/pose.hpp>
 
 #endif
 
@@ -18,7 +18,7 @@ public:
      *@param Angle ang est l'angle du robot au moment ou l'on déclare la classe.*/
     Pose(const Position& pos, Angle ang);
 
-    Pose(const geometry_msgs::Transform& t);
+    Pose(const geometry_msgs::msg::Transform& t);
 
     /// @brief Constructeur par défault de la classe.
     Pose();
@@ -62,9 +62,9 @@ public:
     void setAngle(Angle a);
 
 #ifdef USE_ROS
-    /// @brief Conversion vers geometry_msgs::Pose
-    operator geometry_msgs::Pose() const;
-    Pose(const geometry_msgs::Pose& p);
+    /// @brief Conversion vers geometry_msgs::msg::Pose
+    operator geometry_msgs::msg::Pose() const;
+    Pose(const geometry_msgs::msg::Pose& p);
 #endif
 
 #ifdef USE_IOSTREAM

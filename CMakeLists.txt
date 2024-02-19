@@ -1,41 +1,73 @@
-cmake_minimum_required(VERSION 2.8.3)
+cmake_minimum_required(VERSION 3.5)
 project(goal_strategy)
 
-add_compile_options(-std=c++17)
+if(NOT CMAKE_CXX_STANDARD)
+  set(CMAKE_CXX_STANDARD 17)
+endif()
+if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
+  add_compile_options(-Wall -Wextra -Wpedantic)
+endif()
 
 add_definitions(-D STANDALONE_STRATEGIE)
 add_definitions(-D USE_ROS)
 add_definitions(-D USE_IOSTREAM)
+#set(ROS_BUILD_TYPE Debug)
 
-find_package(catkin REQUIRED COMPONENTS roscpp rospy std_msgs geometry_msgs
-                                        krabi_msgs tf tf_conversions eigen_conversions )
-find_package(Eigen3 REQUIRED)
-catkin_package(
-  INCLUDE_DIRS
-  include
-  LIBRARIES
-  krabilib
-  tf_conversions
-  eigen_conversions
-  CATKIN_DEPENDS
-  roscpp
-  rospy
-  std_msgs
-  geometry_msgs
-  krabi_msgs
-  tf
-  eigen_conversions
-  tf_conversions
-  DEPENDS
-  EIGEN3)
+find_package(ament_cmake REQUIRED)
+find_package(std_msgs REQUIRED)
+find_package(rosidl_default_generators REQUIRED)
+find_package(geometry_msgs REQUIRED)
+#find_package(sensor_msgs REQUIRED)
+find_package(rclcpp REQUIRED)
+find_package(rclpy REQUIRED)
+find_package(krabi_msgs REQUIRED)
+find_package(visualization_msgs REQUIRED)
+#find_package(krabilib REQUIRED)
+#find_package(tf_conversions REQUIRED)
+#find_package(eigen_conversions REQUIRED)
+find_package(tf2_eigen REQUIRED)
 
-include_directories(include ${catkin_INCLUDE_DIRS})
-include_directories(SYSTEM ${EIGEN3_INCLUDE_DIR})
+include_directories(include)
 
-add_executable(${PROJECT_NAME}_node src/goal/main.cpp src/goal/coupe2022.cpp src/goal/coupe2023.cpp src/goal/grabber.cpp src/goal/claws.cpp src/goal/servomotor.cpp src/goal/actuators.cpp src/goal/pump.cpp src/goal/actuators2023.cpp)
 
-file(GLOB_RECURSE krabilib_SRC "src/krabilib/*.cpp")
 
-add_library(krabilib ${krabilib_SRC})
+add_executable(goal_strategy_node 
+  src/goal/main.cpp
+  src/goal/actuators.cpp
+  src/goal/actuators2023.cpp
+  src/goal/claws.cpp
+  src/goal/coupe2021.cpp
+  src/goal/coupe2022.cpp
+  src/goal/coupe2023.cpp
+  src/goal/grabber.cpp
+  src/goal/pump.cpp
+  src/goal/servomotor.cpp
+  src/krabilib/angle.cpp  
+  src/krabilib/distance.cpp  
+  src/krabilib/position.cpp  
+  src/krabilib/strategie/abeille.cpp
+  src/krabilib/strategie/assiette.cpp
+  src/krabilib/strategie/bouee.cpp
+  src/krabilib/strategie/carreFouille.cpp
+  src/krabilib/strategie/galerie.cpp
+  src/krabilib/strategie/hexagon_plat.cpp
+  src/krabilib/strategie/dijkstra.cpp   
+  src/krabilib/strategie/strategiev3.cpp
+  src/krabilib/strategie/accelerator.cpp  
+  src/krabilib/strategie/etape.cpp      
+  src/krabilib/strategie/mediumLevelAction.cpp
+  src/krabilib/strategie/actionGoTo.cpp   
+  src/krabilib/strategie/goldenium.cpp  
+  src/krabilib/strategie/reservoirEau.cpp
+)
 
-target_link_libraries(${PROJECT_NAME}_node ${catkin_LIBRARIES} krabilib)
+
+
+ament_target_dependencies(goal_strategy_node rclcpp geometry_msgs std_msgs 
+krabi_msgs
+visualization_msgs
+#eigen_conversions
+tf2_eigen#_conversions
+#tf_conversions
+#sensor_msgs
+)

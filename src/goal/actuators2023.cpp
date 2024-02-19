@@ -1,6 +1,6 @@
 #include "../include/goal_strategy/actuators2023.h"
 
-Actuators2023::Actuators2023(ros::NodeHandle* a_nh,
+Actuators2023::Actuators2023(rclcpp::Node a_node,
                              std::string a_name,
                              std::shared_ptr<Servomotor> a_servo_cherries,
                              std::shared_ptr<Servomotor> a_claw_servo_left,
@@ -9,7 +9,7 @@ Actuators2023::Actuators2023(ros::NodeHandle* a_nh,
                              std::shared_ptr<Servomotor> a_grabber_servo_mid,
                              std::shared_ptr<Servomotor> a_grabber_servo_suction_cup,
                              std::shared_ptr<Pump> a_grabber_pump)
-  : m_nh(a_nh)
+  : m_node(a_node)
   , m_servo_cherries(a_servo_cherries)
   , m_claw_servo_left(a_claw_servo_left)
   , m_claw_servo_right(a_claw_servo_right)
@@ -20,7 +20,7 @@ Actuators2023::Actuators2023(ros::NodeHandle* a_nh,
 
 {
     m_disguise = false;
-    m_pub = m_nh->advertise<krabi_msgs::actuators>(a_name, 5);
+    m_pub = m_nh->advertise<krabi_msgs::msg::Actuators>(a_name, 5);
     m_shutdown = false;
 }
 

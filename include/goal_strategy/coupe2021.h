@@ -9,11 +9,11 @@
 #include "krabilib/strategie/goldenium.h"
 #include "krabilib/strategie/reservoirEau.h"
 #include "krabilib/strategie/strategiev3.h"
-#include <geometry_msgs/Point.h>
+#include <geometry_msgs/msg/point.hpp>
 
-#include <geometry_msgs/Pose.h>
-#include <visualization_msgs/Marker.h>
-#include <visualization_msgs/MarkerArray.h>
+#include <geometry_msgs/msg/pose.hpp>
+#include <visualization_msgs/msg/marker.hpp>
+#include <visualization_msgs/msg/marker_array.hpp>
 
 class Coupe2021 : public StrategieV3
 {
@@ -21,7 +21,7 @@ public:
     Coupe2021(bool isYellow);
     void setGoodMouillage(Etape::EtapeType good_mouillage);
     Etape::EtapeType getGoodMouillage();
-    void debugEtapes(visualization_msgs::MarkerArray& ma);
+    void debugEtapes(visualization_msgs::msg::MarkerArray& ma);
 
     Position positionCAbsolute(double x_yellow_from_top_left, double y_yellow_from_top_left);
 

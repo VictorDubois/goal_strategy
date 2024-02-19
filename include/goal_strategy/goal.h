@@ -7,14 +7,13 @@
 #include <stdlib.h>
 #include <thread>
 
-#include <geometry_msgs/PoseArray.h>
-#include <ros/ros.h>
-#include <std_msgs/Bool.h>
-#include <std_msgs/Duration.h>
-#include <std_msgs/Float32.h>
-#include <std_msgs/Int32.h>
+#include <geometry_msgs/msg/pose_array.hpp>
+#include "rclcpp/rclcpp.hpp"
+#include <std_msgs/msg/bool.hpp>
+#include <builtin_interfaces/msg/duration.hpp>
+#include <std_msgs/msg/float32.hpp>
+#include <std_msgs/msg/int32.hpp>
 
-#include <tf/transform_listener.h>
 #include <tf2_ros/transform_listener.h>
 
 #include "coupe2023.h"
@@ -22,8 +21,8 @@
 #include "goal_strategy/actuators2023.h"
 #include "goal_strategy/claws.h"
 #include "goal_strategy/grabber.h"
-#include "krabi_msgs/servos_cmd.h"
-#include "krabi_msgs/strat_movement.h"
+#include "krabi_msgs/msg/servos_cmd.hpp"
+#include "krabi_msgs/msg/strat_movement.hpp"
 #include "krabilib/pose.h"
 
 // The distance to a goal (in m)
@@ -78,9 +77,9 @@ private:
     void moveArm(enum PositionServo position);
     void setMaxSpeedAtArrival();
     void clamp_mode();
-    void recule(ros::Duration a_time);
-    void recule(ros::Duration a_time, Distance a_distance);
-    void reculeDroit(ros::Duration a_time, Distance a_distance);
+    void recule(rclcpp::Duration a_time);
+    void recule(rclcpp::Duration a_time, Distance a_distance);
+    void reculeDroit(rclcpp::Duration a_time, Distance a_distance);
     void stopAngular();
     void startAngular();
     void stopActuators();
@@ -91,10 +90,10 @@ private:
     bool checkFunnyAction();
 
     void updateCurrentPose();
-    void updateRemainingTime(std_msgs::Duration remainingTime);
-    void updateTirette(std_msgs::Bool tirette);
-    void updateVacuum(std_msgs::Float32 vacuum_msg);
-    void updateOtherRobots(geometry_msgs::PoseArray);
+    void updateRemainingTime(builtin_interfaces::msgs::duration remainingTime);
+    void updateTirette(std_msgs::msgs::bool tirette);
+    void updateVacuum(std_msgs::msgs::float32 vacuum_msg);
+    void updateOtherRobots(geometry_msgs::msgs::pose_array);
 
     bool isAlignedWithAngle(Angle angle);
     bool isArrivedAtGoal(Distance a_offset);
@@ -121,28 +120,27 @@ private:
     long m_timeout_moving, m_timeout_orient;
     bool m_is_first_action;
 
-    ros::NodeHandle m_nh;
+    rclcpp::Node::SharedPtr m_nh;
 
-    ros::Publisher m_goal_pose_pub;
-    ros::Publisher m_arm_servo_pub;
-    ros::Publisher m_stop_linear_pub;
-    ros::Publisher m_score_pub;
-    ros::Publisher m_debug_ma_etapes_pub;
-    ros::Publisher m_strat_movement_pub;
+    rclcpp::Publisher<geometry_msgs::msg::Pose>::SharedPtr m_goal_pose_pub;
+    rclcpp::Publisher<geometry_msgs::msg::Pose>::SharedPtr m_arm_servo_pub;
+    rclcpp::Publisher<geometry_msgs::msg::Pose>::SharedPtr m_stop_linear_pub;
+    //rclcpp::Publisher<geometry_msgs::msg::Pose>::SharedPtr m_score_pub;
+    rclcpp::Publisher<geometry_msgs::msg::Pose>::SharedPtr m_debug_ma_etapes_pub;
+    rclcpp::Publisher<geometry_msgs::msg::Pose>::SharedPtr m_strat_movement_pub;
 
-    ros::Subscriber m_remaining_time_match_sub;
-    ros::Subscriber m_tirette_sub;
-    ros::Subscriber m_vacuum_sub;
-    ros::Subscriber m_weathercock_state_sub;
-    ros::Subscriber m_other_robots_sub;
+    rclcpp::Subscription<std_msgs::msg::duration>::SharedPtr m_remaining_time_match_sub;
+    rclcpp::Subscription<std_msgs::msg::bool>::SharedPtr m_tirette_sub;
+    rclcpp::Subscription<std_msgs::msg::float32>::SharedPtr m_vacuum_sub;
+    rclcpp::Subscription<geometry_msgs::msg::PoseArray>::SharedPtr m_other_robots_sub;
 
     tf2_ros::Buffer m_tf_buffer;
     tf2_ros::TransformListener m_tf_listener;
     Pose m_current_pose;
     Pose m_goal_pose;
 
-    krabi_msgs::servos_cmd m_servos_cmd;
-    ros::Duration m_remainig_time;
+    krabi_msgs::msg::servos_cmd m_servos_cmd;
+    rclcpp::Duration m_remainig_time;
     bool m_is_blue; // true if blue
     Etape::EtapeType m_previous_etape_type;
     bool m_action_aborted;
@@ -150,9 +148,9 @@ private:
     float m_score_match_at_end;
     bool m_first_manche_a_air_done;
     bool m_servo_out;
-    ros::Time m_moving_timeout_deadline;
+    rclcpp::Time m_moving_timeout_deadline;
     bool m_funny_action_counted;
-    krabi_msgs::strat_movement m_strat_mvnt;
+    krabi_msgs::msg::strat_movement m_strat_mvnt;
     bool m_tirette;
     float m_vacuum_level;
     int m_vacuum_state;

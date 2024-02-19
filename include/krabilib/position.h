@@ -8,8 +8,8 @@
 #endif
 
 #ifdef USE_ROS
-#include <geometry_msgs/Point.h>
-#include <geometry_msgs/Transform.h>
+#include <geometry_msgs/msg/point.hpp>
+#include <geometry_msgs/msg/transform.hpp>
 #endif
 typedef Eigen::Matrix3d Transform;
 typedef Eigen::Affine3d Transform3D;
@@ -91,8 +91,8 @@ public:
     Position transform(const Transform3D& t);
 
 #ifdef USE_ROS
-    Position(const geometry_msgs::Point& p);
-    operator geometry_msgs::Point() const;
+    Position(const geometry_msgs::msg::Point& p);
+    operator geometry_msgs::msg::Point() const;
 #endif
 
 #ifdef USE_IOSTREAM
@@ -137,6 +137,6 @@ class PolarPosition{
 };
 
 #ifdef USE_ROS
-    Transform transformFromMsg(const geometry_msgs::Transform& t);
-    Transform3D transform3DFromMsg(const geometry_msgs::Transform& t);
+    Transform transformFromMsg(const geometry_msgs::msg::Transform& t);
+    Transform3D transform3DFromMsg(const geometry_msgs::msg::Transform& t);
 #endif

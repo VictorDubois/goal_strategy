@@ -9,8 +9,7 @@
 
 #include <cmath>
 #include <iostream>
-#include <ros/ros.h>
-#include <tf/transform_listener.h>
+#include "rclcpp/rclcpp.hpp"
 #include <tf2_ros/transform_listener.h>
 
 #ifdef QTGUI
@@ -141,13 +140,13 @@ void Coupe2021::setGoodMouillage(Etape::EtapeType a_good_mouillage)
  * @param m output marker
  * @param e input etape
  */
-void etape_type_to_marker(visualization_msgs::Marker& m, const Etape::EtapeType& e)
+void etape_type_to_marker(visualization_msgs::msg::Marker& m, const Etape::EtapeType& e)
 {
     auto& color = m.color;
     m.scale.x = 0.05;
     m.scale.y = 0.05;
     m.scale.z = 0.05;
-    m.type = visualization_msgs::Marker::CUBE;
+    m.type = visualization_msgs::msg::Marker::CUBE;
 
     switch (e)
     {
@@ -196,7 +195,7 @@ void etape_type_to_marker(visualization_msgs::Marker& m, const Etape::EtapeType&
         m.scale.x = 0.01;
         m.scale.y = 0.01;
         m.scale.z = 0.01;
-        m.type = visualization_msgs::Marker::SPHERE;
+        m.type = visualization_msgs::msg::Marker::SPHERE;
 
         break;
     case Etape::EtapeType::ROBOT_VU_ICI:
@@ -216,7 +215,7 @@ void etape_type_to_marker(visualization_msgs::Marker& m, const Etape::EtapeType&
  *
  * @param ma marker array
  */
-void Coupe2021::debugEtapes(visualization_msgs::MarkerArray& ma)
+void Coupe2021::debugEtapes(visualization_msgs::msg::MarkerArray& ma)
 {
 
     uint i = 0;
@@ -226,12 +225,12 @@ void Coupe2021::debugEtapes(visualization_msgs::MarkerArray& ma)
         {
 
             // Display etape
-            visualization_msgs::Marker m;
+            visualization_msgs::msg::Marker m;
             m.header.frame_id = "map";
             m.header.seq = m_seq++;
             m.ns = "debug_etapes";
             m.id = i++;
-            m.action = visualization_msgs::Marker::MODIFY;
+            m.action = visualization_msgs::msg::Marker::MODIFY;
             m.pose = Pose(etape->getPosition(), Angle(0));
             etape_type_to_marker(m, etape->getEtapeType());
 
@@ -240,7 +239,7 @@ void Coupe2021::debugEtapes(visualization_msgs::MarkerArray& ma)
                 m.scale.z *= 10;
             }
 
-            m.lifetime = ros::Duration(0); // Does not disapear
+            m.lifetime = rclcpp::Duration(0); // Does not disapear
             m.frame_locked = true;
             ma.markers.push_back(m);
 
@@ -258,8 +257,8 @@ void Coupe2021::debugEtapes(visualization_msgs::MarkerArray& ma)
                 Angle l_direction = l_segment.getAngle();
                 double l_distance = l_segment.getNorme();
 
-                visualization_msgs::Marker line;
-                line.type = visualization_msgs::Marker::CUBE;
+                visualization_msgs::msg::Marker line;
+                line.type = visualization_msgs::msg::Marker::CUBE;
                 line.pose = Pose(mid_way, l_direction);
                 line.scale.x = l_distance;
                 line.scale.y = 0.01;
@@ -268,9 +267,9 @@ void Coupe2021::debugEtapes(visualization_msgs::MarkerArray& ma)
                 line.color.g = 0;
                 line.color.b = 0;
                 line.color.a = 0.5;
-                line.lifetime = ros::Duration(0); // Does not disapear
+                line.lifetime = rclcpp::Duration(0); // Does not disapear
                 line.frame_locked = true;
-                line.action = visualization_msgs::Marker::MODIFY;
+                line.action = visualization_msgs::msg::Marker::MODIFY;
                 line.ns = "debug_etapes";
                 line.header.frame_id = "map";
                 line.header.seq = m_seq++;

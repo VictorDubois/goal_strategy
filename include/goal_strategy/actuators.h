@@ -1,18 +1,18 @@
 #pragma once
 #include "grabber.h"
-#include "krabi_msgs/actuators.h"
+#include "krabi_msgs/msg/actuators.hpp"
 #include "pump.h"
 #include "servomotor.h"
-#include <ros/ros.h>
+#include "rclcpp/rclcpp.hpp"
 #include <thread>
 
 class Actuators
 
 {
 private:
-    ros::Publisher m_pub;
-    ros::NodeHandle* m_nh;
-    krabi_msgs::actuators m_message;
+    rclcpp::Publisher<krabi_msgs::msg::Actuators>::SharedPtr m_pub;
+    rclcpp::Node::SharedPtr m_node;
+    krabi_msgs::msg::Actuators m_message;
     std::shared_ptr<Servomotor> m_servo_pusher;
     std::shared_ptr<Pump> m_fake_statuette_pump;
     std::shared_ptr<Servomotor> m_grabber_servo_base;
@@ -29,7 +29,7 @@ private:
 
 public:
     Actuators(){};
-    Actuators(ros::NodeHandle* a_nh,
+    Actuators(rclcpp::Node::SharedPtr a_node,
               std::string a_name,
               std::shared_ptr<Servomotor> a_servo_pusher,
               std::shared_ptr<Pump> a_fake_statuette_pump,
