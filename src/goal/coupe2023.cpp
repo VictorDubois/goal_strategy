@@ -449,7 +449,7 @@ void Coupe2023::debugEtapes(visualization_msgs::msg::MarkerArray& ma)
  */
 int Coupe2023::getScoreEtape(int i)
 {
-    ROS_INFO_STREAM("getScoreEtape. Time: " << getRemainingTime() << std::endl);
+    RCLCPP_INFO_STREAM(rclcpp::get_logger("rclcpp"), "getScoreEtape. Time: " << getRemainingTime() << std::endl);
     int l_score = 0;
     Assiette* l_assiette;
     Owner l_owner;

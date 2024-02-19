@@ -24,7 +24,7 @@ Actuators::Actuators(rclcpp::Node a_node,
 void Actuators::start()
 {
     m_running = std::thread(&Actuators::run, this);
-    ROS_INFO("actuators running");
+    RCLCPP_INFO(rclcpp::get_logger("rclcpp"), "actuators running");
 }
 
 void Actuators::run()

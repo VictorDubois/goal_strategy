@@ -131,7 +131,7 @@ void Coupe2021::setGoodMouillage(Etape::EtapeType a_good_mouillage)
     m_good_mouillage = a_good_mouillage;
     m_numero_etape_garage
       = a_good_mouillage == Etape::EtapeType::MOUILLAGE_SUD ? m_south_id : m_north_id;
-    ROS_WARN_STREAM("GOOD MOUILLAGE SET: " << m_good_mouillage << std::endl);
+    RCLCPP_WARN_STREAM(rclcpp::get_logger("rclcpp"), "GOOD MOUILLAGE SET: " << m_good_mouillage << std::endl);
 }
 
 /**
@@ -288,7 +288,7 @@ void Coupe2021::debugEtapes(visualization_msgs::msg::MarkerArray& ma)
  */
 int Coupe2021::getScoreEtape(int i)
 {
-    ROS_WARN_STREAM("getScoreEtape. Time: " << getRemainingTime() << ", GOOD MOUILLAGE = "
+    RCLCPP_WARN_STREAM(rclcpp::get_logger("rclcpp"), "getScoreEtape. Time: " << getRemainingTime() << ", GOOD MOUILLAGE = "
                                             << m_good_mouillage << std::endl);
     int l_score = 0;
     switch (this->m_tableau_etapes_total[i]->getEtapeType())

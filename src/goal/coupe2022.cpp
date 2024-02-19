@@ -294,7 +294,7 @@ void Coupe2022::debugEtapes(visualization_msgs::msg::MarkerArray& ma)
  */
 int Coupe2022::getScoreEtape(int i)
 {
-    ROS_INFO_STREAM("getScoreEtape. Time: " << getRemainingTime() << std::endl);
+    RCLCPP_INFO_STREAM(rclcpp::get_logger("rclcpp"), "getScoreEtape. Time: " << getRemainingTime() << std::endl);
     int l_score = 0;
     switch (this->m_tableau_etapes_total[i]->getEtapeType())
     {

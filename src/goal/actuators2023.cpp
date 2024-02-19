@@ -27,7 +27,7 @@ Actuators2023::Actuators2023(rclcpp::Node a_node,
 void Actuators2023::start()
 {
     m_running = std::thread(&Actuators2023::run, this);
-    ROS_INFO("actuators 2023 running");
+    RCLCPP_INFO(rclcpp::get_logger("rclcpp"), "actuators 2023 running");
 }
 
 void Actuators2023::run()

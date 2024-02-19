@@ -77,7 +77,7 @@ void GoalStrat::recule(ros::Duration a_time, Distance a_distance)
     updateCurrentPose();
     auto l_initial_pose = m_current_pose.getPosition();
 
-    ROS_INFO_STREAM("recule !!");
+    RCLCPP_INFO_STREAM(rclcpp::get_logger("rclcpp"), "recule !!");
     recalage_bordure();
     //m_strat_mvnt.reverse_gear = 1;
     override_gear = 1;
@@ -101,7 +101,7 @@ void GoalStrat::reculeDroit(ros::Duration a_time, Distance a_distance)
     updateCurrentPose();
     auto l_initial_pose = m_current_pose.getPosition();
 
-    ROS_INFO_STREAM("recule !!");
+    RCLCPP_INFO_STREAM(rclcpp::get_logger("rclcpp"), "recule !!");
     //recalage_bordure();
     //m_strat_mvnt.reverse_gear = 1;
     override_gear = 1;
@@ -329,7 +329,7 @@ void GoalStrat::updateCurrentPose()
     }
     catch (tf2::TransformException& ex)
     {
-        ROS_WARN("%s", ex.what());
+        RCLCPP_WARN(rclcpp::get_logger("rclcpp"), "%s", ex.what());
     }
 
     ROS_DEBUG_STREAM("updateCurrentPose: " << m_current_pose << std::endl);
@@ -424,10 +424,10 @@ void GoalStrat::goToNextMission()
 
     int strat_graph_status = m_strat_graph->update();
 
-    ROS_INFO_STREAM("New intermediate: " << m_strat_graph->getEtapeEnCours()->getNumero()
+    RCLCPP_INFO_STREAM(rclcpp::get_logger("rclcpp"), "New intermediate: " << m_strat_graph->getEtapeEnCours()->getNumero()
                                          << ", which is a "
                                          << m_strat_graph->getEtapeEnCours()->getEtapeType());
-    ROS_INFO_STREAM("New objective: " << m_strat_graph->getGoal()->getNumero() << ", which is a "
+    RCLCPP_INFO_STREAM(rclcpp::get_logger("rclcpp"), "New objective: " << m_strat_graph->getGoal()->getNumero() << ", which is a "
                                       << m_strat_graph->getGoal()->getEtapeType());
 
     // Long actions
@@ -439,7 +439,7 @@ void GoalStrat::goToNextMission()
     if (strat_graph_status == -1)
     {
         ROS_DEBUG_STREAM("Graph status is -1: we're done");
-        ROS_INFO("All goals accomplished");
+        RCLCPP_INFO(rclcpp::get_logger("rclcpp"), "All goals accomplished");
         m_state = State::EXIT;
         return;
     }
@@ -672,7 +672,7 @@ void GoalStrat::checkStopMatch()
 
     if (m_remainig_time.toSec() < stop_timing.toSec())
     {
-        ROS_INFO_STREAM("Match ended, stopping the actuators");
+        RCLCPP_INFO_STREAM(rclcpp::get_logger("rclcpp"), "Match ended, stopping the actuators");
         stopActuators();
         m_state = State::EXIT;
         m_strat_mvnt.max_speed.linear.x = 0;
@@ -690,7 +690,7 @@ bool GoalStrat::checkFunnyAction()
 
     if (m_remainig_time.toSec() < funny_action_timing.toSec())
     {
-        ROS_INFO_STREAM("Doing the funny action");
+        RCLCPP_INFO_STREAM(rclcpp::get_logger("rclcpp"), "Doing the funny action");
         return true;
     }
     return false;
@@ -961,7 +961,7 @@ void GoalStrat::stateRun()
             m_assiette_funny = m_strat_graph->getBestAssietteForFunny();
             if (m_assiette_funny != nullptr) // If no error
             {
-                ROS_WARN_STREAM("best assiette found for funny: " << m_assiette_funny->getGoalPosition());
+                RCLCPP_WARN_STREAM(rclcpp::get_logger("rclcpp"), "best assiette found for funny: " << m_assiette_funny->getGoalPosition());
             }
         }
 
@@ -989,7 +989,7 @@ void GoalStrat::stateRun()
     if (!m_is_first_action && (ros::Time::now() >= m_moving_timeout_deadline))
     {
         isLate = true;
-        ROS_INFO_STREAM("Robot is late (spent more than "
+        RCLCPP_INFO_STREAM(rclcpp::get_logger("rclcpp"), "Robot is late (spent more than "
                         << m_timeout_moving << "seconds trying to reach destination)" << std::endl);
     }
 
@@ -1038,17 +1038,17 @@ void GoalStrat::stateRun()
             target_angle = (l_coin - m_current_pose.getPosition()).getAngle();
 
             l_has_timed_out = alignWithAngleWithTimeout(Angle(target_angle));
-            ROS_INFO_STREAM("In front of STATUETTE, orienting towards" << target_angle
+            RCLCPP_INFO_STREAM(rclcpp::get_logger("rclcpp"), "In front of STATUETTE, orienting towards" << target_angle
                                                                        << std::endl);
 
             if (l_has_timed_out)
             {
                 m_action_aborted = true;
-                ROS_WARN_STREAM("orienting toward STATUETTE has timed out :(" << std::endl);
+                RCLCPP_WARN_STREAM(rclcpp::get_logger("rclcpp"), "orienting toward STATUETTE has timed out :(" << std::endl);
             }
             stopAngular();
 
-            ROS_INFO_STREAM("Recalage bordure statuette" << std::endl);
+            RCLCPP_INFO_STREAM(rclcpp::get_logger("rclcpp"), "Recalage bordure statuette" << std::endl);
             startLinear();
             recalage_bordure();
             publishStratMovement();
@@ -1063,13 +1063,13 @@ void GoalStrat::stateRun()
             clamp_mode();
             publishStratMovement();
 
-            ROS_INFO_STREAM("Grabing STATUETTE" << std::endl);
+            RCLCPP_INFO_STREAM(rclcpp::get_logger("rclcpp"), "Grabing STATUETTE" << std::endl);
 
             m_theThing->grab_statuette();
-            ROS_INFO_STREAM("STATUETTE caught" << std::endl);
+            RCLCPP_INFO_STREAM(rclcpp::get_logger("rclcpp"), "STATUETTE caught" << std::endl);
 
             stopAngular();
-            ROS_INFO_STREAM("Ecartement bordure statuette" << std::endl);
+            RCLCPP_INFO_STREAM(rclcpp::get_logger("rclcpp"), "Ecartement bordure statuette" << std::endl);
             startLinear();
             recalage_bordure();
             //m_strat_mvnt.reverse_gear = 1;
@@ -1104,16 +1104,16 @@ void GoalStrat::stateRun()
             target_angle = (l_position_vitrine - m_current_pose.getPosition()).getAngle();
 
             l_has_timed_out = alignWithAngleWithTimeout(Angle(target_angle));
-            ROS_INFO_STREAM("In front of VITRINE, orienting towards" << target_angle << std::endl);
+            RCLCPP_INFO_STREAM(rclcpp::get_logger("rclcpp"), "In front of VITRINE, orienting towards" << target_angle << std::endl);
 
             if (l_has_timed_out)
             {
                 m_action_aborted = true;
-                ROS_WARN_STREAM("orienting toward VITRINE has timed out :(" << std::endl);
+                RCLCPP_WARN_STREAM(rclcpp::get_logger("rclcpp"), "orienting toward VITRINE has timed out :(" << std::endl);
             }
             stopAngular();
 
-            ROS_INFO_STREAM("Recalage bordure statuette" << std::endl);
+            RCLCPP_INFO_STREAM(rclcpp::get_logger("rclcpp"), "Recalage bordure statuette" << std::endl);
             startLinear();
             recalage_bordure();
             publishStratMovement();
@@ -1127,14 +1127,14 @@ void GoalStrat::stateRun()
 
             clamp_mode();
             publishStratMovement();
-            ROS_INFO_STREAM("Dropping STATUETTE" << std::endl);
+            RCLCPP_INFO_STREAM(rclcpp::get_logger("rclcpp"), "Dropping STATUETTE" << std::endl);
 
             m_theThing->release_statuette();
 
-            ROS_INFO_STREAM("STATUETTE dropped" << std::endl);
+            RCLCPP_INFO_STREAM(rclcpp::get_logger("rclcpp"), "STATUETTE dropped" << std::endl);
 
             stopAngular();
-            ROS_INFO_STREAM("Ecartement bordure vitrine" << std::endl);
+            RCLCPP_INFO_STREAM(rclcpp::get_logger("rclcpp"), "Ecartement bordure vitrine" << std::endl);
             startLinear();
             recalage_bordure();
             //m_strat_mvnt.reverse_gear = 1;
@@ -1154,7 +1154,7 @@ void GoalStrat::stateRun()
             break;
 
         case Etape::CARRE_FOUILLE:
-            ROS_INFO_STREAM("In front of CARRE_FOUILLE, orienting" << std::endl);
+            RCLCPP_INFO_STREAM(rclcpp::get_logger("rclcpp"), "In front of CARRE_FOUILLE, orienting" << std::endl);
             stopLinear();
 
             if (!m_is_blue)
@@ -1167,19 +1167,19 @@ void GoalStrat::stateRun()
             if (l_has_timed_out)
             {
                 m_action_aborted = true;
-                ROS_WARN_STREAM("orienting toward CARRE_FOUILLE has timed out :(" << std::endl);
+                RCLCPP_WARN_STREAM(rclcpp::get_logger("rclcpp"), "orienting toward CARRE_FOUILLE has timed out :(" << std::endl);
             }
             stopAngular();
             clamp_mode();
             publishStratMovement();
 
-            ROS_INFO_STREAM("Pushing CARRE_FOUILLE" << std::endl);
+            RCLCPP_INFO_STREAM(rclcpp::get_logger("rclcpp"), "Pushing CARRE_FOUILLE" << std::endl);
 
             pushCarreFouille();
 
             retractePusher();
 
-            ROS_INFO_STREAM("CARRE_FOUILLE done" << std::endl);
+            RCLCPP_INFO_STREAM(rclcpp::get_logger("rclcpp"), "CARRE_FOUILLE done" << std::endl);
 
             startAngular();
             startLinear();
@@ -1189,7 +1189,7 @@ void GoalStrat::stateRun()
 
             stopLinear();
 
-            ROS_INFO_STREAM("In front of Manche A Air, orienting" << std::endl);
+            RCLCPP_INFO_STREAM(rclcpp::get_logger("rclcpp"), "In front of Manche A Air, orienting" << std::endl);
 
             l_has_timed_out = alignWithAngleWithTimeout(Angle(-M_PI / 2));
             ROS_WARN_STREAM_COND(l_has_timed_out, "Timeout while orienting");
@@ -1221,7 +1221,7 @@ void GoalStrat::stateRun()
             }
             publishStratMovement();
 
-            ROS_INFO_STREAM("Start Manche A Air" << std::endl);
+            RCLCPP_INFO_STREAM(rclcpp::get_logger("rclcpp"), "Start Manche A Air" << std::endl);
 
             if (!m_is_blue)
             {
@@ -1252,17 +1252,17 @@ void GoalStrat::stateRun()
 
             startLinear();
 
-            ROS_INFO_STREAM("Manche A Air Done" << std::endl);
+            RCLCPP_INFO_STREAM(rclcpp::get_logger("rclcpp"), "Manche A Air Done" << std::endl);
             break;
         case Etape::EtapeType::PHARE:
             stopLinear();
 
-            ROS_INFO_STREAM("In front of Phare, orienting" << std::endl);
+            RCLCPP_INFO_STREAM(rclcpp::get_logger("rclcpp"), "In front of Phare, orienting" << std::endl);
             ROS_WARN_STREAM_COND(
               alignWithAngleWithTimeout((l_phare - m_current_pose.getPosition()).getAngle()),
               "Timeout while orienting");
 
-            ROS_INFO_STREAM("MOVING SERVO DOWN" << std::endl);
+            RCLCPP_INFO_STREAM(rclcpp::get_logger("rclcpp"), "MOVING SERVO DOWN" << std::endl);
             stopAngular();
             publishStratMovement();
             moveArm(DOWN);
@@ -1270,33 +1270,33 @@ void GoalStrat::stateRun()
             moveArm(DOWN);
             usleep(0.5e6);
 
-            ROS_INFO_STREAM("MOVING SERVO UP" << std::endl);
+            RCLCPP_INFO_STREAM(rclcpp::get_logger("rclcpp"), "MOVING SERVO UP" << std::endl);
             moveArm(UP);
             usleep(1.5e6);
-            ROS_INFO_STREAM("Phare Done" << std::endl);
+            RCLCPP_INFO_STREAM(rclcpp::get_logger("rclcpp"), "Phare Done" << std::endl);
             startAngular();
             break;
         case Etape::EtapeType::BOUEE:
             stopLinear();
-            ROS_INFO_STREAM("Orienting grabber" << std::endl);
+            RCLCPP_INFO_STREAM(rclcpp::get_logger("rclcpp"), "Orienting grabber" << std::endl);
             ROS_WARN_STREAM_COND(
               alignWithAngleWithTimeout(
                 Angle((m_goal_pose.getPosition() - m_current_pose.getPosition()).getAngle()
                       - m_theThing->getAngle())),
               "Timeout while orienting");
             m_theThing->grab_hexagon(GrabberContent::ANY);
-            ROS_INFO_STREAM("Bouee grabbed" << std::endl);
+            RCLCPP_INFO_STREAM(rclcpp::get_logger("rclcpp"), "Bouee grabbed" << std::endl);
             break;
         case Etape::EtapeType::PORT:
             m_theThing->release_hexagon_on_ground(GrabberContent::ANY);
-            ROS_INFO_STREAM("Bouee released" << std::endl);
+            RCLCPP_INFO_STREAM(rclcpp::get_logger("rclcpp"), "Bouee released" << std::endl);
             break;
 
         case Etape::EtapeType::ASSIETTE:
             m_score_match += m_strat_graph->dropGateau(m_strat_graph->getEtapeEnCours());
             stopLinear();
 
-            /*ROS_INFO_STREAM("Orienting grabber" << std::endl);
+            /*RCLCPP_INFO_STREAM(rclcpp::get_logger("rclcpp"), "Orienting grabber" << std::endl);
             ROS_WARN_STREAM_COND(
               alignWithAngleWithTimeout(
                 Angle((m_goal_pose.getPosition() - m_current_pose.getPosition()).getAngle()
@@ -1312,7 +1312,7 @@ void GoalStrat::stateRun()
 
             reculeDroit(ros::Duration(3), Distance(0.14));
 
-            ROS_INFO_STREAM("Assiete" << std::endl);
+            RCLCPP_INFO_STREAM(rclcpp::get_logger("rclcpp"), "Assiete" << std::endl);
             break;
 
         case Etape::EtapeType::PILE_GATEAU:
@@ -1324,7 +1324,7 @@ void GoalStrat::stateRun()
             m_claws->release_pile();
             //m_strat_mvnt.reverse_gear = 0;
             override_gear = 0;
-            ROS_INFO_STREAM("Orienting grabber" << std::endl);
+            RCLCPP_INFO_STREAM(rclcpp::get_logger("rclcpp"), "Orienting grabber" << std::endl);
             ROS_WARN_STREAM_COND(
               alignWithAngleWithTimeout(
                 Angle((m_goal_pose.getPosition() - m_current_pose.getPosition()).getAngle()
@@ -1335,21 +1335,21 @@ void GoalStrat::stateRun()
 
             // Approche
             startLinear(); // est ce que ça suffit à le faire avancer ?
-            ROS_INFO_STREAM("Grabber approching" << std::endl);
+            RCLCPP_INFO_STREAM(rclcpp::get_logger("rclcpp"), "Grabber approching" << std::endl);
             ROS_WARN_STREAM_COND(isArrivedAtGoal(), "Timeout while advancing");
             m_claws->grab_pile();
-            ROS_INFO_STREAM("Pile Gateau" << std::endl);
+            RCLCPP_INFO_STREAM(rclcpp::get_logger("rclcpp"), "Pile Gateau" << std::endl);
             override_gear = 2;*/
             publishStratMovement();
             m_claws->grab_pile();
             m_claws->setInside();
-            ROS_INFO_STREAM("Pile Gateau caught" << std::endl);
+            RCLCPP_INFO_STREAM(rclcpp::get_logger("rclcpp"), "Pile Gateau caught" << std::endl);
             startLinear();
 
             break;
         default:
             //stopAngular();
-            ROS_INFO_STREAM("No special action here\n");
+            RCLCPP_INFO_STREAM(rclcpp::get_logger("rclcpp"), "No special action here\n");
             break;
         }
         goToNextMission();
@@ -1360,7 +1360,7 @@ void GoalStrat::stateRun()
         // Then it means that there is an obstacle on the way
         // The first action is excluded because we wait for the tirette (+ no reason for an
         // opponent + no other way)
-        ROS_INFO_STREAM("Timeout, probable obstacle on the way. Trying another path." << std::endl);
+        RCLCPP_INFO_STREAM(rclcpp::get_logger("rclcpp"), "Timeout, probable obstacle on the way. Trying another path." << std::endl);
         abortAction();
         goToNextMission();
 
@@ -1383,7 +1383,7 @@ void GoalStrat::stateExit()
 {
     stopActuators();
     publishScore();
-    ROS_INFO_STREAM("Mission finished, turning off actuators");
+    RCLCPP_INFO_STREAM(rclcpp::get_logger("rclcpp"), "Mission finished, turning off actuators");
 }
 
 /**
