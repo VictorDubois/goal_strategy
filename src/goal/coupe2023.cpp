@@ -379,7 +379,7 @@ void Coupe2023::debugEtapes(visualization_msgs::msg::MarkerArray& ma)
             // Display etape
             visualization_msgs::msg::Marker m;
             m.header.frame_id = "map";
-            m.header.seq = m_seq++;
+            //m.header.seq = m_seq++;
             m.ns = "debug_etapes";
             m.id = i++;
             m.action = visualization_msgs::msg::Marker::MODIFY;
@@ -400,7 +400,7 @@ void Coupe2023::debugEtapes(visualization_msgs::msg::MarkerArray& ma)
                 }
             }
 
-            m.lifetime = rclcpp::Duration(0); // Does not disapear
+            m.lifetime = rclcpp::Duration(0, 0); // Does not disapear
             m.frame_locked = true;
             ma.markers.push_back(m);
 
@@ -428,12 +428,12 @@ void Coupe2023::debugEtapes(visualization_msgs::msg::MarkerArray& ma)
                 line.color.g = 0;
                 line.color.b = 0;
                 line.color.a = 0.5;
-                line.lifetime = rclcpp::Duration(0); // Does not disapear
+                line.lifetime = rclcpp::Duration(0, 0); // Does not disapear
                 line.frame_locked = true;
                 line.action = visualization_msgs::msg::Marker::MODIFY;
                 line.ns = "debug_etapes";
                 line.header.frame_id = "map";
-                line.header.seq = m_seq++;
+                //line.header.seq = m_seq++;
                 line.id = i++;
                 ma.markers.push_back(line);
             }

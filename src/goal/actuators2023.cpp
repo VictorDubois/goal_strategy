@@ -1,6 +1,6 @@
 #include "../include/goal_strategy/actuators2023.h"
 
-Actuators2023::Actuators2023(rclcpp::Node a_node,
+Actuators2023::Actuators2023(rclcpp::Node::SharedPtr a_node,
                              std::string a_name,
                              std::shared_ptr<Servomotor> a_servo_cherries,
                              std::shared_ptr<Servomotor> a_claw_servo_left,
@@ -20,7 +20,7 @@ Actuators2023::Actuators2023(rclcpp::Node a_node,
 
 {
     m_disguise = false;
-    m_pub = m_nh->advertise<krabi_msgs::msg::Actuators>(a_name, 5);
+    m_pub = m_node->create_publisher<krabi_msgs::msg::Actuators>(a_name, 5);
     m_shutdown = false;
 }
 
@@ -99,5 +99,5 @@ void Actuators2023::publish()
         m_message.fake_statuette_vacuum.release = true;
     }
 
-    m_pub.publish(m_message);
+    m_pub->publish(m_message);
 }

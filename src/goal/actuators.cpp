@@ -1,6 +1,6 @@
 #include "../include/goal_strategy/actuators.h"
 
-Actuators::Actuators(rclcpp::Node a_node,
+Actuators::Actuators(rclcpp::Node::SharedPtr a_node,
                      std::string a_name,
                      std::shared_ptr<Servomotor> a_servo_pusher,
                      std::shared_ptr<Pump> a_fake_statuette_pump,
@@ -16,7 +16,7 @@ Actuators::Actuators(rclcpp::Node a_node,
   , m_grabber_servo_suction_cup(a_grabber_servo_suction_cup)
   , m_grabber_pump(a_grabber_pump)
 {
-    m_pub = node->create_publisher<krabi_msgs::msg::actuators>(a_name, 5);
+    m_pub = m_node->create_publisher<krabi_msgs::msg::Actuators>(a_name, 5);
   
     m_shutdown = false;
 }
