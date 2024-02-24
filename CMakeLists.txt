@@ -26,6 +26,7 @@ find_package(visualization_msgs REQUIRED)
 #find_package(tf_conversions REQUIRED)
 #find_package(eigen_conversions REQUIRED)
 find_package(tf2_eigen REQUIRED)
+find_package(tf2_ros REQUIRED)
 
 include_directories(include)
 
@@ -68,6 +69,7 @@ krabi_msgs
 visualization_msgs
 #eigen_conversions
 tf2_eigen#_conversions
+tf2_ros
 #tf_conversions
 #sensor_msgs
 )

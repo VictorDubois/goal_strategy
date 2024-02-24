@@ -1,7 +1,9 @@
 #include "krabilib/position.h"
 #include <math.h>
 //#include <tf/tf.h>
-#include <tf_conversions/tf_eigen.h>
+//#include <tf_conversions/tf_eigen.h>
+//#include <tf_eigen.h>
+#include "tf2/LinearMath/Quaternion.h"
 
 // Constructeur par défaut avec des coordonnées nulles.
 Position::Position(Distance x, Distance y)
@@ -103,25 +105,25 @@ Angle Position::getAngle() const
 }
 
 #ifdef USE_ROS
-Position::Position(const geometry_msgs::Point& p)
+Position::Position(const geometry_msgs::msg::Point& p)
 {
     m_pos << p.x, p.y;
 }
 
-Position::operator geometry_msgs::Point() const
+Position::operator geometry_msgs::msg::Point() const
 {
-    geometry_msgs::Point pt;
+    geometry_msgs::msg::Point pt;
     pt.x = m_pos.x();
     pt.y = m_pos.y();
     pt.z = 0;
     return pt;
 }
-
-Transform transformFromMsg(const geometry_msgs::Transform& t)
+/*
+Transform transformFromMsg(const geometry_msgs::msg::Transform& t)
 {
     Transform out;
-    tf::Quaternion q(t.rotation.x, t.rotation.y, t.rotation.z, t.rotation.w);
-    tf::Matrix3x3 m(q);
+    tf2::Quaternion q(t.rotation.x, t.rotation.y, t.rotation.z, t.rotation.w);
+    tf2::Matrix3x3 m(q);
     double roll, pitch, yaw;
     m.getRPY(roll, pitch, yaw);
 
@@ -130,10 +132,11 @@ Transform transformFromMsg(const geometry_msgs::Transform& t)
     return out;
 }
 
-Transform3D transform3DFromMsg(const geometry_msgs::Transform& t)
+Transform3D transform3DFromMsg(const geometry_msgs::msg::Transform& t)
 {
-    tf::Transform tmp;
-    tf::transformMsgToTF(t, tmp);
+    tf2::Transform tmp;
+    //tf2::transformMsgToTF(t, tmp);
+    tf2::transformMsgToTF(t, tmp);//tf2::convert(quat_tf, quat_msg);
     Eigen::Affine3d out;
     for (int i = 0; i < 3; i++)
     {
@@ -150,7 +153,7 @@ Transform3D transform3DFromMsg(const geometry_msgs::Transform& t)
 
     return out;
 }
-
+*/
 #endif
 
 #ifdef USE_IOSTREAM
