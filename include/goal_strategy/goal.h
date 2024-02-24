@@ -137,8 +137,8 @@ private:
     rclcpp::Subscription<std_msgs::msg::Float32>::SharedPtr m_vacuum_sub;
     rclcpp::Subscription<geometry_msgs::msg::PoseArray>::SharedPtr m_other_robots_sub;
 
-    tf2_ros::Buffer m_tf_buffer;
-    tf2_ros::TransformListener m_tf_listener;
+    std::shared_ptr<tf2_ros::TransformListener> m_tf_listener_{nullptr};
+    std::unique_ptr<tf2_ros::Buffer> m_tf_buffer_;
     Pose m_current_pose;
     Pose m_goal_pose;
 

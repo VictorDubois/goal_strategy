@@ -327,7 +327,7 @@ void GoalStrat::updateCurrentPose()
         //auto base_link_id = tf::resolve(rclcpp::this_node::getNamespace(), "base_link"); //1.7 Removal of support for tf_prefix
         auto base_link_id = "base_link";
         const auto& transform
-          = m_tf_buffer.lookupTransform("map", base_link_id, rclcpp::Time(0)).transform;
+          = m_tf_buffer_->lookupTransform("map", base_link_id, tf2::TimePointZero).transform;
         m_current_pose = Pose(transform);
     }
     catch (tf2::TransformException& ex)
@@ -481,8 +481,10 @@ void GoalStrat::closeCherriesDispenser()
 }
 
 GoalStrat::GoalStrat()
-  : m_tf_listener(m_tf_buffer)
+  //: m_tf_listener(m_tf_buffer)
 {
+    m_tf_buffer_ = std::make_unique<tf2_ros::Buffer>(this->get_clock());
+    m_tf_listener_ = std::make_shared<tf2_ros::TransformListener>(*m_tf_buffer_);
     m_goal_init_done = false;
     m_at_least_one_carre_fouille_done = false;
     m_remainig_time = rclcpp::Duration(100, 0);
