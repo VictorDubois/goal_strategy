@@ -27,6 +27,7 @@ find_package(visualization_msgs REQUIRED)
 #find_package(eigen_conversions REQUIRED)
 find_package(tf2_eigen REQUIRED)
 find_package(tf2_ros REQUIRED)
+find_package(tf2_geometry_msgs REQUIRED)
 
 include_directories(include)
 
@@ -46,6 +47,7 @@ add_executable(goal_strategy_node
   src/krabilib/angle.cpp  
   src/krabilib/distance.cpp  
   src/krabilib/position.cpp  
+  src/krabilib/pose.cpp  
   src/krabilib/strategie/abeille.cpp
   src/krabilib/strategie/assiette.cpp
   src/krabilib/strategie/bouee.cpp
@@ -53,6 +55,8 @@ add_executable(goal_strategy_node
   src/krabilib/strategie/galerie.cpp
   src/krabilib/strategie/hexagon_plat.cpp
   src/krabilib/strategie/dijkstra.cpp   
+  src/krabilib/strategie/pileGateau.cpp   
+  src/krabilib/strategie/port.cpp   
   src/krabilib/strategie/strategiev3.cpp
   src/krabilib/strategie/accelerator.cpp  
   src/krabilib/strategie/etape.cpp      
@@ -60,6 +64,12 @@ add_executable(goal_strategy_node
   src/krabilib/strategie/actionGoTo.cpp   
   src/krabilib/strategie/goldenium.cpp  
   src/krabilib/strategie/reservoirEau.cpp
+  src/krabilib/strategie/vitrine.cpp
+  src/krabilib/strategie/phare.cpp
+  src/krabilib/strategie/mancheAAir.cpp
+  src/krabilib/strategie/mouillageNord.cpp
+  src/krabilib/strategie/mouillageSud.cpp
+  src/krabilib/strategie/statuette.cpp
 )
 
 
@@ -70,6 +80,7 @@ visualization_msgs
 #eigen_conversions
 tf2_eigen#_conversions
 tf2_ros
+tf2_geometry_msgs
 #tf_conversions
 #sensor_msgs
 )

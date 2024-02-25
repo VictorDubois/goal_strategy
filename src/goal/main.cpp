@@ -480,7 +480,7 @@ void GoalStrat::closeCherriesDispenser()
     //usleep(1.0e6);
 }
 
-GoalStrat::GoalStrat()
+GoalStrat::GoalStrat() : Node("goal_strat")
   //: m_tf_listener(m_tf_buffer)
 {
     m_tf_buffer_ = std::make_unique<tf2_ros::Buffer>(this->get_clock());
@@ -507,11 +507,12 @@ GoalStrat::GoalStrat()
     m_strat_movement_pub = m_node->create_publisher<krabi_msgs::msg::StratMovement>("strat_movement", 5);
 
     m_remaining_time_match_sub
-      = m_node->create_subscription("/remaining_time", 5, &GoalStrat::updateRemainingTime, this);
-    m_tirette_sub = m_node->create_subscription("tirette", 5, &GoalStrat::updateTirette, this);
-    m_vacuum_sub = m_node->create_subscription("vacuum", 5, &GoalStrat::updateVacuum, this);
+      = m_node->create_subscription<builtin_interfaces::msg::Duration>("/remaining_time", 5, std::bind(&GoalStrat::updateRemainingTime, this, std::placeholders::_1));
+    m_tirette_sub = m_node->create_subscription<std_msgs::msg::Bool>("tirette", 5, std::bind(&GoalStrat::updateTirette, this, std::placeholders::_1));
+    
+    m_vacuum_sub = m_node->create_subscription<std_msgs::msg::Float32>("vacuum", 5, std::bind(&GoalStrat::updateVacuum, this, std::placeholders::_1));
     m_other_robots_sub
-      = m_node->create_subscription("dynamic_obstacles", 5, &GoalStrat::updateOtherRobots, this);
+      = m_node->create_subscription<geometry_msgs::msg::PoseArray>("dynamic_obstacles", 5, std::bind(&GoalStrat::updateOtherRobots, this, std::placeholders::_1));
 
     std::string actuators_name = "actuators_msg";
 
@@ -659,9 +660,9 @@ void GoalStrat::updateVacuum(std_msgs::msg::Float32 vacuum_msg)
  *
  * @param a_remaining_time_match
  */
-void GoalStrat::updateRemainingTime(builtin_msgs::msg::Duration a_remaining_time_match)
+void GoalStrat::updateRemainingTime(builtin_interfaces::msg::Duration a_remaining_time_match)
 {
-    m_remainig_time = a_remaining_time_match.data;
+    m_remainig_time = rclcpp::Duration(a_remaining_time_match);
     m_strat_graph->setRemainingTime(m_remainig_time.seconds() * 1000);
     checkFunnyAction();
     checkStopMatch();
@@ -711,7 +712,7 @@ bool GoalStrat::checkFunnyAction()
  */
 bool GoalStrat::alignWithAngleWithTimeout(Angle angle)
 {
-    rclcpp::Time orientTimeoutDeadline = m_node->now() + rclcpp::Duration(m_timeout_orient);
+    rclcpp::Time orientTimeoutDeadline = m_node->now() + rclcpp::Duration(m_timeout_orient,0);
 
     rclcpp::Rate r(100); // Check at 100Hz the new pose msg
     while (!isAlignedWithAngle(angle) && m_node->now().seconds() < orientTimeoutDeadline.seconds())
@@ -1270,9 +1271,10 @@ void GoalStrat::stateRun()
             stopLinear();
 
             RCLCPP_INFO_STREAM(rclcpp::get_logger("rclcpp"), "In front of Phare, orienting" << std::endl);
-            RCLCPP_WARN_STREAM_COND(
-              alignWithAngleWithTimeout((l_phare - m_current_pose.getPosition()).getAngle()),
-              "Timeout while orienting");
+            if (alignWithAngleWithTimeout((l_phare - m_current_pose.getPosition()).getAngle()))
+            {
+                RCLCPP_WARN_STREAM(rclcpp::get_logger("rclcpp"), "Timeout while orienting");
+            }
 
             RCLCPP_INFO_STREAM(rclcpp::get_logger("rclcpp"), "MOVING SERVO DOWN" << std::endl);
             stopAngular();
@@ -1291,11 +1293,12 @@ void GoalStrat::stateRun()
         case Etape::EtapeType::BOUEE:
             stopLinear();
             RCLCPP_INFO_STREAM(rclcpp::get_logger("rclcpp"), "Orienting grabber" << std::endl);
-            RCLCPP_WARN_STREAM_COND(
-              alignWithAngleWithTimeout(
-                Angle((m_goal_pose.getPosition() - m_current_pose.getPosition()).getAngle()
-                      - m_theThing->getAngle())),
-              "Timeout while orienting");
+            
+            if(alignWithAngleWithTimeout(Angle((m_goal_pose.getPosition() - m_current_pose.getPosition()).getAngle()
+                      - m_theThing->getAngle())))
+            {
+                RCLCPP_WARN_STREAM(rclcpp::get_logger("rclcpp"), "Timeout while orienting");
+            }
             m_theThing->grab_hexagon(GrabberContent::ANY);
             RCLCPP_INFO_STREAM(rclcpp::get_logger("rclcpp"), "Bouee grabbed" << std::endl);
             break;
@@ -1433,7 +1436,8 @@ void GoalStrat::init()
     m_is_first_action = true;
     m_servo_out = false;
 
-    m_node.param<bool>("isBlue", m_is_blue, true);
+    this->declare_parameter("isBlue", true);
+    m_is_blue = this->get_parameter("isBlue").as_bool();
 
     if (m_is_blue)
     {
@@ -1508,11 +1512,10 @@ void GoalStrat::stop()
 // Entry point
 int main(int argc, char* argv[])
 {
-    rclcpp::init(argc, argv, "goalStrat");
+    rclcpp::init(argc, argv);
     GoalStrat goal_strat;
 
-    rclcpp::Rate r(rclcpp::Duration(0,0.033 * 10e9)); // 100 hz
-    int i = 0;
+    rclcpp::Rate r(33.); // 33 hz
     goal_strat.loop();
     while (rclcpp::ok())
     {

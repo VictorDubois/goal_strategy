@@ -49,7 +49,7 @@ enum VacuumState
     STRONG_VACUUM
 };
 
-class GoalStrat
+class GoalStrat: public rclcpp::Node
 {
 public:
     GoalStrat();
@@ -143,7 +143,7 @@ private:
     Pose m_goal_pose;
 
     krabi_msgs::msg::ServosCmd m_servos_cmd;
-    rclcpp::Duration m_remainig_time;
+    rclcpp::Duration m_remainig_time = rclcpp::Duration(1000,0);
     bool m_is_blue; // true if blue
     Etape::EtapeType m_previous_etape_type;
     bool m_action_aborted;
