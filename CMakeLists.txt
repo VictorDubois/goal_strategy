@@ -84,3 +84,10 @@ tf2_geometry_msgs
 #tf_conversions
 #sensor_msgs
 )
+
+install(TARGETS
+  goal_strategy_node
+  DESTINATION lib/${PROJECT_NAME}/
+)
+
+ament_package()
