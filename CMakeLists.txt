@@ -85,6 +85,9 @@ tf2_geometry_msgs
 #sensor_msgs
 )
 
+install(DIRECTORY launch
+  DESTINATION share/${PROJECT_NAME})
+  
 install(TARGETS
   goal_strategy_node
   DESTINATION lib/${PROJECT_NAME}/
