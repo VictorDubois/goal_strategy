@@ -123,7 +123,7 @@ private:
     long m_timeout_moving, m_timeout_orient;
     bool m_is_first_action;
 
-    rclcpp::Node::SharedPtr m_node;
+    rclcpp::TimerBase::SharedPtr m_timer;
 
     rclcpp::Publisher<geometry_msgs::msg::PoseStamped>::SharedPtr m_goal_pose_pub;
     rclcpp::Publisher<krabi_msgs::msg::ServosCmd>::SharedPtr m_arm_servo_pub;

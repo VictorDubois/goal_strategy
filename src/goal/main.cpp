@@ -1,11 +1,10 @@
 #include "goal_strategy/goal.h"
 #include <std_msgs/msg/float32.hpp>
 
-
 //#include <std_msgs/msg/uint16.hpp>
 
 #define goal_MAX_ALLOWED_ANGULAR_SPEED 5.f // rad/s
-
+using namespace std::chrono_literals;
 /**
  * @brief Set the arm to a specified position
  *
@@ -85,13 +84,13 @@ void GoalStrat::recule(rclcpp::Duration a_time, Distance a_distance)
     override_gear = 1;
 
     publishStratMovement();
-    auto recalageTimeoutDeadline = m_node->now() + a_time;
+    auto recalageTimeoutDeadline = this->now() + a_time;
 
     Distance l_distance_parcourue = Distance(0);
 
-    while (m_node->now().seconds() < recalageTimeoutDeadline.seconds() && l_distance_parcourue < a_distance)
+    while (this->now().seconds() < recalageTimeoutDeadline.seconds() && l_distance_parcourue < a_distance)
     {
-        rclcpp::spin_some(m_node);
+        rclcpp::spin_some(shared_from_this());
         updateCurrentPose();
         l_distance_parcourue = (l_initial_pose - m_current_pose.getPosition()).getNorme();
         usleep(0.1e6);
@@ -119,13 +118,13 @@ void GoalStrat::reculeDroit(rclcpp::Duration a_time, Distance a_distance)
     chooseEffector(false);
     publishStratMovement();
     
-    auto recalageTimeoutDeadline = m_node->now() + a_time;
+    auto recalageTimeoutDeadline = this->now() + a_time;
 
     Distance l_distance_parcourue = Distance(0);
 
-    while (m_node->now().seconds() < recalageTimeoutDeadline.seconds() && l_distance_parcourue < a_distance)
+    while (this->now().seconds() < recalageTimeoutDeadline.seconds() && l_distance_parcourue < a_distance)
     {
-        rclcpp::spin_some(m_node);
+        rclcpp::spin_some(shared_from_this());
         updateCurrentPose();
         l_distance_parcourue = (l_initial_pose - m_current_pose.getPosition()).getNorme();
         usleep(0.1e6);
@@ -311,7 +310,7 @@ void GoalStrat::publishStratMovement()
     chooseGear();
     m_strat_mvnt.goal_pose.pose = m_goal_pose;
     m_strat_mvnt.header.frame_id = "map";
-    m_strat_mvnt.header.stamp =m_node->now();
+    m_strat_mvnt.header.stamp = this->now();
     m_strat_movement_pub->publish(m_strat_mvnt);
 }
 
@@ -346,7 +345,7 @@ void GoalStrat::goToNextMission()
 {
     m_servo_out = false;
 
-    m_moving_timeout_deadline = m_node->now() + rclcpp::Duration(m_timeout_moving, 0);
+    m_moving_timeout_deadline = this->now() + rclcpp::Duration(m_timeout_moving, 0);
 
     startLinear();
     m_is_first_action = false;
@@ -436,7 +435,7 @@ void GoalStrat::goToNextMission()
     // Long actions
     if (false)
     {
-        m_moving_timeout_deadline = m_node->now() + rclcpp::Duration(m_timeout_moving * 3, 0);
+        m_moving_timeout_deadline = this->now() + rclcpp::Duration(m_timeout_moving * 3, 0);
     }
 
     if (strat_graph_status == -1)
@@ -483,6 +482,8 @@ void GoalStrat::closeCherriesDispenser()
 GoalStrat::GoalStrat() : Node("goal_strat")
   //: m_tf_listener(m_tf_buffer)
 {
+        std::cout << "coucou from GoalStrat"<< std::endl;
+
     m_tf_buffer_ = std::make_unique<tf2_ros::Buffer>(this->get_clock());
     m_tf_listener_ = std::make_shared<tf2_ros::TransformListener>(*m_tf_buffer_);
     m_goal_init_done = false;
@@ -501,19 +502,24 @@ GoalStrat::GoalStrat() : Node("goal_strat")
 
     override_gear = 2; // don't care
 
-    m_goal_pose_pub = m_node->create_publisher<geometry_msgs::msg::PoseStamped>("goal_pose", 1000);
-    m_arm_servo_pub = m_node->create_publisher<krabi_msgs::msg::ServosCmd>("cmd_servos", 1000);
-    m_debug_ma_etapes_pub = m_node->create_publisher<visualization_msgs::msg::MarkerArray>("debug_etapes", 5);
-    m_strat_movement_pub = m_node->create_publisher<krabi_msgs::msg::StratMovement>("strat_movement", 5);
+    m_goal_pose_pub = this->create_publisher<geometry_msgs::msg::PoseStamped>("goal_pose", 5);
+    m_arm_servo_pub = this->create_publisher<krabi_msgs::msg::ServosCmd>("cmd_servos", 5);
+    m_debug_ma_etapes_pub = this->create_publisher<visualization_msgs::msg::MarkerArray>("debug_etapes", 5);
+    m_strat_movement_pub = this->create_publisher<krabi_msgs::msg::StratMovement>("strat_movement", 5);
+
+    auto my_callback_group = create_callback_group(rclcpp::CallbackGroupType::Reentrant);
+
+    rclcpp::SubscriptionOptions l_sub_options;
+    l_sub_options.callback_group = my_callback_group;
 
     m_remaining_time_match_sub
-      = m_node->create_subscription<builtin_interfaces::msg::Duration>("/remaining_time", 5, std::bind(&GoalStrat::updateRemainingTime, this, std::placeholders::_1));
-    m_tirette_sub = m_node->create_subscription<std_msgs::msg::Bool>("tirette", 5, std::bind(&GoalStrat::updateTirette, this, std::placeholders::_1));
+      = this->create_subscription<builtin_interfaces::msg::Duration>("/remaining_time", 5, std::bind(&GoalStrat::updateRemainingTime, this, std::placeholders::_1), l_sub_options);
+    m_tirette_sub = this->create_subscription<std_msgs::msg::Bool>("tirette", 5, std::bind(&GoalStrat::updateTirette, this, std::placeholders::_1), l_sub_options);
     
-    m_vacuum_sub = m_node->create_subscription<std_msgs::msg::Float32>("vacuum", 5, std::bind(&GoalStrat::updateVacuum, this, std::placeholders::_1));
+    m_vacuum_sub = this->create_subscription<std_msgs::msg::Float32>("vacuum", 5, std::bind(&GoalStrat::updateVacuum, this, std::placeholders::_1), l_sub_options);
     m_other_robots_sub
-      = m_node->create_subscription<geometry_msgs::msg::PoseArray>("dynamic_obstacles", 5, std::bind(&GoalStrat::updateOtherRobots, this, std::placeholders::_1));
-
+      = this->create_subscription<geometry_msgs::msg::PoseArray>("dynamic_obstacles", 5, std::bind(&GoalStrat::updateOtherRobots, this, std::placeholders::_1), l_sub_options);
+    
     std::string actuators_name = "actuators_msg";
 
     m_year = 2023;
@@ -531,7 +537,7 @@ GoalStrat::GoalStrat() : Node("goal_strat")
                                            l_servo_arm_suction_cup,
                                            l_pump_arm);
 
-    m_actuators = Actuators(m_node,
+    m_actuators = Actuators(rclcpp::Node::SharedPtr(this),
                             actuators_name + "old",
                             m_servo_pusher,
                             l_fake_statuette_pump,
@@ -562,7 +568,7 @@ GoalStrat::GoalStrat() : Node("goal_strat")
     auto l_servo_right_claw = std::make_shared<Servomotor>(10, 90);
 
     m_actuators2023 = Actuators2023(
-      m_node, actuators_name, m_servo_cherries, l_servo_left_claw, l_servo_right_claw, l_servo_arm_base, l_servo_arm_mid, l_servo_arm_suction_cup, l_pump_arm);
+      rclcpp::Node::SharedPtr(this), actuators_name, m_servo_cherries, l_servo_left_claw, l_servo_right_claw, l_servo_arm_base, l_servo_arm_mid, l_servo_arm_suction_cup, l_pump_arm);
 
     if (m_year == 2023)
     {
@@ -585,6 +591,9 @@ GoalStrat::GoalStrat() : Node("goal_strat")
     m_claws->retract(false);
 
     closeCherriesDispenser();
+
+    m_timer = this->create_wall_timer(
+      100ms, std::bind(&GoalStrat::loop, this));
 }
 
 void GoalStrat::publishAll()
@@ -712,17 +721,17 @@ bool GoalStrat::checkFunnyAction()
  */
 bool GoalStrat::alignWithAngleWithTimeout(Angle angle)
 {
-    rclcpp::Time orientTimeoutDeadline = m_node->now() + rclcpp::Duration(m_timeout_orient,0);
+    rclcpp::Time orientTimeoutDeadline = this->now() + rclcpp::Duration(m_timeout_orient,0);
 
     rclcpp::Rate r(100); // Check at 100Hz the new pose msg
-    while (!isAlignedWithAngle(angle) && m_node->now().seconds() < orientTimeoutDeadline.seconds())
+    while (!isAlignedWithAngle(angle) && this->now().seconds() < orientTimeoutDeadline.seconds())
     {
         alignWithAngle(angle);
         m_strat_mvnt.orient = 1;
-        rclcpp::spin_some(m_node);
+        rclcpp::spin_some(shared_from_this());
         r.sleep();
     }
-    return m_node->now().seconds() >= orientTimeoutDeadline.seconds();
+    return this->now().seconds() >= orientTimeoutDeadline.seconds();
 }
 
 /**
@@ -995,7 +1004,7 @@ void GoalStrat::stateRun()
         m_servo_out = true;
     }
 
-    if (!m_is_first_action && (m_node->now() >= m_moving_timeout_deadline))
+    if (!m_is_first_action && (this->now() >= m_moving_timeout_deadline))
     {
         isLate = true;
         RCLCPP_INFO_STREAM(rclcpp::get_logger("rclcpp"), "Robot is late (spent more than "
@@ -1034,7 +1043,7 @@ void GoalStrat::stateRun()
                 m_strat_mvnt.max_speed.angular.z = 0;
                 m_strat_mvnt.max_speed.linear.x = 0;
                 publishStratMovement();
-                rclcpp::spin_some(m_node);
+                rclcpp::spin_some(shared_from_this());
                 usleep(0.1e6);
             }
 
@@ -1061,11 +1070,11 @@ void GoalStrat::stateRun()
             startLinear();
             recalage_bordure();
             publishStratMovement();
-            recalageTimeoutDeadline = m_node->now() + rclcpp::Duration(6,0);
+            recalageTimeoutDeadline = this->now() + rclcpp::Duration(6,0);
 
-            while (m_node->now().seconds() < recalageTimeoutDeadline.seconds())
+            while (this->now().seconds() < recalageTimeoutDeadline.seconds())
             {
-                rclcpp::spin_some(m_node);
+                rclcpp::spin_some(shared_from_this());
                 usleep(0.1e6);
             }
 
@@ -1084,11 +1093,11 @@ void GoalStrat::stateRun()
             //m_strat_mvnt.reverse_gear = 1;
             override_gear = 1;
             publishStratMovement();
-            recalageTimeoutDeadline = m_node->now() + rclcpp::Duration(4,0);
+            recalageTimeoutDeadline = this->now() + rclcpp::Duration(4,0);
 
-            while (m_node->now().seconds() < recalageTimeoutDeadline.seconds())
+            while (this->now().seconds() < recalageTimeoutDeadline.seconds())
             {
-                rclcpp::spin_some(m_node);
+                rclcpp::spin_some(shared_from_this());
                 usleep(0.1e6);
             }
             override_gear = 2;
@@ -1126,11 +1135,11 @@ void GoalStrat::stateRun()
             startLinear();
             recalage_bordure();
             publishStratMovement();
-            recalageTimeoutDeadline = m_node->now() + rclcpp::Duration(6,0);
+            recalageTimeoutDeadline = this->now() + rclcpp::Duration(6,0);
 
-            while (m_node->now().seconds() < recalageTimeoutDeadline.seconds())
+            while (this->now().seconds() < recalageTimeoutDeadline.seconds())
             {
-                rclcpp::spin_some(m_node);
+                rclcpp::spin_some(shared_from_this());
                 usleep(0.1e6);
             }
 
@@ -1149,11 +1158,11 @@ void GoalStrat::stateRun()
             //m_strat_mvnt.reverse_gear = 1;
             override_gear = 1;
             publishStratMovement();
-            recalageTimeoutDeadline = m_node->now() + rclcpp::Duration(4,0);
+            recalageTimeoutDeadline = this->now() + rclcpp::Duration(4,0);
 
-            while (m_node->now().seconds() < recalageTimeoutDeadline.seconds())
+            while (this->now().seconds() < recalageTimeoutDeadline.seconds())
             {
-                rclcpp::spin_some(m_node);
+                rclcpp::spin_some(shared_from_this());
                 usleep(0.1e6);
             }
             override_gear = 2;
@@ -1213,11 +1222,11 @@ void GoalStrat::stateRun()
             position_calage.setY(Distance(position_calage.getY() - Distance(1)));
             m_goal_pose.setPosition(position_calage);
             publishStratMovement();
-            recalageTimeoutDeadline = m_node->now() + rclcpp::Duration(6,0);
+            recalageTimeoutDeadline = this->now() + rclcpp::Duration(6,0);
 
-            while (m_node->now().seconds() < recalageTimeoutDeadline.seconds())
+            while (this->now().seconds() < recalageTimeoutDeadline.seconds())
             {
-                rclcpp::spin_some(m_node);
+                rclcpp::spin_some(shared_from_this());
                 usleep(0.1e6);
             }
 
@@ -1253,12 +1262,12 @@ void GoalStrat::stateRun()
             recalage_bordure();
             position_calage.setY(Distance(position_calage.getY() + Distance(1.1)));
             m_goal_pose.setPosition(position_calage);
-            recalageTimeoutDeadline = m_node->now() + rclcpp::Duration(2,0);
+            recalageTimeoutDeadline = this->now() + rclcpp::Duration(2,0);
             publishStratMovement();
 
-            while (m_node->now().seconds() < recalageTimeoutDeadline.seconds())
+            while (this->now().seconds() < recalageTimeoutDeadline.seconds())
             {
-                rclcpp::spin_some(m_node);
+                rclcpp::spin_some(shared_from_this());
                 usleep(0.1e6);
             }
             override_gear = 2;
@@ -1487,7 +1496,7 @@ void GoalStrat::loop()
         stateExit();
         break;
     }
-    rclcpp::spin_some(m_node);
+    //rclcpp::spin_some(shared_from_this());
 }
 
 /**
@@ -1513,14 +1522,11 @@ void GoalStrat::stop()
 int main(int argc, char* argv[])
 {
     rclcpp::init(argc, argv);
-    GoalStrat goal_strat;
+    auto node = std::make_shared<GoalStrat>();
 
-    rclcpp::Rate r(33.); // 33 hz
-    goal_strat.loop();
-    while (rclcpp::ok())
-    {
-        goal_strat.loop();
-
-        r.sleep();
-    }
+    rclcpp::executors::MultiThreadedExecutor executor;
+    executor.add_node(node);
+    executor.spin();
+    rclcpp::shutdown();
+    return 0;
 }
