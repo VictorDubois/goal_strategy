@@ -137,6 +137,6 @@ class PolarPosition{
 };
 
 #ifdef USE_ROS
-    //Transform transformFromMsg(const geometry_msgs::msg::Transform& t);
-    //Transform3D transform3DFromMsg(const geometry_msgs::msg::Transform& t);
+    Transform transformFromMsg(const geometry_msgs::msg::Transform& t);
+    Transform3D transform3DFromMsg(const geometry_msgs::msg::Transform& t);
 #endif
