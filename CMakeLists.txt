@@ -31,7 +31,12 @@ find_package(tf2_geometry_msgs REQUIRED)
 
 include_directories(include)
 
-
+add_library(krabilib
+  src/krabilib/angle.cpp  
+  src/krabilib/distance.cpp  
+  src/krabilib/position.cpp  
+  src/krabilib/pose.cpp  
+)
 
 add_executable(goal_strategy_node 
   src/goal/main.cpp
@@ -74,23 +79,49 @@ add_executable(goal_strategy_node
 
 
 
-ament_target_dependencies(goal_strategy_node rclcpp geometry_msgs std_msgs 
-krabi_msgs
-visualization_msgs
-#eigen_conversions
-tf2_eigen#_conversions
-tf2_ros
-tf2_geometry_msgs
-#tf_conversions
-#sensor_msgs
+ament_target_dependencies(goal_strategy_node 
+  rclcpp
+  geometry_msgs
+  std_msgs 
+  krabi_msgs
+  visualization_msgs
+  #eigen_conversions
+  tf2_eigen#_conversions
+  tf2_ros
+  tf2_geometry_msgs
+  #tf_conversions
+  #sensor_msgs
 )
+
+ament_target_dependencies(krabilib 
+  rclcpp 
+  tf2_eigen
+  tf2_ros
+  tf2_geometry_msgs
+)
+
+ament_export_targets(export_${PROJECT_NAME} HAS_LIBRARY_TARGET)
 
 install(DIRECTORY launch
   DESTINATION share/${PROJECT_NAME})
-  
+
+install(DIRECTORY include/krabilib
+  DESTINATION include)
+
 install(TARGETS
   goal_strategy_node
   DESTINATION lib/${PROJECT_NAME}/
 )
+
+install(
+  TARGETS krabilib
+  EXPORT export_${PROJECT_NAME}
+  LIBRARY DESTINATION lib
+  ARCHIVE DESTINATION lib
+  RUNTIME DESTINATION bin
+  INCLUDES DESTINATION include
+)
+
+
 
 ament_package()
