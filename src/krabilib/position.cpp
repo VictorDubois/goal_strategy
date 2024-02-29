@@ -1,9 +1,10 @@
 #include "krabilib/position.h"
 #include <math.h>
-//#include <tf/tf.h>
-//#include <tf_conversions/tf_eigen.h>
-//#include <tf_eigen.h>
+#include "tf2/LinearMath/Matrix3x3.h"
+#include "tf2/LinearMath/Transform.h"
 #include "tf2/LinearMath/Quaternion.h"
+#include "tf2/transform_datatypes.h"
+#include "tf2_geometry_msgs/tf2_geometry_msgs.h"
 
 // Constructeur par défaut avec des coordonnées nulles.
 Position::Position(Distance x, Distance y)
@@ -118,7 +119,7 @@ Position::operator geometry_msgs::msg::Point() const
     pt.z = 0;
     return pt;
 }
-/*
+
 Transform transformFromMsg(const geometry_msgs::msg::Transform& t)
 {
     Transform out;
@@ -135,8 +136,7 @@ Transform transformFromMsg(const geometry_msgs::msg::Transform& t)
 Transform3D transform3DFromMsg(const geometry_msgs::msg::Transform& t)
 {
     tf2::Transform tmp;
-    //tf2::transformMsgToTF(t, tmp);
-    tf2::transformMsgToTF(t, tmp);//tf2::convert(quat_tf, quat_msg);
+    tf2::fromMsg(t, tmp);
     Eigen::Affine3d out;
     for (int i = 0; i < 3; i++)
     {
@@ -153,7 +153,7 @@ Transform3D transform3DFromMsg(const geometry_msgs::msg::Transform& t)
 
     return out;
 }
-*/
+
 #endif
 
 #ifdef USE_IOSTREAM
