@@ -512,14 +512,7 @@ GoalStrat::GoalStrat() : Node("goal_strat")
     rclcpp::SubscriptionOptions l_sub_options;
     l_sub_options.callback_group = my_callback_group;
 
-    m_remaining_time_match_sub
-      = this->create_subscription<builtin_interfaces::msg::Duration>("/remaining_time", 5, std::bind(&GoalStrat::updateRemainingTime, this, std::placeholders::_1), l_sub_options);
-    m_tirette_sub = this->create_subscription<std_msgs::msg::Bool>("tirette", 5, std::bind(&GoalStrat::updateTirette, this, std::placeholders::_1), l_sub_options);
-    
-    m_vacuum_sub = this->create_subscription<std_msgs::msg::Float32>("vacuum", 5, std::bind(&GoalStrat::updateVacuum, this, std::placeholders::_1), l_sub_options);
-    m_other_robots_sub
-      = this->create_subscription<geometry_msgs::msg::PoseArray>("dynamic_obstacles", 5, std::bind(&GoalStrat::updateOtherRobots, this, std::placeholders::_1), l_sub_options);
-    
+
     std::string actuators_name = "actuators_msg";
 
     m_year = 2023;
@@ -591,6 +584,17 @@ GoalStrat::GoalStrat() : Node("goal_strat")
     m_claws->retract(false);
 
     closeCherriesDispenser();
+
+    init();// to do before subscribing to /remaining_time
+
+    m_remaining_time_match_sub
+      = this->create_subscription<builtin_interfaces::msg::Duration>("/remaining_time", 5, std::bind(&GoalStrat::updateRemainingTime, this, std::placeholders::_1), l_sub_options);
+    m_tirette_sub = this->create_subscription<std_msgs::msg::Bool>("tirette", 5, std::bind(&GoalStrat::updateTirette, this, std::placeholders::_1), l_sub_options);
+    
+    m_vacuum_sub = this->create_subscription<std_msgs::msg::Float32>("vacuum", 5, std::bind(&GoalStrat::updateVacuum, this, std::placeholders::_1), l_sub_options);
+    m_other_robots_sub
+      = this->create_subscription<geometry_msgs::msg::PoseArray>("dynamic_obstacles", 5, std::bind(&GoalStrat::updateOtherRobots, this, std::placeholders::_1), l_sub_options);
+    
 
     m_timer = this->create_wall_timer(
       100ms, std::bind(&GoalStrat::loop, this));
@@ -1480,7 +1484,7 @@ void GoalStrat::loop()
     switch (m_state)
     {
     case State::INIT:
-        init();
+        //init(); //init before
         break;
     case State::WAIT_TIRETTE:
         if (m_state == State::WAIT_TIRETTE && m_tirette && m_remainig_time > rclcpp::Duration(1, 0))
@@ -1527,6 +1531,7 @@ int main(int argc, char* argv[])
     rclcpp::executors::MultiThreadedExecutor executor;
     executor.add_node(node);
     executor.spin();
+    
     rclcpp::shutdown();
     return 0;
 }
