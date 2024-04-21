@@ -1,5 +1,5 @@
 #pragma once
-#include <boost/serialization/strong_typedef.hpp>
+#include <boost/serialization/strong_typedef.hpp> //sudo apt-get install libboost-dev
 
 BOOST_STRONG_TYPEDEF(double, Angle);
 BOOST_STRONG_TYPEDEF(double, AngleDeg);
