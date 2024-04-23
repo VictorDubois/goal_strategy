@@ -159,12 +159,12 @@ Transform3D transform3DFromMsg(const geometry_msgs::msg::Transform& t)
 #ifdef USE_IOSTREAM
 std::ostream& operator<<(std::ostream& os, const Position& p)
 {
-    os << "p:{x:" << double(p.getX()) << "m, y: " << double(p.getY()) << "m}";
+    return os << "p:{x:" << double(p.getX()) << "m, y: " << double(p.getY()) << "m}";
 }
 
 std::ostream& operator<<(std::ostream& os, const PolarPosition& p)
 {
-    os << "p:{r: " << double(p.getDistance()) << "m, theta: " << double(p.getAngle()) << "rad}";
+    return os << "p:{r: " << double(p.getDistance()) << "m, theta: " << double(p.getAngle()) << "rad}";
 }
 #endif
 

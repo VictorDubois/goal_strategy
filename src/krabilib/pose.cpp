@@ -130,6 +130,6 @@ Pose::Pose(const geometry_msgs::msg::Transform& t)
 #ifdef USE_IOSTREAM
 std::ostream& operator<<(std::ostream& os, const Pose& p)
 {
-    os << "pose:{{p: " << p.getPosition() <<"}, angle: "<<p.getAngle()<<"rad}}";
+    return os << "pose:{{p: " << p.getPosition() <<"}, angle: "<<p.getAngle()<<"rad}}";
 }
 #endif
