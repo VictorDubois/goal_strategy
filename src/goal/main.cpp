@@ -515,7 +515,7 @@ GoalStrat::GoalStrat() : Node("goal_strat")
 
     std::string actuators_name = "actuators_msg";
 
-    m_year = 2023;
+    m_year = 2024;
 
     m_servo_pusher = std::make_shared<Servomotor>(255, 75);
     auto l_pump_arm = std::make_shared<Pump>(false, true);
@@ -563,7 +563,7 @@ GoalStrat::GoalStrat() : Node("goal_strat")
     m_actuators2023 = Actuators2023(
       rclcpp::Node::SharedPtr(this), actuators_name, m_servo_cherries, l_servo_left_claw, l_servo_right_claw, l_servo_arm_base, l_servo_arm_mid, l_servo_arm_suction_cup, l_pump_arm);
 
-    if (m_year == 2023)
+    if (m_year == 2023 || m_year == 2024)
     {
         m_actuators2023.start();
     }
@@ -1449,6 +1449,7 @@ void GoalStrat::init()
     m_is_first_action = true;
     m_servo_out = false;
 
+    //Choose side 
     this->declare_parameter("isBlue", true);
     m_is_blue = this->get_parameter("isBlue").as_bool();
 
@@ -1461,9 +1462,34 @@ void GoalStrat::init()
         RCLCPP_DEBUG_STREAM(rclcpp::get_logger("rclcpp"), "Not Blue :'(" << std::endl);
     }
 
+    //Choose starting position 
+    this->declare_parameter("startingPosition", "SOLAR_PANEL");
+    std::string l_starting_position_string = this->get_parameter("startingPosition").as_string();
+    StartingPosition l_starting_position=SOLAR_PANEL;
+    if (l_starting_position_string=="SOLAR_PANEL")
+    {
+        RCLCPP_DEBUG_STREAM(rclcpp::get_logger("rclcpp"), "We start near the solar panels" << std::endl);
+        l_starting_position = SOLAR_PANEL;
+    }
+    else if (l_starting_position_string=="CENTER")
+    {
+        RCLCPP_DEBUG_STREAM(rclcpp::get_logger("rclcpp"), "We start in the opposite site, in the center" << std::endl);
+        l_starting_position = CENTER;
+
+    }
+    else if ((l_starting_position_string=="PAMI"))
+    {
+        RCLCPP_DEBUG_STREAM(rclcpp::get_logger("rclcpp"), "We start near the pami" << std::endl);
+        l_starting_position = PAMI;
+    }
+    else 
+    {
+        RCLCPP_WARN_STREAM(rclcpp::get_logger("rclcpp"), "Unkown starting position" << std::endl);
+    }
+
     m_action_aborted = false;
 
-    m_strat_graph = std::make_unique<Coupe2023>(!m_is_blue);
+    m_strat_graph = std::make_unique<Coupe2024>(!m_is_blue, l_starting_position);
 
     m_strat_graph->update();
     m_previous_etape_type = Etape::EtapeType::POINT_PASSAGE;

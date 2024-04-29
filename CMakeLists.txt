@@ -46,6 +46,7 @@ add_executable(goal_strategy_node
   src/goal/coupe2021.cpp
   src/goal/coupe2022.cpp
   src/goal/coupe2023.cpp
+  src/goal/coupe2024.cpp
   src/goal/grabber.cpp
   src/goal/pump.cpp
   src/goal/servomotor.cpp
@@ -61,6 +62,7 @@ add_executable(goal_strategy_node
   src/krabilib/strategie/hexagon_plat.cpp
   src/krabilib/strategie/dijkstra.cpp   
   src/krabilib/strategie/pileGateau.cpp   
+  src/krabilib/strategie/plantGroup.cpp   
   src/krabilib/strategie/port.cpp   
   src/krabilib/strategie/strategiev3.cpp
   src/krabilib/strategie/accelerator.cpp  

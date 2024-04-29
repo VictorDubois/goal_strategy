@@ -43,6 +43,7 @@ public:
         GALERIE = 0x21,
         PILE_GATEAU = 0x22,
         ASSIETTE = 0x23,
+        PLANT_GROUP = 0x24,
 
         POINT_PASSAGE = 0x30,
 

@@ -20,6 +20,7 @@
 #include "tf2_ros/buffer.h"
 
 #include "coupe2023.h"
+#include "coupe2024.h"
 #include "goal_strategy/actuators.h"
 #include "goal_strategy/actuators2023.h"
 #include "goal_strategy/claws.h"
@@ -119,7 +120,7 @@ private:
     State m_state = State::RUN;
     Distance m_dist_to_goal;
     bool m_state_msg_displayed;
-    std::unique_ptr<Coupe2023> m_strat_graph;
+    std::unique_ptr<Coupe2024> m_strat_graph;
     long m_timeout_moving, m_timeout_orient;
     bool m_is_first_action;
 
