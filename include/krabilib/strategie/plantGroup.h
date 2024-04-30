@@ -13,7 +13,7 @@ enum PlantType
     FRAGILE
 };
 
-class Plant :
+class Plant
 {
     public:
         Plant(PlantType plant_type, Position start_position);
@@ -38,5 +38,5 @@ public:
 protected:
     Position m_position;
     Position m_start_position;
-    std::vector<Plant> m_plants
+    std::vector<Plant> m_plants;
 };

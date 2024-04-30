@@ -56,6 +56,7 @@ add_executable(goal_strategy_node
   src/krabilib/pose.cpp  
   src/krabilib/strategie/abeille.cpp
   src/krabilib/strategie/assiette.cpp
+  src/krabilib/strategie/aireDeDepose.cpp
   src/krabilib/strategie/bouee.cpp
   src/krabilib/strategie/carreFouille.cpp
   src/krabilib/strategie/galerie.cpp

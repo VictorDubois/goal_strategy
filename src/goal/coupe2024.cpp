@@ -1,9 +1,9 @@
 #include "goal_strategy/coupe2024.h"
 #include "goal_strategy/grabber.h"
 #include "krabilib/pose.h"
-#include "krabilib/strategie/assiette.h"
+#include "krabilib/strategie/aireDeDepose.h"
 #include "krabilib/strategie/galerie.h"
-#include "krabilib/strategie/pileGateau.h"
+#include "krabilib/strategie/plantGroup.h"
 #include "krabilib/strategie/statuette.h"
 #include "krabilib/strategie/vitrine.h"
 
@@ -58,15 +58,15 @@ Coupe2024::Coupe2024(const bool isYellow, const StartingPosition starting_positi
     switch (starting_position)
     {
     case SOLAR_PANEL:
-        campement = Etape::makeEtape(positionC(-1.275f, 0.775f),
+        campement = Etape::makeEtape(positionC(1.275f, 0.775f),
                                      Etape::DEPART); 
         break;
     case CENTER:
-        campement = Etape::makeEtape(positionC(0.0f, 0.0f),
+        campement = Etape::makeEtape(positionC(-1.275f, 0.0f),
                                      Etape::DEPART); 
         break;
     case PAMI:
-        campement = Etape::makeEtape(positionC(0.0f, 0.0f),
+        campement = Etape::makeEtape(positionC(1.275f, -0.775f),
                                      Etape::DEPART); 
         break;
     default:
@@ -79,145 +79,145 @@ Coupe2024::Coupe2024(const bool isYellow, const StartingPosition starting_positi
 
     if (test_contournement)
     {
-        int other_side = Etape::makeEtape(
-          new PileGateau(positionCAbsolute(2.7f, 1.675f), CoucheGateau::genoise_marron));
-        Etape::get(campement)->addVoisins(other_side);
+        // int other_side = Etape::makeEtape(
+        //   new PileGateau(positionCAbsolute(2.7f, 1.675f), CoucheGateau::genoise_marron));
+        // Etape::get(campement)->addVoisins(other_side);
     }
     else
     {
         float distance_to_wall = 0.4f;
-        int assiete_us_0
-          = Etape::makeEtape(new Assiette(positionCAbsolute(0.3f, 0.3f), positionCAbsolute(0.25f, 0.225f), Owner::us));
+        int area_pami_us
+          = Etape::makeEtape(new AireDeDepose(positionC(1.275f, -0.775f), positionC(1.265f, -0.765f), Owner::us));
+        Etape::get(campement)->addVoisins(area_pami_us);
 
-        int assiete_them_1
-          = Etape::makeEtape(new Assiette(positionCAbsolute(1.5f - 0.375f, 0.25f), Owner::them));
+        int area_pami_them
+          = Etape::makeEtape(new AireDeDepose(positionC(-1.275f, -0.775f), positionCAbsolute(-1.265f, -0.765f), Owner::them));
+        Etape::get(campement)->addVoisins(area_pami_them);
+        
+
+        int area_center_us
+          = Etape::makeEtape(new AireDeDepose(positionC(-1.275f, 0.0f), positionCAbsolute(-1.265f, 0.0f), Owner::us));
+        Etape::get(campement)->addVoisins(area_center_us);
+        
+
+        int area_center_them
+          = Etape::makeEtape(new AireDeDepose(positionC(1.275f, 0.0f), positionCAbsolute(1.265f, 0.0f), Owner::them));
+        Etape::get(campement)->addVoisins(area_center_them);
+
+
+        int area_solar_panel_us
+          = Etape::makeEtape(new AireDeDepose(positionC(1.275f, 0.775f), positionCAbsolute(1.265f, 0.765f), Owner::us));
+        Etape::get(campement)->addVoisins(area_solar_panel_us);
+
+
+        int area_solar_panel_them 
+          = Etape::makeEtape(new AireDeDepose(positionC(-1.275f, 0.775f), positionCAbsolute(-1.265f, 0.765f), Owner::them));
+        Etape::get(campement)->addVoisins(area_solar_panel_them);
+
+
+
+
 
         //Etape::get(assiete_us_0)->addVoisins(assiete_them_1);
         //Etape::get(campement)->addVoisins(assiete_them_1);
         //Etape::get(assiete_us_0)->addVoisins(campement);
+        // //////////// Trio départ ////////////
+        // int pile_glacage_depart = Etape::makeEtape(
+        //   new PileGateau(positionCAbsolute(0.45f + 0.125f, 0.25f), CoucheGateau::glacage_rose));
 
-        int assiete_us_2
-          = Etape::makeEtape(new Assiette(positionCAbsolute(1.5f + 0.375f, distance_to_wall), positionCAbsolute(1.5f + 0.375f, 0.225f), Owner::us));
-        //Etape::get(assiete_them_1)->addVoisins(assiete_us_2);
+        // int pile_creme_depart = Etape::makeEtape(new PileGateau(
+        //   positionCAbsolute(0.45f + 0.125f + 0.2f, 0.25f), CoucheGateau::creme_jaune));
 
-        int assiete_them_3
-          = Etape::makeEtape(new Assiette(positionCAbsolute(3.f - 0.225f, 0.25f), Owner::them));
-        //Etape::get(assiete_them_3)->addVoisins(assiete_us_2);
-
-        int assiete_us_4
-          = Etape::makeEtape(new Assiette(positionCAbsolute(3.f - distance_to_wall, 0.75f), positionCAbsolute(3-0.225f, 0.75f), Owner::us));
-        //Etape::get(assiete_them_3)->addVoisins(assiete_us_4);
-
-        int assiete_them_5 = Etape::makeEtape(
-          new Assiette(positionCAbsolute(3.f - 0.225f, 2.f - 0.75f), Owner::them));
-        // Etape::get(assiete_them_5)->addVoisins(assiete_us_4);// Attention: cerises sur le chemin
-
-        int assiete_us_6
-          = Etape::makeEtape(new Assiette(positionCAbsolute(3.f - distance_to_wall, 2.f - distance_to_wall), positionCAbsolute(3-0.225f, 2-0.225f), Owner::us));
-        //Etape::get(assiete_them_5)->addVoisins(assiete_us_6);
-
-        int assiete_them_7 = Etape::makeEtape(
-          new Assiette(positionCAbsolute(1.5f + 0.375f, 2.f - 0.25f), Owner::them));
-        //Etape::get(assiete_them_7)->addVoisins(assiete_us_6);
-
-        int assiete_us_8 = Etape::makeEtape(
-          new Assiette(positionCAbsolute(1.5f - 0.375f, 2.f - distance_to_wall), positionCAbsolute(1.5f-0.375f, 2-0.225f), Owner::us));
-        //Etape::get(assiete_them_7)->addVoisins(assiete_us_8);
-
-        //////////// Trio départ ////////////
-        int pile_glacage_depart = Etape::makeEtape(
-          new PileGateau(positionCAbsolute(0.45f + 0.125f, 0.25f), CoucheGateau::glacage_rose));
-
-        int pile_creme_depart = Etape::makeEtape(new PileGateau(
-          positionCAbsolute(0.45f + 0.125f + 0.2f, 0.25f), CoucheGateau::creme_jaune));
-
-        int pile_genoise_depart = Etape::makeEtape(
-          new PileGateau(positionCAbsolute(1.125f, 0.725f), CoucheGateau::genoise_marron));
-
-        int intermediaire_depart = Etape::makeEtape(positionCAbsolute(0.4f, 0.65f));
-        int out_of_depose_cerise = Etape::makeEtape(positionCAbsolute(0.25f, 0.285f));
-        Etape::get(campement)->addVoisins(out_of_depose_cerise, false);
-
-        Etape::get(intermediaire_depart)->addVoisins(out_of_depose_cerise, assiete_us_0, pile_glacage_depart, pile_genoise_depart, pile_creme_depart);
-
-        //Etape::get(pile_glacage_depart)->addVoisins(pile_creme_depart);
-        //Etape::get(pile_genoise_depart)->addVoisins(pile_creme_depart);
-
-        //Etape::get(pile_glacage_depart)->addVoisins(campement);
-        //Etape::get(pile_glacage_depart)->addVoisins(assiete_us_0);
-
-        //Etape::get(assiete_us_0)->addVoisins(pile_glacage_depart);
-        //Etape::get(assiete_us_0)->addVoisins(pile_genoise_depart);
-        //Etape::get(campement)->addVoisins(pile_glacage_depart);
-        //Etape::get(campement)->addVoisins(pile_genoise_depart);
-
-
-        //////////// Trio symetrique X ////////////
-        int pile_glacage_loin = Etape::makeEtape(new PileGateau(
-          positionCAbsolute(3.0f - (0.45f + 0.125f), 0.25f), CoucheGateau::glacage_rose));
-
-        int pile_creme_loin = Etape::makeEtape(new PileGateau(
-          positionCAbsolute(3.0f - (0.45f + 0.125f + 0.2f), 0.25f), CoucheGateau::creme_jaune));
-
-        int pile_genoise_loin = Etape::makeEtape(
-          new PileGateau(positionCAbsolute(3.0f - 1.125f, 0.725f), CoucheGateau::genoise_marron));
-        Etape::get(pile_genoise_loin)->addVoisins(pile_genoise_depart);
-
-        //Etape::get(pile_glacage_loin)->addVoisins(pile_creme_loin);
-        Etape::get(pile_genoise_loin)->addVoisins(pile_creme_loin);
-
-        //////////// Trio symetrique Y (depart adversaire) ////////////
-        int pile_glacage_depart_adv = Etape::makeEtape(
-          new PileGateau(positionCAbsolute(0.45f + 0.125f, 2 - 0.25f), CoucheGateau::glacage_rose));
-
-        int pile_creme_depart_adv = Etape::makeEtape(new PileGateau(
-          positionCAbsolute(0.45f + 0.125f + 0.2f, 2 - 0.25f), CoucheGateau::creme_jaune));
-
-        int pile_genoise_depart_adv = Etape::makeEtape(
-          new PileGateau(positionCAbsolute(1.125f, 2 - 0.725f), CoucheGateau::genoise_marron));
-
-        //Etape::get(pile_glacage_depart_adv)->addVoisins(pile_creme_depart_adv);
-        Etape::get(pile_genoise_depart_adv)->addVoisins(pile_creme_depart_adv);
-
-        //Etape::get(pile_glacage_depart)->addVoisins(pile_glacage_depart_adv);
-
-        //////////// Trio symetrique X+Y ////////////
-        int pile_glacage_loin_adv = Etape::makeEtape(new PileGateau(
-          positionCAbsolute(3 - (0.45f + 0.125f), 2 - 0.25f), CoucheGateau::glacage_rose));
-
-        int pile_creme_loin_adv = Etape::makeEtape(new PileGateau(
-          positionCAbsolute(3 - (0.45f + 0.125f + 0.2f), 2 - 0.25f), CoucheGateau::creme_jaune));
-
-        int pile_genoise_loin_adv = Etape::makeEtape(
-          new PileGateau(positionCAbsolute(3 - 1.125f, 2 - 0.725f), CoucheGateau::genoise_marron));
-
-        //Etape::get(pile_glacage_loin_adv)->addVoisins(pile_creme_loin_adv);
-        Etape::get(pile_genoise_loin_adv)->addVoisins(pile_creme_loin_adv);
-
-        Etape::get(pile_genoise_loin_adv)->addVoisins(pile_genoise_loin, pile_genoise_depart, pile_genoise_depart_adv);
-        Etape::get(pile_genoise_depart_adv)->addVoisins(pile_genoise_depart, pile_genoise_loin);
-
-        //Etape::get(assiete_us_4)->addVoisins(pile_genoise_depart);
-
-
-        int in_front_of_tower = Etape::makeEtape(positionCAbsolute(0.6f, 1.f));
-        Etape::get(in_front_of_tower)->addVoisins(pile_genoise_depart, pile_genoise_depart_adv, intermediaire_depart, pile_glacage_depart, pile_creme_depart, pile_creme_depart_adv);
-
-        int in_front_of_tower_loin = Etape::makeEtape(positionCAbsolute(2.4f, 1.f));
-        Etape::get(in_front_of_tower_loin)->addVoisins(pile_genoise_loin, pile_genoise_loin_adv, pile_glacage_loin, pile_glacage_loin_adv, pile_creme_loin, pile_creme_loin_adv);
-        Etape::get(in_front_of_tower_loin)->addVoisins(assiete_us_4, assiete_us_6, pile_glacage_loin, pile_glacage_loin_adv);
-
-        //Etape::get(assiete_us_2)->addVoisins(pile_genoise_depart);
-        Etape::get(assiete_us_2)->addVoisins(pile_genoise_loin);
-        //Etape::get(assiete_us_2)->addVoisins(pile_creme_depart);
-        //Etape::get(assiete_us_2)->addVoisins(pile_glacage_loin);
-        //Etape::get(assiete_us_2)->addVoisins(pile_creme_loin);
+        // int pile_genoise_depart = Etape::makeEtape(
+        //   new PileGateau(positionCAbsolute(1.125f, 0.725f), CoucheGateau::genoise_marron));
 
 
 
-        Etape::get(assiete_us_4)->addVoisins(pile_genoise_loin);
-        //Etape::get(assiete_us_4)->addVoisins(pile_creme_loin);
-        //Etape::get(assiete_us_4)->addVoisins(pile_glacage_loin);
+
+        // int intermediaire_depart = Etape::makeEtape(positionCAbsolute(0.4f, 0.65f));
+        // int out_of_depose_cerise = Etape::makeEtape(positionCAbsolute(0.25f, 0.285f));
+        // Etape::get(campement)->addVoisins(out_of_depose_cerise, false);
+
+        // Etape::get(intermediaire_depart)->addVoisins(out_of_depose_cerise, assiete_us_0, pile_glacage_depart, pile_genoise_depart, pile_creme_depart);
+
+        // //Etape::get(pile_glacage_depart)->addVoisins(pile_creme_depart);
+        // //Etape::get(pile_genoise_depart)->addVoisins(pile_creme_depart);
+
+        // //Etape::get(pile_glacage_depart)->addVoisins(campement);
+        // //Etape::get(pile_glacage_depart)->addVoisins(assiete_us_0);
+
+        // //Etape::get(assiete_us_0)->addVoisins(pile_glacage_depart);
+        // //Etape::get(assiete_us_0)->addVoisins(pile_genoise_depart);
+        // //Etape::get(campement)->addVoisins(pile_glacage_depart);
+        // //Etape::get(campement)->addVoisins(pile_genoise_depart);
+
+
+        // //////////// Trio symetrique X ////////////
+        // int pile_glacage_loin = Etape::makeEtape(new PileGateau(
+        //   positionCAbsolute(3.0f - (0.45f + 0.125f), 0.25f), CoucheGateau::glacage_rose));
+
+        // int pile_creme_loin = Etape::makeEtape(new PileGateau(
+        //   positionCAbsolute(3.0f - (0.45f + 0.125f + 0.2f), 0.25f), CoucheGateau::creme_jaune));
+
+        // int pile_genoise_loin = Etape::makeEtape(
+        //   new PileGateau(positionCAbsolute(3.0f - 1.125f, 0.725f), CoucheGateau::genoise_marron));
+        // Etape::get(pile_genoise_loin)->addVoisins(pile_genoise_depart);
+
+        // //Etape::get(pile_glacage_loin)->addVoisins(pile_creme_loin);
+        // Etape::get(pile_genoise_loin)->addVoisins(pile_creme_loin);
+
+        // //////////// Trio symetrique Y (depart adversaire) ////////////
+        // int pile_glacage_depart_adv = Etape::makeEtape(
+        //   new PileGateau(positionCAbsolute(0.45f + 0.125f, 2 - 0.25f), CoucheGateau::glacage_rose));
+
+        // int pile_creme_depart_adv = Etape::makeEtape(new PileGateau(
+        //   positionCAbsolute(0.45f + 0.125f + 0.2f, 2 - 0.25f), CoucheGateau::creme_jaune));
+
+        // int pile_genoise_depart_adv = Etape::makeEtape(
+        //   new PileGateau(positionCAbsolute(1.125f, 2 - 0.725f), CoucheGateau::genoise_marron));
+
+        // //Etape::get(pile_glacage_depart_adv)->addVoisins(pile_creme_depart_adv);
+        // Etape::get(pile_genoise_depart_adv)->addVoisins(pile_creme_depart_adv);
+
+        // //Etape::get(pile_glacage_depart)->addVoisins(pile_glacage_depart_adv);
+
+        // //////////// Trio symetrique X+Y ////////////
+        // int pile_glacage_loin_adv = Etape::makeEtape(new PileGateau(
+        //   positionCAbsolute(3 - (0.45f + 0.125f), 2 - 0.25f), CoucheGateau::glacage_rose));
+
+        // int pile_creme_loin_adv = Etape::makeEtape(new PileGateau(
+        //   positionCAbsolute(3 - (0.45f + 0.125f + 0.2f), 2 - 0.25f), CoucheGateau::creme_jaune));
+
+        // int pile_genoise_loin_adv = Etape::makeEtape(
+        //   new PileGateau(positionCAbsolute(3 - 1.125f, 2 - 0.725f), CoucheGateau::genoise_marron));
+
+        // //Etape::get(pile_glacage_loin_adv)->addVoisins(pile_creme_loin_adv);
+        // Etape::get(pile_genoise_loin_adv)->addVoisins(pile_creme_loin_adv);
+
+        // Etape::get(pile_genoise_loin_adv)->addVoisins(pile_genoise_loin, pile_genoise_depart, pile_genoise_depart_adv);
+        // Etape::get(pile_genoise_depart_adv)->addVoisins(pile_genoise_depart, pile_genoise_loin);
+
+        // //Etape::get(assiete_us_4)->addVoisins(pile_genoise_depart);
+
+
+        // int in_front_of_tower = Etape::makeEtape(positionCAbsolute(0.6f, 1.f));
+        // Etape::get(in_front_of_tower)->addVoisins(pile_genoise_depart, pile_genoise_depart_adv, intermediaire_depart, pile_glacage_depart, pile_creme_depart, pile_creme_depart_adv);
+
+        // int in_front_of_tower_loin = Etape::makeEtape(positionCAbsolute(2.4f, 1.f));
+        // Etape::get(in_front_of_tower_loin)->addVoisins(pile_genoise_loin, pile_genoise_loin_adv, pile_glacage_loin, pile_glacage_loin_adv, pile_creme_loin, pile_creme_loin_adv);
+        // Etape::get(in_front_of_tower_loin)->addVoisins(assiete_us_4, assiete_us_6, pile_glacage_loin, pile_glacage_loin_adv);
+
+        // //Etape::get(assiete_us_2)->addVoisins(pile_genoise_depart);
+        // Etape::get(assiete_us_2)->addVoisins(pile_genoise_loin);
+        // //Etape::get(assiete_us_2)->addVoisins(pile_creme_depart);
+        // //Etape::get(assiete_us_2)->addVoisins(pile_glacage_loin);
+        // //Etape::get(assiete_us_2)->addVoisins(pile_creme_loin);
+
+
+
+        // Etape::get(assiete_us_4)->addVoisins(pile_genoise_loin);
+        // //Etape::get(assiete_us_4)->addVoisins(pile_creme_loin);
+        // //Etape::get(assiete_us_4)->addVoisins(pile_glacage_loin);
     }
 
     m_numero_etape_garage = campement; // Must be set!
@@ -325,24 +325,24 @@ void Coupe2024::etape_type_to_marker(visualization_msgs::msg::Marker& m, Etape* 
         m.scale.z = 0.01;
         break;
 
-    case Etape::EtapeType::ASSIETTE:
+    case Etape::EtapeType::AIREDEDEPOSE:
         m.type = visualization_msgs::msg::Marker::CUBE;
         m.scale.z = 0.01f;
         m.color.a = 0.5f;
         m.scale.x = 0.45f;
         m.scale.y = 0.45f;
-        owner = static_cast<Assiette*>(a_etape->getAction())->getOwner();
+        owner = static_cast<AireDeDepose*>(a_etape->getAction())->getOwner();
 
-        // Assiete bleue
+        // Area blue
         m.color.r = 0.f / 255.f;
         m.color.g = 91.f / 255.f;
         m.color.b = 140.f / 255.f;
         if (isYellow() == (owner == Owner::us))
         {
-            // Assiete verte
-            m.color.r = 0.f / 255.f;
+            // Area yellow
+            m.color.r = 111.f / 255.f;
             m.color.g = 111.f / 255.f;
-            m.color.b = 61.f / 255.f;
+            m.color.b = 0.f / 255.f;
         }
 
         break;
