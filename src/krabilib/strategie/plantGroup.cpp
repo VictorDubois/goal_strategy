@@ -24,7 +24,7 @@ PlantGroup::PlantGroup(Position goalPosition)
   : MediumLevelAction(goalPosition)
 {
     goalPosition = this->goalPosition;
-    position_depart = goalPosition;
+    m_start_position = goalPosition;
 }
 
 PlantGroup::~PlantGroup()

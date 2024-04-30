@@ -7,6 +7,22 @@
 #include "krabilib/command.h"
 #endif // STANDALONE_STRATEGIE
 
+enum PlantType
+{
+    STURDY,
+    FRAGILE
+};
+
+class Plant :
+{
+    public:
+        Plant(PlantType plant_type, Position start_position);
+
+    private:
+        PlantType m_plant_type;
+        Position m_position;
+        Position m_start_position;
+};
 
 class PlantGroup : public MediumLevelAction
 {
@@ -17,10 +33,10 @@ public:
 
     ~PlantGroup();
 
-
     Etape::EtapeType getType();
 
 protected:
-    Position position;
-    Position position_depart;
+    Position m_position;
+    Position m_start_position;
+    std::vector<Plant> m_plants
 };
