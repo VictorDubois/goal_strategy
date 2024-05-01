@@ -28,6 +28,7 @@ public:
 
 
     void addPlant(Plant added_plant);
+    void addPlants(std::vector<Plant> added_plants);
 
     std::vector<Plant> getPlants();
 

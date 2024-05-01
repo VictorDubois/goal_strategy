@@ -1321,7 +1321,7 @@ void GoalStrat::stateRun()
             break;
 
         case Etape::EtapeType::ASSIETTE:
-            m_score_match += m_strat_graph->dropGateau(m_strat_graph->getEtapeEnCours());
+            m_score_match += m_strat_graph->dropPlant(m_strat_graph->getEtapeEnCours());
             stopLinear();
 
             /*RCLCPP_INFO_STREAM(rclcpp::get_logger("rclcpp"), "Orienting grabber" << std::endl);
@@ -1344,7 +1344,7 @@ void GoalStrat::stateRun()
             break;
 
         case Etape::EtapeType::PILE_GATEAU:
-            m_strat_graph->grabGateau(m_strat_graph->getEtapeEnCours());
+            m_strat_graph->grabPlant(m_strat_graph->getEtapeEnCours());
             stopLinear();
 
             /*// Ouvre la pince + orientation

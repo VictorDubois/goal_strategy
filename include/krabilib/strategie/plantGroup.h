@@ -35,6 +35,10 @@ public:
 
     Etape::EtapeType getType();
 
+    std::vector<Plant> getPlants();
+
+    int update();
+    
 protected:
     Position m_position;
     Position m_start_position;

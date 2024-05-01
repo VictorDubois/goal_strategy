@@ -37,4 +37,13 @@ Etape::EtapeType PlantGroup::getType()
     return Etape::PLANT_GROUP;
 }
 
+std::vector<Plant> PlantGroup::getPlants()
+{
+    return m_plants;
+}
 
+
+int PlantGroup::update()
+{
+    return 0;
+}

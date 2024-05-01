@@ -44,12 +44,17 @@ Owner AireDeDepose::getOwner()
 
 Etape::EtapeType AireDeDepose::getType()
 {
-    return Etape::AIREDEDEPOSE;
+    return Etape::AIRE_DE_DEPOSE;
 }
 
 void AireDeDepose::addPlant(Plant added_plant)
 {
     m_stock.push_back(added_plant);
+}
+
+void AireDeDepose::addPlants(std::vector<Plant> added_plants)
+{
+    m_stock.insert(m_stock.end(), added_plants.begin(), added_plants.end());
 }
 
 std::vector<Plant> AireDeDepose::getPlants()

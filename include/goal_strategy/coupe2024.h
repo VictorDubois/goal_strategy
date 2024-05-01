@@ -41,8 +41,8 @@ public:
     void catchStatuette(){}; // 2022 only
     void dropStatuette(){};  // 2022 only
 
-    void grabGateau(Etape* e);
-    int dropGateau(Etape* e);
+    void grabPlant(Etape* e);
+    int dropPlant(Etape* e);
 
     Position positionCAbsolute(double x_yellow_from_top_left, double y_yellow_from_top_left);
 
@@ -53,5 +53,5 @@ private:
 
     uint32_t m_seq;
 
-    std::vector<CoucheGateau> m_stock;
+    std::vector<Plant> m_stock;
 };
