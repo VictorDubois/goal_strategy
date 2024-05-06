@@ -1490,7 +1490,10 @@ void GoalStrat::loop()
         if (m_state == State::WAIT_TIRETTE && m_tirette && m_remainig_time > rclcpp::Duration(1, 0))
         {
             m_state = State::RUN;
-            dropCherries();
+            if (m_year == 2023)
+            {
+                dropCherries();
+            }
         }
         break;
     case State::RUN:
