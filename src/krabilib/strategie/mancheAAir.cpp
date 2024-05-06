@@ -10,11 +10,7 @@
 
 
 
-#ifdef QTGUI
-#include <QDebug>
-#endif
 
-#define QTGUI
 
 #define qDebug() std::cout
 
