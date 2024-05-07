@@ -121,9 +121,9 @@ Coupe2024::Coupe2024(const bool isYellow, const StartingPosition starting_positi
         
         int group_plant_10h = Etape::makeEtape(new PlantGroup(positionC(0.5f, -0.3f)));
 
-        Etape::get(campement)->addVoisins(group_plant_10h);
-        Etape::get(campement)->addVoisins(group_plant_8h);
-        Etape::get(campement)->addVoisins(group_plant_6h);
+        Etape::get(area_solar_panel_us)->addVoisins(group_plant_10h);
+        Etape::get(area_solar_panel_us)->addVoisins(group_plant_8h);
+        Etape::get(area_solar_panel_us)->addVoisins(group_plant_6h);
         Etape::get(group_plant_6h)->addVoisins(group_plant_4h);
         Etape::get(group_plant_4h)->addVoisins(group_plant_2h);
         Etape::get(group_plant_2h)->addVoisins(group_plant_midi);
