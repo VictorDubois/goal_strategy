@@ -21,6 +21,8 @@ public:
     ~AireDeDepose();
 
     int update();
+    
+    bool isStartingPosition();
 
     Etape::EtapeType getType();
 
@@ -41,4 +43,5 @@ protected:
     Position m_area_center;
     Owner m_us_or_them;
     std::vector<Plant> m_stock;
+    bool m_is_starting_position;
 };

@@ -71,3 +71,8 @@ int AireDeDepose::update()
 {
     return 0;
 }
+
+bool AireDeDepose::isStartingPosition()
+{
+    return m_is_starting_position;
+}
