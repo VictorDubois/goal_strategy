@@ -977,24 +977,24 @@ void GoalStrat::stateRun()
         // Zone de fouille
         // m_goal_pose.setPosition(m_strat_graph->positionCAbsolute(0.975f, 1.375f));
         // Zone de départ
-        if(m_assiette_funny == nullptr) // Not initialized yet
+        if(m_area_funny == nullptr) // Not initialized yet
         {
             // try to update
-            m_assiette_funny = m_strat_graph->getBestAssietteForFunny();
-            if (m_assiette_funny != nullptr) // If no error
+            m_area_funny = m_strat_graph->getBestAreaForFunny();
+            if (m_area_funny != nullptr) // If no error
             {
-                RCLCPP_WARN_STREAM(rclcpp::get_logger("rclcpp"), "best assiette found for funny: " << m_assiette_funny->getGoalPosition());
+                RCLCPP_WARN_STREAM(rclcpp::get_logger("rclcpp"), "best area found for funny: " << m_area_funny->getGoalPosition());
             }
         }
 
-        if(m_assiette_funny == nullptr)
+        if(m_area_funny == nullptr)
         {
-            RCLCPP_ERROR_STREAM(rclcpp::get_logger("rclcpp"), "FAIL getting best assiette for funny action, revert to default");
+            RCLCPP_ERROR_STREAM(rclcpp::get_logger("rclcpp"), "FAIL getting best area for funny action, revert to default");
             m_goal_pose.setPosition(m_strat_graph->positionCAbsolute(Distance(1.5f-0.375f), Distance(1.525f)));
         }
         else
         {
-            m_goal_pose.setPosition(m_assiette_funny->getGoalPosition());
+            m_goal_pose.setPosition(m_area_funny->getGoalPosition());
         }
         publishGoal();
         return;
@@ -1321,7 +1321,7 @@ void GoalStrat::stateRun()
             break;
 
         case Etape::EtapeType::ASSIETTE:
-            m_score_match += m_strat_graph->dropPlant(m_strat_graph->getEtapeEnCours());
+            m_score_match += m_strat_graph->dropGateau(m_strat_graph->getEtapeEnCours());
             stopLinear();
 
             /*RCLCPP_INFO_STREAM(rclcpp::get_logger("rclcpp"), "Orienting grabber" << std::endl);
@@ -1344,7 +1344,7 @@ void GoalStrat::stateRun()
             break;
 
         case Etape::EtapeType::PILE_GATEAU:
-            m_strat_graph->grabPlant(m_strat_graph->getEtapeEnCours());
+            m_strat_graph->grabGateau(m_strat_graph->getEtapeEnCours());
             stopLinear();
 
             /*// Ouvre la pince + orientation
@@ -1372,6 +1372,62 @@ void GoalStrat::stateRun()
             m_claws->grab_pile();
             m_claws->setInside();
             RCLCPP_INFO_STREAM(rclcpp::get_logger("rclcpp"), "Pile Gateau caught" << std::endl);
+            startLinear();
+
+            break;
+
+        case Etape::EtapeType::AIRE_DE_DEPOSE:
+            m_score_match += m_strat_graph->dropPlant(m_strat_graph->getEtapeEnCours());
+            stopLinear();
+
+            /*RCLCPP_INFO_STREAM(rclcpp::get_logger("rclcpp"), "Orienting grabber" << std::endl);
+            RCLCPP_WARN_STREAM_COND(
+              alignWithAngleWithTimeout(
+                Angle((m_goal_pose.getPosition() - m_current_pose.getPosition()).getAngle()
+                      - m_claws->getAngle())),
+              "Timeout while orienting");*/
+            publishStratMovement();
+            m_claws->release_pile();
+
+            //recule(rclcpp::Duration(5,0), Distance(0.15));
+            startLinear();
+
+            m_claws->setInside();
+
+            reculeDroit(rclcpp::Duration(3,0), Distance(0.14));
+
+            RCLCPP_INFO_STREAM(rclcpp::get_logger("rclcpp"), "Drop plants in area" << std::endl);
+            break;
+
+        case Etape::EtapeType::PLANT_GROUP:
+            m_strat_graph->grabPlant(m_strat_graph->getEtapeEnCours());
+            stopLinear();
+
+            /*// Ouvre la pince + orientation
+            stopLinear();
+            m_claws->release_pile();
+            //m_strat_mvnt.reverse_gear = 0;
+            override_gear = 0;
+            RCLCPP_INFO_STREAM(rclcpp::get_logger("rclcpp"), "Orienting grabber" << std::endl);
+            RCLCPP_WARN_STREAM_COND(
+              alignWithAngleWithTimeout(
+                Angle((m_goal_pose.getPosition() - m_current_pose.getPosition()).getAngle()
+                      - m_claws->getAngle())),
+              "Timeout while orienting");
+
+            m_claws->setInside();
+
+            // Approche
+            startLinear(); // est ce que ça suffit à le faire avancer ?
+            RCLCPP_INFO_STREAM(rclcpp::get_logger("rclcpp"), "Grabber approching" << std::endl);
+            RCLCPP_WARN_STREAM_COND(isArrivedAtGoal(), "Timeout while advancing");
+            m_claws->grab_pile();
+            RCLCPP_INFO_STREAM(rclcpp::get_logger("rclcpp"), "Pile Gateau" << std::endl);
+            override_gear = 2;*/
+            publishStratMovement();
+            m_claws->grab_pile();
+            m_claws->setInside();
+            RCLCPP_INFO_STREAM(rclcpp::get_logger("rclcpp"), "Plant group caught" << std::endl);
             startLinear();
 
             break;
@@ -1507,6 +1563,8 @@ void GoalStrat::init()
  */
 void GoalStrat::loop()
 {
+    RCLCPP_WARN_STREAM(rclcpp::get_logger("rclcpp"), "mon stock: " <<m_strat_graph->getStock().size() << std::endl);
+
     switch (m_state)
     {
     case State::INIT:

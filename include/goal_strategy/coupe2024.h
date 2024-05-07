@@ -5,6 +5,7 @@
 #include "krabilib/strategie/abeille.h"
 #include "krabilib/strategie/accelerator.h"
 #include "krabilib/strategie/assiette.h"
+#include "krabilib/strategie/aireDeDepose.h"
 #include "krabilib/strategie/bouee.h"
 #include "krabilib/strategie/carreFouille.h"
 #include "krabilib/strategie/etape.h"
@@ -41,12 +42,17 @@ public:
     void catchStatuette(){}; // 2022 only
     void dropStatuette(){};  // 2022 only
 
+    void grabGateau(Etape* e){}; //2023 only
+    int dropGateau(Etape* e){}; //2023 only
+
     void grabPlant(Etape* e);
     int dropPlant(Etape* e);
 
     Position positionCAbsolute(double x_yellow_from_top_left, double y_yellow_from_top_left);
 
-    Assiette* getBestAssietteForFunny();
+    AireDeDepose* getBestAreaForFunny();
+
+    std::vector<Plant> getStock();
 
 private:
     int getScoreEtape(int i);

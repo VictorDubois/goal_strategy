@@ -16,7 +16,8 @@ enum PlantType
 class Plant
 {
     public:
-        Plant(PlantType plant_type, Position start_position);
+        Plant(){};
+        Plant(PlantType plant_type, Position start_position){};
 
     private:
         PlantType m_plant_type;
@@ -38,6 +39,9 @@ public:
     std::vector<Plant> getPlants();
 
     int update();
+
+    void EmptyPlantGroup();
+
     
 protected:
     Position m_position;

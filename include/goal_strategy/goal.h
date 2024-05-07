@@ -174,7 +174,7 @@ private:
     std::thread m_running;
 
     int override_gear;
-    Assiette* m_assiette_funny = nullptr;
+    AireDeDepose* m_area_funny = nullptr;
 
     bool m_claws_openned_once = false;
 };

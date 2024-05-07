@@ -18,6 +18,13 @@
 
 PlantGroup::PlantGroup()
 {
+    Plant plant;
+    m_plants.push_back(plant);
+    m_plants.push_back(plant);
+    m_plants.push_back(plant);
+    m_plants.push_back(plant);
+    m_plants.push_back(plant);
+    m_plants.push_back(plant);
 }
 
 PlantGroup::PlantGroup(Position goalPosition)
@@ -25,6 +32,14 @@ PlantGroup::PlantGroup(Position goalPosition)
 {
     goalPosition = this->goalPosition;
     m_start_position = goalPosition;
+    
+    Plant plant;
+    m_plants.push_back(plant);
+    m_plants.push_back(plant);
+    m_plants.push_back(plant);
+    m_plants.push_back(plant);
+    m_plants.push_back(plant);
+    m_plants.push_back(plant);
 }
 
 PlantGroup::~PlantGroup()
@@ -46,4 +61,9 @@ std::vector<Plant> PlantGroup::getPlants()
 int PlantGroup::update()
 {
     return 0;
+}
+
+void PlantGroup::EmptyPlantGroup()
+{
+    m_plants.clear();
 }

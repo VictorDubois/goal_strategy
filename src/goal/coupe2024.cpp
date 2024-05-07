@@ -87,26 +87,26 @@ Coupe2024::Coupe2024(const bool isYellow, const StartingPosition starting_positi
     {
         float distance_to_wall = 0.4f;
         int area_pami_us
-            = Etape::makeEtape(new AireDeDepose(positionC(1.275f, -0.775f), positionC(1.265f, -0.765f), Owner::us));
+            = Etape::makeEtape(new AireDeDepose(positionC(1.175f, -0.675f), positionC(1.275f, -0.775f), Owner::us));
 
         int area_pami_them
-            = Etape::makeEtape(new AireDeDepose(positionC(-1.275f, -0.775f), positionC(-1.265f, -0.765f), Owner::them));
+            = Etape::makeEtape(new AireDeDepose(positionC(-1.175f, -0.675f), positionC(-1.275f, -0.775f), Owner::them));
         
 
         int area_center_us
-            = Etape::makeEtape(new AireDeDepose(positionC(-1.275f, 0.0f), positionC(-1.265f, 0.0f), Owner::us));
+            = Etape::makeEtape(new AireDeDepose(positionC(-1.175f, 0.0f), positionC(-1.275f, 0.0f), Owner::us));
         
 
         int area_center_them
-            = Etape::makeEtape(new AireDeDepose(positionC(1.275f, 0.0f), positionC(1.265f, 0.0f), Owner::them));
+            = Etape::makeEtape(new AireDeDepose( positionC(1.175f, 0.0f), positionC(1.275f, 0.0f), Owner::them));
 
 
         int area_solar_panel_us
-            = Etape::makeEtape(new AireDeDepose(positionC(1.275f, 0.775f), positionC(1.265f, 0.765f), Owner::us));
+            = Etape::makeEtape(new AireDeDepose(positionC(1.175f, 0.675f), positionC(1.275f, 0.775f), Owner::us));
 
 
         int area_solar_panel_them 
-            = Etape::makeEtape(new AireDeDepose(positionC(-1.275f, 0.775f), positionC(-1.265f, 0.765f), Owner::them));
+            = Etape::makeEtape(new AireDeDepose( positionC(-1.175f, 0.675f), positionC(-1.275f, 0.775f), Owner::them));
 
 
         int group_plant_midi = Etape::makeEtape(new PlantGroup(positionC(0.0f, -0.5f)));
@@ -133,7 +133,7 @@ Coupe2024::Coupe2024(const bool isYellow, const StartingPosition starting_positi
 
         Etape::get(campement)->addVoisins(area_solar_panel_us);
         Etape::get(group_plant_2h)->addVoisins(area_center_us);
-        Etape::get(group_plant_4h)->addVoisins(area_center_us);
+        //Etape::get(group_plant_4h)->addVoisins(area_center_us);
         Etape::get(group_plant_10h)->addVoisins(area_pami_us);
 
 
@@ -162,9 +162,12 @@ void Coupe2024::grabPlant(Etape* e)
     case Etape::PLANT_GROUP:
         l_plant_group = static_cast<PlantGroup*>(e->getAction());
         l_plants = l_plant_group->getPlants();
+               
         m_stock.insert(m_stock.end(), l_plants.begin(), l_plants.end());
+        
+        
         break;
-
+        
     default:
         std::cerr << "Not supposed to grab a gateau from here!" << std::endl;
     }
@@ -305,15 +308,15 @@ void Coupe2024::debugEtapes(visualization_msgs::msg::MarkerArray& ma)
             m.pose = Pose(etape->getPosition(), Angle(0));
             etape_type_to_marker(m, etape);
 
-            if (etape->getEtapeType() == Etape::EtapeType::ASSIETTE)
+            if (etape->getEtapeType() == Etape::EtapeType::AIRE_DE_DEPOSE)
             {
-                m.pose = Pose(static_cast<Assiette*>(etape->getAction())->getAssietteCenter(), Angle(0));
+                m.pose = Pose(static_cast<AireDeDepose*>(etape->getAction())->getAreaCenter(), Angle(0));
             }
 
             if (etape->getNumero() == this->getGoal()->getNumero())
             {
                 m.scale.z *= 10;
-                if (etape->getEtapeType() == Etape::EtapeType::ASSIETTE)
+                if (etape->getEtapeType() == Etape::EtapeType::AIRE_DE_DEPOSE)
                 {
                     m.scale.z = 1;
                 }
@@ -370,9 +373,10 @@ int Coupe2024::getScoreEtape(int i)
 {
     RCLCPP_INFO_STREAM(rclcpp::get_logger("rclcpp"), "getScoreEtape. Time: " << getRemainingTime() << std::endl);
     int l_score = 0;
-    Assiette* l_assiette;
+    AireDeDepose* l_area;
     Owner l_owner;
-    unsigned int l_stock_assiette;
+    unsigned int l_stock_area;
+    
     switch (this->m_tableau_etapes_total[i]->getEtapeType())
     {
         // A faire : remplacer la priorite par le nombre de points obtenables a l'etape
@@ -380,7 +384,7 @@ int Coupe2024::getScoreEtape(int i)
     case Etape::DEPART:
         l_score = 0;
         break;
-    case Etape::PILE_GATEAU:
+    case Etape::PLANT_GROUP:
         l_score = 3;
 
         if (m_stock.size() > 0)
@@ -388,20 +392,20 @@ int Coupe2024::getScoreEtape(int i)
             l_score = -3;
         }
         break;
-    case Etape::ASSIETTE:
-        l_assiette = static_cast<Assiette*>(this->m_tableau_etapes_total[i]->getAction());
-        l_owner = l_assiette->getOwner();
-        l_stock_assiette = l_assiette->getNumberOFGateaux();
+    case Etape::AIRE_DE_DEPOSE:
+        l_area = static_cast<AireDeDepose*>(this->m_tableau_etapes_total[i]->getAction());
+        l_owner = l_area->getOwner();
+        l_stock_area = l_area->getNumberOfPlants();
 
 
-        if (m_stock.size() && l_owner == Owner::us && l_stock_assiette < 3)
+        if (m_stock.size() && l_owner == Owner::us && l_stock_area < 12)
         {
             l_score = 3;
-            if (m_stock.size() >= 2 && l_stock_assiette <= 1)
+            if ( l_stock_area <= 6)
             {
                 l_score = 6;
             }
-            if (m_stock.size() >= 4 && l_stock_assiette == 0)
+            if (l_stock_area == 0)
             {
                 l_score = 9;
             }
@@ -416,34 +420,34 @@ int Coupe2024::getScoreEtape(int i)
     return l_score;
 }
 
-Assiette* Coupe2024::getBestAssietteForFunny()
+AireDeDepose* Coupe2024::getBestAreaForFunny()
 {
-    Assiette* l_farthest_assiette_to_obstacles = nullptr;
+    AireDeDepose* l_farthest_area_to_obstacles = nullptr;
     Distance l_farthest_distance_to_obstacles = Distance(0);
     for (auto& l_etape : Etape::getTableauEtapesTotal())
     {
-        if (l_etape && l_etape->getEtapeType() == Etape::EtapeType::ASSIETTE)
+        if (l_etape && l_etape->getEtapeType() == Etape::EtapeType::AIRE_DE_DEPOSE)
         {
-            auto l_assiette = static_cast<Assiette*>(l_etape->getAction());
-            if (l_assiette->getOwner() != Owner::us)
+            auto l_area = static_cast<AireDeDepose*>(l_etape->getAction());
+            if (l_area->getOwner() != Owner::us)
             {
                 // Pas la peine de mettre les roues dans le plat de l'adversaire
                 continue;
             }
 
-            if (l_assiette->getNumberOFGateaux())
-            {
-                // Pas top de mettre les roues dans les gateaux (mais dans certains cas désespérés ça pourrait le faire)
-                continue;
-            }
             auto l_current_distance = Distance(l_etape->getDistanceToPotentialObstacle());
             // Trier par distance aux adversaires
             if (l_current_distance > l_farthest_distance_to_obstacles)
             {
                 l_farthest_distance_to_obstacles =  l_current_distance;
-                l_farthest_assiette_to_obstacles = l_assiette;
+                l_farthest_area_to_obstacles = l_area;
             }
         }
     }
-    return l_farthest_assiette_to_obstacles;
+    return l_farthest_area_to_obstacles;
+}
+
+std::vector<Plant> Coupe2024::getStock()
+{
+    return m_stock;
 }
