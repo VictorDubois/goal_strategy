@@ -124,7 +124,8 @@ void GoalStrat::reculeDroit(rclcpp::Duration a_time, Distance a_distance)
 
     while (this->now().seconds() < recalageTimeoutDeadline.seconds() && l_distance_parcourue < a_distance)
     {
-        rclcpp::spin_some(shared_from_this());
+        //todo understand if necessary
+        //rclcpp::spin_some(shared_from_this());
         updateCurrentPose();
         l_distance_parcourue = (l_initial_pose - m_current_pose.getPosition()).getNorme();
         usleep(0.1e6);
@@ -1429,6 +1430,9 @@ void GoalStrat::stateRun()
             m_claws->setInside();
             RCLCPP_INFO_STREAM(rclcpp::get_logger("rclcpp"), "Plant group caught" << std::endl);
             startLinear();
+            //todo remove this 
+            
+            //recule(rclcpp::Duration(1000,0), Distance(0.1));
 
             break;
         default:

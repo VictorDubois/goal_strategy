@@ -121,9 +121,44 @@ Coupe2024::Coupe2024(const bool isYellow, const StartingPosition starting_positi
         
         int group_plant_10h = Etape::makeEtape(new PlantGroup(positionC(0.5f, -0.3f)));
 
-        Etape::get(area_solar_panel_us)->addVoisins(group_plant_10h);
-        Etape::get(area_solar_panel_us)->addVoisins(group_plant_8h);
-        Etape::get(area_solar_panel_us)->addVoisins(group_plant_6h);
+        int point_passage_1 = Etape::makeEtape(positionC(0.8f, 0.6f));
+        int point_passage_2 = Etape::makeEtape(positionC(0.0f, 0.75f));
+        int point_passage_3 = Etape::makeEtape(positionC(-0.8f, 0.6f));
+        int point_passage_4 = Etape::makeEtape(positionC(0.8f, -0.6f));
+        int point_passage_5 = Etape::makeEtape(positionC(0.0f, -0.75f));
+        int point_passage_6 = Etape::makeEtape(positionC(-0.8f, -0.6f));
+        int point_passage_center = Etape::makeEtape(positionC(0.0f, 0.0f));
+
+
+        Etape::get(area_solar_panel_us)->addVoisins(point_passage_1);
+        Etape::get(area_pami_us)->addVoisins(point_passage_4);
+        Etape::get(area_center_us)->addVoisins(point_passage_3);
+        Etape::get(area_center_us)->addVoisins(point_passage_6);
+
+        
+        Etape::get(point_passage_1)->addVoisins(point_passage_2);
+        Etape::get(point_passage_2)->addVoisins(point_passage_3);
+        Etape::get(point_passage_4)->addVoisins(point_passage_5);
+        Etape::get(point_passage_5)->addVoisins(point_passage_6);
+
+
+
+        Etape::get(point_passage_1)->addVoisins(group_plant_10h);
+        Etape::get(point_passage_1)->addVoisins(group_plant_8h);
+        Etape::get(point_passage_1)->addVoisins(group_plant_6h);
+
+        Etape::get(point_passage_2)->addVoisins(group_plant_6h);
+        Etape::get(point_passage_3)->addVoisins(group_plant_4h);
+        Etape::get(point_passage_5)->addVoisins(group_plant_midi);
+        Etape::get(point_passage_6)->addVoisins(group_plant_2h);
+
+
+
+        Etape::get(point_passage_4)->addVoisins(group_plant_8h);
+        Etape::get(point_passage_4)->addVoisins(group_plant_10h);
+        Etape::get(point_passage_4)->addVoisins(group_plant_midi);
+
+
         Etape::get(group_plant_6h)->addVoisins(group_plant_4h);
         Etape::get(group_plant_4h)->addVoisins(group_plant_2h);
         Etape::get(group_plant_2h)->addVoisins(group_plant_midi);
@@ -134,7 +169,15 @@ Coupe2024::Coupe2024(const bool isYellow, const StartingPosition starting_positi
         Etape::get(campement)->addVoisins(area_solar_panel_us);
         Etape::get(group_plant_2h)->addVoisins(area_center_us);
         //Etape::get(group_plant_4h)->addVoisins(area_center_us);
-        Etape::get(group_plant_10h)->addVoisins(area_pami_us);
+        //Etape::get(group_plant_10h)->addVoisins(area_pami_us);
+
+        
+        Etape::get(point_passage_center)->addVoisins(group_plant_2h);
+        Etape::get(point_passage_center)->addVoisins(group_plant_4h);
+        Etape::get(point_passage_center)->addVoisins(group_plant_6h);
+        Etape::get(point_passage_center)->addVoisins(group_plant_8h);
+        Etape::get(point_passage_center)->addVoisins(group_plant_10h);
+        Etape::get(point_passage_center)->addVoisins(group_plant_midi);
 
 
     }
@@ -429,7 +472,7 @@ AireDeDepose* Coupe2024::getBestAreaForFunny()
         if (l_etape && l_etape->getEtapeType() == Etape::EtapeType::AIRE_DE_DEPOSE)
         {
             auto l_area = static_cast<AireDeDepose*>(l_etape->getAction());
-            if (l_area->getOwner() != Owner::us)
+            if (l_area->getOwner() != Owner::us || l_area->isStartingPosition())
             {
                 // Pas la peine de mettre les roues dans le plat de l'adversaire
                 continue;
