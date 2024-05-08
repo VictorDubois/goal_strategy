@@ -76,7 +76,7 @@ Coupe2024::Coupe2024(const bool isYellow, const StartingPosition starting_positi
 
 
     bool test_contournement = false;
-
+    int area_pami_us;
     if (test_contournement)
     {
         // int other_side = Etape::makeEtape(
@@ -86,27 +86,27 @@ Coupe2024::Coupe2024(const bool isYellow, const StartingPosition starting_positi
     else
     {
         float distance_to_wall = 0.4f;
-        int area_pami_us
-            = Etape::makeEtape(new AireDeDepose(positionC(1.175f, -0.675f), positionC(1.275f, -0.775f), Owner::us));
+        area_pami_us
+            = Etape::makeEtape(new AireDeDepose(positionC(1.175f, -0.675f), positionC(1.275f, -0.775f), Owner::us,false));
 
         int area_pami_them
-            = Etape::makeEtape(new AireDeDepose(positionC(-1.175f, -0.675f), positionC(-1.275f, -0.775f), Owner::them));
+            = Etape::makeEtape(new AireDeDepose(positionC(-1.175f, -0.675f), positionC(-1.275f, -0.775f), Owner::them,false));
         
 
         int area_center_us
-            = Etape::makeEtape(new AireDeDepose(positionC(-1.175f, 0.0f), positionC(-1.275f, 0.0f), Owner::us));
+            = Etape::makeEtape(new AireDeDepose(positionC(-1.175f, 0.0f), positionC(-1.275f, 0.0f), Owner::us,false));
         
 
         int area_center_them
-            = Etape::makeEtape(new AireDeDepose( positionC(1.175f, 0.0f), positionC(1.275f, 0.0f), Owner::them));
+            = Etape::makeEtape(new AireDeDepose( positionC(1.175f, 0.0f), positionC(1.275f, 0.0f), Owner::them,false));
 
 
         int area_solar_panel_us
-            = Etape::makeEtape(new AireDeDepose(positionC(1.175f, 0.675f), positionC(1.275f, 0.775f), Owner::us));
+            = Etape::makeEtape(new AireDeDepose(positionC(1.175f, 0.675f), positionC(1.275f, 0.775f), Owner::us,true));
 
 
         int area_solar_panel_them 
-            = Etape::makeEtape(new AireDeDepose( positionC(-1.175f, 0.675f), positionC(-1.275f, 0.775f), Owner::them));
+            = Etape::makeEtape(new AireDeDepose( positionC(-1.175f, 0.675f), positionC(-1.275f, 0.775f), Owner::them,false));
 
 
         int group_plant_midi = Etape::makeEtape(new PlantGroup(positionC(0.0f, -0.5f)));
@@ -182,7 +182,7 @@ Coupe2024::Coupe2024(const bool isYellow, const StartingPosition starting_positi
 
     }
 
-    m_numero_etape_garage = campement; // Must be set!
+    m_numero_etape_garage = area_pami_us; // Must be set!
 
 #ifdef QTGUI
     qDebug() << Etape::getTotalEtapes();
@@ -441,16 +441,16 @@ int Coupe2024::getScoreEtape(int i)
         l_stock_area = l_area->getNumberOfPlants();
 
 
-        if (m_stock.size() && l_owner == Owner::us && l_stock_area < 12)
+        if (m_stock.size() && l_owner == Owner::us && l_stock_area < 18)
         {
-            l_score = 3;
+            l_score = 6;
             if ( l_stock_area <= 6)
             {
-                l_score = 6;
+                l_score = 12;
             }
             if (l_stock_area == 0)
             {
-                l_score = 9;
+                l_score = 24;
             }
         }
         break;
@@ -470,8 +470,10 @@ AireDeDepose* Coupe2024::getBestAreaForFunny()
     for (auto& l_etape : Etape::getTableauEtapesTotal())
     {
         if (l_etape && l_etape->getEtapeType() == Etape::EtapeType::AIRE_DE_DEPOSE)
-        {
+        {  
             auto l_area = static_cast<AireDeDepose*>(l_etape->getAction());
+            //RCLCPP_WARN_STREAM(rclcpp::get_logger("rclcpp"), "DEBUG"<< " Owner is" << l_area->getOwner() << "is starting position"<<l_area->isStartingPosition << std::endl);
+
             if (l_area->getOwner() != Owner::us || l_area->isStartingPosition())
             {
                 // Pas la peine de mettre les roues dans le plat de l'adversaire
@@ -487,6 +489,7 @@ AireDeDepose* Coupe2024::getBestAreaForFunny()
             }
         }
     }
+    //RCLCPP_WARN_STREAM(rclcpp::get_logger("rclcpp"), "DEBUG"<< " l_farthest_area_to_obstacles" << l_area->getOwner() << "is starting position"<<l_area->isStartingPosition << std::endl);
     return l_farthest_area_to_obstacles;
 }
 

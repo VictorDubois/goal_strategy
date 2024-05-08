@@ -489,7 +489,7 @@ GoalStrat::GoalStrat() : Node("goal_strat")
     m_tf_listener_ = std::make_shared<tf2_ros::TransformListener>(*m_tf_buffer_);
     m_goal_init_done = false;
     m_at_least_one_carre_fouille_done = false;
-    m_remainig_time = rclcpp::Duration(100, 0);
+    m_remainig_time = rclcpp::Duration(90, 0);
     m_strat_mvnt.max_speed_at_arrival = 0.0f;
     m_strat_mvnt.orient = 0;
     m_strat_mvnt.max_speed.linear.x = 0.5f;
@@ -991,7 +991,7 @@ void GoalStrat::stateRun()
         if(m_area_funny == nullptr)
         {
             RCLCPP_ERROR_STREAM(rclcpp::get_logger("rclcpp"), "FAIL getting best area for funny action, revert to default");
-            m_goal_pose.setPosition(m_strat_graph->positionCAbsolute(Distance(1.5f-0.375f), Distance(1.525f)));
+            m_goal_pose.setPosition(m_strat_graph->positionC(1.275f, -0.775f));
         }
         else
         {

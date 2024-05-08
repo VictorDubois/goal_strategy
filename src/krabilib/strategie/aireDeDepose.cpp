@@ -15,17 +15,19 @@ AireDeDepose::AireDeDepose()
 {
 }
 
-AireDeDepose::AireDeDepose(Position goalPosition, Owner us_or_them) : AireDeDepose(goalPosition, goalPosition, us_or_them)
+AireDeDepose::AireDeDepose(Position goalPosition, Owner us_or_them, bool is_starting_position) 
+    : AireDeDepose(goalPosition, goalPosition, us_or_them, is_starting_position)
 {
 }
 
 
-AireDeDepose::AireDeDepose(Position goalPosition, Position area_center, Owner us_or_them)
+AireDeDepose::AireDeDepose(Position goalPosition, Position area_center, Owner us_or_them, bool is_starting_position)
   : MediumLevelAction(goalPosition)
 {
   m_goal_position=goalPosition;
   m_us_or_them=us_or_them;
   m_area_center=area_center;
+  m_is_starting_position=is_starting_position;
 }
 
 AireDeDepose::~AireDeDepose()

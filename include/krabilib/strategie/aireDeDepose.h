@@ -15,8 +15,8 @@ class AireDeDepose : public MediumLevelAction
 public:
     AireDeDepose();
 
-    AireDeDepose(Position goalPosition, Position area_center, Owner us_or_them);
-    AireDeDepose(Position goalPosition, Owner us_or_them);
+    AireDeDepose(Position goalPosition, Position area_center, Owner us_or_them, bool is_starting_position);
+    AireDeDepose(Position goalPosition, Owner us_or_them, bool is_starting_position);
 
     ~AireDeDepose();
 
