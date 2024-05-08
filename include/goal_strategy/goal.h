@@ -177,4 +177,6 @@ private:
     AireDeDepose* m_area_funny = nullptr;
 
     bool m_claws_openned_once = false;
+
+    StartingPosition m_starting_position;
 };

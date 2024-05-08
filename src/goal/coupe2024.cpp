@@ -52,22 +52,31 @@ Coupe2024::Coupe2024(const bool isYellow, const StartingPosition starting_positi
     // Création des étapes
     // Les étapes qui correspondant à des actions sont créées automatiquement lors de l'ajout d'actions
     
-    //Choix du campement 
-    int campement;
+     
+    bool test_contournement = false, pami_start = false, center_start = false, solar_panel_start = false;
+    int campement;    
+    int area_pami_us, area_pami_them, area_center_us, area_center_them, area_solar_panel_us, area_solar_panel_them, 
+        group_plant_midi, group_plant_2h, group_plant_4h, group_plant_6h, group_plant_8h, group_plant_10h,
+        point_passage_1, point_passage_2, point_passage_3, point_passage_4, point_passage_5, point_passage_6, point_passage_center;;
 
+
+    //Choix du campement
     switch (starting_position)
     {
     case SOLAR_PANEL:
         campement = Etape::makeEtape(positionC(1.275f, 0.775f),
                                      Etape::DEPART); 
+        solar_panel_start = true;
         break;
     case CENTER:
         campement = Etape::makeEtape(positionC(-1.275f, 0.0f),
                                      Etape::DEPART); 
+        center_start = true;
         break;
     case PAMI:
         campement = Etape::makeEtape(positionC(1.275f, -0.775f),
                                      Etape::DEPART); 
+        pami_start = true;
         break;
     default:
         throw std::runtime_error("Wrong starting position");
@@ -75,8 +84,8 @@ Coupe2024::Coupe2024(const bool isYellow, const StartingPosition starting_positi
     }
 
 
-    bool test_contournement = false;
-    int area_pami_us;
+
+
     if (test_contournement)
     {
         // int other_side = Etape::makeEtape(
@@ -87,47 +96,47 @@ Coupe2024::Coupe2024(const bool isYellow, const StartingPosition starting_positi
     {
         float distance_to_wall = 0.4f;
         area_pami_us
-            = Etape::makeEtape(new AireDeDepose(positionC(1.175f, -0.675f), positionC(1.275f, -0.775f), Owner::us,false));
+            = Etape::makeEtape(new AireDeDepose(positionC(1.175f, -0.675f), positionC(1.275f, -0.775f), Owner::us, pami_start));
 
-        int area_pami_them
-            = Etape::makeEtape(new AireDeDepose(positionC(-1.175f, -0.675f), positionC(-1.275f, -0.775f), Owner::them,false));
+        area_pami_them
+            = Etape::makeEtape(new AireDeDepose(positionC(-1.175f, -0.675f), positionC(-1.275f, -0.775f), Owner::them, false));
         
 
-        int area_center_us
-            = Etape::makeEtape(new AireDeDepose(positionC(-1.175f, 0.0f), positionC(-1.275f, 0.0f), Owner::us,false));
+        area_center_us
+            = Etape::makeEtape(new AireDeDepose(positionC(-1.175f, 0.0f), positionC(-1.275f, 0.0f), Owner::us, center_start));
         
 
-        int area_center_them
-            = Etape::makeEtape(new AireDeDepose( positionC(1.175f, 0.0f), positionC(1.275f, 0.0f), Owner::them,false));
+        area_center_them
+            = Etape::makeEtape(new AireDeDepose( positionC(1.175f, 0.0f), positionC(1.275f, 0.0f), Owner::them, false));
 
 
-        int area_solar_panel_us
-            = Etape::makeEtape(new AireDeDepose(positionC(1.175f, 0.675f), positionC(1.275f, 0.775f), Owner::us,true));
+        area_solar_panel_us
+            = Etape::makeEtape(new AireDeDepose(positionC(1.175f, 0.675f), positionC(1.275f, 0.775f), Owner::us, solar_panel_start));
 
 
-        int area_solar_panel_them 
+        area_solar_panel_them 
             = Etape::makeEtape(new AireDeDepose( positionC(-1.175f, 0.675f), positionC(-1.275f, 0.775f), Owner::them,false));
 
 
-        int group_plant_midi = Etape::makeEtape(new PlantGroup(positionC(0.0f, -0.5f)));
+        group_plant_midi = Etape::makeEtape(new PlantGroup(positionC(0.0f, -0.5f)));
 
-        int group_plant_2h = Etape::makeEtape(new PlantGroup(positionC(-0.5f, -0.3f)));
+        group_plant_2h = Etape::makeEtape(new PlantGroup(positionC(-0.5f, -0.3f)));
 
-        int group_plant_4h = Etape::makeEtape(new PlantGroup(positionC(-0.5f, 0.3f)));
+        group_plant_4h = Etape::makeEtape(new PlantGroup(positionC(-0.5f, 0.3f)));
         
-        int group_plant_6h = Etape::makeEtape(new PlantGroup(positionC(0.0f, 0.5f)));
+        group_plant_6h = Etape::makeEtape(new PlantGroup(positionC(0.0f, 0.5f)));
         
-        int group_plant_8h = Etape::makeEtape(new PlantGroup(positionC(0.5f, 0.3f)));
+        group_plant_8h = Etape::makeEtape(new PlantGroup(positionC(0.5f, 0.3f)));
         
-        int group_plant_10h = Etape::makeEtape(new PlantGroup(positionC(0.5f, -0.3f)));
+        group_plant_10h = Etape::makeEtape(new PlantGroup(positionC(0.5f, -0.3f)));
 
-        int point_passage_1 = Etape::makeEtape(positionC(0.8f, 0.6f));
-        int point_passage_2 = Etape::makeEtape(positionC(0.0f, 0.75f));
-        int point_passage_3 = Etape::makeEtape(positionC(-0.8f, 0.6f));
-        int point_passage_4 = Etape::makeEtape(positionC(0.8f, -0.6f));
-        int point_passage_5 = Etape::makeEtape(positionC(0.0f, -0.75f));
-        int point_passage_6 = Etape::makeEtape(positionC(-0.8f, -0.6f));
-        int point_passage_center = Etape::makeEtape(positionC(0.0f, 0.0f));
+        point_passage_1 = Etape::makeEtape(positionC(0.8f, 0.6f));
+        point_passage_2 = Etape::makeEtape(positionC(0.0f, 0.75f));
+        point_passage_3 = Etape::makeEtape(positionC(-0.8f, 0.6f));
+        point_passage_4 = Etape::makeEtape(positionC(0.8f, -0.6f));
+        point_passage_5 = Etape::makeEtape(positionC(0.0f, -0.75f));
+        point_passage_6 = Etape::makeEtape(positionC(-0.8f, -0.6f));
+        point_passage_center = Etape::makeEtape(positionC(0.0f, 0.0f));
 
 
         Etape::get(area_solar_panel_us)->addVoisins(point_passage_1);
@@ -235,7 +244,7 @@ int Coupe2024::dropPlant(Etape* e)
         {
           l_area->addPlants(m_stock);
           m_stock.clear();
-          l_scored = 2;
+          l_scored = 6;
         }  
         break;
 
