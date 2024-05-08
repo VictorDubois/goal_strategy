@@ -83,6 +83,11 @@ void GoalStrat::recule(rclcpp::Duration a_time, Distance a_distance)
     //m_strat_mvnt.reverse_gear = 1;
     override_gear = 1;
 
+    if(m_year==2024)
+    {
+    override_gear = 0;
+    }
+
     publishStratMovement();
     auto recalageTimeoutDeadline = this->now() + a_time;
 
@@ -105,13 +110,25 @@ void GoalStrat::reculeDroit(rclcpp::Duration a_time, Distance a_distance)
     RCLCPP_INFO_STREAM(rclcpp::get_logger("rclcpp"), "recule !!");
     //recalage_bordure();
     //m_strat_mvnt.reverse_gear = 1;
+    
     override_gear = 1;
+
+
 
     Position l_position_recule = m_current_pose.getPosition();
     l_position_recule.setX(Distance(l_position_recule.getX()
                            - a_distance * cos(m_current_pose.getAngle())));
     l_position_recule.setY(Distance(l_position_recule.getY()
                            - a_distance * sin(m_current_pose.getAngle())));
+
+    if (m_year == 2024)
+    {
+        override_gear = 0;
+        l_position_recule.setX(Distance(l_position_recule.getX()
+                           + a_distance * cos(m_current_pose.getAngle())));
+        l_position_recule.setY(Distance(l_position_recule.getY()
+                           + a_distance * sin(m_current_pose.getAngle())));
+    }
 
     m_goal_pose.setPosition(l_position_recule);
 
@@ -124,7 +141,7 @@ void GoalStrat::reculeDroit(rclcpp::Duration a_time, Distance a_distance)
 
     while (this->now().seconds() < recalageTimeoutDeadline.seconds() && l_distance_parcourue < a_distance)
     {
-        //todo understand if necessary
+        //todo modify this to go backward
         //rclcpp::spin_some(shared_from_this());
         updateCurrentPose();
         l_distance_parcourue = (l_initial_pose - m_current_pose.getPosition()).getNorme();
@@ -773,17 +790,25 @@ void GoalStrat::chooseGear()
              || m_strat_graph->getEtapeEnCours()->getEtapeType() == Etape::EtapeType::STATUETTE
              || m_strat_graph->getEtapeEnCours()->getEtapeType() == Etape::EtapeType::VITRINE
              || (m_strat_graph->getEtapeEnCours()->getEtapeType() == Etape::EtapeType::CARRE_FOUILLE
-                 && !m_is_blue))
+                 && !m_is_blue)
+             || m_strat_graph->getEtapeEnCours()->getEtapeType() == Etape::EtapeType::POINT_PASSAGE 
+                 )
     {
         l_reverseGear.data = false;
         m_strat_mvnt.reverse_gear = 0;
     }
     else
     {
-        // Don't care
-        l_reverseGear.data = false;
-        m_strat_mvnt.reverse_gear = 2;
+        // // Don't care
+        // l_reverseGear.data = false;
+        // m_strat_mvnt.reverse_gear = 2;
+        l_reverseGear.data = true;
+        m_strat_mvnt.reverse_gear = 1;
     }
+
+
+    //l_reverseGear.data = true;
+    //m_strat_mvnt.reverse_gear = 1;
 
     RCLCPP_DEBUG_STREAM(rclcpp::get_logger("rclcpp"), "currentEtapeType = " << m_strat_graph->getEtapeEnCours()->getEtapeType()
                                            << "m_previous_etape_type = " << m_previous_etape_type
@@ -817,7 +842,6 @@ void GoalStrat::publishScore()
     // Is the robot in the right area at the end?
     if (m_remainig_time < rclcpp::Duration(4,0))
     {
-        l_score += 5; // deguisement
         std::vector<Position> l_valid_end_locations;
         if (m_year == 2022)
         {
@@ -827,6 +851,7 @@ void GoalStrat::publishScore()
         }
         else if (m_year == 2023)
         {
+            l_score += 5; // deguisement
             // Auto add all of our assiettes as valid end locations
             for (auto& etape : Etape::getTableauEtapesTotal())
             {
@@ -843,12 +868,33 @@ void GoalStrat::publishScore()
                 }
             }
         }
+        else if (m_year == 2024)
+        {
+            switch(m_starting_position)
+            {
+            case SOLAR_PANEL:
+                l_valid_end_locations.push_back(m_strat_graph->positionC(1.275f, -0.775f)); //pami us
+                l_valid_end_locations.push_back(m_strat_graph->positionC(-1.275f, 0.0f)); //center us
+                break;
+            case CENTER:
+                l_valid_end_locations.push_back(m_strat_graph->positionC(1.275f, -0.775f)); //pami us 
+                l_valid_end_locations.push_back(m_strat_graph->positionC(1.275f, 0.775f)); //solar us
+                break;
+            case PAMI:
+                l_valid_end_locations.push_back(m_strat_graph->positionC(1.275f, 0.775f)); //solar us 
+                l_valid_end_locations.push_back(m_strat_graph->positionC(-1.275f, 0.0f)); //center us
+                break;
+            default:
+                throw std::runtime_error("Wrong starting position");
+                break;
+            }
 
+        }
         for (auto l_position : l_valid_end_locations)
         {
             if ((m_current_pose.getPosition() - l_position).getNorme() < 0.3f)
             {
-                l_score += 15;
+                l_score += 10;
             }
         }
     }
@@ -1394,8 +1440,8 @@ void GoalStrat::stateRun()
             startLinear();
 
             m_claws->setInside();
-
-            reculeDroit(rclcpp::Duration(3,0), Distance(0.14));
+            //todo add again if repaired
+            //reculeDroit(rclcpp::Duration(3,0), Distance(0.14));
 
             RCLCPP_INFO_STREAM(rclcpp::get_logger("rclcpp"), "Drop plants in area" << std::endl);
             break;
@@ -1482,9 +1528,18 @@ void GoalStrat::init()
 {
     m_funny_action_counted = false;
     m_first_manche_a_air_done = false;
-    m_score_match = 5; // panier present
-    m_score_match += 10; // 10 cerises
-    m_score_match += 5; // comptage correct
+    
+    if (m_year==2023)
+    {
+        m_score_match = 5; // panier present
+        m_score_match += 10; // 10 cerises
+        m_score_match += 5; // comptage correct
+    }
+    if (m_year==2024)
+    {
+        m_score_match += 0; // point du pami todo add when pami works
+    }
+
 
     m_servos_cmd.enable = true;
     /*m_servos_cmd.brak_speed = 10;
@@ -1525,22 +1580,22 @@ void GoalStrat::init()
     //Choose starting position 
     this->declare_parameter("startingPosition", "SOLAR_PANEL");
     std::string l_starting_position_string = this->get_parameter("startingPosition").as_string();
-    StartingPosition l_starting_position=SOLAR_PANEL;
+    m_starting_position=SOLAR_PANEL;
     if (l_starting_position_string=="SOLAR_PANEL")
     {
         RCLCPP_DEBUG_STREAM(rclcpp::get_logger("rclcpp"), "We start near the solar panels" << std::endl);
-        l_starting_position = SOLAR_PANEL;
+        m_starting_position = SOLAR_PANEL;
     }
     else if (l_starting_position_string=="CENTER")
     {
         RCLCPP_DEBUG_STREAM(rclcpp::get_logger("rclcpp"), "We start in the opposite site, in the center" << std::endl);
-        l_starting_position = CENTER;
+        m_starting_position = CENTER;
 
     }
     else if ((l_starting_position_string=="PAMI"))
     {
         RCLCPP_DEBUG_STREAM(rclcpp::get_logger("rclcpp"), "We start near the pami" << std::endl);
-        l_starting_position = PAMI;
+        m_starting_position = PAMI;
     }
     else 
     {
@@ -1549,7 +1604,7 @@ void GoalStrat::init()
 
     m_action_aborted = false;
 
-    m_strat_graph = std::make_unique<Coupe2024>(!m_is_blue, l_starting_position);
+    m_strat_graph = std::make_unique<Coupe2024>(!m_is_blue, m_starting_position);
 
     m_strat_graph->update();
     m_previous_etape_type = Etape::EtapeType::POINT_PASSAGE;

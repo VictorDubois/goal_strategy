@@ -57,7 +57,8 @@ Coupe2024::Coupe2024(const bool isYellow, const StartingPosition starting_positi
     int campement;    
     int area_pami_us, area_pami_them, area_center_us, area_center_them, area_solar_panel_us, area_solar_panel_them, 
         group_plant_midi, group_plant_2h, group_plant_4h, group_plant_6h, group_plant_8h, group_plant_10h,
-        point_passage_1, point_passage_2, point_passage_3, point_passage_4, point_passage_5, point_passage_6, point_passage_center;;
+        point_passage_1, point_passage_2, point_passage_3, point_passage_4, point_passage_5, point_passage_6, point_passage_center, point_passage_7;
+
 
 
     //Choix du campement
@@ -137,6 +138,8 @@ Coupe2024::Coupe2024(const bool isYellow, const StartingPosition starting_positi
         point_passage_5 = Etape::makeEtape(positionC(0.0f, -0.75f));
         point_passage_6 = Etape::makeEtape(positionC(-0.8f, -0.6f));
         point_passage_center = Etape::makeEtape(positionC(0.0f, 0.0f));
+        point_passage_7 = Etape::makeEtape(positionC((-1.175f-0.5f)/2.0f, -0.15f));
+
 
 
         Etape::get(area_solar_panel_us)->addVoisins(point_passage_1);
@@ -176,7 +179,8 @@ Coupe2024::Coupe2024(const bool isYellow, const StartingPosition starting_positi
         Etape::get(group_plant_8h)->addVoisins(group_plant_6h);
 
         Etape::get(campement)->addVoisins(area_solar_panel_us);
-        Etape::get(group_plant_2h)->addVoisins(area_center_us);
+        Etape::get(group_plant_2h)->addVoisins(point_passage_7);
+        Etape::get(point_passage_7)->addVoisins(area_center_us);
         //Etape::get(group_plant_4h)->addVoisins(area_center_us);
         //Etape::get(group_plant_10h)->addVoisins(area_pami_us);
 
