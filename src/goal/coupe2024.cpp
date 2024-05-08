@@ -58,7 +58,10 @@ Coupe2024::Coupe2024(const bool isYellow, const StartingPosition starting_positi
     int area_pami_us, area_pami_them, area_center_us, area_center_them, area_solar_panel_us, area_solar_panel_them, 
         group_plant_midi, group_plant_2h, group_plant_4h, group_plant_6h, group_plant_8h, group_plant_10h,
         point_passage_1, point_passage_2, point_passage_3, point_passage_4, point_passage_5, point_passage_6, point_passage_center, point_passage_7;
+    
 
+    //todo crad remove 
+    int area_pami_us2, area_pami_us3, area_solar_panel_us2, area_solar_panel_us3;
 
 
     //Choix du campement
@@ -99,6 +102,13 @@ Coupe2024::Coupe2024(const bool isYellow, const StartingPosition starting_positi
         area_pami_us
             = Etape::makeEtape(new AireDeDepose(positionC(1.175f, -0.675f), positionC(1.275f, -0.775f), Owner::us, pami_start));
 
+//todo crad remove 
+area_pami_us2
+            = Etape::makeEtape(new AireDeDepose(positionC(1.175f, -0.675f), positionC(1.275f, -0.775f), Owner::us, pami_start));
+area_pami_us3
+            = Etape::makeEtape(new AireDeDepose(positionC(1.175f, -0.675f), positionC(1.275f, -0.775f), Owner::us, pami_start));
+
+
         area_pami_them
             = Etape::makeEtape(new AireDeDepose(positionC(-1.175f, -0.675f), positionC(-1.275f, -0.775f), Owner::them, false));
         
@@ -113,7 +123,11 @@ Coupe2024::Coupe2024(const bool isYellow, const StartingPosition starting_positi
 
         area_solar_panel_us
             = Etape::makeEtape(new AireDeDepose(positionC(1.175f, 0.675f), positionC(1.275f, 0.775f), Owner::us, solar_panel_start));
-
+//Todo crad remove 
+area_solar_panel_us2
+            = Etape::makeEtape(new AireDeDepose(positionC(1.175f, 0.675f), positionC(1.275f, 0.775f), Owner::us, solar_panel_start)); 
+area_solar_panel_us3
+            = Etape::makeEtape(new AireDeDepose(positionC(1.175f, 0.675f), positionC(1.275f, 0.775f), Owner::us, solar_panel_start));
 
         area_solar_panel_them 
             = Etape::makeEtape(new AireDeDepose( positionC(-1.175f, 0.675f), positionC(-1.275f, 0.775f), Owner::them,false));
@@ -143,7 +157,18 @@ Coupe2024::Coupe2024(const bool isYellow, const StartingPosition starting_positi
 
 
         Etape::get(area_solar_panel_us)->addVoisins(point_passage_1);
+        //todo crad remove
+        Etape::get(area_solar_panel_us2)->addVoisins(point_passage_1);
+        Etape::get(area_solar_panel_us3)->addVoisins(point_passage_1);
+        
+        
         Etape::get(area_pami_us)->addVoisins(point_passage_4);
+        //todo crad remove
+
+        Etape::get(area_pami_us2)->addVoisins(point_passage_4);
+        Etape::get(area_pami_us3)->addVoisins(point_passage_4);
+        
+        
         Etape::get(area_center_us)->addVoisins(point_passage_3);
         Etape::get(area_center_us)->addVoisins(point_passage_6);
 
