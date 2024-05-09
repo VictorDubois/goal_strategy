@@ -43,7 +43,7 @@ Position Coupe2024::positionCAbsolute(double x_yellow_from_top_left, double y_ye
 Coupe2024::Coupe2024(const bool isYellow, const StartingPosition starting_position)
   : StrategieV3(isYellow, true)
 {
-    setRemainingTime(90 * 1000);
+    setRemainingTime(89 * 1000);
 
     // Initialisation des tableaux d'étapes
     m_tableau_etapes_total
