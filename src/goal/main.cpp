@@ -466,7 +466,7 @@ void GoalStrat::goToNextMission()
         return;
     }
 
-    if (!m_claws_openned_once && m_strat_graph->getEtapeEnCours()->getEtapeType() == Etape::EtapeType::PILE_GATEAU)
+    if (!m_claws_openned_once && (m_strat_graph->getEtapeEnCours()->getEtapeType() == Etape::EtapeType::PILE_GATEAU || m_strat_graph->getEtapeEnCours()->getEtapeType() == Etape::EtapeType::PLANT_GROUP))
     {
         m_claws->release_pile(false);
         m_claws_openned_once = true;
