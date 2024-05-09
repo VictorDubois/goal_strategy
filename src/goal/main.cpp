@@ -908,7 +908,7 @@ void GoalStrat::publishScore()
         {
             if ((m_current_pose.getPosition() - l_position).getNorme() < 0.3f)
             {
-                l_score += 10;
+                l_score += 9;
             }
         }
     }
@@ -1551,7 +1551,7 @@ void GoalStrat::init()
     }
     if (m_year==2024)
     {
-        m_score_match += 0; // point du pami todo add when pami works
+        m_score_match += 1; // check if init is correct (substracted from zone de fin )
     }
 
 
