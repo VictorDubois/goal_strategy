@@ -95,7 +95,8 @@ void GoalStrat::recule(rclcpp::Duration a_time, Distance a_distance)
 
     while (this->now().seconds() < recalageTimeoutDeadline.seconds() && l_distance_parcourue < a_distance)
     {
-        rclcpp::spin_some(shared_from_this());
+        //todo fix and reenable
+        //rclcpp::spin_some(shared_from_this());
         updateCurrentPose();
         l_distance_parcourue = (l_initial_pose - m_current_pose.getPosition()).getNorme();
         usleep(0.1e6);
