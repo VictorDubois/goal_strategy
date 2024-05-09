@@ -589,7 +589,7 @@ GoalStrat::GoalStrat() : Node("goal_strat")
     }
 
     m_claws = std::make_shared<Claws>(
-      Position(Eigen::Vector2d(0.32f, 0.f)),Position(Eigen::Vector2d(0.2f, 0.f)), l_servo_left_claw, l_servo_right_claw);
+      Position(Eigen::Vector2d(0.32f, 0.f)),Position(Eigen::Vector2d(0.08f, 0.f)), l_servo_left_claw, l_servo_right_claw);
 
     m_claws->setInside();
     /* servo check */
