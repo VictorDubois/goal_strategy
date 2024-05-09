@@ -104,7 +104,7 @@ area_solar_panel_us3
             = Etape::makeEtape(new AireDeDepose(positionC(1.175f, 0.675f), positionC(1.275f, 0.775f), Owner::us, solar_panel_start));
 
         group_plant_8h = Etape::makeEtape(new PlantGroup(positionC(0.5f, 0.3f)));
-        point_passage_1 = Etape::makeEtape(positionC(0.8f, 0.6f));
+        point_passage_1 = Etape::makeEtape(positionC(0.9f, 0.7f));
         Etape::get(point_passage_1)->addVoisins(group_plant_8h);
         Etape::get(campement)->addVoisins(point_passage_1);
         Etape::get(area_solar_panel_us)->addVoisins(point_passage_1);
@@ -162,10 +162,10 @@ area_solar_panel_us3
         
         group_plant_10h = Etape::makeEtape(new PlantGroup(positionC(0.5f, -0.3f)));
 
-        point_passage_1 = Etape::makeEtape(positionC(0.8f, 0.6f));
+        point_passage_1 = Etape::makeEtape(positionC(0.9f, 0.7f));
         point_passage_2 = Etape::makeEtape(positionC(0.0f, 0.75f));
         point_passage_3 = Etape::makeEtape(positionC(-0.8f, 0.6f));
-        point_passage_4 = Etape::makeEtape(positionC(0.8f, -0.6f));
+        point_passage_4 = Etape::makeEtape(positionC(0.9f, -0.7f));
         point_passage_5 = Etape::makeEtape(positionC(0.0f, -0.75f));
         point_passage_6 = Etape::makeEtape(positionC(-0.8f, -0.6f));
         point_passage_center = Etape::makeEtape(positionC(0.0f, 0.0f));
