@@ -53,7 +53,7 @@ Coupe2024::Coupe2024(const bool isYellow, const StartingPosition starting_positi
     // Les étapes qui correspondant à des actions sont créées automatiquement lors de l'ajout d'actions
     
      
-    bool test_contournement = false, pami_start = false, center_start = false, solar_panel_start = false;
+    bool test_contournement = true, pami_start = false, center_start = false, solar_panel_start = false;
     int campement;    
     int area_pami_us, area_pami_them, area_center_us, area_center_them, area_solar_panel_us, area_solar_panel_them, 
         group_plant_midi, group_plant_2h, group_plant_4h, group_plant_6h, group_plant_8h, group_plant_10h,
@@ -95,6 +95,23 @@ Coupe2024::Coupe2024(const bool isYellow, const StartingPosition starting_positi
         // int other_side = Etape::makeEtape(
         //   new PlantGroup(positionC(-campement.getPosition().getX(), -campement.getPosition().getY())));
         // Etape::get(campement)->addVoisins(other_side);
+        area_solar_panel_us
+            = Etape::makeEtape(new AireDeDepose(positionC(1.175f, 0.675f), positionC(1.275f, 0.775f), Owner::us, solar_panel_start));
+//Todo crad remove 
+area_solar_panel_us2
+            = Etape::makeEtape(new AireDeDepose(positionC(1.175f, 0.675f), positionC(1.275f, 0.775f), Owner::us, solar_panel_start)); 
+area_solar_panel_us3
+            = Etape::makeEtape(new AireDeDepose(positionC(1.175f, 0.675f), positionC(1.275f, 0.775f), Owner::us, solar_panel_start));
+
+        group_plant_8h = Etape::makeEtape(new PlantGroup(positionC(0.5f, 0.3f)));
+        point_passage_1 = Etape::makeEtape(positionC(0.8f, 0.6f));
+        Etape::get(point_passage_1)->addVoisins(group_plant_8h);
+        Etape::get(campement)->addVoisins(point_passage_1);
+        Etape::get(area_solar_panel_us)->addVoisins(point_passage_1);
+        //todo crad remove
+        Etape::get(area_solar_panel_us2)->addVoisins(point_passage_1);
+        Etape::get(area_solar_panel_us3)->addVoisins(point_passage_1);
+        
     }
     else
     {
