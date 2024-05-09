@@ -259,7 +259,9 @@ bool GoalStrat::isArrivedAtGoal(Distance a_offset)
         l_reach_dist = m_theThing->getReach();
     }
     if (m_strat_graph->getEtapeEnCours()->getEtapeType() == Etape::EtapeType::PILE_GATEAU
-        || m_strat_graph->getEtapeEnCours()->getEtapeType() == Etape::EtapeType::ASSIETTE)
+        || m_strat_graph->getEtapeEnCours()->getEtapeType() == Etape::EtapeType::ASSIETTE
+        || m_strat_graph->getEtapeEnCours()->getEtapeType() == Etape::EtapeType::PLANT_GROUP
+        || m_strat_graph->getEtapeEnCours()->getEtapeType() == Etape::EtapeType::AIRE_DE_DEPOSE)
     {
         l_reach_dist = m_claws->getReach();
     }
@@ -775,6 +777,9 @@ void GoalStrat::chooseGear()
         || m_previous_etape_type == Etape::EtapeType::STATUETTE
         || m_previous_etape_type == Etape::EtapeType::VITRINE
         || m_previous_etape_type == Etape::EtapeType::ASSIETTE
+        || m_strat_graph->getEtapeEnCours()->getEtapeType() == Etape::EtapeType::AIRE_DE_DEPOSE
+        || m_strat_graph->getEtapeEnCours()->getEtapeType() == Etape::EtapeType::PLANT_GROUP
+
         || (m_previous_etape_type == Etape::EtapeType::PILE_GATEAU && m_strat_graph->getEtapeEnCours()->getEtapeType() != Etape::EtapeType::ASSIETTE)
         || (m_strat_graph->getEtapeEnCours()->getEtapeType() == Etape::EtapeType::CARRE_FOUILLE
             && m_is_blue))
@@ -791,7 +796,10 @@ void GoalStrat::chooseGear()
              || m_strat_graph->getEtapeEnCours()->getEtapeType() == Etape::EtapeType::VITRINE
              || (m_strat_graph->getEtapeEnCours()->getEtapeType() == Etape::EtapeType::CARRE_FOUILLE
                  && !m_is_blue)
-             || m_strat_graph->getEtapeEnCours()->getEtapeType() == Etape::EtapeType::POINT_PASSAGE 
+            // || m_strat_graph->getEtapeEnCours()->getEtapeType() == Etape::EtapeType::POINT_PASSAGE 
+             || (m_previous_etape_type == Etape::EtapeType::PLANT_GROUP && m_strat_graph->getEtapeEnCours()->getEtapeType() != Etape::EtapeType::AIRE_DE_DEPOSE)
+              || m_previous_etape_type == Etape::EtapeType::AIRE_DE_DEPOSE
+
                  )
     {
         l_reverseGear.data = false;

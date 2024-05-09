@@ -203,7 +203,8 @@ area_solar_panel_us3
         Etape::get(group_plant_10h)->addVoisins(group_plant_8h);
         Etape::get(group_plant_8h)->addVoisins(group_plant_6h);
 
-        Etape::get(campement)->addVoisins(area_solar_panel_us);
+        //Etape::get(campement)->addVoisins(area_solar_panel_us);
+        Etape::get(campement)->addVoisins(point_passage_1);
         Etape::get(group_plant_2h)->addVoisins(point_passage_7);
         Etape::get(point_passage_7)->addVoisins(area_center_us);
         //Etape::get(group_plant_4h)->addVoisins(area_center_us);
