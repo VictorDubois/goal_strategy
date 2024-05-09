@@ -771,35 +771,41 @@ void GoalStrat::chooseGear()
         l_reverseGear.data = (override_gear == 1);
     }
     
-    else if (m_previous_etape_type == Etape::EtapeType::MANCHE_A_AIR
-        || m_strat_graph->getEtapeEnCours()->getEtapeType() == Etape::EtapeType::PHARE
-        || m_previous_etape_type == Etape::EtapeType::PORT
-        || m_previous_etape_type == Etape::EtapeType::STATUETTE
-        || m_previous_etape_type == Etape::EtapeType::VITRINE
-        || m_previous_etape_type == Etape::EtapeType::ASSIETTE
-        || m_strat_graph->getEtapeEnCours()->getEtapeType() == Etape::EtapeType::AIRE_DE_DEPOSE
-        || m_strat_graph->getEtapeEnCours()->getEtapeType() == Etape::EtapeType::PLANT_GROUP
-
-        || (m_previous_etape_type == Etape::EtapeType::PILE_GATEAU && m_strat_graph->getEtapeEnCours()->getEtapeType() != Etape::EtapeType::ASSIETTE)
-        || (m_strat_graph->getEtapeEnCours()->getEtapeType() == Etape::EtapeType::CARRE_FOUILLE
-            && m_is_blue))
+    else if (//2020&2021
+            m_previous_etape_type == Etape::EtapeType::MANCHE_A_AIR
+            || m_strat_graph->getEtapeEnCours()->getEtapeType() == Etape::EtapeType::PHARE
+            || m_previous_etape_type == Etape::EtapeType::PORT
+            //2022
+            || m_previous_etape_type == Etape::EtapeType::STATUETTE
+            || m_previous_etape_type == Etape::EtapeType::VITRINE
+            || (m_strat_graph->getEtapeEnCours()->getEtapeType() == Etape::EtapeType::CARRE_FOUILLE
+                && m_is_blue)
+            //2023
+            || m_previous_etape_type == Etape::EtapeType::ASSIETTE
+            || (m_previous_etape_type == Etape::EtapeType::PILE_GATEAU && m_strat_graph->getEtapeEnCours()->getEtapeType() != Etape::EtapeType::ASSIETTE)
+            //2024
+            || m_strat_graph->getEtapeEnCours()->getEtapeType() == Etape::EtapeType::AIRE_DE_DEPOSE
+            || m_strat_graph->getEtapeEnCours()->getEtapeType() == Etape::EtapeType::PLANT_GROUP
+            )
     {
         l_reverseGear.data = true;
         m_strat_mvnt.reverse_gear = 1;
     }
-    else if (m_strat_graph->getEtapeEnCours()->getEtapeType() == Etape::EtapeType::MANCHE_A_AIR
-             || m_previous_etape_type == Etape::EtapeType::PHARE
-             || m_strat_graph->getEtapeEnCours()->getEtapeType() == Etape::EtapeType::PILE_GATEAU
-             || m_strat_graph->getEtapeEnCours()->getEtapeType() == Etape::EtapeType::ASSIETTE
-             || m_strat_graph->getEtapeEnCours()->getEtapeType() == Etape::EtapeType::PORT
-             || m_strat_graph->getEtapeEnCours()->getEtapeType() == Etape::EtapeType::STATUETTE
-             || m_strat_graph->getEtapeEnCours()->getEtapeType() == Etape::EtapeType::VITRINE
-             || (m_strat_graph->getEtapeEnCours()->getEtapeType() == Etape::EtapeType::CARRE_FOUILLE
-                 && !m_is_blue)
-            // || m_strat_graph->getEtapeEnCours()->getEtapeType() == Etape::EtapeType::POINT_PASSAGE 
-             || (m_previous_etape_type == Etape::EtapeType::PLANT_GROUP && m_strat_graph->getEtapeEnCours()->getEtapeType() != Etape::EtapeType::AIRE_DE_DEPOSE)
-              || m_previous_etape_type == Etape::EtapeType::AIRE_DE_DEPOSE
-
+    else if (//2020&2021
+            m_strat_graph->getEtapeEnCours()->getEtapeType() == Etape::EtapeType::MANCHE_A_AIR
+            || m_previous_etape_type == Etape::EtapeType::PHARE
+            || m_strat_graph->getEtapeEnCours()->getEtapeType() == Etape::EtapeType::PORT
+            //2022
+            || m_strat_graph->getEtapeEnCours()->getEtapeType() == Etape::EtapeType::STATUETTE
+            || m_strat_graph->getEtapeEnCours()->getEtapeType() == Etape::EtapeType::VITRINE
+            || (m_strat_graph->getEtapeEnCours()->getEtapeType() == Etape::EtapeType::CARRE_FOUILLE
+                && !m_is_blue)
+            //2023
+            || m_strat_graph->getEtapeEnCours()->getEtapeType() == Etape::EtapeType::PILE_GATEAU
+            || m_strat_graph->getEtapeEnCours()->getEtapeType() == Etape::EtapeType::ASSIETTE
+            // 2024
+            || (m_previous_etape_type == Etape::EtapeType::PLANT_GROUP && m_strat_graph->getEtapeEnCours()->getEtapeType() != Etape::EtapeType::AIRE_DE_DEPOSE)
+            || m_previous_etape_type == Etape::EtapeType::AIRE_DE_DEPOSE
                  )
     {
         l_reverseGear.data = false;
