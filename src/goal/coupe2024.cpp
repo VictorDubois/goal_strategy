@@ -53,7 +53,7 @@ Coupe2024::Coupe2024(const bool isYellow, const StartingPosition starting_positi
     // Les étapes qui correspondant à des actions sont créées automatiquement lors de l'ajout d'actions
     
      
-    bool test_contournement = true, pami_start = false, center_start = false, solar_panel_start = false;
+    bool test_contournement = false, pami_start = false, center_start = false, solar_panel_start = false;
     int campement;    
     int area_pami_us, area_pami_them, area_center_us, area_center_them, area_solar_panel_us, area_solar_panel_them, 
         group_plant_midi, group_plant_2h, group_plant_4h, group_plant_6h, group_plant_8h, group_plant_10h,

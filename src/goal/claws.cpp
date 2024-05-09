@@ -49,7 +49,7 @@ void Claws::grab_pile(bool a_do_sleep)
 
 void Claws::release_pile(bool a_do_sleep)
 {
-    m_right_servo->set(70, 100);
+    m_right_servo->set(50, 100);
 
     // Pour ne pas s'emmeler les pinces
     if (m_left_servo->getAngle() < 70)
