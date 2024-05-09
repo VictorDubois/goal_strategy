@@ -752,7 +752,8 @@ bool GoalStrat::alignWithAngleWithTimeout(Angle angle)
     {
         alignWithAngle(angle);
         m_strat_mvnt.orient = 1;
-        rclcpp::spin_some(shared_from_this());
+        //todo fix and reenable
+        //rclcpp::spin_some(shared_from_this());
         r.sleep();
     }
     return this->now().seconds() >= orientTimeoutDeadline.seconds();
@@ -1108,7 +1109,8 @@ void GoalStrat::stateRun()
                 m_strat_mvnt.max_speed.angular.z = 0;
                 m_strat_mvnt.max_speed.linear.x = 0;
                 publishStratMovement();
-                rclcpp::spin_some(shared_from_this());
+                 //todo fix and reenable
+                //rclcpp::spin_some(shared_from_this());
                 usleep(0.1e6);
             }
 
@@ -1139,7 +1141,8 @@ void GoalStrat::stateRun()
 
             while (this->now().seconds() < recalageTimeoutDeadline.seconds())
             {
-                rclcpp::spin_some(shared_from_this());
+                //todo fix and reenable
+                //rclcpp::spin_some(shared_from_this());
                 usleep(0.1e6);
             }
 
@@ -1162,7 +1165,8 @@ void GoalStrat::stateRun()
 
             while (this->now().seconds() < recalageTimeoutDeadline.seconds())
             {
-                rclcpp::spin_some(shared_from_this());
+                //todo fix and reenable
+                //rclcpp::spin_some(shared_from_this());
                 usleep(0.1e6);
             }
             override_gear = 2;
@@ -1204,7 +1208,8 @@ void GoalStrat::stateRun()
 
             while (this->now().seconds() < recalageTimeoutDeadline.seconds())
             {
-                rclcpp::spin_some(shared_from_this());
+                //todo fix and reenable
+                //rclcpp::spin_some(shared_from_this());
                 usleep(0.1e6);
             }
 
@@ -1227,7 +1232,8 @@ void GoalStrat::stateRun()
 
             while (this->now().seconds() < recalageTimeoutDeadline.seconds())
             {
-                rclcpp::spin_some(shared_from_this());
+                //todo fix and reenable
+                //rclcpp::spin_some(shared_from_this());
                 usleep(0.1e6);
             }
             override_gear = 2;
@@ -1291,7 +1297,8 @@ void GoalStrat::stateRun()
 
             while (this->now().seconds() < recalageTimeoutDeadline.seconds())
             {
-                rclcpp::spin_some(shared_from_this());
+                //todo fix and reenable
+                //rclcpp::spin_some(shared_from_this());
                 usleep(0.1e6);
             }
 
@@ -1332,7 +1339,8 @@ void GoalStrat::stateRun()
 
             while (this->now().seconds() < recalageTimeoutDeadline.seconds())
             {
-                rclcpp::spin_some(shared_from_this());
+                //todo fix and reenable
+                //rclcpp::spin_some(shared_from_this());
                 usleep(0.1e6);
             }
             override_gear = 2;
