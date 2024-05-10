@@ -13,8 +13,6 @@ public:
 
     void grab_pile(bool a_do_sleep = true);
     void release_pile(bool a_do_sleep = true);
-    void open_wide(bool a_do_sleep = true);
-
     void retract(bool a_do_sleep = true);
     void setInFront();
     void setInside();

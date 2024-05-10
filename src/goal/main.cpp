@@ -1504,12 +1504,6 @@ void GoalStrat::stateRun()
             //recule(rclcpp::Duration(1000,0), Distance(0.1));
 
             break;
-        case Etape::EtapeType::POINT_PASSAGE:
-            if (this->getStock()==0)
-            {
-                m_claws->open_wide();
-            }
-
         default:
             //stopAngular();
             RCLCPP_INFO_STREAM(rclcpp::get_logger("rclcpp"), "No special action here\n");

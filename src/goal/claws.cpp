@@ -60,19 +60,6 @@ void Claws::release_pile(bool a_do_sleep)
     conditionnal_sleep(1e6, a_do_sleep);
 }
 
-void Claws::open_wide(bool a_do_sleep)
-{
-    m_right_servo->set(70, 100);
-
-    // Pour ne pas s'emmeler les pinces
-    if (m_left_servo->getAngle() < 70)
-    {
-        conditionnal_sleep(1e6, a_do_sleep);
-    }
-    m_left_servo->set(145, 100);
-    conditionnal_sleep(1e6, a_do_sleep);
-}
-
 void Claws::retract(bool a_do_sleep)
 {
     // Do nothing, retracting is dangerous if there is a pile stuck :/
