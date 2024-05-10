@@ -466,12 +466,19 @@ void GoalStrat::goToNextMission()
         m_state = State::EXIT;
         return;
     }
-
-    if (!m_claws_openned_once && (m_strat_graph->getEtapeEnCours()->getEtapeType() == Etape::EtapeType::PILE_GATEAU || m_strat_graph->getEtapeEnCours()->getEtapeType() == Etape::EtapeType::PLANT_GROUP))
+    if ((!m_claws_openned_once && (m_strat_graph->getEtapeEnCours()->getEtapeType() == Etape::EtapeType::PILE_GATEAU || m_strat_graph->getEtapeEnCours()->getEtapeType() == Etape::EtapeType::PLANT_GROUP)) 
+    || (m_claws_openned_once && m_previous_etape_type !=Etape::EtapeType::AIRE_DE_DEPOSE && m_strat_graph->getStock().size() == 0))
     {
-        m_claws->release_pile(false);
+        m_claws->open_wide(false);
+        
         m_claws_openned_once = true;
     }
+
+    // if (!m_claws_openned_once && (m_strat_graph->getEtapeEnCours()->getEtapeType() == Etape::EtapeType::PILE_GATEAU || m_strat_graph->getEtapeEnCours()->getEtapeType() == Etape::EtapeType::PLANT_GROUP))
+    // {
+    //     m_claws->release_pile(false);
+    //     m_claws_openned_once = true;
+    // }
 
     return;
 }

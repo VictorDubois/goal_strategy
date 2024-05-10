@@ -78,3 +78,16 @@ void Claws::conditionnal_sleep(uint a_microseconds, bool a_do_sleep)
         usleep(a_microseconds);
     }
 }
+
+void Claws::open_wide(bool a_do_sleep)
+{
+    m_right_servo->set(70, 100);
+
+    // Pour ne pas s'emmeler les pinces
+    if (m_left_servo->getAngle() < 70)
+    {
+        conditionnal_sleep(1e6, a_do_sleep);
+    }
+    m_left_servo->set(145, 100);
+    conditionnal_sleep(1e6, a_do_sleep);
+}
