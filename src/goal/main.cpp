@@ -726,7 +726,7 @@ void GoalStrat::checkStopMatch()
  */
 bool GoalStrat::checkFunnyAction()
 {
-    const rclcpp::Duration funny_action_timing = rclcpp::Duration(10, 0); // 10s before T=0;
+    const rclcpp::Duration funny_action_timing = rclcpp::Duration(15, 0); // 10s before T=0;
 
     if (m_remainig_time.seconds() < funny_action_timing.seconds())
     {
