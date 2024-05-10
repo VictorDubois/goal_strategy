@@ -889,16 +889,16 @@ void GoalStrat::publishScore()
             switch(m_starting_position)
             {
             case SOLAR_PANEL:
-                l_valid_end_locations.push_back(m_strat_graph->positionC(1.275f, -0.775f)); //pami us
-                l_valid_end_locations.push_back(m_strat_graph->positionC(-1.275f, 0.0f)); //center us
+                l_valid_end_locations.push_back(m_strat_graph->positionC(1.175f, -0.675f)); //pami us
+                l_valid_end_locations.push_back(m_strat_graph->positionC(-1.175f, 0.0f)); //center us
                 break;
             case CENTER:
-                l_valid_end_locations.push_back(m_strat_graph->positionC(1.275f, -0.775f)); //pami us 
-                l_valid_end_locations.push_back(m_strat_graph->positionC(1.275f, 0.775f)); //solar us
+                l_valid_end_locations.push_back(m_strat_graph->positionC(1.175f, -0.675f)); //pami us 
+                l_valid_end_locations.push_back(m_strat_graph->positionC(1.175f, 0.675f)); //solar us
                 break;
             case PAMI:
-                l_valid_end_locations.push_back(m_strat_graph->positionC(1.275f, 0.775f)); //solar us 
-                l_valid_end_locations.push_back(m_strat_graph->positionC(-1.275f, 0.0f)); //center us
+                l_valid_end_locations.push_back(m_strat_graph->positionC(1.175f, 0.675f)); //solar us 
+                l_valid_end_locations.push_back(m_strat_graph->positionC(-1.175f, 0.0f)); //center us
                 break;
             default:
                 throw std::runtime_error("Wrong starting position");

@@ -235,10 +235,13 @@ area_solar_panel_us3
         Etape::get(point_passage_center)->addVoisins(group_plant_10h);
         Etape::get(point_passage_center)->addVoisins(group_plant_midi);
 
-
+        
     }
 
-    m_numero_etape_garage = area_pami_us; // Must be set!
+    int garage
+            = Etape::makeEtape(positionC(1.175f, -0.675f));
+
+    m_numero_etape_garage = garage; // Must be set!
 
 #ifdef QTGUI
     qDebug() << Etape::getTotalEtapes();
