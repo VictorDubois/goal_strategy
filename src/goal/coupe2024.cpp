@@ -96,12 +96,12 @@ Coupe2024::Coupe2024(const bool isYellow, const StartingPosition starting_positi
         //   new PlantGroup(positionC(-campement.getPosition().getX(), -campement.getPosition().getY())));
         // Etape::get(campement)->addVoisins(other_side);
         area_solar_panel_us
-            = Etape::makeEtape(new AireDeDepose(positionC(1.175f, 0.675f), positionC(1.275f, 0.775f), Owner::us, solar_panel_start));
+            = Etape::makeEtape(new AireDeDepose(positionC(1.175f, 0.775f), positionC(1.275f, 0.775f), Owner::us, solar_panel_start));
 //Todo crad remove 
 area_solar_panel_us2
             = Etape::makeEtape(new AireDeDepose(positionC(1.175f, 0.675f), positionC(1.275f, 0.775f), Owner::us, solar_panel_start)); 
-area_solar_panel_us3
-            = Etape::makeEtape(new AireDeDepose(positionC(1.175f, 0.675f), positionC(1.275f, 0.775f), Owner::us, solar_panel_start));
+// area_solar_panel_us3
+//             = Etape::makeEtape(new AireDeDepose(positionC(1.175f, 0.675f), positionC(1.275f, 0.775f), Owner::us, solar_panel_start));
 
         group_plant_8h = Etape::makeEtape(new PlantGroup(positionC(0.5f, 0.3f)));
         point_passage_1 = Etape::makeEtape(positionC(0.9f, 0.7f));
@@ -110,14 +110,14 @@ area_solar_panel_us3
         Etape::get(area_solar_panel_us)->addVoisins(point_passage_1);
         //todo crad remove
         Etape::get(area_solar_panel_us2)->addVoisins(point_passage_1);
-        Etape::get(area_solar_panel_us3)->addVoisins(point_passage_1);
+        //Etape::get(area_solar_panel_us3)->addVoisins(point_passage_1);
         
     }
     else
     {
         float distance_to_wall = 0.4f;
         area_pami_us
-            = Etape::makeEtape(new AireDeDepose(positionC(1.175f, -0.675f), positionC(1.275f, -0.775f), Owner::us, pami_start));
+            = Etape::makeEtape(new AireDeDepose(positionC(1.175f, -0.775f), positionC(1.275f, -0.775f), Owner::us, pami_start));
 
 //todo crad remove 
 area_pami_us2
@@ -139,12 +139,12 @@ area_pami_us3
 
 
         area_solar_panel_us
-            = Etape::makeEtape(new AireDeDepose(positionC(1.175f, 0.675f), positionC(1.275f, 0.775f), Owner::us, solar_panel_start));
+            = Etape::makeEtape(new AireDeDepose(positionC(1.275f, 0.775f), positionC(1.275f, 0.775f), Owner::us, solar_panel_start));
 //Todo crad remove 
 area_solar_panel_us2
-            = Etape::makeEtape(new AireDeDepose(positionC(1.175f, 0.675f), positionC(1.275f, 0.775f), Owner::us, solar_panel_start)); 
-area_solar_panel_us3
-            = Etape::makeEtape(new AireDeDepose(positionC(1.175f, 0.675f), positionC(1.275f, 0.775f), Owner::us, solar_panel_start));
+            = Etape::makeEtape(new AireDeDepose(positionC(1.175f, 0.775f), positionC(1.275f, 0.775f), Owner::us, solar_panel_start)); 
+// area_solar_panel_us3
+//             = Etape::makeEtape(new AireDeDepose(positionC(1.175f, 0.675f), positionC(1.275f, 0.775f), Owner::us, solar_panel_start));
 
         area_solar_panel_them 
             = Etape::makeEtape(new AireDeDepose( positionC(-1.175f, 0.675f), positionC(-1.275f, 0.775f), Owner::them,false));
@@ -176,7 +176,7 @@ area_solar_panel_us3
         Etape::get(area_solar_panel_us)->addVoisins(point_passage_1);
         //todo crad remove
         Etape::get(area_solar_panel_us2)->addVoisins(point_passage_1);
-        Etape::get(area_solar_panel_us3)->addVoisins(point_passage_1);
+        //Etape::get(area_solar_panel_us3)->addVoisins(point_passage_1);
         
         
         Etape::get(area_pami_us)->addVoisins(point_passage_4);
@@ -502,15 +502,47 @@ int Coupe2024::getScoreEtape(int i)
 
         if (m_stock.size() && l_owner == Owner::us && l_stock_area < 18)
         {
-            l_score = 6;
-            if ( l_stock_area <= 6)
+            
+            if (l_area->getGoalPosition()==positionC(1.275f, 0.775f)) //solar panel 1
             {
-                l_score = 12;
+                RCLCPP_WARN_STREAM(rclcpp::get_logger("rclcpp"), "helloooo " );
+                
+                l_score = 200000;
             }
-            if (l_stock_area == 0)
+            if (l_area->getGoalPosition()==positionC(1.175f, 0.775f)) //solar panel 2
             {
-                l_score = 24;
+                l_score = 100000;
             }
+            // if (l_area->getGoalPosition()==positionC(1.175f, 0.675f)) //solar panel 3
+            // {
+            //     l_score = 3000;
+            // }
+            if (l_area->getGoalPosition()==positionC(1.275f, -0.775f)) //pami 1
+            {
+                l_score = 20000;
+            }
+            if (l_area->getGoalPosition()==positionC(1.175f, -0.775f)) //pami 2
+            {    
+                l_score = 10000;
+            }
+            if (l_area->getGoalPosition()==positionC(1.175f, -0.675f)) //pami 3
+            {
+                l_score = 1;
+            }
+            if (l_area->getGoalPosition()==positionC(-1.175f, 0.0f)) //center
+            {
+                l_score = 1;  
+            }
+            // strat v1: todo change back if strat V2 do not work
+            // l_score = 6;
+            // if ( l_stock_area <= 6)
+            // {
+            //     l_score = 12;
+            // }
+            // if (l_stock_area == 0)
+            // {
+            //     l_score = 24;
+            // }
         }
         break;
     case Etape::POINT_PASSAGE:

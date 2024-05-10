@@ -37,6 +37,7 @@ public:
     unsigned int getNumberOfPlants();
 
     Position getAreaCenter();
+    Position getGoalPosition();
 
 protected:
     Position m_goal_position;

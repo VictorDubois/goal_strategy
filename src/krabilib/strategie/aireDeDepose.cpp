@@ -69,6 +69,11 @@ Position AireDeDepose::getAreaCenter()
     return m_area_center;
 }
 
+Position AireDeDepose::getGoalPosition()
+{
+    return m_goal_position;
+}
+
 int AireDeDepose::update()
 {
     return 0;
