@@ -121,9 +121,9 @@ area_solar_panel_us3
 
 //todo crad remove 
 area_pami_us2
-            = Etape::makeEtape(new AireDeDepose(positionC(1.275f, -0.775f), positionC(1.275f, -0.775f), Owner::us, pami_start));
+            = Etape::makeEtape(new AireDeDepose(positionC(1.175f, -0.675f), positionC(1.275f, -0.775f), Owner::us, pami_start));
 area_pami_us3
-            = Etape::makeEtape(new AireDeDepose(positionC(1.375f, -0.875f), positionC(1.275f, -0.775f), Owner::us, pami_start));
+            = Etape::makeEtape(new AireDeDepose(positionC(1.175f, -0.675f), positionC(1.275f, -0.775f), Owner::us, pami_start));
 
 
         area_pami_them
@@ -142,9 +142,9 @@ area_pami_us3
             = Etape::makeEtape(new AireDeDepose(positionC(1.175f, 0.675f), positionC(1.275f, 0.775f), Owner::us, solar_panel_start));
 //Todo crad remove 
 area_solar_panel_us2
-            = Etape::makeEtape(new AireDeDepose(positionC(1.275f, 0.775f), positionC(1.275f, 0.775f), Owner::us, solar_panel_start)); 
+            = Etape::makeEtape(new AireDeDepose(positionC(1.175f, 0.675f), positionC(1.275f, 0.775f), Owner::us, solar_panel_start)); 
 area_solar_panel_us3
-            = Etape::makeEtape(new AireDeDepose(positionC(1.375f, 0.875f), positionC(1.275f, 0.775f), Owner::us, solar_panel_start));
+            = Etape::makeEtape(new AireDeDepose(positionC(1.175f, 0.675f), positionC(1.275f, 0.775f), Owner::us, solar_panel_start));
 
         area_solar_panel_them 
             = Etape::makeEtape(new AireDeDepose( positionC(-1.175f, 0.675f), positionC(-1.275f, 0.775f), Owner::them,false));
