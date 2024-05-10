@@ -166,8 +166,8 @@ area_solar_panel_us3
         point_passage_2 = Etape::makeEtape(positionC(0.0f, 0.75f));
         point_passage_3 = Etape::makeEtape(positionC(-0.8f, 0.6f));
         point_passage_4 = Etape::makeEtape(positionC(0.9f, -0.7f));
-        point_passage_5 = Etape::makeEtape(positionC(0.0f, -0.75f));
-        point_passage_6 = Etape::makeEtape(positionC(-0.8f, -0.6f));
+        //point_passage_5 = Etape::makeEtape(positionC(0.0f, -0.75f));
+        //point_passage_6 = Etape::makeEtape(positionC(-0.8f, -0.6f));
         point_passage_center = Etape::makeEtape(positionC(0.0f, 0.0f));
         point_passage_7 = Etape::makeEtape(positionC((-1.175f-0.5f)/2.0f, -0.15f));
 
@@ -187,13 +187,13 @@ area_solar_panel_us3
         
         
         Etape::get(area_center_us)->addVoisins(point_passage_3);
-        Etape::get(area_center_us)->addVoisins(point_passage_6);
+        //Etape::get(area_center_us)->addVoisins(point_passage_6);
 
         
         Etape::get(point_passage_1)->addVoisins(point_passage_2);
         Etape::get(point_passage_2)->addVoisins(point_passage_3);
-        Etape::get(point_passage_4)->addVoisins(point_passage_5);
-        Etape::get(point_passage_5)->addVoisins(point_passage_6);
+        //Etape::get(point_passage_4)->addVoisins(point_passage_5);
+        //Etape::get(point_passage_5)->addVoisins(point_passage_6);
 
 
 
@@ -203,8 +203,8 @@ area_solar_panel_us3
 
         Etape::get(point_passage_2)->addVoisins(group_plant_6h);
         Etape::get(point_passage_3)->addVoisins(group_plant_4h);
-        Etape::get(point_passage_5)->addVoisins(group_plant_midi);
-        Etape::get(point_passage_6)->addVoisins(group_plant_2h);
+        //Etape::get(point_passage_5)->addVoisins(group_plant_midi);
+        //Etape::get(point_passage_6)->addVoisins(group_plant_2h);
 
 
 
