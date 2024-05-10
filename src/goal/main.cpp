@@ -1505,7 +1505,7 @@ void GoalStrat::stateRun()
 
             break;
         case Etape::EtapeType::POINT_PASSAGE:
-            if (this->getStock()==0)
+            if (m_strat_graph->getStock().size()==0)
             {
                 m_claws->open_wide();
             }
