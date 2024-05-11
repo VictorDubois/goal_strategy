@@ -239,7 +239,7 @@ area_solar_panel_us2
     }
 
     int garage
-            = Etape::makeEtape(positionC(1.175f, -0.675f));
+            = Etape::makeEtape(positionC(1.425f, -0.675f));
 
     m_numero_etape_garage = garage; // Must be set!
 

@@ -896,16 +896,16 @@ void GoalStrat::publishScore()
             switch(m_starting_position)
             {
             case SOLAR_PANEL:
-                l_valid_end_locations.push_back(m_strat_graph->positionC(1.175f, -0.675f)); //pami us
-                l_valid_end_locations.push_back(m_strat_graph->positionC(-1.175f, 0.0f)); //center us
+                l_valid_end_locations.push_back(m_strat_graph->positionC(1.425f, -0.675f)); //pami us
+                l_valid_end_locations.push_back(m_strat_graph->positionC(-1.425f, 0.0f)); //center us
                 break;
             case CENTER:
-                l_valid_end_locations.push_back(m_strat_graph->positionC(1.175f, -0.675f)); //pami us 
-                l_valid_end_locations.push_back(m_strat_graph->positionC(1.175f, 0.675f)); //solar us
+                l_valid_end_locations.push_back(m_strat_graph->positionC(1.425f, -0.675f)); //pami us 
+                l_valid_end_locations.push_back(m_strat_graph->positionC(1.425f, 0.675f)); //solar us
                 break;
             case PAMI:
-                l_valid_end_locations.push_back(m_strat_graph->positionC(1.175f, 0.675f)); //solar us 
-                l_valid_end_locations.push_back(m_strat_graph->positionC(-1.175f, 0.0f)); //center us
+                l_valid_end_locations.push_back(m_strat_graph->positionC(1.425f, 0.675f)); //solar us 
+                l_valid_end_locations.push_back(m_strat_graph->positionC(-1.425f, 0.0f)); //center us
                 break;
             default:
                 throw std::runtime_error("Wrong starting position");
@@ -1051,6 +1051,14 @@ void GoalStrat::stateRun()
         {
             // try to update
             m_area_funny = m_strat_graph->getBestAreaForFunny();
+            if(m_strat_graph->getStock().size()==0)
+            {
+                m_claws->grab_pile();
+            }
+            else
+            {
+                m_claws->release_pile();
+            }
             if (m_area_funny != nullptr) // If no error
             {
                 RCLCPP_WARN_STREAM(rclcpp::get_logger("rclcpp"), "best area found for funny: " << m_area_funny->getGoalPosition());
