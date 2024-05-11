@@ -117,7 +117,7 @@ area_solar_panel_us2
     {
         float distance_to_wall = 0.4f;
         area_pami_us
-            = Etape::makeEtape(new AireDeDepose(positionC(1.175f, -0.775f), positionC(1.275f, -0.775f), Owner::us, pami_start));
+            = Etape::makeEtape(new AireDeDepose(positionC(1.175f, -0.725f), positionC(1.275f, -0.775f), Owner::us, pami_start));
 
 //todo crad remove 
 area_pami_us2
@@ -517,11 +517,11 @@ int Coupe2024::getScoreEtape(int i)
             // {
             //     l_score = 3000;
             // }
-            if (l_area->getGoalPosition()==positionC(1.275f, -0.775f)) //pami 1
+            if (l_area->getGoalPosition()==positionC(1.175f, -0.725f)) //pami 1
             {
                 l_score = 20000;
             }
-            if (l_area->getGoalPosition()==positionC(1.175f, -0.775f)) //pami 2
+            if (l_area->getGoalPosition()==positionC(1.175f, -0.675f)) //pami 2
             {    
                 l_score = 10000;
             }
