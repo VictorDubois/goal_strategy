@@ -146,6 +146,9 @@ public:
     /** @brief Renvoi le score de l'étape */
     int getScore();
 
+    /** @brief Renvoi le nom de l'étape */
+    std::string getName();
+
     /** @brief Ajoute un voisin au tableau de voisins */
     void addVoisin(Etape* newVoisin, bool autreSens = true);
 

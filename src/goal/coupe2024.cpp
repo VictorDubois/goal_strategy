@@ -428,6 +428,28 @@ void Coupe2024::debugEtapes(visualization_msgs::msg::MarkerArray& ma)
             m.frame_locked = true;
             ma.markers.push_back(m);
 
+            visualization_msgs::msg::Marker l_marker_info;
+            l_marker_info.type = visualization_msgs::msg::Marker::TEXT_VIEW_FACING;
+            l_marker_info.pose = Pose(etape->getPosition(), Angle(0));
+
+            l_marker_info.header.frame_id = "map";
+            l_marker_info.ns = "debug_etapes";
+            l_marker_info.id = i++;
+            l_marker_info.action = visualization_msgs::msg::Marker::ADD;
+
+            l_marker_info.text = etape->getName() + "\n" + std::to_string(etape->getScore()) + "pts\n" + std::to_string(etape->getDistance()) + "mm";
+
+            l_marker_info.scale.x = 0.3;
+            l_marker_info.scale.y = 0.3;
+            l_marker_info.scale.z = 0.05;
+
+            l_marker_info.color.r = 0.0f;
+            l_marker_info.color.g = 0.5f;
+            l_marker_info.color.b = 0.2f;
+            l_marker_info.color.a = 1.0;
+
+            ma.markers.push_back(l_marker_info);
+
             // Display lines
             int nb_children = etape->getNbChildren();
 
