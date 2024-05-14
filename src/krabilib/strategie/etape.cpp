@@ -90,12 +90,12 @@ void Etape::setState(int state)
     this->state = state;
 }
 
-int Etape::getDistance()
+float Etape::getDistance()
 {
     return this->distance;
 }
 
-void Etape::setDistance(int distance)
+void Etape::setDistance(float distance)
 {
     this->distance = distance;
 }
@@ -159,12 +159,12 @@ void Etape::oublieRobotVu()
     }
 }
 
-int* Etape::getDistances()
+float* Etape::getDistances()
 {
     return this->distances;
 }
 
-void Etape::setDistances(int* distances)
+void Etape::setDistances(float  * distances)
 {
     this->distances = distances;
 }
@@ -174,7 +174,7 @@ void Etape::computeChildDistances()
     if (nbChildren == 0)
         return;
 
-    this->distances = new int[this->nbChildren];
+    this->distances = new float[this->nbChildren];
 
     for (int i = 0; i < this->nbChildren; ++i)
     {

@@ -77,11 +77,11 @@ public:
     void setState(int state);
 
     /** @brief Renvoi la distance de cette étape à l'étape où se trouve le robot */
-    int getDistance();
+    float getDistance();
 
     /** @brief Set la distance de cette étape à l'étape où se trouve le robot *
      *   @param distance de cette étape à l'étape où se trouve le robot */
-    void setDistance(int distance);
+    void setDistance(float distance);
 
     /** @brief Set l'étape précédente pour remonter à l'étape en cours (utilisé pour l'exploration
      * du graphe) */
@@ -114,11 +114,11 @@ public:
     void oublieRobotVu();
 
     /** @brief Renvoi un tableau des distances vers les etapes attachees a celle-ci */
-    int* getDistances();
+    float* getDistances();
 
     /** @brief set un tableau des distances vers les etapes attachees a celle-ci *
      *   @param distances Tableau des distances vers les etapes attachées à celle-ci */
-    void setDistances(int* distances);
+    void setDistances(float* distances);
 
     void computeChildDistances();
 
@@ -218,7 +218,7 @@ private:
     int state;
 
     /** @brief Distance de cette étape à l'étape où se trouve le robot */
-    int distance;
+    float distance;
 
     /** @brief Type d'étape (un feu, un point de passage...) */
     EtapeType type;
@@ -230,7 +230,7 @@ private:
     int numero;
 
     /** @brief Tableau des distances vers les étapes attachées à celle-ci */
-    int* distances;
+    float* distances;
 
     /** @brief Nombre d'étapes qui doivent être considérées comme finie si celle-ci l'est */
     int nombreEtapesLieesParFinirEtape;

@@ -15,7 +15,7 @@ Etape* Dijkstra::getEtapeCourante()
     return tableauEtapes[this->numeroEtapeCourante];
 }
 
-int Dijkstra::calculDistanceDirect(Etape* etapeDepart, Etape* etapeArrivee)
+float Dijkstra::calculDistanceDirect(Etape* etapeDepart, Etape* etapeArrivee)
 {
     // distance quartésienne : d = sqrt(x^2+y^2)
     // sqrt = square root, racine carrée
@@ -146,7 +146,7 @@ void Dijkstra::initialiser()
 // Renvoi le numéro de l'étape la plus proche dont on n'a pas encore mis à jour les voisins
 int Dijkstra::trouverMin(int classementEtapeMinimale)
 {
-    int minimum = -1;
+    float minimum = -1;
     int numeroEtapeLaPlusProche = -1;
 
     for (int i = 0; i < this->nombreEtapes; i++)
@@ -213,7 +213,7 @@ int Dijkstra::trouverMin(int classementEtapeMinimale)
         {
             if (this->etapeRapporte(this->tableauEtapes[i])
                 && (!(this->tableauEtapes[i]->aEviter()))
-                && this->tableauEtapes[i]->getDistance() != -1
+                && this->tableauEtapes[i]->getDistance() >= 0
                 && this->tableauEtapes[i]->getState() != -2)
             {
                 onEstCoinceDansUnEndroitPourri = false;
@@ -248,9 +248,9 @@ int Dijkstra::trouverMin(int classementEtapeMinimale)
 // Met à jour les voisin de l'étape spécifiée.
 void Dijkstra::mettreAJourVoisins(int numeroEtape)
 {
-    int distanceEtapeCourante = this->tableauEtapes[numeroEtape]->getDistance();
-    int distanceChildCourant;
-    int distanceEtapeVersChild;
+    float distanceEtapeCourante = this->tableauEtapes[numeroEtape]->getDistance();
+    float distanceChildCourant;
+    float distanceEtapeVersChild;
 
     for (int i = 0; i < this->tableauEtapes[numeroEtape]->getNbChildren(); i++)
     {
@@ -281,12 +281,12 @@ void Dijkstra::mettreAJourVoisins(int numeroEtape)
     }
 }
 
-int Dijkstra::getDistance(int numeroEtape)
+float Dijkstra::getDistance(int numeroEtape)
 {
     return tableauEtapes[numeroEtape]->getDistance();
 }
 
-int Dijkstra::getDistance(Etape* etape)
+float Dijkstra::getDistance(Etape* etape)
 {
     return etape->getDistance();
 }

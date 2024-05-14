@@ -23,7 +23,7 @@ public:
     * @param etapeDepart l'étape de départ *
     * @param etapeArrivee l'étape d'arrivée *
     * @return distance  à vol d'oiseau entre deux étapes*/
-    static int calculDistanceDirect(Etape* etapeDepart, Etape* etapeArrivee);
+    static float calculDistanceDirect(Etape* etapeDepart, Etape* etapeArrivee);
 
     /** @brief Set l'étape courante *
     * @param numeroEtapeCourante le numéro de l'étape courante */
@@ -52,12 +52,12 @@ public:
     /** @brief Renvoi la distance de l'étape spécifiée à l'étape origine *
     * @param numeroEtape le numéro de l'étape dont on veut connaître la distance *
     * @return la distance de l'étape spécifiée à l'étape origine */
-    int getDistance(int numeroEtape);
+    float getDistance(int numeroEtape);
 
     /** @brief Renvoi la distance de l'étape spécifiée à l'étape origine *
     * @param etape l'étape dont on veut connaître la distance *
     * @return la distance de l'étape spécifiée à l'étape origine */
-    int getDistance(Etape* etape);
+    float getDistance(Etape* etape);
 
     /** @brief Renvoi le nombre d'etapes constituant de graphe *
     * @return le nombre d'etapes constituant de graphe */
