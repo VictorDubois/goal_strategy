@@ -248,6 +248,16 @@ int Etape::getScore()
     return this->score;
 }
 
+void Etape::setHeuristicScore(int score)
+{
+    this->heuristicScore = score;
+}
+
+int Etape::getHeuristicScore()
+{
+    return this->heuristicScore;
+}
+
 void Etape::setAction(MediumLevelAction* action)
 {
     this->action = action;

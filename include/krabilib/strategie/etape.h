@@ -139,6 +139,13 @@ public:
     /** @brief Effectue les changements nécessaires pour considérer l'étape comme effectuée */
     void finir(void);
 
+    /** @brief set le score de l'étape d'après l'heuristique prenant en compte la distance *
+     *   @param score le score heuristique de l'étape */
+    void setHeuristicScore(int score);
+
+    /** @brief Renvoi le score de l'étape d'après l'heuristique prenant en compte la distance */
+    int getHeuristicScore();
+
     /** @brief set le score de l'étape *
      *   @param score le score de l'étape */
     void setScore(int score);
@@ -244,6 +251,8 @@ private:
     /** @brief Score de l'étape, correspondant à si on veut que le robot la réalise ou pas*/
     int score;
 
+    /** @brief Score de l'étape, correspondant à si on veut que le robot la réalise ou pas en prenant en compte la distance*/
+    int heuristicScore;
     /** @brief Etape à laquelle on fini l'action de l'étape */
     int numeroEtapeFinAction;
 
