@@ -263,7 +263,7 @@ int StrategieV3::update()
                 //        score =
                 //        modificateurTemporel*(10000-m_tableau_etapes_total[i]->getDistance() +
                 //        scoreTypeEtape);
-                score = (10000 - m_tableau_etapes_total[i]->getDistance() + scoreTypeEtape);
+                score = (100000 - m_tableau_etapes_total[i]->getDistance()*1000 + scoreTypeEtape*1000);
                 if ((scoreMaxi < score) && scoreTypeEtape
                     && (m_tableau_etapes_total[i]->getDistance() != -1))
                 {
