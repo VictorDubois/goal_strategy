@@ -85,7 +85,7 @@ void GoalStrat::recule(rclcpp::Duration a_time, Distance a_distance)
 
     if(m_year==2024)
     {
-    override_gear = 0;
+        override_gear = 0;
     }
 
     publishStratMovement();
@@ -108,7 +108,7 @@ void GoalStrat::reculeDroit(rclcpp::Duration a_time, Distance a_distance)
     updateCurrentPose();
     auto l_initial_pose = m_current_pose.getPosition();
 
-    RCLCPP_INFO_STREAM(rclcpp::get_logger("rclcpp"), "recule !!");
+    RCLCPP_INFO_STREAM(rclcpp::get_logger("rclcpp"), "recule droit !!");
     //recalage_bordure();
     //m_strat_mvnt.reverse_gear = 1;
     
@@ -117,12 +117,7 @@ void GoalStrat::reculeDroit(rclcpp::Duration a_time, Distance a_distance)
 
 
     Position l_position_recule = m_current_pose.getPosition();
-    l_position_recule.setX(Distance(l_position_recule.getX()
-                           - a_distance * cos(m_current_pose.getAngle())));
-    l_position_recule.setY(Distance(l_position_recule.getY()
-                           - a_distance * sin(m_current_pose.getAngle())));
-
-    if (m_year == 2024)
+    if (m_year == 2024) // On recule dans l'autre sens
     {
         override_gear = 0;
         l_position_recule.setX(Distance(l_position_recule.getX()
@@ -130,6 +125,14 @@ void GoalStrat::reculeDroit(rclcpp::Duration a_time, Distance a_distance)
         l_position_recule.setY(Distance(l_position_recule.getY()
                            + a_distance * sin(m_current_pose.getAngle())));
     }
+    else    
+    {
+        l_position_recule.setX(Distance(l_position_recule.getX()
+                           - a_distance * cos(m_current_pose.getAngle())));
+        l_position_recule.setY(Distance(l_position_recule.getY()
+                           - a_distance * sin(m_current_pose.getAngle())));
+    }
+    
 
     m_goal_pose.setPosition(l_position_recule);
 
