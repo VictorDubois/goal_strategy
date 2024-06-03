@@ -853,6 +853,67 @@ void GoalStrat::abortAction()
     m_action_aborted = true;
 }
 
+bool GoalStrat::isParked()
+{
+
+    std::vector<Position> l_valid_end_locations;
+    if (m_year == 2022)
+    {
+        l_valid_end_locations.push_back(m_strat_graph->positionCAbsolute(0.975f, 1.375f));
+        l_valid_end_locations.push_back(m_strat_graph->positionCAbsolute(0.3, 0.7f));
+        l_valid_end_locations.push_back(m_strat_graph->positionCAbsolute(3 - 0.975f, 1.375f));
+    }
+    else if (m_year == 2023)
+    {
+        // Auto add all of our assiettes as valid end locations
+        for (auto& etape : Etape::getTableauEtapesTotal())
+        {
+            if (etape)
+            {
+                if (etape->getEtapeType() == Etape::EtapeType::ASSIETTE)
+                {
+                    auto assiette = static_cast<Assiette&>(*(etape->getAction()));
+                    if (assiette.getOwner() == Owner::us)
+                    {
+                        l_valid_end_locations.push_back(etape->getPosition());
+                    }
+                }
+            }
+        }
+    }
+    else if (m_year == 2024)
+    {
+        switch(m_starting_position)
+        {
+        case SOLAR_PANEL:
+            l_valid_end_locations.push_back(m_strat_graph->positionC(1.425f, -0.675f)); //pami us
+            l_valid_end_locations.push_back(m_strat_graph->positionC(-1.425f, 0.0f)); //center us
+            break;
+        case CENTER:
+            l_valid_end_locations.push_back(m_strat_graph->positionC(1.425f, -0.675f)); //pami us 
+            l_valid_end_locations.push_back(m_strat_graph->positionC(1.425f, 0.675f)); //solar us
+            break;
+        case PAMI:
+            l_valid_end_locations.push_back(m_strat_graph->positionC(1.425f, 0.675f)); //solar us 
+            l_valid_end_locations.push_back(m_strat_graph->positionC(-1.425f, 0.0f)); //center us
+            break;
+        default:
+            throw std::runtime_error("Wrong starting position");
+            break;
+        }
+
+    }
+    for (auto l_position : l_valid_end_locations)
+    {
+        if ((m_current_pose.getPosition() - l_position).getNorme() < 0.3f)
+        {
+            return true;
+        }
+    }
+    
+    return false;
+}
+
 /**
  * @brief Publish the score
  *
@@ -868,60 +929,13 @@ void GoalStrat::publishScore()
     // Is the robot in the right area at the end?
     if (m_remainig_time < rclcpp::Duration(4,0))
     {
-        std::vector<Position> l_valid_end_locations;
-        if (m_year == 2022)
+        if(isParked())
         {
-            l_valid_end_locations.push_back(m_strat_graph->positionCAbsolute(0.975f, 1.375f));
-            l_valid_end_locations.push_back(m_strat_graph->positionCAbsolute(0.3, 0.7f));
-            l_valid_end_locations.push_back(m_strat_graph->positionCAbsolute(3 - 0.975f, 1.375f));
+            l_score += 9;
         }
-        else if (m_year == 2023)
+        if (m_year == 2023)
         {
             l_score += 5; // deguisement
-            // Auto add all of our assiettes as valid end locations
-            for (auto& etape : Etape::getTableauEtapesTotal())
-            {
-                if (etape)
-                {
-                    if (etape->getEtapeType() == Etape::EtapeType::ASSIETTE)
-                    {
-                        auto assiette = static_cast<Assiette&>(*(etape->getAction()));
-                        if (assiette.getOwner() == Owner::us)
-                        {
-                            l_valid_end_locations.push_back(etape->getPosition());
-                        }
-                    }
-                }
-            }
-        }
-        else if (m_year == 2024)
-        {
-            switch(m_starting_position)
-            {
-            case SOLAR_PANEL:
-                l_valid_end_locations.push_back(m_strat_graph->positionC(1.425f, -0.675f)); //pami us
-                l_valid_end_locations.push_back(m_strat_graph->positionC(-1.425f, 0.0f)); //center us
-                break;
-            case CENTER:
-                l_valid_end_locations.push_back(m_strat_graph->positionC(1.425f, -0.675f)); //pami us 
-                l_valid_end_locations.push_back(m_strat_graph->positionC(1.425f, 0.675f)); //solar us
-                break;
-            case PAMI:
-                l_valid_end_locations.push_back(m_strat_graph->positionC(1.425f, 0.675f)); //solar us 
-                l_valid_end_locations.push_back(m_strat_graph->positionC(-1.425f, 0.0f)); //center us
-                break;
-            default:
-                throw std::runtime_error("Wrong starting position");
-                break;
-            }
-
-        }
-        for (auto l_position : l_valid_end_locations)
-        {
-            if ((m_current_pose.getPosition() - l_position).getNorme() < 0.3f)
-            {
-                l_score += 9;
-            }
         }
     }
 
@@ -1076,6 +1090,12 @@ void GoalStrat::stateRun()
         else
         {
             m_goal_pose.setPosition(m_area_funny->getGoalPosition());
+        }
+
+        if(isParked() && m_year == 2024)
+        {
+            // avoid turning inside the area
+            m_strat_mvnt.orient = krabi_msgs::msg::StratMovement::STOP_ANGULAR;
         }
         publishGoal();
         return;
