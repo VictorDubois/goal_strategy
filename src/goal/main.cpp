@@ -57,7 +57,7 @@ void GoalStrat::moveArm(enum PositionServo position)
 void GoalStrat::clamp_mode()
 {
     m_strat_mvnt.max_speed.angular.z = 0;
-    m_strat_mvnt.orient = 3;
+    m_strat_mvnt.orient = krabi_msgs::msg::StratMovement::CLAMP_MODE;
 }
 
 /**
@@ -66,7 +66,7 @@ void GoalStrat::clamp_mode()
 void GoalStrat::recalage_bordure()
 {
     m_strat_mvnt.max_speed.angular.z = 0;
-    m_strat_mvnt.orient = 2;
+    m_strat_mvnt.orient = krabi_msgs::msg::StratMovement::RECALAGE_BORDURE;
 }
 
 void GoalStrat::recule(rclcpp::Duration a_time)
@@ -81,11 +81,11 @@ void GoalStrat::recule(rclcpp::Duration a_time, Distance a_distance)
     RCLCPP_INFO_STREAM(rclcpp::get_logger("rclcpp"), "recule !!");
     recalage_bordure();
     //m_strat_mvnt.reverse_gear = 1;
-    override_gear = 1;
+    override_gear = krabi_msgs::msg::StratMovement::REVERSE;
 
     if(m_year==2024)
     {
-        override_gear = 0;
+        override_gear = krabi_msgs::msg::StratMovement::FORWARD;
     }
 
     publishStratMovement();
@@ -101,7 +101,7 @@ void GoalStrat::recule(rclcpp::Duration a_time, Distance a_distance)
         l_distance_parcourue = (l_initial_pose - m_current_pose.getPosition()).getNorme();
         usleep(0.1e6);
     }
-    override_gear = 2;
+    override_gear = krabi_msgs::msg::StratMovement::FORWARD_OR_REVERSE;
 }
 void GoalStrat::reculeDroit(rclcpp::Duration a_time, Distance a_distance)
 {
@@ -112,14 +112,14 @@ void GoalStrat::reculeDroit(rclcpp::Duration a_time, Distance a_distance)
     //recalage_bordure();
     //m_strat_mvnt.reverse_gear = 1;
     
-    override_gear = 1;
+    override_gear = krabi_msgs::msg::StratMovement::REVERSE;
 
 
 
     Position l_position_recule = m_current_pose.getPosition();
     if (m_year == 2024) // On recule dans l'autre sens
     {
-        override_gear = 0;
+        override_gear = krabi_msgs::msg::StratMovement::FORWARD;
         l_position_recule.setX(Distance(l_position_recule.getX()
                            + a_distance * cos(m_current_pose.getAngle())));
         l_position_recule.setY(Distance(l_position_recule.getY()
@@ -151,7 +151,7 @@ void GoalStrat::reculeDroit(rclcpp::Duration a_time, Distance a_distance)
         l_distance_parcourue = (l_initial_pose - m_current_pose.getPosition()).getNorme();
         usleep(0.1e6);
     }
-    override_gear = 2;
+    override_gear = krabi_msgs::msg::StratMovement::FORWARD_OR_REVERSE;
 }
 /**
  * @brief Send cmd to disable angular motion
@@ -160,7 +160,7 @@ void GoalStrat::reculeDroit(rclcpp::Duration a_time, Distance a_distance)
 void GoalStrat::stopAngular()
 {
     m_strat_mvnt.max_speed.angular.z = 0;
-    m_strat_mvnt.orient = 4;
+    m_strat_mvnt.orient = krabi_msgs::msg::StratMovement::STOP_ANGULAR;
 }
 
 /**
@@ -170,7 +170,7 @@ void GoalStrat::stopAngular()
 void GoalStrat::startAngular()
 {
     m_strat_mvnt.max_speed.angular.z = goal_MAX_ALLOWED_ANGULAR_SPEED;
-    m_strat_mvnt.orient = 0;
+    m_strat_mvnt.orient = krabi_msgs::msg::StratMovement::GO_TO_GOALPOSE_POSITION;
 }
 
 /**
@@ -230,7 +230,7 @@ void GoalStrat::alignWithAngle(Angle a_angle)
 
     m_strat_mvnt.goal_pose = l_posestamped;
     m_strat_mvnt.header.frame_id = "map";
-    m_strat_mvnt.orient = 1;
+    m_strat_mvnt.orient = krabi_msgs::msg::StratMovement::ORIENT_TOWARD_GOALPOSE_ORIENTATION;
     publishStratMovement();
 }
 
@@ -290,7 +290,7 @@ bool GoalStrat::isAlignedWithAngle(Angle angle)
 
     // Is the tool on the back?
     Angle toolAngle = m_current_pose.getAngle();
-    if (m_strat_mvnt.reverse_gear == 1)
+    if (m_strat_mvnt.reverse_gear == krabi_msgs::msg::StratMovement::REVERSE)
     {
         toolAngle += M_PI;
     }
@@ -521,17 +521,17 @@ GoalStrat::GoalStrat() : Node("goal_strat")
     m_at_least_one_carre_fouille_done = false;
     m_remainig_time = rclcpp::Duration(90, 0);
     m_strat_mvnt.max_speed_at_arrival = 0.0f;
-    m_strat_mvnt.orient = 0;
+    m_strat_mvnt.orient = krabi_msgs::msg::StratMovement::GO_TO_GOALPOSE_POSITION;
     m_strat_mvnt.max_speed.linear.x = 0.5f;
     m_strat_mvnt.max_speed.angular.z = goal_MAX_ALLOWED_ANGULAR_SPEED;
-    m_strat_mvnt.reverse_gear = 2; // don't care
+    m_strat_mvnt.reverse_gear = krabi_msgs::msg::StratMovement::FORWARD_OR_REVERSE; // don't care
 
     m_state = State::INIT;
     m_tirette = false;
     m_vacuum_level = 0.f;
     m_vacuum_state = OPEN_AIR;
 
-    override_gear = 2; // don't care
+    override_gear = krabi_msgs::msg::StratMovement::FORWARD_OR_REVERSE; // don't care
 
     m_goal_pose_pub = this->create_publisher<geometry_msgs::msg::PoseStamped>("goal_pose", 5);
     m_arm_servo_pub = this->create_publisher<krabi_msgs::msg::ServosCmd>("cmd_servos", 5);
@@ -762,7 +762,7 @@ bool GoalStrat::alignWithAngleWithTimeout(Angle angle)
     while (!isAlignedWithAngle(angle) && this->now().seconds() < orientTimeoutDeadline.seconds())
     {
         alignWithAngle(angle);
-        m_strat_mvnt.orient = 1;
+        m_strat_mvnt.orient = krabi_msgs::msg::StratMovement::ORIENT_TOWARD_GOALPOSE_ORIENTATION;
         //todo fix and reenable
         //rclcpp::spin_some(shared_from_this());
         r.sleep();
@@ -777,10 +777,10 @@ bool GoalStrat::alignWithAngleWithTimeout(Angle angle)
 void GoalStrat::chooseGear()
 {
     std_msgs::msg::Bool l_reverseGear;
-    if (override_gear != 2)
+    if (override_gear != krabi_msgs::msg::StratMovement::FORWARD_OR_REVERSE)
     {
         m_strat_mvnt.reverse_gear = override_gear;
-        l_reverseGear.data = (override_gear == 1);
+        l_reverseGear.data = (override_gear == krabi_msgs::msg::StratMovement::REVERSE);
     }
     
     else if (//2020&2021
@@ -801,7 +801,7 @@ void GoalStrat::chooseGear()
             )
     {
         l_reverseGear.data = true;
-        m_strat_mvnt.reverse_gear = 1;
+        m_strat_mvnt.reverse_gear = krabi_msgs::msg::StratMovement::REVERSE;
     }
     else if (//2020&2021
             m_strat_graph->getEtapeEnCours()->getEtapeType() == Etape::EtapeType::MANCHE_A_AIR
@@ -821,15 +821,15 @@ void GoalStrat::chooseGear()
                  )
     {
         l_reverseGear.data = false;
-        m_strat_mvnt.reverse_gear = 0;
+        m_strat_mvnt.reverse_gear = krabi_msgs::msg::StratMovement::FORWARD;
     }
     else
     {
         // // Don't care
         // l_reverseGear.data = false;
-        // m_strat_mvnt.reverse_gear = 2;
+        // m_strat_mvnt.reverse_gear = krabi_msgs::msg::StratMovement::FORWARD_OR_REVERSE;
         l_reverseGear.data = true;
-        m_strat_mvnt.reverse_gear = 1;
+        m_strat_mvnt.reverse_gear = krabi_msgs::msg::StratMovement::REVERSE;
     }
 
 
@@ -997,17 +997,17 @@ void GoalStrat::chooseEffector(bool enable)
 void GoalStrat::stateRun()
 {
     m_strat_mvnt.max_speed_at_arrival = 0.0f;
-    m_strat_mvnt.orient = 0;
+    m_strat_mvnt.orient = krabi_msgs::msg::StratMovement::GO_TO_GOALPOSE_POSITION;
     m_strat_mvnt.max_speed.linear.x = 0.5f;
     m_strat_mvnt.max_speed.angular.z = goal_MAX_ALLOWED_ANGULAR_SPEED;
-    m_strat_mvnt.reverse_gear = 2; // don't care
+    m_strat_mvnt.reverse_gear = krabi_msgs::msg::StratMovement::FORWARD_OR_REVERSE; // don't care
     updateCurrentPose();
 
     /*m_strat_mvnt.max_speed_at_arrival = 0.1f;
-    m_strat_mvnt.orient = 0;
+    m_strat_mvnt.orient = krabi_msgs::msg::StratMovement::GO_TO_GOALPOSE_POSITION;
     m_strat_mvnt.max_speed.linear.x = 1.f;
     m_strat_mvnt.max_speed.angular.z = goal_MAX_ALLOWED_ANGULAR_SPEED;
-    m_strat_mvnt.reverse_gear = 2; // don't care*/
+    m_strat_mvnt.reverse_gear = krabi_msgs::msg::StratMovement::FORWARD_OR_REVERSE; // don't care*/
 
     chooseEffector();
 
@@ -1045,7 +1045,7 @@ void GoalStrat::stateRun()
         m_strat_mvnt.max_speed_at_arrival = 0.1f;
         m_strat_mvnt.max_speed.linear.x = 1.f;
         m_strat_mvnt.max_speed.angular.z = goal_MAX_ALLOWED_ANGULAR_SPEED;
-        m_strat_mvnt.reverse_gear = 2; // don't care
+        m_strat_mvnt.reverse_gear = krabi_msgs::msg::StratMovement::FORWARD_OR_REVERSE; // don't care
         chooseEffector(false); // We want the center of the robot to be positionned
         // Zone de fouille
         // m_goal_pose.setPosition(m_strat_graph->positionCAbsolute(0.975f, 1.375f));
@@ -1178,7 +1178,7 @@ void GoalStrat::stateRun()
             startLinear();
             recalage_bordure();
             //m_strat_mvnt.reverse_gear = 1;
-            override_gear = 1;
+            override_gear = krabi_msgs::msg::StratMovement::REVERSE;
             publishStratMovement();
             recalageTimeoutDeadline = this->now() + rclcpp::Duration(4,0);
 
@@ -1188,7 +1188,7 @@ void GoalStrat::stateRun()
                 //rclcpp::spin_some(shared_from_this());
                 usleep(0.1e6);
             }
-            override_gear = 2;
+            override_gear = krabi_msgs::msg::StratMovement::FORWARD_OR_REVERSE;
 
             if (m_vacuum_state != STRONG_VACUUM)
             {
@@ -1245,7 +1245,7 @@ void GoalStrat::stateRun()
             startLinear();
             recalage_bordure();
             //m_strat_mvnt.reverse_gear = 1;
-            override_gear = 1;
+            override_gear = krabi_msgs::msg::StratMovement::REVERSE;
             publishStratMovement();
             recalageTimeoutDeadline = this->now() + rclcpp::Duration(4,0);
 
@@ -1255,7 +1255,7 @@ void GoalStrat::stateRun()
                 //rclcpp::spin_some(shared_from_this());
                 usleep(0.1e6);
             }
-            override_gear = 2;
+            override_gear = krabi_msgs::msg::StratMovement::FORWARD_OR_REVERSE;
 
             startAngular();
             startLinear();
@@ -1347,7 +1347,7 @@ void GoalStrat::stateRun()
             usleep(2.5e6);
 
             //m_strat_mvnt.reverse_gear = 1;
-            override_gear = 1;
+            override_gear = krabi_msgs::msg::StratMovement::REVERSE;
 
             startLinear();
             recalage_bordure();
@@ -1362,7 +1362,7 @@ void GoalStrat::stateRun()
                 //rclcpp::spin_some(shared_from_this());
                 usleep(0.1e6);
             }
-            override_gear = 2;
+            override_gear = krabi_msgs::msg::StratMovement::FORWARD_OR_REVERSE;
 
             startLinear();
 
