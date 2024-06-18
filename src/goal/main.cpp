@@ -1070,11 +1070,11 @@ void GoalStrat::stateRun()
             m_area_funny = m_strat_graph->getBestAreaForFunny();
             if(m_strat_graph->getStock().size()==0)
             {
-                m_claws->grab_pile();
+                m_claws->grab_pile(false);
             }
             else
             {
-                m_claws->release_pile();
+                m_claws->release_pile(false);
             }
             if (m_area_funny != nullptr) // If no error
             {
