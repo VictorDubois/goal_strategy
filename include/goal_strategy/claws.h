@@ -29,5 +29,5 @@ private:
     std::shared_ptr<Servomotor> m_left_servo;
     std::shared_ptr<Servomotor> m_right_servo;
 
-    const static float s_angle_closed_left = 60;
+    static constexpr float s_angle_closed_left = 60.f;
 };
