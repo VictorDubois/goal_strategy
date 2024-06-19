@@ -43,7 +43,7 @@ void Claws::grab_pile(bool a_do_sleep)
     {
         conditionnal_sleep(1e6, a_do_sleep);
     }
-    m_left_servo->set(60, 100);
+    m_left_servo->set(s_angle_closed_left, 100);
     conditionnal_sleep(1.5e6, a_do_sleep);
 }
 
@@ -52,12 +52,12 @@ void Claws::release_pile(bool a_do_sleep)
     m_right_servo->set(90, 100);
 
     // Pour ne pas s'emmeler les pinces
-    if (m_left_servo->getAngle() < 70)
+    if (m_left_servo->getAngle() < s_angle_closed_left)
     {
         conditionnal_sleep(1e6, a_do_sleep);
     }
     m_left_servo->set(125, 100);
-    conditionnal_sleep(1e6, a_do_sleep);
+    conditionnal_sleep(0.75e6, a_do_sleep);
 }
 
 void Claws::retract(bool a_do_sleep)
@@ -84,7 +84,7 @@ void Claws::open_wide(bool a_do_sleep)
     m_right_servo->set(70, 100);
 
     // Pour ne pas s'emmeler les pinces
-    if (m_left_servo->getAngle() < 70)
+    if (m_left_servo->getAngle() < s_angle_closed_left)
     {
         conditionnal_sleep(1e6, a_do_sleep);
     }

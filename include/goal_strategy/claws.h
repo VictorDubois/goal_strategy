@@ -28,4 +28,6 @@ private:
     Position m_relative_position;
     std::shared_ptr<Servomotor> m_left_servo;
     std::shared_ptr<Servomotor> m_right_servo;
+
+    const static float s_angle_closed_left = 60;
 };
