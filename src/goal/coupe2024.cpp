@@ -239,7 +239,7 @@ area_solar_panel_us2
     }
 
     int garage
-            = Etape::makeEtape(positionC(1.425f, -0.675f));
+            = Etape::makeEtape(positionC(1.175f, -0.675f));
 
     m_numero_etape_garage = garage; // Must be set!
 
@@ -591,7 +591,7 @@ AireDeDepose* Coupe2024::getBestAreaForFunny()
             auto l_area = static_cast<AireDeDepose*>(l_etape->getAction());
             //RCLCPP_WARN_STREAM(rclcpp::get_logger("rclcpp"), "DEBUG"<< " Owner is" << l_area->getOwner() << "is starting position"<<l_area->isStartingPosition << std::endl);
 
-            if (l_area->getOwner() != Owner::us || l_area->isStartingPosition())
+            if (l_area->getOwner() != Owner::us )//|| l_area->isStartingPosition())
             {
                 // Pas la peine de mettre les roues dans le plat de l'adversaire
                 continue;
