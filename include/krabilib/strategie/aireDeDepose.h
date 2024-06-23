@@ -39,6 +39,8 @@ public:
     Position getAreaCenter();
     Position getGoalPosition();
 
+    bool isValidAreaForFunny();
+
 protected:
     Position m_goal_position;
     Position m_area_center;

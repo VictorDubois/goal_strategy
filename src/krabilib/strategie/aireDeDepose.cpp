@@ -83,3 +83,20 @@ bool AireDeDepose::isStartingPosition()
 {
     return m_is_starting_position;
 }
+
+bool AireDeDepose::isValidAreaForFunny()
+{
+    if (this->getOwner() != Owner::us )
+    {
+        // Pas la peine de mettre les roues dans le plat de l'adversaire
+        return false;
+    }
+
+    if(this->isStartingPosition())
+    {
+        // Interdit de rentrer dans notre zone de départ
+        return false;
+    }
+
+    return true;
+}

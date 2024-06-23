@@ -883,25 +883,21 @@ bool GoalStrat::isParked()
     }
     else if (m_year == 2024)
     {
-        switch(m_starting_position)
+        // Auto add all of our assiettes as valid end locations
+        for (auto& etape : Etape::getTableauEtapesTotal())
         {
-        case SOLAR_PANEL:
-            l_valid_end_locations.push_back(m_strat_graph->positionC(1.175f, -0.675f)); //pami us
-            l_valid_end_locations.push_back(m_strat_graph->positionC(-1.175f, 0.0f)); //center us
-            break;
-        case CENTER:
-            l_valid_end_locations.push_back(m_strat_graph->positionC(1.175f, -0.675f)); //pami us 
-            l_valid_end_locations.push_back(m_strat_graph->positionC(1.175f, 0.675f)); //solar us
-            break;
-        case PAMI:
-            l_valid_end_locations.push_back(m_strat_graph->positionC(1.175f, 0.675f)); //solar us 
-            l_valid_end_locations.push_back(m_strat_graph->positionC(-1.175f, 0.0f)); //center us
-            break;
-        default:
-            throw std::runtime_error("Wrong starting position");
-            break;
+            if (etape)
+            {
+                if (etape->getEtapeType() == Etape::EtapeType::AIRE_DE_DEPOSE)
+                {
+                    auto aireDeDepose = static_cast<AireDeDepose&>(*(etape->getAction()));
+                    if (aireDeDepose.isValidAreaForFunny())
+                    {
+                        l_valid_end_locations.push_back(etape->getPosition());
+                    }
+                }
+            }
         }
-
     }
     for (auto l_position : l_valid_end_locations)
     {

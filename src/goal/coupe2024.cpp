@@ -591,9 +591,8 @@ AireDeDepose* Coupe2024::getBestAreaForFunny()
             auto l_area = static_cast<AireDeDepose*>(l_etape->getAction());
             //RCLCPP_WARN_STREAM(rclcpp::get_logger("rclcpp"), "DEBUG"<< " Owner is" << l_area->getOwner() << "is starting position"<<l_area->isStartingPosition << std::endl);
 
-            if (l_area->getOwner() != Owner::us || l_area->isStartingPosition())
+            if (!l_area->isValidAreaForFunny())
             {
-                // Pas la peine de mettre les roues dans le plat de l'adversaire
                 continue;
             }
 
