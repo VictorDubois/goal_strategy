@@ -95,6 +95,7 @@ void GoalStrat::recule(rclcpp::Duration a_time, Distance a_distance)
 
     while (this->now().seconds() < recalageTimeoutDeadline.seconds() && l_distance_parcourue < a_distance)
     {
+        RCLCPP_INFO_STREAM(rclcpp::get_logger("rclcpp"), "l_distance_parcourue: " << l_distance_parcourue);
         //todo fix and reenable
         //rclcpp::spin_some(shared_from_this());
         updateCurrentPose();
@@ -145,6 +146,7 @@ void GoalStrat::reculeDroit(rclcpp::Duration a_time, Distance a_distance)
 
     while (this->now().seconds() < recalageTimeoutDeadline.seconds() && l_distance_parcourue < a_distance)
     {
+        RCLCPP_INFO_STREAM(rclcpp::get_logger("rclcpp"), "l_distance_parcourue: " << l_distance_parcourue);
         //todo modify this to go backward
         //rclcpp::spin_some(shared_from_this());
         updateCurrentPose();
@@ -358,7 +360,7 @@ void GoalStrat::updateCurrentPose()
         RCLCPP_WARN(rclcpp::get_logger("rclcpp"), "%s", ex.what());
     }
 
-    RCLCPP_DEBUG_STREAM(rclcpp::get_logger("rclcpp"), "updateCurrentPose: " << m_current_pose << std::endl);
+    RCLCPP_INFO_STREAM(rclcpp::get_logger("rclcpp"), "updateCurrentPose: " << m_current_pose << std::endl);
 }
 
 /**
@@ -1052,7 +1054,7 @@ void GoalStrat::stateRun()
         }
 
         // runHome
-        m_strat_mvnt.max_speed_at_arrival = 0.1f;
+        m_strat_mvnt.max_speed_at_arrival = 0.0f; // Set to 0 if you don't want an overshoot
         m_strat_mvnt.max_speed.linear.x = 1.f;
         m_strat_mvnt.max_speed.angular.z = goal_MAX_ALLOWED_ANGULAR_SPEED;
         m_strat_mvnt.reverse_gear = krabi_msgs::msg::StratMovement::FORWARD_OR_REVERSE; // don't care
@@ -1493,12 +1495,14 @@ void GoalStrat::stateRun()
             publishStratMovement();
             m_claws->release_pile();
 
+
             //recule(rclcpp::Duration(5,0), Distance(0.15));
             startLinear();
 
             m_claws->setInside();
             //todo add again if repaired
-            //reculeDroit(rclcpp::Duration(3,0), Distance(0.14));
+            reculeDroit(rclcpp::Duration(3,0), Distance(0.14));
+            //recule(rclcpp::Duration(30,0), Distance(0.14));
 
             RCLCPP_INFO_STREAM(rclcpp::get_logger("rclcpp"), "Drop plants in area" << std::endl);
             break;
