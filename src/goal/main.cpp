@@ -1052,7 +1052,7 @@ void GoalStrat::stateRun()
         }
 
         // runHome
-        m_strat_mvnt.max_speed_at_arrival = 0.1f;
+        m_strat_mvnt.max_speed_at_arrival = 0.0f; // Set to 0 if you don't want an overshoot
         m_strat_mvnt.max_speed.linear.x = 1.f;
         m_strat_mvnt.max_speed.angular.z = goal_MAX_ALLOWED_ANGULAR_SPEED;
         m_strat_mvnt.reverse_gear = krabi_msgs::msg::StratMovement::FORWARD_OR_REVERSE; // don't care
