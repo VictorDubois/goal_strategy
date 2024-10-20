@@ -22,8 +22,6 @@ public:
 
     int update();
     
-    bool isStartingPosition();
-
     Etape::EtapeType getType();
 
     Owner getOwner();
@@ -41,5 +39,4 @@ protected:
     Position m_area_center;
     Owner m_us_or_them;
     std::vector<Plant> m_stock;
-    bool m_is_starting_position;
 };

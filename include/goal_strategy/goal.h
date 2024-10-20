@@ -1,5 +1,7 @@
 #pragma once
 
+#define YEAR_2025
+
 #include <math.h>
 #include <memory>
 #include <stdint.h>
@@ -21,6 +23,7 @@
 
 #include "coupe2023.h"
 #include "coupe2024.h"
+#include "coupe2025.h"
 #include "goal_strategy/actuators.h"
 #include "goal_strategy/actuators2023.h"
 #include "goal_strategy/claws.h"
@@ -122,7 +125,12 @@ private:
     State m_state = State::RUN;
     Distance m_dist_to_goal;
     bool m_state_msg_displayed;
+#ifdef YEAR_2025 
+    std::unique_ptr<Coupe2025> m_strat_graph;
+#else
     std::unique_ptr<Coupe2024> m_strat_graph;
+#endif    
+
     long m_timeout_moving, m_timeout_orient;
     bool m_is_first_action;
 
@@ -181,4 +189,5 @@ private:
     bool m_claws_openned_once = false;
 
     StartingPosition m_starting_position;
+    StartingPosition2025 m_starting_position_2025;
 };

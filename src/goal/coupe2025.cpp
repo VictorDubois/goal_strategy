@@ -37,7 +37,7 @@ Position Coupe2025::positionCAbsolute(double x_yellow_from_top_left, double y_ye
  * @param isYellow
  * @param starting_position
  */
-Coupe2025::Coupe2025(const bool isYellow, const StartingPosition starting_position)
+Coupe2025::Coupe2025(const bool isYellow, const StartingPosition2025 starting_position)
   : StrategieV3(isYellow, true)
 {
     setRemainingTime(84 * 1000);
@@ -100,8 +100,7 @@ int area_solar_panel_us2
         
     }
 
-    int garage
-            = Etape::makeEtape(positionC(1.1f, -0.45));
+    int garage = Etape::makeEtape(positionC(1.1f, -0.45));
 
     m_numero_etape_garage = garage; // Must be set!
 

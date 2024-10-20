@@ -67,8 +67,3 @@ int AireDeConstruction::update()
 {
     return 0;
 }
-
-bool AireDeConstruction::isStartingPosition()
-{
-    return m_is_starting_position;
-}

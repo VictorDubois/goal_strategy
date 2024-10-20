@@ -546,7 +546,7 @@ GoalStrat::GoalStrat() : Node("goal_strat")
 
     std::string actuators_name = "actuators_msg";
 
-    m_year = 2024;
+    m_year = 2025;
 
     m_servo_pusher = std::make_shared<Servomotor>(255, 75);
     auto l_pump_arm = std::make_shared<Pump>(false, true);
@@ -899,6 +899,12 @@ bool GoalStrat::isParked()
             }
         }
     }
+    else if (m_year == 2025)
+    {
+        // Only one spot in 2025
+        l_valid_end_locations.push_back(Position(Distance(1.125f), Distance(-0.775f)));
+    }
+
     for (auto l_position : l_valid_end_locations)
     {
         if ((m_current_pose.getPosition() - l_position).getNorme() < 0.3f)
@@ -1088,7 +1094,7 @@ void GoalStrat::stateRun()
             m_goal_pose.setPosition(m_area_funny->getGoalPosition());
         }
 
-        if(isParked() && m_year == 2024)
+        if(isParked() && (m_year == 2024 || m_year == 2025))
         {
             // avoid turning inside the area
             m_strat_mvnt.orient = krabi_msgs::msg::StratMovement::STOP_ANGULAR;
@@ -1592,7 +1598,7 @@ void GoalStrat::init()
         m_score_match += 10; // 10 cerises
         m_score_match += 5; // comptage correct
     }
-    if (m_year==2024)
+    if (m_year==2024 || m_year == 2025)
     {
         m_score_match += 1; // check if init is correct (substracted from zone de fin )
     }
@@ -1634,34 +1640,62 @@ void GoalStrat::init()
         RCLCPP_DEBUG_STREAM(rclcpp::get_logger("rclcpp"), "Not Blue :'(" << std::endl);
     }
 
+    m_action_aborted = false;
+
     //Choose starting position 
     this->declare_parameter("startingPosition", "SOLAR_PANEL");
     std::string l_starting_position_string = this->get_parameter("startingPosition").as_string();
-    m_starting_position=SOLAR_PANEL;
-    if (l_starting_position_string=="SOLAR_PANEL")
+    if (m_year == 2024)
     {
-        RCLCPP_DEBUG_STREAM(rclcpp::get_logger("rclcpp"), "We start near the solar panels" << std::endl);
-        m_starting_position = SOLAR_PANEL;
-    }
-    else if (l_starting_position_string=="CENTER")
-    {
-        RCLCPP_DEBUG_STREAM(rclcpp::get_logger("rclcpp"), "We start in the opposite site, in the center" << std::endl);
-        m_starting_position = CENTER;
+        m_starting_position=SOLAR_PANEL;
+        if (l_starting_position_string=="SOLAR_PANEL")
+        {
+            RCLCPP_DEBUG_STREAM(rclcpp::get_logger("rclcpp"), "We start near the solar panels" << std::endl);
+            m_starting_position = SOLAR_PANEL;
+        }
+        else if (l_starting_position_string=="CENTER")
+        {
+            RCLCPP_DEBUG_STREAM(rclcpp::get_logger("rclcpp"), "We start in the opposite site, in the center" << std::endl);
+            m_starting_position = CENTER;
 
-    }
-    else if ((l_starting_position_string=="PAMI"))
-    {
-        RCLCPP_DEBUG_STREAM(rclcpp::get_logger("rclcpp"), "We start near the pami" << std::endl);
-        m_starting_position = PAMI;
-    }
-    else 
-    {
-        RCLCPP_WARN_STREAM(rclcpp::get_logger("rclcpp"), "Unkown starting position" << std::endl);
-    }
+        }
+        else if ((l_starting_position_string=="PAMI"))
+        {
+            RCLCPP_DEBUG_STREAM(rclcpp::get_logger("rclcpp"), "We start near the pami" << std::endl);
+            m_starting_position = PAMI;
+        }
+        else 
+        {
+            RCLCPP_WARN_STREAM(rclcpp::get_logger("rclcpp"), "Unkown starting position" << std::endl);
+        }
 
-    m_action_aborted = false;
+        //m_strat_graph = std::make_unique<Coupe2024>(!m_is_blue, m_starting_position);
+    }
+    else
+    {
+        m_starting_position_2025=COIN_START;
+        if (l_starting_position_string=="COIN")
+        {
+            RCLCPP_DEBUG_STREAM(rclcpp::get_logger("rclcpp"), "We start near the corner" << std::endl);
+            m_starting_position_2025 = COIN_START;
+        }
+        else if (l_starting_position_string=="COTE")
+        {
+            RCLCPP_DEBUG_STREAM(rclcpp::get_logger("rclcpp"), "We start in the opposite site, in the center" << std::endl);
+            m_starting_position_2025 = COTE_START;
 
-    m_strat_graph = std::make_unique<Coupe2024>(!m_is_blue, m_starting_position);
+        }
+        else if ((l_starting_position_string=="PAMI"))
+        {
+            RCLCPP_DEBUG_STREAM(rclcpp::get_logger("rclcpp"), "We start near the pami" << std::endl);
+            m_starting_position_2025 = PAMI_START;
+        }
+        else 
+        {
+            RCLCPP_WARN_STREAM(rclcpp::get_logger("rclcpp"), "Unkown starting position" << std::endl);
+        }
+        m_strat_graph = std::make_unique<Coupe2025>(!m_is_blue, m_starting_position_2025);
+    }
 
     m_strat_graph->update();
     m_previous_etape_type = Etape::EtapeType::POINT_PASSAGE;
