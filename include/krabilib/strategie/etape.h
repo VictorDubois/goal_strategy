@@ -45,6 +45,8 @@ public:
         ASSIETTE = 0x23,
         PLANT_GROUP = 0x24,
         AIRE_DE_DEPOSE = 0x25,
+        STOCK_MATIERE_PREMIERE = 0x26,
+        AIRE_DE_CONSTRUCTION = 0x27,
         
         POINT_PASSAGE = 0x30,
 

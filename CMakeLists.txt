@@ -47,6 +47,7 @@ add_executable(goal_strategy_node
   src/goal/coupe2022.cpp
   src/goal/coupe2023.cpp
   src/goal/coupe2024.cpp
+  src/goal/coupe2025.cpp
   src/goal/grabber.cpp
   src/goal/pump.cpp
   src/goal/servomotor.cpp
@@ -78,6 +79,8 @@ add_executable(goal_strategy_node
   src/krabilib/strategie/mouillageNord.cpp
   src/krabilib/strategie/mouillageSud.cpp
   src/krabilib/strategie/statuette.cpp
+  src/krabilib/strategie/aireDeConstruction.cpp
+  src/krabilib/strategie/stockDeMatierePremiere.cpp
 )
 
 
