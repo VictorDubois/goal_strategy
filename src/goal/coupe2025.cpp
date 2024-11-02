@@ -18,15 +18,15 @@ Position Coupe2025::positionCAbsolute(double x_yellow_from_top_left, double y_ye
     return positionC(1.5 - x_yellow_from_top_left, 1 - y_yellow_from_top_left);
 }
     //  ____________________________________________________
-    // |                       SCENE                        P|
-    // |                                                    A|
-    // |                                                    M|
-    // |                       x                            I|
-    // |START_SIDE            <----o                         |
+    // |P                       SCENE                        |
+    // |A                                                    |
+    // |M                                                    |
+    // |I                       x                            |
+    // |                      <----o               START_SIDE|
     // |                           |                         |
     // |                           |                         |
     // |                           v y                       |  
-    // |_________________________________________START_CORNER|
+    // |_______________START_FRONT__________________________ |
     //                         PUBLIC
     //        
     //
@@ -53,7 +53,27 @@ Coupe2025::Coupe2025(const bool isYellow, const StartingPosition2025 starting_po
     bool test_contournement = false;
     int campement;    
 
-    int stock_corner_start = Etape::makeEtape(new StockDeMatierePremiere(Pose(positionC(1.3f, 0.5f), Angle(0))));
+    //Choix du campement
+    switch (starting_position)
+    { 
+    case StartingPosition2025::FRONT_START:
+        campement = Etape::makeEtape(positionC(0.275f, 0.775f),
+                                     Etape::DEPART); 
+        break;
+    case StartingPosition2025::COTE_START:
+        campement = Etape::makeEtape(positionC(-1.275f, 0.125f),
+                                     Etape::DEPART); 
+        break;
+    case StartingPosition2025::PAMI_START:
+        campement = Etape::makeEtape(positionC(1.125f, -0.775f),
+                                     Etape::DEPART); 
+        break;
+    default:
+        throw std::runtime_error("Wrong starting position");
+        break;
+    }
+
+    int stock_corner_start = true;//Etape::makeEtape(new StockDeMatierePremiere(Pose(positionC(1.3f, 0.5f), Angle(0))));
 
 
     //todo crad remove 
@@ -85,18 +105,26 @@ int area_solar_panel_us2
     else
     {
         float distance_to_wall = 0.4f;
-        int stock_cote_start = Etape::makeEtape(new StockDeMatierePremiere(Pose(positionC(1.3f, -0.05f), Angle(0.0f))));
-        int stock_centre_A = Etape::makeEtape(new StockDeMatierePremiere(Pose(positionC(0.4f, 0.05f), Angle(0.0f))));
-        int stock_centre_B = Etape::makeEtape(new StockDeMatierePremiere(Pose(positionC(-0.4f, 0.05f), Angle(0.0f))));
+        int stock_bord_cote_publique       = Etape::makeEtape(new StockDeMatierePremiere(Pose(positionC(1.425f, 0.6f), Angle(90.0f))));
+        int stock_bord_cote_publique_them  = Etape::makeEtape(new StockDeMatierePremiere(Pose(positionC(-1.425f, 0.6f), Angle(90.0f))));
+        int stock_bord_cote_backstage      = Etape::makeEtape(new StockDeMatierePremiere(Pose(positionC(1.425f, -0.325f), Angle(90.0f))));
+        int stock_bord_cote_backstage_them = Etape::makeEtape(new StockDeMatierePremiere(Pose(positionC(-1.425f, -0.325f), Angle(90.0f))));
+        int stock_proche_rampe             = Etape::makeEtape(new StockDeMatierePremiere(Pose(positionC(0.675f, -0.725f), Angle(0.0f))));
+        int stock_centre_us                = Etape::makeEtape(new StockDeMatierePremiere(Pose(positionC(0.4f, 0.05f), Angle(0.0f))));
+        int stock_centre_them              = Etape::makeEtape(new StockDeMatierePremiere(Pose(positionC(-0.4f, 0.05f), Angle(0.0f))));
+        int stock_front_us                 = Etape::makeEtape(new StockDeMatierePremiere(Pose(positionC(0.725f, 0.75f), Angle(0.0f))));
+        int stock_front_them               = Etape::makeEtape(new StockDeMatierePremiere(Pose(positionC(-0.725f, 0.75f), Angle(0.0f))));
 
-        int zone_contruction_corner = Etape::makeEtape(new AireDeConstruction(positionC(1.275f, 0.775f), positionC(1.275f, 0.775f), Owner::us));
-        int zone_contruction_cote = Etape::makeEtape(new AireDeConstruction(positionC(-1.275f, 0.225f), positionC(-1.275f, 0.225f), Owner::us));
+        int zone_contruction_front      = Etape::makeEtape(new AireDeConstruction(Pose(positionC(0.275f, 0.775f), Angle(0.0f)), Owner::us, AireSize::AIRE_BIG));
+        int zone_contruction_cote       = Etape::makeEtape(new AireDeConstruction(Pose(positionC(-1.275f, 0.125f), Angle(0.0f)), Owner::us, AireSize::AIRE_BIG));
+        int mini_zone_contruction_coin  = Etape::makeEtape(new AireDeConstruction(Pose(positionC(-1.275f, 0.925f), Angle(0.0f)), Owner::us, AireSize::AIRE_SMALL));
+        int mini_zone_contruction_front = Etape::makeEtape(new AireDeConstruction(Pose(positionC(0.725f, 0.925f), Angle(0.0f)), Owner::us, AireSize::AIRE_SMALL));
 
         //int point_passage_1 = Etape::makeEtape(positionC(0.9f, 0.7f));
 
-        Etape::get(stock_corner_start)->addVoisins(zone_contruction_corner);
-        Etape::get(zone_contruction_cote)->addVoisins(stock_centre_B, stock_cote_start);
-        Etape::get(stock_centre_A)->addVoisins(stock_centre_B, zone_contruction_corner);
+        Etape::get(stock_corner_start)->addVoisins(stock_centre_us);
+        Etape::get(campement)->addVoisins(stock_centre_us);
+        
         
     }
 
@@ -220,15 +248,25 @@ void Coupe2025::debugEtapes(visualization_msgs::msg::MarkerArray& ma)
             m.pose = Pose(etape->getPosition(), Angle(0));
             etape_type_to_marker(m, etape);
 
-            if (etape->getEtapeType() == Etape::EtapeType::AIRE_DE_DEPOSE)
+            if (etape->getEtapeType() == Etape::EtapeType::AIRE_DE_CONSTRUCTION)
             {
-                m.pose = Pose(static_cast<AireDeDepose*>(etape->getAction())->getAreaCenter(), Angle(0));
+                AireDeConstruction* l_adc = static_cast<AireDeConstruction*>(etape->getAction());
+                m.pose = l_adc->getAreaCenter();
+                if(!l_adc->isBig())
+                {
+                    m.scale.y *= 0.5;
+                }
+            }
+            else if (etape->getEtapeType() == Etape::EtapeType::STOCK_MATIERE_PREMIERE)
+            {
+                StockDeMatierePremiere* l_stockMP = static_cast<StockDeMatierePremiere*>(etape->getAction());
+                m.pose = l_stockMP->getStockCenter();
             }
 
             if (etape->getNumero() == this->getGoal()->getNumero())
             {
                 m.scale.z *= 10;
-                if (etape->getEtapeType() == Etape::EtapeType::AIRE_DE_DEPOSE)
+                if (etape->getEtapeType() == Etape::EtapeType::AIRE_DE_CONSTRUCTION)
                 {
                     m.scale.z = 1;
                 }

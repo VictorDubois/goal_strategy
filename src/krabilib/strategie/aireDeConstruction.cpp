@@ -1,4 +1,5 @@
 #include "krabilib/strategie/aireDeConstruction.h"
+#include "krabilib/strategie/stockDeMatierePremiere.h" // for plateforme definition
 #include "krabilib/position.h"
 #include "krabilib/strategie/mediumLevelAction.h"
 
@@ -15,16 +16,17 @@ AireDeConstruction::AireDeConstruction()
 {
 }
 
-AireDeConstruction::AireDeConstruction(Position goalPosition, Owner us_or_them) 
-    : AireDeConstruction(goalPosition, goalPosition, us_or_them)
+AireDeConstruction::AireDeConstruction(Pose goalPose, Owner us_or_them, AireSize a_size) 
+    : AireDeConstruction(goalPose, goalPose, us_or_them, a_size)
 {
 }
 
 
-AireDeConstruction::AireDeConstruction(Position goalPosition, Position area_center, Owner us_or_them)
-  : MediumLevelAction(goalPosition)
+AireDeConstruction::AireDeConstruction(Pose goalPose, Pose area_center, Owner us_or_them, AireSize a_size)
+  : MediumLevelAction(goalPose.getPosition())
 {
-  m_goal_position=goalPosition;
+  m_size = a_size;
+  m_goal_pose=goalPose;
   m_us_or_them=us_or_them;
   m_area_center=area_center;
 }
@@ -43,24 +45,29 @@ Etape::EtapeType AireDeConstruction::getType()
     return Etape::AIRE_DE_CONSTRUCTION;
 }
 
-void AireDeConstruction::addPlateforme(Plant added_plant)
+void AireDeConstruction::addPlateforme(Plateforme added_plateforme)
 {
-    m_stock.push_back(added_plant);
+    m_stock.push_back(added_plateforme);
 }
 
-std::vector<Plant> AireDeConstruction::getPlateformes()
+std::vector<Plateforme> AireDeConstruction::getPlateformes()
 {
     return m_stock;
 }
 
-Position AireDeConstruction::getAreaCenter()
+Pose AireDeConstruction::getAreaCenter()
 {
     return m_area_center;
 }
 
+Pose AireDeConstruction::getGoalPose()
+{
+    return m_goal_pose;
+}
+
 Position AireDeConstruction::getGoalPosition()
 {
-    return m_goal_position;
+    return m_goal_pose.getPosition();
 }
 
 int AireDeConstruction::update()

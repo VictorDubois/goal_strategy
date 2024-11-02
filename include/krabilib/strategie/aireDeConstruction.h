@@ -1,22 +1,28 @@
 #pragma once
 
 #include "krabilib/position.h"
+#include "krabilib/pose.h"
 #include "krabilib/strategie/mediumLevelAction.h"
-#include "krabilib/strategie/plantGroup.h"
 #include "krabilib/strategie/assiette.h"
+#include "krabilib/strategie/stockDeMatierePremiere.h" // pour def plateforme
 
 #ifndef STANDALONE_STRATEGIE
 #include "krabilib/command.h"
 #endif // STANDALONE_STRATEGIE
 
+enum AireSize
+{
+    AIRE_BIG,
+    AIRE_SMALL
+};
 
 class AireDeConstruction : public MediumLevelAction
 {
 public:
     AireDeConstruction();
 
-    AireDeConstruction(Position goalPosition, Position area_center, Owner us_or_them);
-    AireDeConstruction(Position goalPosition, Owner us_or_them);
+    AireDeConstruction(Pose goalPose, Pose area_center, Owner us_or_them, AireSize a_size);
+    AireDeConstruction(Pose goalPose, Owner us_or_them, AireSize a_size);
 
     ~AireDeConstruction();
 
@@ -27,16 +33,20 @@ public:
     Owner getOwner();
 
 
-    void addPlateforme(Plant added_plant);
+    void addPlateforme(Plateforme added_plateforme);
 
-    std::vector<Plant> getPlateformes();
+    std::vector<Plateforme> getPlateformes();
 
-    Position getAreaCenter();
+    Pose getAreaCenter();
     Position getGoalPosition();
+    Pose getGoalPose();
+
+    bool isBig(){return m_size == AireSize::AIRE_BIG;} 
 
 protected:
-    Position m_goal_position;
-    Position m_area_center;
+    Pose m_goal_pose;
+    Pose m_area_center;
     Owner m_us_or_them;
-    std::vector<Plant> m_stock;
+    std::vector<Plateforme> m_stock;
+    AireSize m_size;
 };

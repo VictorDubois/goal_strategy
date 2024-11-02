@@ -37,6 +37,8 @@ public:
 
     void EmptyStockDeMatierePremiere();
 
+    Pose getStockCenter(){return m_start_pose;}
+
     
 protected:
     Position m_position;

@@ -1673,15 +1673,15 @@ void GoalStrat::init()
     }
     else
     {
-        m_starting_position_2025=COIN_START;
-        if (l_starting_position_string=="COIN")
+        m_starting_position_2025=FRONT_START;
+        if (l_starting_position_string=="FRONT")
         {
-            RCLCPP_DEBUG_STREAM(rclcpp::get_logger("rclcpp"), "We start near the corner" << std::endl);
-            m_starting_position_2025 = COIN_START;
+            RCLCPP_DEBUG_STREAM(rclcpp::get_logger("rclcpp"), "We start on the front" << std::endl);
+            m_starting_position_2025 = FRONT_START;
         }
         else if (l_starting_position_string=="COTE")
         {
-            RCLCPP_DEBUG_STREAM(rclcpp::get_logger("rclcpp"), "We start in the opposite site, in the center" << std::endl);
+            RCLCPP_DEBUG_STREAM(rclcpp::get_logger("rclcpp"), "We start in the opposite side, in the center" << std::endl);
             m_starting_position_2025 = COTE_START;
 
         }

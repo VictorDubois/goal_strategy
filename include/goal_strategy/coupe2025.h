@@ -28,7 +28,7 @@
 
 enum StartingPosition2025
 {
-    COIN_START,
+    FRONT_START,
     COTE_START,
     PAMI_START
 };
