@@ -57,15 +57,15 @@ Coupe2025::Coupe2025(const bool isYellow, const StartingPosition2025 starting_po
     switch (starting_position)
     { 
     case StartingPosition2025::FRONT_START:
-        campement = Etape::makeEtape(positionC(0.275f, 0.775f),
+        campement = Etape::makeEtape(positionC(-0.275f, 0.775f),
                                      Etape::DEPART); 
         break;
     case StartingPosition2025::COTE_START:
-        campement = Etape::makeEtape(positionC(-1.275f, 0.125f),
+        campement = Etape::makeEtape(positionC(1.275f, 0.125f),
                                      Etape::DEPART); 
         break;
     case StartingPosition2025::PAMI_START:
-        campement = Etape::makeEtape(positionC(1.125f, -0.775f),
+        campement = Etape::makeEtape(positionC(-1.125f, -0.775f),
                                      Etape::DEPART); 
         break;
     default:
@@ -105,20 +105,20 @@ int area_solar_panel_us2
     else
     {
         float distance_to_wall = 0.4f;
-        int stock_bord_cote_publique       = Etape::makeEtape(new StockDeMatierePremiere(Pose(positionC(1.425f, 0.6f), Angle(90.0f))));
-        int stock_bord_cote_publique_them  = Etape::makeEtape(new StockDeMatierePremiere(Pose(positionC(-1.425f, 0.6f), Angle(90.0f))));
-        int stock_bord_cote_backstage      = Etape::makeEtape(new StockDeMatierePremiere(Pose(positionC(1.425f, -0.325f), Angle(90.0f))));
-        int stock_bord_cote_backstage_them = Etape::makeEtape(new StockDeMatierePremiere(Pose(positionC(-1.425f, -0.325f), Angle(90.0f))));
-        int stock_proche_rampe             = Etape::makeEtape(new StockDeMatierePremiere(Pose(positionC(0.675f, -0.725f), Angle(0.0f))));
+        int stock_bord_cote_publique       = Etape::makeEtape(new StockDeMatierePremiere(Pose(positionC(1.425f, 0.6f), Angle(M_PI/2))));
+        int stock_bord_cote_publique_them  = Etape::makeEtape(new StockDeMatierePremiere(Pose(positionC(-1.425f, 0.6f), Angle(M_PI/2))));
+        int stock_bord_cote_backstage      = Etape::makeEtape(new StockDeMatierePremiere(Pose(positionC(1.425f, -0.325f), Angle(M_PI/2))));
+        int stock_bord_cote_backstage_them = Etape::makeEtape(new StockDeMatierePremiere(Pose(positionC(-1.425f, -0.325f), Angle(M_PI/2))));
+        int stock_proche_rampe             = Etape::makeEtape(new StockDeMatierePremiere(Pose(positionC(-0.675f, -0.725f), Angle(0.0f))));
         int stock_centre_us                = Etape::makeEtape(new StockDeMatierePremiere(Pose(positionC(0.4f, 0.05f), Angle(0.0f))));
         int stock_centre_them              = Etape::makeEtape(new StockDeMatierePremiere(Pose(positionC(-0.4f, 0.05f), Angle(0.0f))));
         int stock_front_us                 = Etape::makeEtape(new StockDeMatierePremiere(Pose(positionC(0.725f, 0.75f), Angle(0.0f))));
         int stock_front_them               = Etape::makeEtape(new StockDeMatierePremiere(Pose(positionC(-0.725f, 0.75f), Angle(0.0f))));
 
-        int zone_contruction_front      = Etape::makeEtape(new AireDeConstruction(Pose(positionC(0.275f, 0.775f), Angle(0.0f)), Owner::us, AireSize::AIRE_BIG));
-        int zone_contruction_cote       = Etape::makeEtape(new AireDeConstruction(Pose(positionC(-1.275f, 0.125f), Angle(0.0f)), Owner::us, AireSize::AIRE_BIG));
-        int mini_zone_contruction_coin  = Etape::makeEtape(new AireDeConstruction(Pose(positionC(-1.275f, 0.925f), Angle(0.0f)), Owner::us, AireSize::AIRE_SMALL));
-        int mini_zone_contruction_front = Etape::makeEtape(new AireDeConstruction(Pose(positionC(0.725f, 0.925f), Angle(0.0f)), Owner::us, AireSize::AIRE_SMALL));
+        int zone_contruction_front      = Etape::makeEtape(new AireDeConstruction(Pose(positionC(-0.275f, 0.775f), Angle(0.0f)), Owner::us, AireSize::AIRE_BIG));
+        int zone_contruction_cote       = Etape::makeEtape(new AireDeConstruction(Pose(positionC(1.275f, 0.125f), Angle(0.0f)), Owner::us, AireSize::AIRE_BIG));
+        int mini_zone_contruction_coin  = Etape::makeEtape(new AireDeConstruction(Pose(positionC(1.275f, 0.925f), Angle(0.0f)), Owner::us, AireSize::AIRE_SMALL));
+        int mini_zone_contruction_front = Etape::makeEtape(new AireDeConstruction(Pose(positionC(-0.725f, 0.925f), Angle(0.0f)), Owner::us, AireSize::AIRE_SMALL));
 
         //int point_passage_1 = Etape::makeEtape(positionC(0.9f, 0.7f));
 
@@ -158,6 +158,7 @@ void Coupe2025::etape_type_to_marker(visualization_msgs::msg::Marker& m, Etape* 
     m.type = visualization_msgs::msg::Marker::CUBE;
     CoucheGateau type_couche = CoucheGateau::glacage_rose;
     Owner owner;
+    AireDeConstruction* l_adc;
 
     const Etape::EtapeType& e = a_etape->getEtapeType();
     m.color.a = 1;
@@ -179,12 +180,20 @@ void Coupe2025::etape_type_to_marker(visualization_msgs::msg::Marker& m, Etape* 
         m.color.a = 0.5f;
         m.scale.x = 0.45f;
         m.scale.y = 0.45f;
-        owner = static_cast<AireDeConstruction*>(a_etape->getAction())->getOwner();
+        l_adc = static_cast<AireDeConstruction*>(a_etape->getAction());
+        owner = l_adc->getOwner();
+
+        if(!l_adc->isBig())
+        {
+            m.scale.y = 0.15f;
+        }
 
         // Area blue
         m.color.r = 0.f / 255.f;
         m.color.g = 91.f / 255.f;
         m.color.b = 140.f / 255.f;
+        
+
         if (isYellow() == (owner == Owner::us))
         {
             // Area yellow
@@ -195,13 +204,13 @@ void Coupe2025::etape_type_to_marker(visualization_msgs::msg::Marker& m, Etape* 
 
         break;
     case Etape::EtapeType::STOCK_MATIERE_PREMIERE:
-        m.type = visualization_msgs::msg::Marker::CYLINDER;
-        m.scale.x = 0.25f;
-        m.scale.y = 0.25f;
+        m.type = visualization_msgs::msg::Marker::CUBE;
+        m.scale.x = 0.4f;
+        m.scale.y = 0.1f;
         m.scale.z = 0.01f;
-        m.color.r = 0.0f / 255.f;
-        m.color.g = 240.f / 255.f;
-        m.color.b = 0.0f / 255.f;
+        m.color.r = 222.0f / 255.f;
+        m.color.g = 184.f / 255.f;
+        m.color.b = 135.0f / 255.f;
         break;
 
     case Etape::EtapeType::POINT_PASSAGE:
@@ -252,10 +261,6 @@ void Coupe2025::debugEtapes(visualization_msgs::msg::MarkerArray& ma)
             {
                 AireDeConstruction* l_adc = static_cast<AireDeConstruction*>(etape->getAction());
                 m.pose = l_adc->getAreaCenter();
-                if(!l_adc->isBig())
-                {
-                    m.scale.y *= 0.5;
-                }
             }
             else if (etape->getEtapeType() == Etape::EtapeType::STOCK_MATIERE_PREMIERE)
             {
