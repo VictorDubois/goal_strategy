@@ -2,7 +2,7 @@
 #include "goal_strategy/grabber.h"
 #include "krabilib/pose.h"
 #include "krabilib/strategie/aireDeConstruction.h"
-#include "krabilib/strategie/stockDeMatierePremiere.h"
+#include "krabilib/strategie/plateforme.h"
 
 #include <cmath>
 #include <iostream>
@@ -110,20 +110,37 @@ int area_solar_panel_us2
         int stock_bord_cote_backstage      = Etape::makeEtape(new StockDeMatierePremiere(Pose(positionC(1.425f, -0.325f), Angle(M_PI/2))));
         int stock_bord_cote_backstage_them = Etape::makeEtape(new StockDeMatierePremiere(Pose(positionC(-1.425f, -0.325f), Angle(M_PI/2))));
         int stock_proche_rampe             = Etape::makeEtape(new StockDeMatierePremiere(Pose(positionC(-0.675f, -0.725f), Angle(0.0f))));
-        int stock_centre_us                = Etape::makeEtape(new StockDeMatierePremiere(Pose(positionC(0.4f, 0.05f), Angle(0.0f))));
-        int stock_centre_them              = Etape::makeEtape(new StockDeMatierePremiere(Pose(positionC(-0.4f, 0.05f), Angle(0.0f))));
+        int stock_centre_us                = Etape::makeEtape(new StockDeMatierePremiere(Pose(positionC(-0.4f, 0.05f), Angle(0.0f))));
+        int stock_centre_them              = Etape::makeEtape(new StockDeMatierePremiere(Pose(positionC(0.4f, 0.05f), Angle(0.0f))));
         int stock_front_us                 = Etape::makeEtape(new StockDeMatierePremiere(Pose(positionC(0.725f, 0.75f), Angle(0.0f))));
         int stock_front_them               = Etape::makeEtape(new StockDeMatierePremiere(Pose(positionC(-0.725f, 0.75f), Angle(0.0f))));
 
-        int zone_contruction_front      = Etape::makeEtape(new AireDeConstruction(Pose(positionC(-0.275f, 0.775f), Angle(0.0f)), Owner::us, AireSize::AIRE_BIG));
-        int zone_contruction_cote       = Etape::makeEtape(new AireDeConstruction(Pose(positionC(1.275f, 0.125f), Angle(0.0f)), Owner::us, AireSize::AIRE_BIG));
-        int mini_zone_contruction_coin  = Etape::makeEtape(new AireDeConstruction(Pose(positionC(1.275f, 0.925f), Angle(0.0f)), Owner::us, AireSize::AIRE_SMALL));
-        int mini_zone_contruction_front = Etape::makeEtape(new AireDeConstruction(Pose(positionC(-0.725f, 0.925f), Angle(0.0f)), Owner::us, AireSize::AIRE_SMALL));
+        int zone_contruction_front           = Etape::makeEtape(new AireDeConstruction(Pose(positionC(-0.275f, 0.775f), Angle(0.0f)), Owner::us, AireSize::AIRE_BIG));
+        int zone_contruction_cote            = Etape::makeEtape(new AireDeConstruction(Pose(positionC(1.275f, 0.125f), Angle(0.0f)), Owner::us, AireSize::AIRE_BIG));
+        int mini_zone_contruction_coin       = Etape::makeEtape(new AireDeConstruction(Pose(positionC(1.275f, 0.925f), Angle(0.0f)), Owner::us, AireSize::AIRE_SMALL));
+        int mini_zone_contruction_front      = Etape::makeEtape(new AireDeConstruction(Pose(positionC(-0.725f, 0.925f), Angle(0.0f)), Owner::us, AireSize::AIRE_SMALL));
+        int zone_contruction_front_them      = Etape::makeEtape(new AireDeConstruction(Pose(positionC(0.275f, 0.775f), Angle(0.0f)), Owner::them, AireSize::AIRE_BIG));
+        int zone_contruction_cote_them       = Etape::makeEtape(new AireDeConstruction(Pose(positionC(-1.275f, 0.125f), Angle(0.0f)), Owner::them, AireSize::AIRE_BIG));
+        int mini_zone_contruction_coin_them  = Etape::makeEtape(new AireDeConstruction(Pose(positionC(-1.275f, 0.925f), Angle(0.0f)), Owner::them, AireSize::AIRE_SMALL));
+        int mini_zone_contruction_front_them = Etape::makeEtape(new AireDeConstruction(Pose(positionC(0.725f, 0.925f), Angle(0.0f)), Owner::them, AireSize::AIRE_SMALL));
 
-        //int point_passage_1 = Etape::makeEtape(positionC(0.9f, 0.7f));
+        int point_passage_stock_centre_us_publique = Etape::makeEtape(positionC(-0.4f, 0.32f));
+        int point_passage_stock_centre_us_back = Etape::makeEtape(positionC(-0.4f, -0.22f));
 
-        Etape::get(stock_corner_start)->addVoisins(stock_centre_us);
-        Etape::get(campement)->addVoisins(stock_centre_us);
+        int point_passage_stock_centre_them_publique = Etape::makeEtape(positionC(0.4f, 0.32f));
+        int point_passage_stock_centre_them_back = Etape::makeEtape(positionC(0.4f, -0.22f));
+
+        int point_passage_zone_contruction_cote = Etape::makeEtape(positionC(1.075f, 0.125f));
+
+        Etape::get(stock_centre_us)->addVoisins(point_passage_stock_centre_us_publique, point_passage_stock_centre_us_back);
+        Etape::get(stock_centre_them)->addVoisins(point_passage_stock_centre_them_publique, point_passage_stock_centre_them_back);
+
+        Etape::get(stock_corner_start)->addVoisins(point_passage_stock_centre_them_publique);
+        Etape::get(point_passage_stock_centre_us_publique)->addVoisins(campement, zone_contruction_front, point_passage_stock_centre_them_publique);
+        Etape::get(point_passage_stock_centre_us_back)->addVoisins(point_passage_stock_centre_them_back);
+
+        Etape::get(point_passage_zone_contruction_cote)->addVoisins(point_passage_stock_centre_them_back, point_passage_stock_centre_them_publique, zone_contruction_cote);
+
         
         
     }
@@ -381,47 +398,15 @@ int Coupe2025::getScoreEtape(int i)
 
         if (m_stock.size() && l_owner == Owner::us && l_stock_area == 0)
         {
-            
-            if (l_area->getGoalPosition()==positionC(1.275f, 0.775f)) //solar panel 1
+            l_score = 6;
+            if ( l_stock_area <= 6)
             {
-                RCLCPP_WARN_STREAM(rclcpp::get_logger("rclcpp"), "helloooo " );
-                
-                l_score = 200000;
+                l_score = 12;
             }
-            if (l_area->getGoalPosition()==positionC(1.175f, 0.775f)) //solar panel 2
+            if (l_stock_area == 0)
             {
-                l_score = 100000;
+                l_score = 24;
             }
-            // if (l_area->getGoalPosition()==positionC(1.175f, 0.675f)) //solar panel 3
-            // {
-            //     l_score = 3000;
-            // }
-            if (l_area->getGoalPosition()==positionC(1.175f, -0.725f)) //pami 1
-            {
-                l_score = 20000;
-            }
-            if (l_area->getGoalPosition()==positionC(1.175f, -0.675f)) //pami 2
-            {    
-                l_score = 10000;
-            }
-            if (l_area->getGoalPosition()==positionC(1.175f, -0.675f)) //pami 3
-            {
-                l_score = 1;
-            }
-            if (l_area->getGoalPosition()==positionC(-1.175f, 0.0f)) //center
-            {
-                l_score = 1;  
-            }
-            // strat v1: todo change back if strat V2 do not work
-            // l_score = 6;
-            // if ( l_stock_area <= 6)
-            // {
-            //     l_score = 12;
-            // }
-            // if (l_stock_area == 0)
-            // {
-            //     l_score = 24;
-            // }
         }
         break;
     case Etape::POINT_PASSAGE:
@@ -436,4 +421,57 @@ int Coupe2025::getScoreEtape(int i)
 std::vector<Plateforme> Coupe2025::getStock()
 {
     return m_stock;
+}
+
+
+
+
+void Coupe2025::grabPlateformes(Etape* e)
+{
+    StockDeMatierePremiere* l_stock;
+    std::vector<Plateforme> l_plateformes;
+
+    switch (e->getEtapeType())
+    {
+    // A faire : remplacer la priorite par le nombre de points obtenables a l'etape
+    case Etape::STOCK_MATIERE_PREMIERE:
+        l_stock = static_cast<StockDeMatierePremiere*>(e->getAction());
+        l_plateformes = l_stock->getPlateformes();
+               
+        m_stock.insert(m_stock.end(), l_plateformes.begin(), l_plateformes.end());
+        break;
+        
+    default:
+        std::cerr << "Not supposed to grab a plateforme from here!" << std::endl;
+    }
+}
+
+int Coupe2025::dropPlateformes(Etape* e)
+{
+    int l_scored = 0;
+    AireDeConstruction* l_area;
+    Plateforme* l_plateforme;
+    std::vector<Plateforme> l_stock_area;
+    Owner l_owner_area;
+    switch (e->getEtapeType())
+    {
+        // A faire : remplacer la priorite par le nombre de points obtenables a l'etape
+
+    case Etape::AIRE_DE_CONSTRUCTION:
+        l_area = static_cast<AireDeConstruction*>(e->getAction());
+        l_owner_area = l_area->getOwner();
+
+        if (m_stock.size())
+        {
+          l_area->addPlateforme(m_stock.back());
+          m_stock.pop_back();
+          l_scored = 6;
+        }  
+        break;
+
+    default:
+        std::cerr << "Not supposed to drop a plateforme there!" << std::endl;
+    }
+
+    return l_scored;
 }

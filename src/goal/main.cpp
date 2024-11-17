@@ -269,6 +269,10 @@ bool GoalStrat::isArrivedAtGoal(Distance a_offset)
     {
         l_reach_dist = m_claws->getReach();
     }
+    if (m_strat_graph->getEtapeEnCours()->getEtapeType() == Etape::EtapeType::STOCK_MATIERE_PREMIERE)
+    {
+        l_reach_dist = m_claws->getReach();
+    }
 
     if (m_dist_to_goal < l_reach_dist)
     {
@@ -1543,6 +1547,13 @@ void GoalStrat::stateRun()
             
             //recule(rclcpp::Duration(1000,0), Distance(0.1));
 
+            break;
+
+        case Etape::EtapeType::AIRE_DE_CONSTRUCTION:
+            m_score_match += m_strat_graph->dropPlateformes(m_strat_graph->getEtapeEnCours());
+            break;
+        case Etape::EtapeType::STOCK_MATIERE_PREMIERE:
+            m_strat_graph->grabPlateformes(m_strat_graph->getEtapeEnCours());
             break;
         default:
             //stopAngular();

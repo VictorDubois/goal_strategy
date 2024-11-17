@@ -26,6 +26,7 @@
 #include "coupe2025.h"
 #include "goal_strategy/actuators.h"
 #include "goal_strategy/actuators2023.h"
+#include "goal_strategy/actuators2025.h"
 #include "goal_strategy/claws.h"
 #include "goal_strategy/grabber.h"
 #include "krabi_msgs/msg/servos_cmd.hpp"
