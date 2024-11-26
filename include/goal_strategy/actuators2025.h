@@ -1,6 +1,6 @@
 #pragma once
 #include "claws.h"
-#include "krabi_msgs/msg/actuators.hpp"
+#include "krabi_msgs/msg/actuators2025.hpp"
 #include "pump.h"
 #include "servomotor.h"
 #include "stepper.h"
@@ -12,7 +12,7 @@ class Actuators2025
 
 {
 private:
-    rclcpp::Publisher<krabi_msgs::msg::Actuators>::SharedPtr m_pub;
+    rclcpp::Publisher<krabi_msgs::msg::Actuators2025>::SharedPtr m_pub;
     rclcpp::Node::SharedPtr m_node;
     krabi_msgs::msg::Actuators m_message;
     std::shared_ptr<Servomotor> m_servo_1;

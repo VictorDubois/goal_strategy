@@ -596,7 +596,7 @@ GoalStrat::GoalStrat() : Node("goal_strat")
     auto l_servo_right_claw = std::make_shared<Servomotor>(10, 90);
 
     m_actuators2023 = Actuators2023(
-      rclcpp::Node::SharedPtr(this), actuators_name, m_servo_cherries, l_servo_left_claw, l_servo_right_claw, l_servo_arm_base, l_servo_arm_mid, l_servo_arm_suction_cup, l_pump_arm);
+      rclcpp::Node::SharedPtr(this), actuators_name + "2023", m_servo_cherries, l_servo_left_claw, l_servo_right_claw, l_servo_arm_base, l_servo_arm_mid, l_servo_arm_suction_cup, l_pump_arm);
 
     if (m_year == 2023 || m_year == 2024)
     {
@@ -619,6 +619,24 @@ GoalStrat::GoalStrat() : Node("goal_strat")
     m_claws->retract(false);
 
     closeCherriesDispenser();
+
+    // 2025
+
+    auto l_servo_grabi_left_most = std::make_shared<Servomotor>(10, 90);
+    auto l_servo_grabi_center_left = std::make_shared<Servomotor>(10, 90);
+    auto l_servo_grabi_center_right = std::make_shared<Servomotor>(10, 90);
+    auto l_servo_grabi_right_most = std::make_shared<Servomotor>(10, 90);
+    m_servo_banner = std::make_shared<Servomotor>(10, 90);
+    auto l_stepper_grabi_elevator = std::make_shared<StepperElevator>(100 /* mm/s */, 1000 /* mm/s2 */, 100 /* x50mA */, 300 /*mm de haut max*/);
+
+    m_grabi = std::make_shared<Grabi>(Position(Eigen::Vector2d(0.32f, 0.f)),Position(Eigen::Vector2d(0.08f, 0.f)), l_servo_grabi_left_most, l_servo_grabi_center_left, l_servo_grabi_center_right, l_servo_grabi_right_most, l_stepper_grabi_elevator);
+
+    m_actuators2025 = Actuators2025(
+      rclcpp::Node::SharedPtr(this), actuators_name, l_servo_grabi_left_most, l_servo_grabi_center_left, l_servo_grabi_center_right, l_servo_grabi_right_most, m_servo_banner, l_servo_arm_suction_cup, l_servo_arm_suction_cup, l_servo_arm_suction_cup, l_stepper_grabi_elevator, l_pump_arm);
+
+    m_actuators2025.start();
+
+    m_actuators2025.set_score(42);
 
     init();// to do before subscribing to /remaining_time
 

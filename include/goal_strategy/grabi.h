@@ -1,6 +1,7 @@
 #pragma once
 #include "krabilib/strategie/strategiev3.h"
 #include "servomotor.h"
+#include "stepper.h"
 
 class Grabi
 {
@@ -11,7 +12,8 @@ public:
           std::shared_ptr<Servomotor> a_servo_magnet_1,
           std::shared_ptr<Servomotor> a_servo_magnet_2,
           std::shared_ptr<Servomotor> a_servo_magnet_3,
-          std::shared_ptr<Servomotor> a_servo_magnet_4);
+          std::shared_ptr<Servomotor> a_servo_magnet_4,
+          std::shared_ptr<StepperElevator> a_stepper_elevator);
 
     void grab_plateforme(bool a_do_sleep = true);
     void drop_plateforme(bool a_do_sleep = true);
@@ -30,4 +32,5 @@ private:
     std::shared_ptr<Servomotor> m_servo_magnet_2;
     std::shared_ptr<Servomotor> m_servo_magnet_3;
     std::shared_ptr<Servomotor> m_servo_magnet_4;
+    std::shared_ptr<StepperElevator> m_stepper_elevator;
 };

@@ -28,6 +28,7 @@
 #include "goal_strategy/actuators2023.h"
 #include "goal_strategy/actuators2025.h"
 #include "goal_strategy/claws.h"
+#include "goal_strategy/grabi.h"
 #include "goal_strategy/grabber.h"
 #include "krabi_msgs/msg/servos_cmd.hpp"
 #include "krabi_msgs/msg/strat_movement.hpp"
@@ -171,6 +172,7 @@ private:
     int m_vacuum_state;
     Actuators m_actuators;
     Actuators2023 m_actuators2023;
+    Actuators2025 m_actuators2025;
     bool m_goal_init_done;
     bool m_at_least_one_carre_fouille_done;
     std::vector<Position> m_potential_other_robots;
@@ -181,6 +183,8 @@ private:
     std::shared_ptr<Claws> m_claws;
     std::shared_ptr<Servomotor> m_servo_pusher;
     std::shared_ptr<Servomotor> m_servo_cherries;
+    std::shared_ptr<Grabi> m_grabi;
+    std::shared_ptr<Servomotor> m_servo_banner;
 
     std::thread m_running;
 

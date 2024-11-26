@@ -2,17 +2,19 @@
 
 Grabi::Grabi(Position a_relative_position_in_front,
              Position a_relative_position_inside,
-             std::shared_ptr<Servomotor> a_servo_release_1,
-             std::shared_ptr<Servomotor> a_servo_release_2,
-             std::shared_ptr<Servomotor> a_servo_release_3,
-             std::shared_ptr<Servomotor> a_servo_release_4)
+             std::shared_ptr<Servomotor> a_servo_magnet_1,
+             std::shared_ptr<Servomotor> a_servo_magnet_2,
+             std::shared_ptr<Servomotor> a_servo_magnet_3,
+             std::shared_ptr<Servomotor> a_servo_magnet_4,
+             std::shared_ptr<StepperElevator> a_stepper_elevator)
   : m_relative_position_in_front(a_relative_position_in_front)
   , m_relative_position_inside(a_relative_position_inside)
   , m_relative_position(a_relative_position_in_front)
-  , m_servo_release_1(a_servo_release_1)
-  , m_servo_release_2(a_servo_release_2)
-  , m_servo_release_3(a_servo_release_3)
-  , m_servo_release_4(a_servo_release_4)
+  , m_servo_magnet_1(a_servo_magnet_1)
+  , m_servo_magnet_2(a_servo_magnet_2)
+  , m_servo_magnet_3(a_servo_magnet_3)
+  , m_servo_magnet_4(a_servo_magnet_4)
+  , m_stepper_elevator(a_stepper_elevator)
 {
 }
 

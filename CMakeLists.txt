@@ -51,6 +51,9 @@ add_executable(goal_strategy_node
   src/goal/grabber.cpp
   src/goal/pump.cpp
   src/goal/servomotor.cpp
+  src/goal/grabi.cpp
+  src/goal/stepper.cpp
+  src/goal/actuators2025.cpp
   src/krabilib/angle.cpp  
   src/krabilib/distance.cpp  
   src/krabilib/position.cpp  
