@@ -14,7 +14,7 @@ class Actuators2025
 private:
     rclcpp::Publisher<krabi_msgs::msg::Actuators2025>::SharedPtr m_pub;
     rclcpp::Node::SharedPtr m_node;
-    krabi_msgs::msg::Actuators m_message;
+    krabi_msgs::msg::Actuators2025 m_message;
     std::shared_ptr<Servomotor> m_servo_1;
     std::shared_ptr<Servomotor> m_servo_2;
     std::shared_ptr<Servomotor> m_servo_3;

@@ -53,10 +53,6 @@ void Actuators2025::shutdown()
     m_shutdown = true;
 }
 
-void Actuators2025::disguise()
-{
-}
-
 void Actuators2025::publish()
 {
     
@@ -92,14 +88,14 @@ void Actuators2025::publish()
     m_message.vacuum_2.enable_pump = false;
     m_message.vacuum_2.release = false;
 
-    m_message.stepper_elevator_1.speed = m_stepper_elevator_1->getSpeed();
-    m_message.stepper_elevator_1.accel = m_stepper_elevator_1->getAccel();
-    m_message.stepper_elevator_1.position = m_stepper_elevator_1;
-    m_message.stepper_elevator_1.current = m_stepper_elevator_1;
-    m_message.stepper_elevator_1.mode = m_stepper_elevator_1;
+    m_message.stepper_1.speed = m_stepper_elevator_1->getSpeed();
+    m_message.stepper_1.accel = m_stepper_elevator_1->getAccel();
+    m_message.stepper_1.position = m_stepper_elevator_1->getTargetPosition();
+    m_message.stepper_1.current = m_stepper_elevator_1->getMaxCurrent();
+    m_message.stepper_1.mode = m_stepper_elevator_1->getStepperMode();
 
-    m_message.stepper_elevator_2.enable = true;
-
+    m_message.stepper_2.mode = StepperMode::DISABLE;
+    
     if (m_shutdown)
     {
         m_message.servo_1.enable = false;
@@ -110,6 +106,8 @@ void Actuators2025::publish()
         m_message.servo_6.enable = false;
         m_message.servo_7.enable = false;
         m_message.servo_8.enable = false;
+        m_message.stepper_1.mode = StepperMode::DISABLE;
+        m_message.stepper_2.mode = StepperMode::DISABLE;
     }
 
     m_pub->publish(m_message);

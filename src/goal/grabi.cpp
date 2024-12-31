@@ -42,27 +42,21 @@ Angle Grabi::getAngle()
 
 void Grabi::grab_plateforme(bool a_do_sleep)
 {
-    m_right_servo->set(150, 100);
+    /* @todo lower elevator, raise plank */
 
-    // Pour ne pas s'emmeler les pinces
-    if (m_left_servo->getAngle() < 70)
-    {
-        conditionnal_sleep(1e6, a_do_sleep);
-    }
-    m_left_servo->set(s_angle_closed_left, 100);
+    m_servo_magnet_1->set(150, 100);
+    m_servo_magnet_2->set(150, 100);
+    m_servo_magnet_3->set(150, 100);
+    m_servo_magnet_4->set(150, 100);
     conditionnal_sleep(1.5e6, a_do_sleep);
 }
 
 void Grabi::drop_plateforme(bool a_do_sleep)
 {
-    m_right_servo->set(90, 100);
-
-    // Pour ne pas s'emmeler les pinces
-    if (m_left_servo->getAngle() < s_angle_closed_left)
-    {
-        conditionnal_sleep(1e6, a_do_sleep);
-    }
-    m_left_servo->set(125, 100);
+    m_servo_magnet_1->set(50, 100);
+    m_servo_magnet_2->set(50, 100);
+    m_servo_magnet_3->set(50, 100);
+    m_servo_magnet_4->set(50, 100);
     conditionnal_sleep(0.75e6, a_do_sleep);
 }
 
