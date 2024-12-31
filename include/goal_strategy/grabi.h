@@ -21,6 +21,8 @@ public:
     void setInside();
     float getReach();
     Angle getAngle();
+    void initializeElevator();
+    bool elevatorInitDone();
 
 private:
     void conditionnal_sleep(uint a_microseconds, bool a_do_sleep);

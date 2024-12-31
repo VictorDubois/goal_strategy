@@ -1569,9 +1569,11 @@ void GoalStrat::stateRun()
 
         case Etape::EtapeType::AIRE_DE_CONSTRUCTION:
             m_score_match += m_strat_graph->dropPlateformes(m_strat_graph->getEtapeEnCours());
+            m_grabi->drop_plateforme();
             break;
         case Etape::EtapeType::STOCK_MATIERE_PREMIERE:
             m_strat_graph->grabPlateformes(m_strat_graph->getEtapeEnCours());
+            m_grabi->grab_plateforme();
             break;
         default:
             //stopAngular();
@@ -1750,6 +1752,7 @@ void GoalStrat::loop()
         //init(); //init before
         break;
     case State::WAIT_TIRETTE:
+        m_grabi->initializeElevator();
         if (m_state == State::WAIT_TIRETTE && m_tirette && m_remainig_time > rclcpp::Duration(1, 0))
         {
             m_state = State::RUN;

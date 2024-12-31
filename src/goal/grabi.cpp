@@ -40,24 +40,50 @@ Angle Grabi::getAngle()
     return m_relative_position.getAngle();
 }
 
-void Grabi::grab_plateforme(bool a_do_sleep)
+void Grabi::initializeElevator()
 {
-    /* @todo lower elevator, raise plank */
+    m_stepper_elevator->doHoming();
+}
+
+bool Grabi::elevatorInitDone()
+{
+    m_stepper_elevator->homingDone();
+}
+
+bool Grabi::grab_plateforme(bool a_do_sleep)
+{
+    // todo add timeout
+    while (!elevatorInitDone())
+    {
+        initializeElevator();
+        return false;
+    }
+    
+    /* @todo raise plank */
+
+    m_stepper_elevator->goToPosition(50); // mm
+    conditionnal_sleep(1.5e6, a_do_sleep);
 
     m_servo_magnet_1->set(150, 100);
     m_servo_magnet_2->set(150, 100);
     m_servo_magnet_3->set(150, 100);
     m_servo_magnet_4->set(150, 100);
     conditionnal_sleep(1.5e6, a_do_sleep);
+    m_stepper_elevator->goToPosition(150); // mm
+
 }
 
 void Grabi::drop_plateforme(bool a_do_sleep)
 {
+    m_stepper_elevator->goToPosition(50); // mm
+    conditionnal_sleep(1.5e6, a_do_sleep);
+
     m_servo_magnet_1->set(50, 100);
     m_servo_magnet_2->set(50, 100);
     m_servo_magnet_3->set(50, 100);
     m_servo_magnet_4->set(50, 100);
     conditionnal_sleep(0.75e6, a_do_sleep);
+    m_stepper_elevator->goToPosition(150); // mm
 }
 
 
