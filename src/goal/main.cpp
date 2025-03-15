@@ -632,7 +632,7 @@ GoalStrat::GoalStrat() : Node("goal_strat")
     m_grabi = std::make_shared<Grabi>(Position(Eigen::Vector2d(0.32f, 0.f)),Position(Eigen::Vector2d(0.08f, 0.f)), l_servo_grabi_left_most, l_servo_grabi_center_left, l_servo_grabi_center_right, l_servo_grabi_right_most, l_stepper_grabi_elevator);
 
     m_actuators2025 = Actuators2025(
-      rclcpp::Node::SharedPtr(this), actuators_name, l_servo_grabi_left_most, l_servo_grabi_center_left, l_servo_grabi_center_right, l_servo_grabi_right_most, m_servo_banner, l_servo_arm_suction_cup, l_servo_arm_suction_cup, l_servo_arm_suction_cup, l_stepper_grabi_elevator, l_pump_arm);
+      rclcpp::Node::SharedPtr(this), "actuators2025", l_servo_grabi_left_most, l_servo_grabi_center_left, l_servo_grabi_center_right, l_servo_grabi_right_most, m_servo_banner, l_servo_arm_suction_cup, l_servo_arm_suction_cup, l_servo_arm_suction_cup, l_stepper_grabi_elevator, l_pump_arm);
 
     m_actuators2025.start();
 
