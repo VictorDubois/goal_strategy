@@ -47,7 +47,7 @@ void Grabi::initializeElevator()
 
 bool Grabi::elevatorInitDone()
 {
-    m_stepper_elevator->homingDone();
+    return m_stepper_elevator->homingDone();
 }
 
 bool Grabi::grab_plateforme(bool a_do_sleep)
@@ -70,7 +70,7 @@ bool Grabi::grab_plateforme(bool a_do_sleep)
     m_servo_magnet_4->set(150, 100);
     conditionnal_sleep(1.5e6, a_do_sleep);
     m_stepper_elevator->goToPosition(150); // mm
-
+    return true;
 }
 
 void Grabi::drop_plateforme(bool a_do_sleep)
