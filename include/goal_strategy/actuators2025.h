@@ -4,7 +4,6 @@
 #include "pump.h"
 #include "servomotor.h"
 #include "stepper.h"
-#include "stepper.h"
 #include "rclcpp/rclcpp.hpp"
 #include <thread>
 
@@ -13,6 +12,7 @@ class Actuators2025
 {
 private:
     rclcpp::Publisher<krabi_msgs::msg::Actuators2025>::SharedPtr m_pub;
+
     rclcpp::Node::SharedPtr m_node;
     krabi_msgs::msg::Actuators2025 m_message;
     std::shared_ptr<Servomotor> m_servo_1;
@@ -52,4 +52,5 @@ public:
     void start();
     void shutdown();
     void set_score(int a_score);
+    void updateStepperElevator(krabi_msgs::msg::InfosStepper stepper_info_msg);
 };

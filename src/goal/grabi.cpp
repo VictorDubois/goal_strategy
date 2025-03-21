@@ -52,10 +52,8 @@ bool Grabi::elevatorInitDone()
 
 bool Grabi::grab_plateforme(bool a_do_sleep)
 {
-    // todo add timeout
-    while (!elevatorInitDone())
+    if (elevatorInitHasFailed())
     {
-        initializeElevator();
         return false;
     }
     
@@ -73,17 +71,47 @@ bool Grabi::grab_plateforme(bool a_do_sleep)
     return true;
 }
 
-void Grabi::drop_plateforme(bool a_do_sleep)
+bool Grabi::elevatorInitHasFailed()
 {
-    m_stepper_elevator->goToPosition(50); // mm
-    conditionnal_sleep(1.5e6, a_do_sleep);
+    rclcpp::Time timeout = rclcpp::Clock{RCL_STEADY_TIME}.now() + rclcpp::Duration(3, 0);
+    
+    while (rclcpp::Clock{RCL_STEADY_TIME}.now() < timeout)
+    {
+        initializeElevator();
+        if (elevatorInitDone())
+        {
+            return true;
+        }
+        
+    }
+    return false;
+}
 
+bool Grabi::drop_plateforme(bool a_do_sleep)
+{
+    if (elevatorInitHasFailed())
+    {
+        return false;
+    }
+    
+    m_stepper_elevator->goToPosition(50); // mm
+    rclcpp::Time timeout = rclcpp::Clock{RCL_STEADY_TIME}.now() + rclcpp::Duration(3, 0);
+    bool success = false;
+    while(a_do_sleep && !success && rclcpp::Clock{RCL_STEADY_TIME}.now() < timeout)
+    {
+        usleep(10);
+        if (m_stepper_elevator->movmentDone())
+        {
+            success = true;
+        }
+    }
     m_servo_magnet_1->set(50, 100);
     m_servo_magnet_2->set(50, 100);
     m_servo_magnet_3->set(50, 100);
     m_servo_magnet_4->set(50, 100);
     conditionnal_sleep(0.75e6, a_do_sleep);
     m_stepper_elevator->goToPosition(150); // mm
+    return success;
 }
 
 

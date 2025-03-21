@@ -16,7 +16,7 @@ public:
           std::shared_ptr<StepperElevator> a_stepper_elevator);
 
     bool grab_plateforme(bool a_do_sleep = true);
-    void drop_plateforme(bool a_do_sleep = true);
+    bool drop_plateforme(bool a_do_sleep = true);
     void setInFront();
     void setInside();
     float getReach();
@@ -35,4 +35,5 @@ private:
     std::shared_ptr<Servomotor> m_servo_magnet_3;
     std::shared_ptr<Servomotor> m_servo_magnet_4;
     std::shared_ptr<StepperElevator> m_stepper_elevator;
+    bool elevatorInitHasFailed();
 };

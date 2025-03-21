@@ -1,5 +1,6 @@
 #pragma once
 #include "rclcpp/rclcpp.hpp"
+#include "krabi_msgs/msg/infos_stepper.hpp"
 
 enum StepperMode
 {
@@ -14,6 +15,11 @@ class StepperMotor
 protected:
     StepperMode m_stepper_mode;
     int16_t m_target_position; // mm
+    int16_t m_distance_to_go; // mm
+    void updateInfos(krabi_msgs::msg::InfosStepper a_new_infos)
+    {
+        m_distance_to_go = a_new_infos.distance_to_go;
+    };  
 
 private:
     uint16_t m_speed; // mm/s
@@ -41,6 +47,7 @@ public:
     uint16_t getMaxCurrent() {return m_max_current;};
     uint16_t getTargetPosition() {return m_target_position;};
     StepperMode getStepperMode() {return m_stepper_mode;};
+    bool movmentDone() { return m_distance_to_go == 0;};
 };
 
 class StepperElevator: public StepperMotor
@@ -48,10 +55,16 @@ class StepperElevator: public StepperMotor
 private:
   //float m_;
   bool m_homing_done;
+  uint8_t m_homing_sequences_done;
   uint16_t m_max_height_mm;
 
-
 public:
+    void updateElevatorInfos(krabi_msgs::msg::InfosStepper a_new_infos)
+    {
+        m_homing_done = a_new_infos.homing_switch_on;
+        m_homing_sequences_done = a_new_infos.homing_sequences_done;
+        updateInfos(a_new_infos);
+    };  
     void doHoming(){m_stepper_mode = StepperMode::HOMING;};
     bool homingDone(){return m_homing_done;};
     bool goToPosition(int16_t a_distance_in_mm);

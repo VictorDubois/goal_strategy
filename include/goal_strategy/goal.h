@@ -69,7 +69,7 @@ public:
     };
     bool isArrivedAtGoal();
     void stop();
-
+    
 private:
     void init();
     void stateRun();
@@ -103,7 +103,11 @@ private:
     void updateTirette(std_msgs::msg::Bool tirette);
     void updateVacuum(std_msgs::msg::Float32 vacuum_msg);
     void updateOtherRobots(geometry_msgs::msg::PoseArray);
-
+    void updateStepperElevator(krabi_msgs::msg::InfosStepper stepper_info_msg)
+    {
+        m_actuators2025.updateStepperElevator(stepper_info_msg);
+    };
+    
     bool isAlignedWithAngle(Angle angle);
     bool isArrivedAtGoal(Distance a_offset);
 
@@ -123,6 +127,9 @@ private:
     void publishStratMovement();
 
     bool isParked();
+
+
+
 
     State m_state = State::RUN;
     Distance m_dist_to_goal;
@@ -149,6 +156,7 @@ private:
     rclcpp::Subscription<std_msgs::msg::Bool>::SharedPtr m_tirette_sub;
     rclcpp::Subscription<std_msgs::msg::Float32>::SharedPtr m_vacuum_sub;
     rclcpp::Subscription<geometry_msgs::msg::PoseArray>::SharedPtr m_other_robots_sub;
+    rclcpp::Subscription<krabi_msgs::msg::InfosStepper>::SharedPtr m_elevator_sub;
 
     std::shared_ptr<tf2_ros::TransformListener> m_tf_listener_{nullptr};
     std::unique_ptr<tf2_ros::Buffer> m_tf_buffer_;
