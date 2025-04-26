@@ -10,19 +10,27 @@ Actuators2025::Actuators2025(rclcpp::Node::SharedPtr a_node,
                              std::shared_ptr<Servomotor> a_servo_6,
                              std::shared_ptr<Servomotor> a_servo_7,
                              std::shared_ptr<Servomotor> a_servo_8,
+                             std::shared_ptr<AX12> a_AX12_1,
+                             std::shared_ptr<AX12> a_AX12_2,
+                             std::shared_ptr<AX12> a_AX12_3,
+                             std::shared_ptr<AX12> a_AX12_4,
                              std::shared_ptr<StepperElevator> a_stepper_elevator_1,
                              std::shared_ptr<Pump> a_grabber_pump)
   : m_node(a_node)
   , m_servo_1(a_servo_1)
-    , m_servo_2(a_servo_2)
-    , m_servo_3(a_servo_3)
-    , m_servo_4(a_servo_4)
-    , m_servo_5(a_servo_5)
-    , m_servo_6(a_servo_6)
-    , m_servo_7(a_servo_7)
-    , m_servo_8(a_servo_8)
-    , m_stepper_elevator_1(a_stepper_elevator_1)
-    , m_grabber_pump(a_grabber_pump)
+  , m_servo_2(a_servo_2)
+  , m_servo_3(a_servo_3)
+  , m_servo_4(a_servo_4)
+  , m_servo_5(a_servo_5)
+  , m_servo_6(a_servo_6)
+  , m_servo_7(a_servo_7)
+  , m_servo_8(a_servo_8)
+  , m_AX12_1(a_AX12_1)
+  , m_AX12_2(a_AX12_2)
+  , m_AX12_3(a_AX12_3)
+  , m_AX12_4(a_AX12_4)
+  , m_stepper_elevator_1(a_stepper_elevator_1)
+  , m_grabber_pump(a_grabber_pump)
 {
     m_pub = m_node->create_publisher<krabi_msgs::msg::Actuators2025>(a_name, 5);
     m_shutdown = false;
@@ -60,7 +68,7 @@ void Actuators2025::shutdown()
 
 void Actuators2025::publish()
 {
-    
+
     m_message.score = m_score;
     m_message.servo_1.enable = true;
     m_message.servo_2.enable = true;
@@ -88,6 +96,34 @@ void Actuators2025::publish()
     m_message.servo_8.angle = m_servo_8->getAngle();
     m_message.servo_8.speed = m_servo_8->getSpeed();
 
+    m_message.ax12_1.mode = 1;
+    m_message.ax12_1.position = m_AX12_1->getAngle();
+    m_message.ax12_1.max_speed = m_AX12_1->getSpeed();
+    m_message.ax12_1.torque_enable = m_AX12_1->getSpeed() != 0;
+    m_message.ax12_1.temperature_limit = 65; // °C ?
+    m_message.ax12_1.current_limit = 255;    // ??
+
+    m_message.ax12_2.mode = 1;
+    m_message.ax12_2.position = m_AX12_2->getAngle();
+    m_message.ax12_2.max_speed = m_AX12_2->getSpeed();
+    m_message.ax12_2.torque_enable = m_AX12_2->getSpeed() != 0;
+    m_message.ax12_2.temperature_limit = 65; // °C ?
+    m_message.ax12_2.current_limit = 255;    // ??
+
+    m_message.ax12_3.mode = 1;
+    m_message.ax12_3.position = m_AX12_3->getAngle();
+    m_message.ax12_3.max_speed = m_AX12_3->getSpeed();
+    m_message.ax12_3.torque_enable = m_AX12_3->getSpeed() != 0;
+    m_message.ax12_3.temperature_limit = 65; // °C ?
+    m_message.ax12_3.current_limit = 255;    // ??
+
+    m_message.ax12_4.mode = 1;
+    m_message.ax12_4.position = m_AX12_4->getAngle();
+    m_message.ax12_4.max_speed = m_AX12_4->getSpeed();
+    m_message.ax12_4.torque_enable = m_AX12_4->getSpeed() != 0;
+    m_message.ax12_4.temperature_limit = 65; // °C ?
+    m_message.ax12_4.current_limit = 255;    // ??
+
     m_message.vacuum_1.enable_pump = false;
     m_message.vacuum_1.release = false;
     m_message.vacuum_2.enable_pump = false;
@@ -100,7 +136,7 @@ void Actuators2025::publish()
     m_message.stepper_1.mode = m_stepper_elevator_1->getStepperMode();
 
     m_message.stepper_2.mode = StepperMode::DISABLE;
-    
+
     if (m_shutdown)
     {
         m_message.servo_1.enable = false;
@@ -111,6 +147,10 @@ void Actuators2025::publish()
         m_message.servo_6.enable = false;
         m_message.servo_7.enable = false;
         m_message.servo_8.enable = false;
+        m_message.ax12_1.torque_enable = 0;
+        m_message.ax12_2.torque_enable = 0;
+        m_message.ax12_3.torque_enable = 0;
+        m_message.ax12_4.torque_enable = 0;
         m_message.stepper_1.mode = StepperMode::DISABLE;
         m_message.stepper_2.mode = StepperMode::DISABLE;
     }

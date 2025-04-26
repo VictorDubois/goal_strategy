@@ -3,7 +3,7 @@
 
 class Servomotor
 {
-private:
+protected:
     float m_speed;
     float m_angle;
 

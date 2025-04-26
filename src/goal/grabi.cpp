@@ -6,6 +6,10 @@ Grabi::Grabi(Position a_relative_position_in_front,
              std::shared_ptr<Servomotor> a_servo_magnet_2,
              std::shared_ptr<Servomotor> a_servo_magnet_3,
              std::shared_ptr<Servomotor> a_servo_magnet_4,
+             std::shared_ptr<AX12> a_ax12_left_can,
+             std::shared_ptr<AX12> a_ax12_right_can,
+             std::shared_ptr<AX12> a_ax12_suction_cup,
+             std::shared_ptr<AX12> a_ax12_lever,
              std::shared_ptr<StepperElevator> a_stepper_elevator)
   : m_relative_position_in_front(a_relative_position_in_front)
   , m_relative_position_inside(a_relative_position_inside)
@@ -14,6 +18,10 @@ Grabi::Grabi(Position a_relative_position_in_front,
   , m_servo_magnet_2(a_servo_magnet_2)
   , m_servo_magnet_3(a_servo_magnet_3)
   , m_servo_magnet_4(a_servo_magnet_4)
+  , m_ax12_left_can(a_ax12_left_can)
+  , m_ax12_right_can(a_ax12_right_can)
+  , m_ax12_suction_cup(a_ax12_suction_cup)
+  , m_ax12_lever(a_ax12_lever)
   , m_stepper_elevator(a_stepper_elevator)
 {
 }
@@ -56,7 +64,7 @@ bool Grabi::grab_plateforme(bool a_do_sleep)
     {
         return false;
     }
-    
+
     /* @todo raise plank */
 
     m_stepper_elevator->goToPosition(50); // mm
@@ -73,16 +81,15 @@ bool Grabi::grab_plateforme(bool a_do_sleep)
 
 bool Grabi::elevatorInitHasFailed()
 {
-    rclcpp::Time timeout = rclcpp::Clock{RCL_STEADY_TIME}.now() + rclcpp::Duration(3, 0);
-    
-    while (rclcpp::Clock{RCL_STEADY_TIME}.now() < timeout)
+    rclcpp::Time timeout = rclcpp::Clock{ RCL_STEADY_TIME }.now() + rclcpp::Duration(3, 0);
+
+    while (rclcpp::Clock{ RCL_STEADY_TIME }.now() < timeout)
     {
         initializeElevator();
         if (elevatorInitDone())
         {
             return true;
         }
-        
     }
     return false;
 }
@@ -93,11 +100,11 @@ bool Grabi::drop_plateforme(bool a_do_sleep)
     {
         return false;
     }
-    
+
     m_stepper_elevator->goToPosition(50); // mm
-    rclcpp::Time timeout = rclcpp::Clock{RCL_STEADY_TIME}.now() + rclcpp::Duration(3, 0);
+    rclcpp::Time timeout = rclcpp::Clock{ RCL_STEADY_TIME }.now() + rclcpp::Duration(3, 0);
     bool success = false;
-    while(a_do_sleep && !success && rclcpp::Clock{RCL_STEADY_TIME}.now() < timeout)
+    while (a_do_sleep && !success && rclcpp::Clock{ RCL_STEADY_TIME }.now() < timeout)
     {
         usleep(10);
         if (m_stepper_elevator->movmentDone())
@@ -113,7 +120,6 @@ bool Grabi::drop_plateforme(bool a_do_sleep)
     m_stepper_elevator->goToPosition(150); // mm
     return success;
 }
-
 
 void Grabi::conditionnal_sleep(uint a_microseconds, bool a_do_sleep)
 {

@@ -42,6 +42,7 @@ add_executable(goal_strategy_node
   src/goal/main.cpp
   src/goal/actuators.cpp
   src/goal/actuators2023.cpp
+  #src/goal/AX12.cpp
   src/goal/claws.cpp
   src/goal/coupe2021.cpp
   src/goal/coupe2022.cpp

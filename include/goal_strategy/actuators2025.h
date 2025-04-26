@@ -1,10 +1,11 @@
 #pragma once
+#include "AX12.h"
 #include "claws.h"
 #include "krabi_msgs/msg/actuators2025.hpp"
 #include "pump.h"
+#include "rclcpp/rclcpp.hpp"
 #include "servomotor.h"
 #include "stepper.h"
-#include "rclcpp/rclcpp.hpp"
 #include <thread>
 
 class Actuators2025
@@ -23,6 +24,10 @@ private:
     std::shared_ptr<Servomotor> m_servo_6;
     std::shared_ptr<Servomotor> m_servo_7;
     std::shared_ptr<Servomotor> m_servo_8;
+    std::shared_ptr<AX12> m_AX12_1;
+    std::shared_ptr<AX12> m_AX12_2;
+    std::shared_ptr<AX12> m_AX12_3;
+    std::shared_ptr<AX12> m_AX12_4;
     std::shared_ptr<StepperElevator> m_stepper_elevator_1;
     std::shared_ptr<Pump> m_grabber_pump;
 
@@ -34,7 +39,7 @@ private:
     void run();
 
 public:
-    Actuators2025(){};
+    Actuators2025() {};
     Actuators2025(rclcpp::Node::SharedPtr a_node,
                   std::string a_name,
                   std::shared_ptr<Servomotor> m_servo_1,
@@ -45,6 +50,10 @@ public:
                   std::shared_ptr<Servomotor> m_servo_6,
                   std::shared_ptr<Servomotor> m_servo_7,
                   std::shared_ptr<Servomotor> m_servo_8,
+                  std::shared_ptr<AX12> m_AX12_1,
+                  std::shared_ptr<AX12> m_AX12_2,
+                  std::shared_ptr<AX12> m_AX12_3,
+                  std::shared_ptr<AX12> m_AX12_4,
                   std::shared_ptr<StepperElevator> m_stepper_elevator_1,
                   std::shared_ptr<Pump> a_grabber_pump);
 
