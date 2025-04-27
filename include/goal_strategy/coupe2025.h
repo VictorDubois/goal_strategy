@@ -50,8 +50,10 @@ public:
     void grabPlant(Etape* e) {}; // 2024 only
     int dropPlant(Etape* e) {}; // 2024 only
 
-    void grabPlateformes(Etape* e);
-    int dropPlateformes(Etape* e); 
+    void grabPlateformes(Etape* e); //2025 only
+    int dropPlateformes(Etape* e);  //2025 only
+
+    void dropBanner(Etape* e); //2025 only
 
     Position positionCAbsolute(double x_yellow_from_top_left, double y_yellow_from_top_left);
 

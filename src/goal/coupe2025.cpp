@@ -29,7 +29,7 @@ Position Coupe2025::positionCAbsolute(double x_yellow_from_top_left, double y_ye
     // |_______________START_FRONT__________________________ |
     //                         PUBLIC
     //        
-    //
+    // "us" position are define as blue ("them" are yellow)
 
 /**
  * @brief Initialize the graph of goals based on the color
@@ -40,7 +40,7 @@ Position Coupe2025::positionCAbsolute(double x_yellow_from_top_left, double y_ye
 Coupe2025::Coupe2025(const bool isYellow, const StartingPosition2025 starting_position)
   : StrategieV3(isYellow, true)
 {
-    setRemainingTime(84 * 1000);
+    setRemainingTime(84 * 1000); // duration of the match
 
     // Initialisation des tableaux d'étapes
     m_tableau_etapes_total
@@ -49,8 +49,6 @@ Coupe2025::Coupe2025(const bool isYellow, const StartingPosition2025 starting_po
     // Création des étapes
     // Les étapes qui correspondant à des actions sont créées automatiquement lors de l'ajout d'actions
     
-     
-    bool test_contournement = false;
     int campement;    
 
     //Choix du campement
@@ -79,72 +77,56 @@ Coupe2025::Coupe2025(const bool isYellow, const StartingPosition2025 starting_po
     //todo crad remove 
     int area_pami_us2, area_pami_us3, area_solar_panel_us2, area_solar_panel_us3;
 
-    if (test_contournement)
-    {
-        // int other_side = Etape::makeEtape(
-        //   new PlantGroup(positionC(-campement.getPosition().getX(), -campement.getPosition().getY())));
-        // Etape::get(campement)->addVoisins(other_side);
-        int area_solar_panel_us
-            = Etape::makeEtape(new AireDeDepose(positionC(1.175f, 0.775f), positionC(1.275f, 0.775f), Owner::us, stock_corner_start));
-//Todo crad remove 
-int area_solar_panel_us2
-            = Etape::makeEtape(new AireDeDepose(positionC(1.175f, 0.675f), positionC(1.275f, 0.775f), Owner::us, stock_corner_start)); 
-// area_solar_panel_us3
-//             = Etape::makeEtape(new AireDeDepose(positionC(1.175f, 0.675f), positionC(1.275f, 0.775f), Owner::us, stock_corner_start));
 
-        int group_plant_8h = Etape::makeEtape(new PlantGroup(positionC(0.5f, 0.3f)));
-        int point_passage_1 = Etape::makeEtape(positionC(0.9f, 0.7f));
-        Etape::get(point_passage_1)->addVoisins(group_plant_8h);
-        Etape::get(campement)->addVoisins(point_passage_1);
-        Etape::get(area_solar_panel_us)->addVoisins(point_passage_1);
-        //todo crad remove
-        Etape::get(area_solar_panel_us2)->addVoisins(point_passage_1);
-        //Etape::get(area_solar_panel_us3)->addVoisins(point_passage_1);
-        
-    }
-    else
-    {
-        float distance_to_wall = 0.4f;
-        int stock_bord_cote_publique       = Etape::makeEtape(new StockDeMatierePremiere(Pose(positionC(1.425f, 0.6f), Angle(M_PI/2))));
-        int stock_bord_cote_publique_them  = Etape::makeEtape(new StockDeMatierePremiere(Pose(positionC(-1.425f, 0.6f), Angle(M_PI/2))));
-        int stock_bord_cote_backstage      = Etape::makeEtape(new StockDeMatierePremiere(Pose(positionC(1.425f, -0.325f), Angle(M_PI/2))));
-        int stock_bord_cote_backstage_them = Etape::makeEtape(new StockDeMatierePremiere(Pose(positionC(-1.425f, -0.325f), Angle(M_PI/2))));
-        int stock_proche_rampe             = Etape::makeEtape(new StockDeMatierePremiere(Pose(positionC(-0.675f, -0.725f), Angle(0.0f))));
-        int stock_centre_us                = Etape::makeEtape(new StockDeMatierePremiere(Pose(positionC(-0.4f, 0.05f), Angle(0.0f))));
-        int stock_centre_them              = Etape::makeEtape(new StockDeMatierePremiere(Pose(positionC(0.4f, 0.05f), Angle(0.0f))));
-        int stock_front_us                 = Etape::makeEtape(new StockDeMatierePremiere(Pose(positionC(0.725f, 0.75f), Angle(0.0f))));
-        int stock_front_them               = Etape::makeEtape(new StockDeMatierePremiere(Pose(positionC(-0.725f, 0.75f), Angle(0.0f))));
+    
+    float distance_to_wall = 0.4f;
+    // Definition des zone de stock
+    int stock_bord_cote_publique       = Etape::makeEtape(new StockDeMatierePremiere(Pose(positionC(1.425f, 0.6f), Angle(M_PI/2))));
+    int stock_bord_cote_publique_them  = Etape::makeEtape(new StockDeMatierePremiere(Pose(positionC(-1.425f, 0.6f), Angle(M_PI/2))));
+    int stock_bord_cote_backstage      = Etape::makeEtape(new StockDeMatierePremiere(Pose(positionC(1.425f, -0.325f), Angle(M_PI/2))));
+    int stock_bord_cote_backstage_them = Etape::makeEtape(new StockDeMatierePremiere(Pose(positionC(-1.425f, -0.325f), Angle(M_PI/2))));
+    int stock_proche_rampe             = Etape::makeEtape(new StockDeMatierePremiere(Pose(positionC(-0.675f, -0.725f), Angle(0.0f))));
+    int stock_centre_us                = Etape::makeEtape(new StockDeMatierePremiere(Pose(positionC(-0.4f, 0.05f), Angle(0.0f))));
+    int stock_centre_them              = Etape::makeEtape(new StockDeMatierePremiere(Pose(positionC(0.4f, 0.05f), Angle(0.0f))));
+    int stock_front_us                 = Etape::makeEtape(new StockDeMatierePremiere(Pose(positionC(-0.725f, 0.75f), Angle(0.0f))));
+    int stock_front_them               = Etape::makeEtape(new StockDeMatierePremiere(Pose(positionC(0.725f, 0.75f), Angle(0.0f))));
+    
+    // Definition de zones de construction
+    int zone_contruction_front           = Etape::makeEtape(new AireDeConstruction(Pose(positionC(-0.275f, 0.775f), Angle(0.0f)), Owner::us, AireSize::AIRE_BIG));
+    int zone_contruction_cote            = Etape::makeEtape(new AireDeConstruction(Pose(positionC(1.275f, 0.125f), Angle(0.0f)), Owner::us, AireSize::AIRE_BIG));
+    int mini_zone_contruction_coin       = Etape::makeEtape(new AireDeConstruction(Pose(positionC(1.275f, 0.925f), Angle(0.0f)), Owner::us, AireSize::AIRE_SMALL));
+    int mini_zone_contruction_front      = Etape::makeEtape(new AireDeConstruction(Pose(positionC(-0.725f, 0.925f), Angle(0.0f)), Owner::us, AireSize::AIRE_SMALL));
+    int zone_contruction_front_them      = Etape::makeEtape(new AireDeConstruction(Pose(positionC(0.275f, 0.775f), Angle(0.0f)), Owner::them, AireSize::AIRE_BIG));
+    int zone_contruction_cote_them       = Etape::makeEtape(new AireDeConstruction(Pose(positionC(-1.275f, 0.125f), Angle(0.0f)), Owner::them, AireSize::AIRE_BIG));
+    int mini_zone_contruction_coin_them  = Etape::makeEtape(new AireDeConstruction(Pose(positionC(-1.275f, 0.925f), Angle(0.0f)), Owner::them, AireSize::AIRE_SMALL));
+    int mini_zone_contruction_front_them = Etape::makeEtape(new AireDeConstruction(Pose(positionC(0.725f, 0.925f), Angle(0.0f)), Owner::them, AireSize::AIRE_SMALL));
 
-        int zone_contruction_front           = Etape::makeEtape(new AireDeConstruction(Pose(positionC(-0.275f, 0.775f), Angle(0.0f)), Owner::us, AireSize::AIRE_BIG));
-        int zone_contruction_cote            = Etape::makeEtape(new AireDeConstruction(Pose(positionC(1.275f, 0.125f), Angle(0.0f)), Owner::us, AireSize::AIRE_BIG));
-        int mini_zone_contruction_coin       = Etape::makeEtape(new AireDeConstruction(Pose(positionC(1.275f, 0.925f), Angle(0.0f)), Owner::us, AireSize::AIRE_SMALL));
-        int mini_zone_contruction_front      = Etape::makeEtape(new AireDeConstruction(Pose(positionC(-0.725f, 0.925f), Angle(0.0f)), Owner::us, AireSize::AIRE_SMALL));
-        int zone_contruction_front_them      = Etape::makeEtape(new AireDeConstruction(Pose(positionC(0.275f, 0.775f), Angle(0.0f)), Owner::them, AireSize::AIRE_BIG));
-        int zone_contruction_cote_them       = Etape::makeEtape(new AireDeConstruction(Pose(positionC(-1.275f, 0.125f), Angle(0.0f)), Owner::them, AireSize::AIRE_BIG));
-        int mini_zone_contruction_coin_them  = Etape::makeEtape(new AireDeConstruction(Pose(positionC(-1.275f, 0.925f), Angle(0.0f)), Owner::them, AireSize::AIRE_SMALL));
-        int mini_zone_contruction_front_them = Etape::makeEtape(new AireDeConstruction(Pose(positionC(0.725f, 0.925f), Angle(0.0f)), Owner::them, AireSize::AIRE_SMALL));
+    // Definition des points de passage
+    int point_passage_stock_centre_us_publique = Etape::makeEtape(positionC(-0.4f, 0.32f));
+    int point_passage_stock_centre_us_back = Etape::makeEtape(positionC(-0.4f, -0.22f));
 
-        int point_passage_stock_centre_us_publique = Etape::makeEtape(positionC(-0.4f, 0.32f));
-        int point_passage_stock_centre_us_back = Etape::makeEtape(positionC(-0.4f, -0.22f));
+    int point_passage_stock_centre_them_publique = Etape::makeEtape(positionC(0.4f, 0.32f));
+    int point_passage_stock_centre_them_back = Etape::makeEtape(positionC(0.4f, -0.22f));
 
-        int point_passage_stock_centre_them_publique = Etape::makeEtape(positionC(0.4f, 0.32f));
-        int point_passage_stock_centre_them_back = Etape::makeEtape(positionC(0.4f, -0.22f));
+    int point_passage_zone_contruction_cote = Etape::makeEtape(positionC(1.075f, 0.125f));
 
-        int point_passage_zone_contruction_cote = Etape::makeEtape(positionC(1.075f, 0.125f));
+    int point_passage_1 = Etape::makeEtape(positionC(0.725f, 0.32f));
+    int point_passage_2 = Etape::makeEtape(positionC(0.725f, 0.6f));
 
-        Etape::get(stock_centre_us)->addVoisins(point_passage_stock_centre_us_publique, point_passage_stock_centre_us_back);
-        Etape::get(stock_centre_them)->addVoisins(point_passage_stock_centre_them_publique, point_passage_stock_centre_them_back);
+    //Definition des liens
+    Etape::get(stock_centre_us)->addVoisins(point_passage_stock_centre_us_publique, point_passage_stock_centre_us_back);
+    Etape::get(stock_centre_them)->addVoisins(point_passage_stock_centre_them_publique, point_passage_stock_centre_them_back);
 
-        Etape::get(stock_corner_start)->addVoisins(point_passage_stock_centre_them_publique);
-        Etape::get(point_passage_stock_centre_us_publique)->addVoisins(campement, zone_contruction_front, point_passage_stock_centre_them_publique);
-        Etape::get(point_passage_stock_centre_us_back)->addVoisins(point_passage_stock_centre_them_back);
+    Etape::get(stock_corner_start)->addVoisins(point_passage_stock_centre_them_publique);
+    Etape::get(point_passage_stock_centre_us_publique)->addVoisins(campement, zone_contruction_front, point_passage_stock_centre_them_publique);
+    Etape::get(point_passage_stock_centre_us_back)->addVoisins(point_passage_stock_centre_them_back);
 
-        Etape::get(point_passage_zone_contruction_cote)->addVoisins(point_passage_stock_centre_them_back, point_passage_stock_centre_them_publique, zone_contruction_cote);
+    Etape::get(point_passage_zone_contruction_cote)->addVoisins(point_passage_stock_centre_them_back, point_passage_stock_centre_them_publique, zone_contruction_cote);
 
-        
-        
-    }
+    Etape::get(point_passage_stock_centre_them_publique)->addVoisins(point_passage_1);
+    Etape::get(point_passage_2)->addVoisins(point_passage_1, stock_bord_cote_publique);
 
+    
     int garage = Etape::makeEtape(positionC(1.1f, -0.45));
 
     m_numero_etape_garage = garage; // Must be set!
