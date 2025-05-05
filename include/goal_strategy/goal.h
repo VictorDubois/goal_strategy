@@ -69,6 +69,7 @@ public:
     };
     bool isArrivedAtGoal();
     void stop();
+    void initTF();
 
 private:
     void init();

@@ -140,14 +140,19 @@ void GoalStrat::reculeDroit(rclcpp::Duration a_time, Distance a_distance)
     auto recalageTimeoutDeadline = this->now() + a_time;
 
     Distance l_distance_parcourue = Distance(0);
+    Distance l_epsilon_distance = Distance(0.05);
 
     while (this->now().seconds() < recalageTimeoutDeadline.seconds()
-           && l_distance_parcourue < a_distance)
+           && l_distance_parcourue + l_epsilon_distance < a_distance)
     {
         // todo modify this to go backward
         // rclcpp::spin_some(shared_from_this());
         updateCurrentPose();
         l_distance_parcourue = (l_initial_pose - m_current_pose.getPosition()).getNorme();
+        RCLCPP_DEBUG_STREAM(rclcpp::get_logger("rclcpp"),
+                            "distancePacrourue: " << l_distance_parcourue);
+        publishStratMovement();
+
         usleep(0.1e6);
     }
     override_gear = krabi_msgs::msg::StratMovement::FORWARD_OR_REVERSE;
@@ -351,6 +356,10 @@ void GoalStrat::publishStratMovement()
  */
 void GoalStrat::updateCurrentPose()
 {
+    if (m_tf_buffer_ == nullptr)
+    { // Too soon, need to call initTF before
+        return;
+    }
     try
     {
         // auto base_link_id = tf::resolve(rclcpp::this_node::getNamespace(), "base_link"); //1.7
@@ -528,14 +537,34 @@ void GoalStrat::closeCherriesDispenser()
     // usleep(1.0e6);
 }
 
+void GoalStrat::initTF()
+{
+    auto my_callback_group = create_callback_group(rclcpp::CallbackGroupType::Reentrant);
+
+    rclcpp::SubscriptionOptions l_sub_options;
+    l_sub_options.callback_group = my_callback_group;
+
+    m_tf_buffer_ = std::make_unique<tf2_ros::Buffer>(this->get_clock());
+    /*m_tf_listener_
+      = std::make_shared<tf2_ros::TransformListener>(*m_tf_buffer_, shared_from_this(), true);*/
+    m_tf_listener_ = std::make_shared<tf2_ros::TransformListener>(
+      *m_tf_buffer_,
+      shared_from_this(),
+      true,
+      tf2_ros::DynamicListenerQoS(), // default
+      tf2_ros::StaticListenerQoS(),  // default
+      l_sub_options);                // to pass CallbackGroupType::Reentrant
+    // m_tf_listener_ = std::make_shared<tf2_ros::TransformListener>(*m_tf_buffer_);
+}
+
 GoalStrat::GoalStrat()
   : Node("goal_strat")
 //: m_tf_listener(m_tf_buffer)
 {
     std::cout << "coucou from GoalStrat" << std::endl;
 
-    m_tf_buffer_ = std::make_unique<tf2_ros::Buffer>(this->get_clock());
-    m_tf_listener_ = std::make_shared<tf2_ros::TransformListener>(*m_tf_buffer_);
+    m_tf_buffer_ = nullptr;
+
     m_goal_init_done = false;
     m_at_least_one_carre_fouille_done = false;
     m_remainig_time = rclcpp::Duration(90, 0);
@@ -1652,10 +1681,12 @@ void GoalStrat::stateRun()
         case Etape::EtapeType::AIRE_DE_CONSTRUCTION:
             m_score_match += m_strat_graph->dropPlateformes(m_strat_graph->getEtapeEnCours());
             m_grabi->drop_plateforme();
+            reculeDroit(rclcpp::Duration(3, 0), Distance(0.2));
             break;
         case Etape::EtapeType::STOCK_MATIERE_PREMIERE:
             m_strat_graph->grabPlateformes(m_strat_graph->getEtapeEnCours());
             m_grabi->grab_plateforme();
+            reculeDroit(rclcpp::Duration(3, 0), Distance(0.2));
             break;
         default:
             // stopAngular();
@@ -1884,6 +1915,7 @@ int main(int argc, char* argv[])
 {
     rclcpp::init(argc, argv);
     auto node = std::make_shared<GoalStrat>();
+    node->initTF();
 
     rclcpp::executors::MultiThreadedExecutor executor;
     executor.add_node(node);
