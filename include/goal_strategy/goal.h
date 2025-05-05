@@ -9,17 +9,17 @@
 #include <stdlib.h>
 #include <thread>
 
-#include <geometry_msgs/msg/pose_array.hpp>
 #include "rclcpp/rclcpp.hpp"
+#include <geometry_msgs/msg/pose_array.hpp>
 #include <std_msgs/msg/bool.hpp>
-//#include <builtin_interfaces/msg/duration.hpp>
+// #include <builtin_interfaces/msg/duration.hpp>
 #include "builtin_interfaces/msg/duration.hpp"
 #include <std_msgs/msg/float32.hpp>
-#include <std_msgs/msg/int32.hpp>
 #include <std_msgs/msg/int16.hpp>
+#include <std_msgs/msg/int32.hpp>
 
-#include "tf2_ros/transform_listener.h"
 #include "tf2_ros/buffer.h"
+#include "tf2_ros/transform_listener.h"
 
 #include "coupe2023.h"
 #include "coupe2024.h"
@@ -28,15 +28,15 @@
 #include "goal_strategy/actuators2023.h"
 #include "goal_strategy/actuators2025.h"
 #include "goal_strategy/claws.h"
-#include "goal_strategy/grabi.h"
 #include "goal_strategy/grabber.h"
+#include "goal_strategy/grabi.h"
 #include "krabi_msgs/msg/servos_cmd.hpp"
 #include "krabi_msgs/msg/strat_movement.hpp"
 #include "krabilib/pose.h"
 
 // The distance to a goal (in m)
 #define REACH_DIST 0.02                            // m
-#define REACH_ANG AngleTools::deg2rad(AngleDeg(2)) //°
+#define REACH_ANG AngleTools::deg2rad(AngleDeg(2)) // °
 
 enum PositionServo
 {
@@ -55,7 +55,7 @@ enum VacuumState
     STRONG_VACUUM
 };
 
-class GoalStrat: public rclcpp::Node
+class GoalStrat : public rclcpp::Node
 {
 public:
     GoalStrat();
@@ -69,7 +69,7 @@ public:
     };
     bool isArrivedAtGoal();
     void stop();
-    
+
 private:
     void init();
     void stateRun();
@@ -107,7 +107,7 @@ private:
     {
         m_actuators2025.updateStepperElevator(stepper_info_msg);
     };
-    
+
     bool isAlignedWithAngle(Angle angle);
     bool isArrivedAtGoal(Distance a_offset);
 
@@ -128,17 +128,14 @@ private:
 
     bool isParked();
 
-
-
-
     State m_state = State::RUN;
     Distance m_dist_to_goal;
     bool m_state_msg_displayed;
-#ifdef YEAR_2025 
+#ifdef YEAR_2025
     std::unique_ptr<Coupe2025> m_strat_graph;
 #else
     std::unique_ptr<Coupe2024> m_strat_graph;
-#endif    
+#endif
 
     long m_timeout_moving, m_timeout_orient;
     bool m_is_first_action;
@@ -147,8 +144,8 @@ private:
 
     rclcpp::Publisher<geometry_msgs::msg::PoseStamped>::SharedPtr m_goal_pose_pub;
     rclcpp::Publisher<krabi_msgs::msg::ServosCmd>::SharedPtr m_arm_servo_pub;
-    //rclcpp::Publisher<geometry_msgs::msg::Pose>::SharedPtr m_stop_linear_pub;
-    //rclcpp::Publisher<geometry_msgs::msg::Pose>::SharedPtr m_score_pub;
+    // rclcpp::Publisher<geometry_msgs::msg::Pose>::SharedPtr m_stop_linear_pub;
+    // rclcpp::Publisher<geometry_msgs::msg::Pose>::SharedPtr m_score_pub;
     rclcpp::Publisher<visualization_msgs::msg::MarkerArray>::SharedPtr m_debug_ma_etapes_pub;
     rclcpp::Publisher<krabi_msgs::msg::StratMovement>::SharedPtr m_strat_movement_pub;
 
@@ -158,13 +155,13 @@ private:
     rclcpp::Subscription<geometry_msgs::msg::PoseArray>::SharedPtr m_other_robots_sub;
     rclcpp::Subscription<krabi_msgs::msg::InfosStepper>::SharedPtr m_elevator_sub;
 
-    std::shared_ptr<tf2_ros::TransformListener> m_tf_listener_{nullptr};
+    std::shared_ptr<tf2_ros::TransformListener> m_tf_listener_{ nullptr };
     std::unique_ptr<tf2_ros::Buffer> m_tf_buffer_;
     Pose m_current_pose;
     Pose m_goal_pose;
 
     krabi_msgs::msg::ServosCmd m_servos_cmd;
-    rclcpp::Duration m_remainig_time = rclcpp::Duration(1000,0);
+    rclcpp::Duration m_remainig_time = rclcpp::Duration(1000, 0);
     bool m_is_blue; // true if blue
     Etape::EtapeType m_previous_etape_type;
     bool m_action_aborted;
