@@ -96,33 +96,37 @@ void Actuators2025::publish()
     m_message.servo_8.angle = m_servo_8->getAngle();
     m_message.servo_8.speed = m_servo_8->getSpeed();
 
-    m_message.ax12_1.mode = 1;
+    m_message.ax12_1.mode = m_AX12_1->getMode();
     m_message.ax12_1.position = m_AX12_1->getAngle();
     m_message.ax12_1.max_speed = m_AX12_1->getSpeed();
-    m_message.ax12_1.torque_enable = m_AX12_1->getSpeed() != 0;
-    m_message.ax12_1.temperature_limit = 65; // °C ?
-    m_message.ax12_1.current_limit = 255;    // ??
+    m_message.ax12_1.torque_enable = m_AX12_1->getTorqueEnable();
+    m_message.ax12_1.temperature_limit = m_AX12_1->getTemperatureLimit();
+    m_message.ax12_1.current_limit = m_AX12_1->getCurrentLimit();
+    m_message.ax12_1.max_accel = m_AX12_1->getCurrentLimit();
 
-    m_message.ax12_2.mode = 1;
+    m_message.ax12_2.mode = m_AX12_2->getMode();
     m_message.ax12_2.position = m_AX12_2->getAngle();
     m_message.ax12_2.max_speed = m_AX12_2->getSpeed();
-    m_message.ax12_2.torque_enable = m_AX12_2->getSpeed() != 0;
-    m_message.ax12_2.temperature_limit = 65; // °C ?
-    m_message.ax12_2.current_limit = 255;    // ??
+    m_message.ax12_2.torque_enable = m_AX12_2->getTorqueEnable();
+    m_message.ax12_2.temperature_limit = m_AX12_2->getTemperatureLimit();
+    m_message.ax12_2.current_limit = m_AX12_2->getCurrentLimit();
+    m_message.ax12_2.max_accel = m_AX12_2->getCurrentLimit();
 
-    m_message.ax12_3.mode = 1;
+    m_message.ax12_3.mode = m_AX12_3->getMode();
     m_message.ax12_3.position = m_AX12_3->getAngle();
     m_message.ax12_3.max_speed = m_AX12_3->getSpeed();
-    m_message.ax12_3.torque_enable = m_AX12_3->getSpeed() != 0;
-    m_message.ax12_3.temperature_limit = 65; // °C ?
-    m_message.ax12_3.current_limit = 255;    // ??
+    m_message.ax12_3.torque_enable = m_AX12_3->getTorqueEnable();
+    m_message.ax12_3.temperature_limit = m_AX12_3->getTemperatureLimit();
+    m_message.ax12_3.current_limit = m_AX12_3->getCurrentLimit();
+    m_message.ax12_3.max_accel = m_AX12_3->getCurrentLimit();
 
-    m_message.ax12_4.mode = 1;
+    m_message.ax12_4.mode = m_AX12_4->getMode();
     m_message.ax12_4.position = m_AX12_4->getAngle();
     m_message.ax12_4.max_speed = m_AX12_4->getSpeed();
-    m_message.ax12_4.torque_enable = m_AX12_4->getSpeed() != 0;
-    m_message.ax12_4.temperature_limit = 65; // °C ?
-    m_message.ax12_4.current_limit = 255;    // ??
+    m_message.ax12_4.torque_enable = m_AX12_4->getTorqueEnable();
+    m_message.ax12_4.temperature_limit = m_AX12_4->getTemperatureLimit();
+    m_message.ax12_4.current_limit = m_AX12_4->getCurrentLimit();
+    m_message.ax12_4.max_accel = m_AX12_4->getCurrentLimit();
 
     m_message.vacuum_1.enable_pump = false;
     m_message.vacuum_1.release = false;
