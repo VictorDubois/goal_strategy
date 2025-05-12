@@ -1788,7 +1788,7 @@ void GoalStrat::init()
     m_action_aborted = false;
 
     // Choose starting position
-    this->declare_parameter("startingPosition", "SOLAR_PANEL");
+    this->declare_parameter("startingPosition", "FRONT_START");
     std::string l_starting_position_string = this->get_parameter("startingPosition").as_string();
     if (m_year == 2024)
     {
