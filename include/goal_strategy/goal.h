@@ -105,20 +105,20 @@ private:
     void updateRemainingTime(builtin_interfaces::msg::Duration remainingTime);
     void updateTirette(std_msgs::msg::Bool tirette);
     void updateVacuum(std_msgs::msg::Float32 vacuum_msg);
-    void updateAX12Info(std_msgs::msg::Float32 ax12_msg, uint8_t AX12_ID);
-    void updateAX12Info1(std_msgs::msg::Float32 ax12_msg)
+    void updateAX12Info(krabi_msgs::msg::AX12Info ax12_msg, uint8_t);
+    void updateAX12Info1(krabi_msgs::msg::AX12Info ax12_msg)
     {
         updateAX12Info(ax12_msg, 1);
     };
-    void updateAX12Info2(std_msgs::msg::Float32 ax12_msg)
+    void updateAX12Info2(krabi_msgs::msg::AX12Info ax12_msg)
     {
         updateAX12Info(ax12_msg, 2);
     };
-    void updateAX12Info3(std_msgs::msg::Float32 ax12_msg)
+    void updateAX12Info3(krabi_msgs::msg::AX12Info ax12_msg)
     {
         updateAX12Info(ax12_msg, 3);
     };
-    void updateAX12Info4(std_msgs::msg::Float32 ax12_msg)
+    void updateAX12Info4(krabi_msgs::msg::AX12Info ax12_msg)
     {
         updateAX12Info(ax12_msg, 4);
     };

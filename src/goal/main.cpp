@@ -792,6 +792,15 @@ void GoalStrat::publishAll()
     }
 }
 
+void GoalStrat::updateAX12Info(krabi_msgs::msg::AX12Info a_ax12_msg, uint8_t id)
+{
+    m_grabi->updateAX12Infos(a_ax12_msg.current_position,
+                             a_ax12_msg.present_temperature,
+                             a_ax12_msg.present_current,
+                             a_ax12_msg.moving,
+                             id);
+}
+
 void GoalStrat::updateDigitalReads(std_msgs::msg::Byte digitalReads)
 {
     m_grabi->updateCanDetected(digitalReads.data);
