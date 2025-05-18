@@ -16,7 +16,7 @@ enum GrabberContent
 class Grabber
 {
 public:
-    Grabber(){};
+    Grabber() {};
     Grabber(Position a_relative_position,
             std::shared_ptr<Servomotor> a_servo_base,
             std::shared_ptr<Servomotor> a_servo_mid,
@@ -41,6 +41,7 @@ private:
     std::shared_ptr<Servomotor> m_servo_mid;
     std::shared_ptr<Servomotor> m_servo_suction_cup;
     std::shared_ptr<Pump> m_pump;
+    uint8_t m_can_detected;
 
     void grab_hexagon();
     void retract_arm();

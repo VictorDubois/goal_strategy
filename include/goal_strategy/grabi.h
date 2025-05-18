@@ -28,6 +28,38 @@ public:
     Angle getAngle();
     void initializeElevator();
     bool elevatorInitDone();
+    void updateCanDetected(uint8_t a_can_detected)
+    {
+        m_can_detected = a_can_detected;
+    };
+    void updateAX12Infos(int16_t a_current_position,
+                         uint8_t a_present_temperature,
+                         uint16_t a_present_current,
+                         uint8_t a_moving,
+                         uint8_t AX12_ID)
+    {
+        switch (AX12_ID)
+        {
+        case 1:
+            m_ax12_left_can->updateInfos(
+              a_current_position, a_present_temperature, a_present_current, a_moving);
+            break;
+        case 2:
+            m_ax12_right_can->updateInfos(
+              a_current_position, a_present_temperature, a_present_current, a_moving);
+            break;
+        case 3:
+            m_ax12_suction_cup->updateInfos(
+              a_current_position, a_present_temperature, a_present_current, a_moving);
+            break;
+        case 4:
+            m_ax12_lever->updateInfos(
+              a_current_position, a_present_temperature, a_present_current, a_moving);
+            break;
+        default:
+            break;
+        }
+    };
 
 private:
     void conditionnal_sleep(uint a_microseconds, bool a_do_sleep);
@@ -45,4 +77,5 @@ private:
     std::shared_ptr<AX12> m_ax12_lever;
     std::shared_ptr<StepperElevator> m_stepper_elevator;
     bool elevatorInitHasFailed();
+    uint8_t m_can_detected = 0;
 };

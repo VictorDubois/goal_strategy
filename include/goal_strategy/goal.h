@@ -14,6 +14,7 @@
 #include <std_msgs/msg/bool.hpp>
 // #include <builtin_interfaces/msg/duration.hpp>
 #include "builtin_interfaces/msg/duration.hpp"
+#include <std_msgs/msg/byte.hpp>
 #include <std_msgs/msg/float32.hpp>
 #include <std_msgs/msg/int16.hpp>
 #include <std_msgs/msg/int32.hpp>
@@ -30,6 +31,7 @@
 #include "goal_strategy/claws.h"
 #include "goal_strategy/grabber.h"
 #include "goal_strategy/grabi.h"
+#include "krabi_msgs/msg/ax12_info.hpp"
 #include "krabi_msgs/msg/servos_cmd.hpp"
 #include "krabi_msgs/msg/strat_movement.hpp"
 #include "krabilib/pose.h"
@@ -103,6 +105,24 @@ private:
     void updateRemainingTime(builtin_interfaces::msg::Duration remainingTime);
     void updateTirette(std_msgs::msg::Bool tirette);
     void updateVacuum(std_msgs::msg::Float32 vacuum_msg);
+    void updateAX12Info(std_msgs::msg::Float32 ax12_msg, uint8_t AX12_ID);
+    void updateAX12Info1(std_msgs::msg::Float32 ax12_msg)
+    {
+        updateAX12Info(ax12_msg, 1);
+    };
+    void updateAX12Info2(std_msgs::msg::Float32 ax12_msg)
+    {
+        updateAX12Info(ax12_msg, 2);
+    };
+    void updateAX12Info3(std_msgs::msg::Float32 ax12_msg)
+    {
+        updateAX12Info(ax12_msg, 3);
+    };
+    void updateAX12Info4(std_msgs::msg::Float32 ax12_msg)
+    {
+        updateAX12Info(ax12_msg, 4);
+    };
+    void updateDigitalReads(std_msgs::msg::Byte digitalReads);
     void updateOtherRobots(geometry_msgs::msg::PoseArray);
     void updateStepperElevator(krabi_msgs::msg::InfosStepper stepper_info_msg)
     {
@@ -155,6 +175,11 @@ private:
     rclcpp::Subscription<std_msgs::msg::Float32>::SharedPtr m_vacuum_sub;
     rclcpp::Subscription<geometry_msgs::msg::PoseArray>::SharedPtr m_other_robots_sub;
     rclcpp::Subscription<krabi_msgs::msg::InfosStepper>::SharedPtr m_elevator_sub;
+    rclcpp::Subscription<krabi_msgs::msg::AX12Info>::SharedPtr m_ax12_1_info_sub;
+    rclcpp::Subscription<krabi_msgs::msg::AX12Info>::SharedPtr m_ax12_2_info_sub;
+    rclcpp::Subscription<krabi_msgs::msg::AX12Info>::SharedPtr m_ax12_3_info_sub;
+    rclcpp::Subscription<krabi_msgs::msg::AX12Info>::SharedPtr m_ax12_4_info_sub;
+    rclcpp::Subscription<std_msgs::msg::Byte>::SharedPtr m_digital_reads_sub;
 
     std::shared_ptr<tf2_ros::TransformListener> m_tf_listener_{ nullptr };
     std::unique_ptr<tf2_ros::Buffer> m_tf_buffer_;
@@ -176,6 +201,7 @@ private:
     bool m_tirette;
     float m_vacuum_level;
     int m_vacuum_state;
+
     Actuators m_actuators;
     Actuators2023 m_actuators2023;
     Actuators2025 m_actuators2025;
