@@ -9,7 +9,7 @@ Grabi::Grabi(Position a_relative_position_in_front,
              std::shared_ptr<AX12> a_ax12_left_can,
              std::shared_ptr<AX12> a_ax12_right_can,
              std::shared_ptr<AX12> a_ax12_suction_cup,
-             std::shared_ptr<AX12> a_ax12_lever,
+             std::shared_ptr<Servomotor> a_servo_lever,
              std::shared_ptr<StepperElevator> a_stepper_elevator)
   : m_relative_position_in_front(a_relative_position_in_front)
   , m_relative_position_inside(a_relative_position_inside)
@@ -21,7 +21,7 @@ Grabi::Grabi(Position a_relative_position_in_front,
   , m_ax12_left_can(a_ax12_left_can)
   , m_ax12_right_can(a_ax12_right_can)
   , m_ax12_suction_cup(a_ax12_suction_cup)
-  , m_ax12_lever(a_ax12_lever)
+  , m_servo_lever(a_servo_lever)
   , m_stepper_elevator(a_stepper_elevator)
 {
 }

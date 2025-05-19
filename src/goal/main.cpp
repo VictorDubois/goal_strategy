@@ -683,6 +683,7 @@ GoalStrat::GoalStrat()
     auto l_ax12_2 = std::make_shared<AX12>(10, 90);
     auto l_ax12_3 = std::make_shared<AX12>(10, 90);
     auto l_ax12_4 = std::make_shared<AX12>(10, 90);
+    auto l_servo_grabi_lever = std::make_shared<Servomotor>(10, 90);
     m_servo_banner = std::make_shared<Servomotor>(10, 90);
     auto l_stepper_grabi_elevator = std::make_shared<StepperElevator>(
       100 /* mm/s */, 1000 /* mm/s2 */, 100 /* x50mA */, 300 /*mm de haut max*/);
@@ -696,7 +697,7 @@ GoalStrat::GoalStrat()
                                       l_ax12_1,
                                       l_ax12_2,
                                       l_ax12_3,
-                                      l_ax12_4,
+                                      l_servo_grabi_lever,
                                       l_stepper_grabi_elevator);
 
     m_actuators2025 = Actuators2025(rclcpp::Node::SharedPtr(this),

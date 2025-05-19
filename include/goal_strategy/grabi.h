@@ -17,7 +17,7 @@ public:
           std::shared_ptr<AX12> a_ax12_left_can,
           std::shared_ptr<AX12> a_ax12_right_can,
           std::shared_ptr<AX12> a_ax12_suction_cup,
-          std::shared_ptr<AX12> a_ax12_lever,
+          std::shared_ptr<Servomotor> a_servo_lever,
           std::shared_ptr<StepperElevator> a_stepper_elevator);
 
     bool grab_plateforme(bool a_do_sleep = true);
@@ -53,8 +53,6 @@ public:
               a_current_position, a_present_temperature, a_present_current, a_moving);
             break;
         case 4:
-            m_ax12_lever->updateInfos(
-              a_current_position, a_present_temperature, a_present_current, a_moving);
             break;
         default:
             break;
@@ -74,7 +72,7 @@ private:
     std::shared_ptr<AX12> m_ax12_left_can;
     std::shared_ptr<AX12> m_ax12_right_can;
     std::shared_ptr<AX12> m_ax12_suction_cup;
-    std::shared_ptr<AX12> m_ax12_lever;
+    std::shared_ptr<Servomotor> m_servo_lever;
     std::shared_ptr<StepperElevator> m_stepper_elevator;
     bool elevatorInitHasFailed();
     uint8_t m_can_detected = 0;
