@@ -962,7 +962,9 @@ void GoalStrat::chooseGear()
           && m_strat_graph->getEtapeEnCours()->getEtapeType() != Etape::EtapeType::ASSIETTE)
       // 2024
       || m_strat_graph->getEtapeEnCours()->getEtapeType() == Etape::EtapeType::AIRE_DE_DEPOSE
-      || m_strat_graph->getEtapeEnCours()->getEtapeType() == Etape::EtapeType::PLANT_GROUP)
+      || m_strat_graph->getEtapeEnCours()->getEtapeType() == Etape::EtapeType::PLANT_GROUP
+      //2025
+      || m_previous_etape_type == Etape::EtapeType::AIRE_DE_CONSTRUCTION)
     {
         l_reverseGear.data = true;
         m_strat_mvnt.reverse_gear = krabi_msgs::msg::StratMovement::REVERSE;
@@ -982,7 +984,10 @@ void GoalStrat::chooseGear()
       // 2024
       || (m_previous_etape_type == Etape::EtapeType::PLANT_GROUP
           && m_strat_graph->getEtapeEnCours()->getEtapeType() != Etape::EtapeType::AIRE_DE_DEPOSE)
-      || m_previous_etape_type == Etape::EtapeType::AIRE_DE_DEPOSE)
+      || m_previous_etape_type == Etape::EtapeType::AIRE_DE_DEPOSE
+      // 2025
+      || m_strat_graph->getEtapeEnCours()->getEtapeType() == Etape::EtapeType::STOCK_MATIERE_PREMIERE
+      || m_strat_graph->getEtapeEnCours()->getEtapeType() == Etape::EtapeType::AIRE_DE_CONSTRUCTION)
     {
         l_reverseGear.data = false;
         m_strat_mvnt.reverse_gear = krabi_msgs::msg::StratMovement::FORWARD;
