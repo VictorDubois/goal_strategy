@@ -20,17 +20,19 @@ class Position
 {
 public:
     /// @brief Constructeur avec des coordonnées prédéfinies.
-    Position(Distance X= Distance(0), Distance Y = Distance(0));
+    Position(Distance X = Distance(0), Distance Y = Distance(0));
 
     /// @brief Constructeur avec des coordonnées prédéfinies.
     Position(const Eigen::Vector2d& position);
 
     /**
      * @brief Construct a new Position object using a PolarPosition
-     * 
-     * @param pp 
+     *
+     * @param pp
      */
     Position(const PolarPosition& pp);
+
+    Position(const Position& p) = default;
 
     /// @brief Surchage d'opérateur pour multiplier par un flottant
     Position operator*(float val) const;
@@ -76,7 +78,7 @@ public:
 
     /**
      * @brief Transform the current point from the current frame to the frame defines by transform
-     * 
+     *
      * @param t 3x3 2d transform matrix
      * @return Position new position in transformed frame
      */
@@ -84,7 +86,7 @@ public:
 
     /**
      * @brief Transform the current point from the current frame to the frame defines by transform
-     * 
+     *
      * @param t 3d transform matrix
      * @return Position new position in transformed frame
      */
@@ -111,9 +113,10 @@ private:
     Eigen::Vector2d m_pos;
 };
 
-class PolarPosition{
-    public:
-    PolarPosition(const Distance d = Distance(0),const Angle a = Angle(0));
+class PolarPosition
+{
+public:
+    PolarPosition(const Distance d = Distance(0), const Angle a = Angle(0));
     PolarPosition(const Position& pos);
 
     Distance getDistance() const;
@@ -130,13 +133,12 @@ class PolarPosition{
     friend std::ostream& operator<<(std::ostream& os, const PolarPosition& p);
 #endif
 
-    private:
+private:
     Distance m_dist;
     Angle m_angle;
-
 };
 
 #ifdef USE_ROS
-    Transform transformFromMsg(const geometry_msgs::msg::Transform& t);
-    Transform3D transform3DFromMsg(const geometry_msgs::msg::Transform& t);
+Transform transformFromMsg(const geometry_msgs::msg::Transform& t);
+Transform3D transform3DFromMsg(const geometry_msgs::msg::Transform& t);
 #endif
