@@ -5,9 +5,8 @@
 #ifndef STANDALONE_STRATEGIE
 #include "krabilib/command.h"
 #include "krabilib/strategie/strategieV2.h"
-//#define VITESSE_LINEAIRE_MAX 100
+// #define VITESSE_LINEAIRE_MAX 100
 #endif
-
 
 #define qDebug() std::cout
 
@@ -27,7 +26,7 @@ PileGateau::~PileGateau()
 {
 }
 
-const CoucheGateau PileGateau::getTypeCouche()
+CoucheGateau PileGateau::getTypeCouche()
 {
     return type_couche;
 }
