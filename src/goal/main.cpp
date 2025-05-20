@@ -274,10 +274,11 @@ bool GoalStrat::isArrivedAtGoal(Distance a_offset)
     {
         l_reach_dist = m_claws->getReach();
     }
-    if (m_strat_graph->getEtapeEnCours()->getEtapeType()
-        == Etape::EtapeType::STOCK_MATIERE_PREMIERE)
+    if (m_strat_graph->getEtapeEnCours()->getEtapeType() == Etape::EtapeType::STOCK_MATIERE_PREMIERE
+        || m_strat_graph->getEtapeEnCours()->getEtapeType()
+             == Etape::EtapeType::AIRE_DE_CONSTRUCTION)
     {
-        l_reach_dist = m_claws->getReach();
+        l_reach_dist = m_grabi->getReach();
     }
 
     if (m_dist_to_goal < l_reach_dist)
@@ -1160,6 +1161,15 @@ void GoalStrat::chooseEffector(bool enable)
         // m_strat_mvnt.endpoint_frame_id = tf::resolve(rclcpp::this_node::getNamespace(),
         // "claws_inside"); //1.7 Removal of support for tf_prefix
         m_strat_mvnt.endpoint_frame_id = "claws_inside";
+    }
+
+    if (m_strat_graph->getEtapeEnCours()->getEtapeType() == Etape::EtapeType::AIRE_DE_CONSTRUCTION
+        || m_strat_graph->getEtapeEnCours()->getEtapeType()
+             == Etape::EtapeType::STOCK_MATIERE_PREMIERE)
+    {
+        // m_strat_mvnt.endpoint_frame_id = tf::resolve(rclcpp::this_node::getNamespace(),
+        // "claws_inside"); //1.7 Removal of support for tf_prefix
+        m_strat_mvnt.endpoint_frame_id = "grabi";
     }
 }
 
