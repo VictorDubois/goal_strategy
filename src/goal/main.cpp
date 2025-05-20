@@ -6,7 +6,7 @@
 #define goal_MAX_ALLOWED_ANGULAR_SPEED 1.f // rad/s
 using namespace std::chrono_literals;
 /**
- * @brief Set the arm to a specified position
+ * @brief Set the arm to a specified position used in 2019checkFunnyAction
  *
  * @param position FOLDED, IN, OUT, UP, RELEASE, DOWN
  */
@@ -695,7 +695,7 @@ GoalStrat::GoalStrat()
     auto l_stepper_grabi_elevator = std::make_shared<StepperElevator>(
       100 /* mm/s */, 1000 /* mm/s2 */, 100 /* x50mA */, 300 /*mm de haut max*/);
 
-    m_grabi = std::make_shared<Grabi>(Position(Eigen::Vector2d(0.32f, 0.f)),
+    m_grabi = std::make_shared<Grabi>(Position(Eigen::Vector2d(0.191767f, 0.f)),
                                       Position(Eigen::Vector2d(0.08f, 0.f)),
                                       l_servo_grabi_left_most,
                                       l_servo_grabi_center_left,
@@ -1234,9 +1234,11 @@ void GoalStrat::stateRun()
             goToNextMission();
         }
     }
-
+    RCLCPP_WARN_STREAM(rclcpp::get_logger("rclcpp"), "checkFunnyAction " << checkFunnyAction());
     if (checkFunnyAction())
     {
+           RCLCPP_WARN_STREAM(rclcpp::get_logger("rclcpp"), "checkFunnyAction " << checkFunnyAction()<<"FUNNNNN");
+ 
         const rclcpp::Duration funny_action_timing_2 = rclcpp::Duration(1, 0); // 1s before T=0;
 
         if (m_remainig_time.seconds() < funny_action_timing_2.seconds())

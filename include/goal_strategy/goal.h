@@ -225,7 +225,7 @@ private:
     std::thread m_running;
 
     int override_gear;
-    AireDeDepose* m_area_funny = nullptr;
+    AireDeConstruction* m_area_funny = nullptr;
 
     bool m_claws_openned_once = false;
 

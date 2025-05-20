@@ -8,7 +8,7 @@
 #ifndef STANDALONE_STRATEGIE
 #include "krabilib/command.h"
 #endif // STANDALONE_STRATEGIE
-
+//2024 only
 
 class AireDeDepose : public MediumLevelAction
 {

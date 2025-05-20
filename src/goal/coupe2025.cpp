@@ -479,3 +479,14 @@ int Coupe2025::dropPlateformes(Etape* e)
 
     return l_scored;
 }
+
+AireDeConstruction* Coupe2025::getBestAreaForFunny()
+{
+    for (auto& l_etape : Etape::getTableauEtapesTotal())
+    {
+        if (l_etape && l_etape->getNumero() == m_numero_etape_garage && l_etape->getEtapeType() == Etape::EtapeType::AIRE_DE_CONSTRUCTION)
+        {  
+            return static_cast<AireDeConstruction*>(l_etape->getAction());
+        }
+    }
+}
