@@ -985,8 +985,16 @@ void GoalStrat::chooseGear()
         // // Don't care
         // l_reverseGear.data = false;
         // m_strat_mvnt.reverse_gear = krabi_msgs::msg::StratMovement::FORWARD_OR_REVERSE;
-        l_reverseGear.data = true;
-        m_strat_mvnt.reverse_gear = krabi_msgs::msg::StratMovement::REVERSE;
+        if (m_year == 2024)
+        {
+            l_reverseGear.data = true;
+            m_strat_mvnt.reverse_gear = krabi_msgs::msg::StratMovement::REVERSE;
+        }
+        else
+        {
+            l_reverseGear.data = false;
+            m_strat_mvnt.reverse_gear = krabi_msgs::msg::StratMovement::FORWARD;
+        }
     }
 
     // l_reverseGear.data = true;
