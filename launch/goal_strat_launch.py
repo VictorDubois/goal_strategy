@@ -32,6 +32,7 @@ def generate_launch_description():
         launch_ros.actions.SetParameter(name='xRobotPos', value=xRobotPos_value),
         launch_ros.actions.SetParameter(name='yRobotPos', value=yRobotPos_value),
         launch_ros.actions.SetParameter(name='zRobotOrientation', value=zRobotOrientation_value),
+        launch_ros.actions.SetParameter(name='maxAngularSpeed', value="1"),
         Node(
             package='goal_strategy',
             namespace='krabi_ns',

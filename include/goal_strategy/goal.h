@@ -186,9 +186,12 @@ private:
     Pose m_current_pose;
     Pose m_goal_pose;
 
+    // ROS Params
+    bool m_is_blue; // true if blue
+    float goal_MAX_ALLOWED_ANGULAR_SPEED;
+
     krabi_msgs::msg::ServosCmd m_servos_cmd;
     rclcpp::Duration m_remainig_time = rclcpp::Duration(1000, 0);
-    bool m_is_blue; // true if blue
     Etape::EtapeType m_previous_etape_type;
     bool m_action_aborted;
     float m_score_match;
