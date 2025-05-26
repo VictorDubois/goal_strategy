@@ -680,6 +680,7 @@ GoalStrat::GoalStrat()
     auto l_servo_grabi_center_left = std::make_shared<Servomotor>(10, 90);
     auto l_servo_grabi_center_right = std::make_shared<Servomotor>(10, 90);
     auto l_servo_grabi_right_most = std::make_shared<Servomotor>(10, 90);
+    auto l_pump_plank = std::make_shared<Pump>(false, true);
     auto l_ax12_1 = std::make_shared<AX12>(10, 90);
     auto l_ax12_2 = std::make_shared<AX12>(10, 90);
     auto l_ax12_3 = std::make_shared<AX12>(10, 90);
@@ -699,7 +700,8 @@ GoalStrat::GoalStrat()
                                       l_ax12_2,
                                       l_ax12_3,
                                       l_servo_grabi_lever,
-                                      l_stepper_grabi_elevator);
+                                      l_stepper_grabi_elevator,
+                                      l_pump_plank);
 
     m_actuators2025 = Actuators2025(rclcpp::Node::SharedPtr(this),
                                     "actuators2025",
@@ -716,7 +718,7 @@ GoalStrat::GoalStrat()
                                     l_ax12_3,
                                     l_ax12_4,
                                     l_stepper_grabi_elevator,
-                                    l_pump_arm);
+                                    l_pump_plank);
 
     m_actuators2025.start();
 
@@ -1740,12 +1742,21 @@ void GoalStrat::stateRun()
 
         case Etape::EtapeType::AIRE_DE_CONSTRUCTION:
             m_score_match += m_strat_graph->dropPlateformes(m_strat_graph->getEtapeEnCours());
+            stopLinear();
+            stopAngular();
             m_grabi->drop_plateforme();
+            startLinear();
+            startAngular();
             reculeDroit(rclcpp::Duration(3, 0), Distance(0.2));
+            m_grabi->resetElevatorLow();
             break;
         case Etape::EtapeType::STOCK_MATIERE_PREMIERE:
             m_strat_graph->grabPlateformes(m_strat_graph->getEtapeEnCours());
+            stopLinear();
+            stopAngular();
             m_grabi->grab_plateforme();
+            startLinear();
+            startAngular();
             reculeDroit(rclcpp::Duration(3, 0), Distance(0.2));
             break;
         default:

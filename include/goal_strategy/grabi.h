@@ -1,6 +1,7 @@
 #pragma once
 #include "AX12.h"
 #include "krabilib/strategie/strategiev3.h"
+#include "pump.h"
 #include "servomotor.h"
 #include "stepper.h"
 
@@ -18,7 +19,8 @@ public:
           std::shared_ptr<AX12> a_ax12_right_can,
           std::shared_ptr<AX12> a_ax12_suction_cup,
           std::shared_ptr<Servomotor> a_servo_lever,
-          std::shared_ptr<StepperElevator> a_stepper_elevator);
+          std::shared_ptr<StepperElevator> a_stepper_elevator,
+          std::shared_ptr<Pump> a_pump_plank);
 
     bool grab_plateforme(bool a_do_sleep = true);
     bool drop_plateforme(bool a_do_sleep = true);
@@ -27,6 +29,8 @@ public:
     float getReach();
     Angle getAngle();
     void initializeElevator();
+    void resetElevatorLow();
+
     bool elevatorInitDone();
     void updateCanDetected(uint8_t a_can_detected)
     {
@@ -74,6 +78,8 @@ private:
     std::shared_ptr<AX12> m_ax12_suction_cup;
     std::shared_ptr<Servomotor> m_servo_lever;
     std::shared_ptr<StepperElevator> m_stepper_elevator;
+    std::shared_ptr<Pump> m_pump_plank;
+
     bool elevatorInitHasFailed();
     uint8_t m_can_detected = 0;
 };
