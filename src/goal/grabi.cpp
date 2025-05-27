@@ -139,6 +139,11 @@ bool Grabi::grab_plateforme(bool a_do_sleep)
     return true;
 }
 
+bool Grabi::allCansDetected()
+{
+    return m_can_detected == 0b1111;
+}
+
 bool Grabi::elevatorInitHasFailed()
 {
     rclcpp::Time timeout = rclcpp::Clock{ RCL_STEADY_TIME }.now() + rclcpp::Duration(3, 0);

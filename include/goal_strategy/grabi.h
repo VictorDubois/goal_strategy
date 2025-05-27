@@ -36,6 +36,8 @@ public:
     {
         m_can_detected = a_can_detected;
     };
+    bool allCansDetected();
+
     void updateAX12Infos(int16_t a_current_position,
                          uint8_t a_present_temperature,
                          uint16_t a_present_current,

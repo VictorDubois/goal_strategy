@@ -1755,6 +1755,18 @@ void GoalStrat::stateRun()
             stopLinear();
             stopAngular();
             m_grabi->grab_plateforme();
+
+            while (!m_grabi->allCansDetected())
+            {
+                // m_strat_graph->getEtapeEnCours()->get;
+                //  wiggle
+                /*alignWithAngleWithTimeout(Angle((m_goal_pose.getPose()).getAngle()) + 0.1,
+                                          "Timeout while orienting");
+                alignWithAngleWithTimeout(Angle((m_goal_pose.getPose()).getAngle()) - 0.1,
+                                          "Timeout while orienting");*/
+                RCLCPP_WARN_STREAM(rclcpp::get_logger("rclcpp"), "Failed catch all cans :(");
+                break;
+            }
             startLinear();
             startAngular();
             reculeDroit(rclcpp::Duration(3, 0), Distance(0.2));
