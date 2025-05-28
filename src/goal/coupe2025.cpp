@@ -469,7 +469,7 @@ int Coupe2025::dropPlateformes(Etape* e)
         {
           l_area->addPlateforme(m_stock.back());
           m_stock.pop_back();
-          l_scored = 6;
+          //l_scored = 6; //TODO remove when platforms works
         }  
         break;
 

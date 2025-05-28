@@ -1079,12 +1079,12 @@ bool GoalStrat::isParked()
     else if (m_year == 2025)
     {
         // Only one spot in 2025
-        l_valid_end_locations.push_back(Position(Distance(1.125f), Distance(-0.775f)));
+        l_valid_end_locations.push_back(Position(Distance(-1.125f), Distance(-0.775f)));
     }
 
     for (auto l_position : l_valid_end_locations)
     {
-        if ((m_current_pose.getPosition() - l_position).getNorme() < 0.3f)
+        if ((m_current_pose.getPosition() - l_position).getNorme() < 0.5f)
         {
             return true;
         }
@@ -1127,8 +1127,6 @@ void GoalStrat::publishScore()
     m_actuators2023.set_score(m_score_match_at_end);
     m_actuators2025.set_score(m_score_match_at_end);
     RCLCPP_WARN_STREAM(rclcpp::get_logger("rclcpp"), " score at end " << m_score_match_at_end << std::endl);
-
-
 }
 
 /**

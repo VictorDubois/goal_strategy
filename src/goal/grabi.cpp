@@ -102,7 +102,7 @@ bool Grabi::grab_plateforme(bool a_do_sleep)
     /* @todo raise plank */
 
     m_ax12_left_can->set(AX12_LEFT_GRAB, 100);
-    m_ax12_left_can->set(AX12_RIGHT_GRAB, 100);
+    m_ax12_right_can->set(AX12_RIGHT_GRAB, 100);
     m_ax12_suction_cup->set(AX12_SUCTION_HIGH, 100);
 
     m_servo_lever->set(SERVO_FINGER_LOW, 100);
