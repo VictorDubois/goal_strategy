@@ -141,6 +141,7 @@ private:
     void pushCarreFouille();
     void retractePusher();
     void dropCherries();
+    void pushBanner();
     void closeCherriesDispenser();
 
     void setDistancesFromRobotsToEtapes();

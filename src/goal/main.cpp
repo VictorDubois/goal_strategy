@@ -532,6 +532,11 @@ void GoalStrat::dropCherries()
     usleep(5.0e6);
 }
 
+void GoalStrat::pushBanner()
+{
+    reculeDroit(rclcpp::Duration(2, 0), Distance(0.1));
+}
+
 void GoalStrat::closeCherriesDispenser()
 {
     m_servo_cherries->setAngle(140);
@@ -1962,6 +1967,10 @@ void GoalStrat::loop()
             if (m_year == 2023)
             {
                 dropCherries();
+            }
+            if (m_year == 2025)
+            {
+                pushBanner();
             }
         }
         break;
