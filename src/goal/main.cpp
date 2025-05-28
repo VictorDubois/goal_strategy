@@ -1757,17 +1757,26 @@ void GoalStrat::stateRun()
             m_score_match += m_strat_graph->dropPlateformes(m_strat_graph->getEtapeEnCours());
             stopLinear();
             stopAngular();
+            RCLCPP_INFO_STREAM(rclcpp::get_logger("rclcpp"), "Drop plateforme");
             m_grabi->drop_plateforme();
             startLinear();
             startAngular();
             reculeDroit(rclcpp::Duration(3, 0), Distance(0.2));
+            stopLinear();
+            stopAngular();
+            RCLCPP_INFO_STREAM(rclcpp::get_logger("rclcpp"), "Resetting elevator");
             m_grabi->resetElevatorLow();
+            RCLCPP_INFO_STREAM(rclcpp::get_logger("rclcpp"), "Done resetting elevator");
+            startLinear();
+            startAngular();
             break;
         case Etape::EtapeType::STOCK_MATIERE_PREMIERE:
             m_strat_graph->grabPlateformes(m_strat_graph->getEtapeEnCours());
             stopLinear();
             stopAngular();
+            RCLCPP_INFO_STREAM(rclcpp::get_logger("rclcpp"), "Grab plateforme");
             m_grabi->grab_plateforme();
+            RCLCPP_INFO_STREAM(rclcpp::get_logger("rclcpp"), "Done grabbing plateforme");
 
             while (!m_grabi->allCansDetected())
             {
@@ -1842,8 +1851,7 @@ void GoalStrat::init()
     }
     if (m_year == 2024)
     {
-        m_score_match += 1; 
-        // check if init is correct (substracted from zone de fin )
+        m_score_match += 1; // check if init is correct (substracted from zone de fin )
     }
     if (m_year == 2025)
     {
