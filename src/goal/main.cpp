@@ -568,7 +568,7 @@ GoalStrat::GoalStrat()
 
     m_goal_init_done = false;
     m_at_least_one_carre_fouille_done = false;
-    m_remainig_time = rclcpp::Duration(90, 0);
+    m_remainig_time = rclcpp::Duration(85, 0);
     m_strat_mvnt.max_speed_at_arrival = 0.0f;
     m_strat_mvnt.orient = krabi_msgs::msg::StratMovement::GO_TO_GOALPOSE_POSITION;
     m_strat_mvnt.max_speed.linear.x = 0.5f;
