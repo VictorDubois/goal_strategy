@@ -222,6 +222,11 @@ int Dijkstra::trouverMin(int classementEtapeMinimale)
         // Sinon on supprime les barrières en oubliant qu'on a vu des robots
         if (onEstCoinceDansUnEndroitPourri)
         {
+            if (deblocageEndroitPourriEnCours)
+            {
+                // On a déjà tenté, ça n'a pas suffi
+                return -1;
+            }
             for (int i = 0; i < this->nombreEtapes; i++)
             {
                 // On reset numeroEtapeEnCours à l'étape où on est actuellement
@@ -233,7 +238,9 @@ int Dijkstra::trouverMin(int classementEtapeMinimale)
                 this->tableauEtapes[i]->oublieRobotVu();
             }
 
+            deblocageEndroitPourriEnCours = true;
             this->run();
+            deblocageEndroitPourriEnCours = false;
             return -1;
         }
         else

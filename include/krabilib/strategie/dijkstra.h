@@ -101,6 +101,9 @@ private:
     /** @brief nombre de lances transporte par le robot */
     int nombreLancesTransporte;
     int nombreFiletTransporte;
+
+    /** @brief pour ne pas lancer cette opération récursive en boucle */
+    bool deblocageEndroitPourriEnCours;
 };
 
 #endif // DIJKSTRA_H
