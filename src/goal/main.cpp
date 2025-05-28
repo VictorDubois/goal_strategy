@@ -1110,11 +1110,15 @@ void GoalStrat::publishScore()
     {
         if (isParked())
         {
-            l_score += 9;
+            l_score += 10;
         }
         if (m_year == 2023)
         {
             l_score += 5; // deguisement
+        }
+        if (m_year == 2025)
+        {
+            l_score += 20; // deguisement
         }
     }
 
@@ -1234,11 +1238,8 @@ void GoalStrat::stateRun()
             goToNextMission();
         }
     }
-    RCLCPP_WARN_STREAM(rclcpp::get_logger("rclcpp"), "checkFunnyAction " << checkFunnyAction());
     if (checkFunnyAction())
     {
-           RCLCPP_WARN_STREAM(rclcpp::get_logger("rclcpp"), "checkFunnyAction " << checkFunnyAction()<<"FUNNNNN");
- 
         const rclcpp::Duration funny_action_timing_2 = rclcpp::Duration(1, 0); // 1s before T=0;
 
         if (m_remainig_time.seconds() < funny_action_timing_2.seconds())
