@@ -1116,10 +1116,6 @@ void GoalStrat::publishScore()
         {
             l_score += 5; // deguisement
         }
-        if (m_year == 2025)
-        {
-            l_score += 20; // deguisement
-        }
     }
 
     if (m_remainig_time.seconds() > 0.0f)
@@ -1129,6 +1125,10 @@ void GoalStrat::publishScore()
 
     m_actuators.set_score(m_score_match_at_end);
     m_actuators2023.set_score(m_score_match_at_end);
+    m_actuators2025.set_score(m_score_match_at_end);
+    RCLCPP_WARN_STREAM(rclcpp::get_logger("rclcpp"), " score at end " << m_score_match_at_end << std::endl);
+
+
 }
 
 /**
@@ -1840,9 +1840,14 @@ void GoalStrat::init()
         m_score_match += 10; // 10 cerises
         m_score_match += 5;  // comptage correct
     }
-    if (m_year == 2024 || m_year == 2025)
+    if (m_year == 2024)
     {
-        m_score_match += 1; // check if init is correct (substracted from zone de fin )
+        m_score_match += 1; 
+        // check if init is correct (substracted from zone de fin )
+    }
+    if (m_year == 2025)
+    {
+        m_score_match = 20; // Banner
     }
 
     m_servos_cmd.enable = true;
