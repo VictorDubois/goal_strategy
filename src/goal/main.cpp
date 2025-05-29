@@ -534,7 +534,7 @@ void GoalStrat::dropCherries()
 
 void GoalStrat::pushBanner()
 {
-    reculeDroit(rclcpp::Duration(2, 0), Distance(0.1));
+    reculeDroit(rclcpp::Duration(1, 0), Distance(0.1));
 }
 
 void GoalStrat::closeCherriesDispenser()
