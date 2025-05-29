@@ -1765,8 +1765,8 @@ void GoalStrat::stateRun()
             RCLCPP_INFO_STREAM(rclcpp::get_logger("rclcpp"), "Resetting elevator");
             m_grabi->resetElevatorLow();
             RCLCPP_INFO_STREAM(rclcpp::get_logger("rclcpp"), "Done resetting elevator");
-            startLinear();
-            startAngular();
+            /*startLinear();
+            startAngular();*/
             break;
         case Etape::EtapeType::STOCK_MATIERE_PREMIERE:
             m_strat_graph->grabPlateformes(m_strat_graph->getEtapeEnCours());
@@ -1789,7 +1789,6 @@ void GoalStrat::stateRun()
             }
             startLinear();
             startAngular();
-            reculeDroit(rclcpp::Duration(3, 0), Distance(0.2));
             break;
         default:
             // stopAngular();
