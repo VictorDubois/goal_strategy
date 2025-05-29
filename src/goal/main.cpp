@@ -1280,7 +1280,7 @@ void GoalStrat::stateRun()
         {
             RCLCPP_ERROR_STREAM(rclcpp::get_logger("rclcpp"),
                                 "FAIL getting best area for funny action, revert to default");
-            m_goal_pose.setPosition(m_strat_graph->positionC(1.275f, -0.775f));
+            m_goal_pose.setPosition(m_strat_graph->positionC(-1.2f, -0.480f));
         }
         else
         {
