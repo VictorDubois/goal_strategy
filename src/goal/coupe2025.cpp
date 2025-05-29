@@ -147,7 +147,12 @@ Coupe2025::Coupe2025(const bool isYellow, const StartingPosition2025 starting_po
     Etape::get(stock_centre_us)->addVoisins(point_passage_stock_centre_us_publique);
     Etape::get(point_passage_stock_front_us)
       ->addVoisins(point_passage_stock_centre_us_publique, stock_front_us);
-    Etape::get(stock_front_us)->addVoisins(mini_zone_contruction_front);
+
+    // Distance between Stock and mini zone smaller than reach !
+    Etape::get(stock_front_us)->addVoisin(mini_zone_contruction_front, false); // Unidirectionnal
+    Etape::get(mini_zone_contruction_front)
+      ->addVoisin(point_passage_stock_front_us, false); // Unidirectionnal
+
     Etape::get(point_passage_3)->addVoisins(point_passage_stock_front_us);
 
     // Hard graph
