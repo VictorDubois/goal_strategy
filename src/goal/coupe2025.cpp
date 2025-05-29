@@ -132,11 +132,11 @@ Coupe2025::Coupe2025(const bool isYellow, const StartingPosition2025 starting_po
 
     int point_passage_zone_contruction_cote = Etape::makeEtape(positionC(1.075f, 0.125f));
 
-    int point_passage_1 = Etape::makeEtape(positionC(0.725f, 0.32f));
+    int point_passage_1 = Etape::makeEtape(positionC(0.8, 0.32f));
     int point_passage_2 = Etape::makeEtape(positionC(0.725f, 0.6f));
 
-    int point_passage_stock_front_us = Etape::makeEtape(positionC(-0.725f, 0.32f));
-    int point_passage_3 = Etape::makeEtape(positionC(-0.725f, -0.22f));
+    int point_passage_stock_front_us = Etape::makeEtape(positionC(-0.75f, 0.32f));
+    int point_passage_3 = Etape::makeEtape(positionC(-0.720f, -0.22f));
 
     // Definition des liens
 
