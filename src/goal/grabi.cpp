@@ -15,7 +15,7 @@
 #define SERVO_RIGHTMOST_CAN_GRAB 67
 #define SERVO_RIGHTMOST_CAN_RELEASE 144
 
-#define SERVO_RIGHTCENTER_CAN_GRAB 22
+#define SERVO_RIGHTCENTER_CAN_GRAB 52
 #define SERVO_RIGHTCENTER_CAN_RELEASE 132
 
 #define SERVO_LEFTCENTER_CAN_GRAB 67
@@ -94,10 +94,10 @@ bool Grabi::elevatorInitDone()
 
 bool Grabi::grab_plateforme(bool a_do_sleep)
 {
-    if (elevatorInitHasFailed())
+    /*if (elevatorInitHasFailed())
     {
         return false;
-    }
+    }*/
 
     /* @todo raise plank */
 
@@ -163,10 +163,10 @@ bool Grabi::drop_plateforme(bool a_do_sleep)
 {
     bool success = true;
 
-    if (elevatorInitHasFailed())
+    /*if (elevatorInitHasFailed())
     {
         return false;
-    }
+    }*/
 
     m_stepper_elevator->goToPosition(0); // mm
     /*rclcpp::Time timeout = rclcpp::Clock{ RCL_STEADY_TIME }.now() + rclcpp::Duration(3, 0);
@@ -180,7 +180,7 @@ bool Grabi::drop_plateforme(bool a_do_sleep)
         }
     }*/
     m_ax12_left_can->set(AX12_LEFT_EXT, 100);
-    m_ax12_left_can->set(AX12_RIGHT_EXT, 100);
+    m_ax12_right_can->set(AX12_RIGHT_EXT, 100);
     usleep(1.5e6);
 
     m_stepper_elevator->goToPosition(150); // mm
@@ -188,7 +188,7 @@ bool Grabi::drop_plateforme(bool a_do_sleep)
     usleep(2.5e6);
 
     m_ax12_left_can->set(AX12_LEFT_GRAB, 100);
-    m_ax12_left_can->set(AX12_RIGHT_GRAB, 100);
+    m_ax12_right_can->set(AX12_RIGHT_GRAB, 100);
 
     usleep(2.5e6);
     m_pump_plank->setPumping(false);
