@@ -27,7 +27,7 @@ public:
 
     Etape::EtapeType getType();
 
-    CoucheGateau getTypeCouche();
+    const CoucheGateau getTypeCouche();
 
 protected:
     Position position;

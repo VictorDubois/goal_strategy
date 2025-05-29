@@ -4,8 +4,8 @@
 
 #include "krabilib/strategie/abeille.h"
 #include "krabilib/strategie/accelerator.h"
-#include "krabilib/strategie/aireDeDepose.h"
 #include "krabilib/strategie/assiette.h"
+#include "krabilib/strategie/aireDeDepose.h"
 #include "krabilib/strategie/bouee.h"
 #include "krabilib/strategie/carreFouille.h"
 #include "krabilib/strategie/etape.h"
@@ -31,6 +31,7 @@ enum StartingPosition
     PAMI
 };
 
+
 class Coupe2024 : public StrategieV3
 {
 public:
@@ -38,11 +39,11 @@ public:
     void debugEtapes(visualization_msgs::msg::MarkerArray& ma);
     void etape_type_to_marker(visualization_msgs::msg::Marker& m, Etape* e);
 
-    void catchStatuette() {}; // 2022 only
-    void dropStatuette() {};  // 2022 only
+    void catchStatuette(){}; // 2022 only
+    void dropStatuette(){};  // 2022 only
 
-    void grabGateau(Etape* /*e*/) {}; // 2023 only
-    int dropGateau(Etape* /*e*/) {};  // 2023 only
+    void grabGateau(Etape* e){}; //2023 only
+    int dropGateau(Etape* e){}; //2023 only
 
     void grabPlant(Etape* e);
     int dropPlant(Etape* e);

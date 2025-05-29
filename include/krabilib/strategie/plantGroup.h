@@ -15,14 +15,14 @@ enum PlantType
 
 class Plant
 {
-public:
-    Plant() {};
-    Plant(PlantType /*plant_type*/, Position /*start_position*/) {};
+    public:
+        Plant(){};
+        Plant(PlantType plant_type, Position start_position){};
 
-private:
-    PlantType m_plant_type;
-    Position m_position;
-    Position m_start_position;
+    private:
+        PlantType m_plant_type;
+        Position m_position;
+        Position m_start_position;
 };
 
 class PlantGroup : public MediumLevelAction
@@ -42,6 +42,7 @@ public:
 
     void EmptyPlantGroup();
 
+    
 protected:
     Position m_position;
     Position m_start_position;
