@@ -85,7 +85,7 @@ Coupe2025::Coupe2025(const bool isYellow, const StartingPosition2025 starting_po
     int stock_proche_rampe = Etape::makeEtape(
       new StockDeMatierePremiere(Pose(positionC(-0.675f, -0.725f), Angle(0.0f))));
     int stock_centre_us
-      = Etape::makeEtape(new StockDeMatierePremiere(Pose(positionC(-0.4f, 0.05f), Angle(0.0f))));
+      = Etape::makeEtape(new StockDeMatierePremiere(Pose(positionC(-0.4f, 0.0f), Angle(0.0f))));
     int stock_centre_them
       = Etape::makeEtape(new StockDeMatierePremiere(Pose(positionC(0.4f, 0.05f), Angle(0.0f))));
     int stock_front_us
