@@ -963,7 +963,7 @@ void GoalStrat::chooseGear()
       // 2024
       || m_strat_graph->getEtapeEnCours()->getEtapeType() == Etape::EtapeType::AIRE_DE_DEPOSE
       || m_strat_graph->getEtapeEnCours()->getEtapeType() == Etape::EtapeType::PLANT_GROUP
-      //2025
+      // 2025
       || m_previous_etape_type == Etape::EtapeType::AIRE_DE_CONSTRUCTION)
     {
         l_reverseGear.data = true;
@@ -986,7 +986,9 @@ void GoalStrat::chooseGear()
           && m_strat_graph->getEtapeEnCours()->getEtapeType() != Etape::EtapeType::AIRE_DE_DEPOSE)
       || m_previous_etape_type == Etape::EtapeType::AIRE_DE_DEPOSE
       // 2025
-      || m_strat_graph->getEtapeEnCours()->getEtapeType() == Etape::EtapeType::STOCK_MATIERE_PREMIERE
+      || m_strat_graph->getEtapeEnCours()->getEtapeType()
+           == Etape::EtapeType::STOCK_MATIERE_PREMIERE
+      // || m_previous_etape_type == Etape::EtapeType::DEPART // should not be needed
       || m_strat_graph->getEtapeEnCours()->getEtapeType() == Etape::EtapeType::AIRE_DE_CONSTRUCTION)
     {
         l_reverseGear.data = false;
@@ -996,17 +998,17 @@ void GoalStrat::chooseGear()
     {
         // // Don't care
         // l_reverseGear.data = false;
-        // m_strat_mvnt.reverse_gear = krabi_msgs::msg::StratMovement::FORWARD_OR_REVERSE;
+        m_strat_mvnt.reverse_gear = krabi_msgs::msg::StratMovement::FORWARD_OR_REVERSE;
         if (m_year == 2024)
         {
             l_reverseGear.data = true;
             m_strat_mvnt.reverse_gear = krabi_msgs::msg::StratMovement::REVERSE;
         }
-        else
+        /*else
         {
             l_reverseGear.data = false;
             m_strat_mvnt.reverse_gear = krabi_msgs::msg::StratMovement::FORWARD;
-        }
+        }*/
     }
 
     // l_reverseGear.data = true;
@@ -1126,7 +1128,8 @@ void GoalStrat::publishScore()
     m_actuators.set_score(m_score_match_at_end);
     m_actuators2023.set_score(m_score_match_at_end);
     m_actuators2025.set_score(m_score_match_at_end);
-    RCLCPP_WARN_STREAM(rclcpp::get_logger("rclcpp"), " score at end " << m_score_match_at_end << std::endl);
+    RCLCPP_WARN_STREAM(rclcpp::get_logger("rclcpp"),
+                       " score at end " << m_score_match_at_end << std::endl);
 }
 
 /**
