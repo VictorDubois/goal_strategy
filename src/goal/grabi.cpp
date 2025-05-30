@@ -197,6 +197,7 @@ bool Grabi::drop_plateforme(bool a_do_sleep)
     usleep(1.5e6);
 
     m_stepper_elevator->goToPosition(150); // mm
+    m_servo_lever->set(SERVO_FINGER_LOW, 100);
 
     usleep(2.5e6);
 
@@ -206,7 +207,6 @@ bool Grabi::drop_plateforme(bool a_do_sleep)
     usleep(2.5e6);
     m_pump_plank->setPumping(false);
     m_pump_plank->release();
-    m_servo_lever->set(SERVO_FINGER_LOW, 100);
 
     usleep(1.5e6);
     m_ax12_suction_cup->set(AX12_SUCTION_HIGH, 100);
