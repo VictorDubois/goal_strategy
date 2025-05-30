@@ -141,7 +141,7 @@ bool Grabi::grab_plateforme(bool a_do_sleep)
 
     usleep(1.5e6);
 
-    m_ax12_suction_cup->set(AX12_SUCTION_LOW, 100);
+    m_ax12_suction_cup->set(AX12_SUCTION_GRAB, 100);
     m_servo_lever->set(SERVO_FINGER_HIGH, 100);
 
     usleep(1.5e6);
