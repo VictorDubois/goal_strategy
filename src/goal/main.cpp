@@ -493,8 +493,9 @@ void GoalStrat::goToNextMission()
     {
         RCLCPP_DEBUG_STREAM(rclcpp::get_logger("rclcpp"), "Graph status is -1: we're done");
         RCLCPP_INFO(rclcpp::get_logger("rclcpp"), "All goals accomplished");
-        m_state = State::EXIT;
-        return;
+        m_all_done_do_funny = true;
+        // m_state = State::EXIT;
+        // return;
     }
     if ((!m_claws_openned_once
          && (m_strat_graph->getEtapeEnCours()->getEtapeType() == Etape::EtapeType::PILE_GATEAU
@@ -904,6 +905,10 @@ void GoalStrat::checkStopMatch()
  */
 bool GoalStrat::checkFunnyAction()
 {
+    if (m_all_done_do_funny)
+    {
+        return true;
+    }
     const rclcpp::Duration funny_action_timing = rclcpp::Duration(15, 0); // 10s before T=0;
 
     if (m_remainig_time.seconds() < funny_action_timing.seconds())
