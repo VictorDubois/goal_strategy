@@ -280,6 +280,10 @@ bool GoalStrat::isArrivedAtGoal(Distance a_offset)
     {
         l_reach_dist = m_grabi->getReach();
     }
+    if (isParked())
+    {
+        // l_reach_dist *= 2;
+    }
 
     if (m_dist_to_goal < l_reach_dist)
     {
@@ -1081,7 +1085,7 @@ bool GoalStrat::isParked()
     else if (m_year == 2025)
     {
         // Only one spot in 2025
-        l_valid_end_locations.push_back(Position(Distance(-1.125f), Distance(-0.775f)));
+        l_valid_end_locations.push_back(m_strat_graph->getParkedPosition());
     }
 
     for (auto l_position : l_valid_end_locations)
@@ -1318,6 +1322,11 @@ void GoalStrat::stateRun()
 
     if (isArrivedAtGoal())
     {
+        if (isParked())
+        {
+            // Does not work yet, but not a real problem
+            // stopAngular();
+        }
         // retract arm if needed
         if (m_previous_etape_type == Etape::EtapeType::MANCHE_A_AIR)
         {

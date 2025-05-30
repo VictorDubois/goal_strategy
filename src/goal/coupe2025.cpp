@@ -100,7 +100,7 @@ Coupe2025::Coupe2025(const bool isYellow, const StartingPosition2025 starting_po
     int zone_contruction_cote = Etape::makeEtape(new AireDeConstruction(
       Pose(positionC(1.275f, 0.125f), Angle(0.0f)), Owner::us, AireSize::AIRE_BIG));
     int zone_contruction_backstage
-      = Etape::makeEtape(/*new AireDeConstruction(Pose(*/positionC(-1.1f, -0.480f)/*, Angle(0.0f)),
+      = Etape::makeEtape(/*new AireDeConstruction(Pose(*/getParkedPosition()/* positionC(-1.1f, -0.480f)*//*, Angle(0.0f)),
                                                 Pose(positionC(-1.125f, -0.775f), Angle(0.0f)),
                                                 Owner::us,
                                                 AireSize::AIRE_BIG)*/);
