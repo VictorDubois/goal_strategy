@@ -188,8 +188,11 @@ bool Grabi::drop_plateforme(bool a_do_sleep)
 
     m_ax12_left_can->set(AX12_LEFT_GRAB, 10);
     m_ax12_right_can->set(AX12_RIGHT_GRAB, 10);
+    usleep(1.5e6);
 
-    usleep(2.5e6);
+    m_stepper_elevator->goToPosition(120); // mm
+
+    usleep(1.0e6);
     m_pump_plank->setPumping(false);
     m_pump_plank->release();
 
