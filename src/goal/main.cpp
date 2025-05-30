@@ -686,19 +686,19 @@ GoalStrat::GoalStrat()
 
     // 2025
 
-    auto l_servo_grabi_left_most = std::make_shared<Servomotor>(10, 90);
-    auto l_servo_grabi_center_left = std::make_shared<Servomotor>(10, 90);
-    auto l_servo_grabi_center_right = std::make_shared<Servomotor>(10, 90);
-    auto l_servo_grabi_right_most = std::make_shared<Servomotor>(10, 90);
+    auto l_servo_grabi_left_most = std::make_shared<Servomotor>(10, SERVO_RIGHTMOST_CAN_GRAB);
+    auto l_servo_grabi_center_left = std::make_shared<Servomotor>(10, SERVO_RIGHTCENTER_CAN_GRAB);
+    auto l_servo_grabi_center_right = std::make_shared<Servomotor>(10, SERVO_LEFTCENTER_CAN_GRAB);
+    auto l_servo_grabi_right_most = std::make_shared<Servomotor>(10, SERVO_LEFTMOST_CAN_GRAB);
     auto l_pump_plank = std::make_shared<Pump>(false, true);
-    auto l_ax12_1 = std::make_shared<AX12>(10, 90);
-    auto l_ax12_2 = std::make_shared<AX12>(10, 90);
-    auto l_ax12_3 = std::make_shared<AX12>(10, 90);
+    auto l_ax12_1 = std::make_shared<AX12>(10, AX12_LEFT_GRAB);
+    auto l_ax12_2 = std::make_shared<AX12>(10, AX12_RIGHT_GRAB);
+    auto l_ax12_3 = std::make_shared<AX12>(10, AX12_SUCTION_HIGH);
     auto l_ax12_4 = std::make_shared<AX12>(10, 90);
-    auto l_servo_grabi_lever = std::make_shared<Servomotor>(10, 90);
+    auto l_servo_grabi_lever = std::make_shared<Servomotor>(10, SERVO_FINGER_LOW);
     m_servo_banner = std::make_shared<Servomotor>(10, 90);
     auto l_stepper_grabi_elevator = std::make_shared<StepperElevator>(
-      100 /* mm/s */, 1000 /* mm/s2 */, 100 /* x50mA */, 300 /*mm de haut max*/);
+      100 /* mm/s */, 100 /* mm/s2 */, 100 /* x50mA */, 300 /*mm de haut max*/);
 
     m_grabi = std::make_shared<Grabi>(Position(Eigen::Vector2d(0.191767f, 0.f)),
                                       Position(Eigen::Vector2d(0.08f, 0.f)),
@@ -719,7 +719,7 @@ GoalStrat::GoalStrat()
                                     l_servo_grabi_center_left,
                                     l_servo_grabi_center_right,
                                     l_servo_grabi_right_most,
-                                    m_servo_banner,
+                                    l_servo_grabi_lever,
                                     l_servo_arm_suction_cup,
                                     l_servo_arm_suction_cup,
                                     l_servo_arm_suction_cup,

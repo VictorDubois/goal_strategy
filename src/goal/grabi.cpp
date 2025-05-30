@@ -1,32 +1,5 @@
 #include <goal_strategy/grabi.h>
 
-#define AX12_LEFT_EXT 100
-#define AX12_LEFT_INT 615
-#define AX12_LEFT_GRAB 400
-
-#define AX12_RIGHT_EXT 615
-#define AX12_RIGHT_INT 100
-#define AX12_RIGHT_GRAB 320
-
-#define AX12_SUCTION_HIGH 828
-#define AX12_SUCTION_LOW 340
-#define AX12_SUCTION_GRAB 490
-
-#define SERVO_RIGHTMOST_CAN_GRAB 67
-#define SERVO_RIGHTMOST_CAN_RELEASE 144
-
-#define SERVO_RIGHTCENTER_CAN_GRAB 52
-#define SERVO_RIGHTCENTER_CAN_RELEASE 132
-
-#define SERVO_LEFTCENTER_CAN_GRAB 67
-#define SERVO_LEFTCENTER_CAN_RELEASE 144
-
-#define SERVO_LEFTMOST_CAN_GRAB 62
-#define SERVO_LEFTMOST_CAN_RELEASE 150
-
-#define SERVO_FINGER_HIGH 110
-#define SERVO_FINGER_LOW 175
-
 Grabi::Grabi(Position a_relative_position_in_front,
              Position a_relative_position_inside,
              std::shared_ptr<Servomotor> a_servo_magnet_1,
@@ -101,6 +74,7 @@ void Grabi::initGrabi()
     m_servo_magnet_2->set(SERVO_RIGHTCENTER_CAN_GRAB, 100);
     m_servo_magnet_3->set(SERVO_LEFTCENTER_CAN_GRAB, 100);
     m_servo_magnet_4->set(SERVO_LEFTMOST_CAN_GRAB, 100);
+    m_servo_lever->set(SERVO_FINGER_LOW, 100);
     m_pump_plank->setPumping(false);
     initializeElevator();
 }
@@ -145,6 +119,8 @@ bool Grabi::grab_plateforme(bool a_do_sleep)
     m_servo_lever->set(SERVO_FINGER_HIGH, 100);
 
     usleep(1.5e6);
+
+    m_ax12_suction_cup->set(AX12_SUCTION_TRANSPORT, 100);
 
     // @todo check that the cans are grabbed
 
@@ -192,24 +168,33 @@ bool Grabi::drop_plateforme(bool a_do_sleep)
             success = true;
         }
     }*/
-    m_ax12_left_can->set(AX12_LEFT_EXT, 100);
-    m_ax12_right_can->set(AX12_RIGHT_EXT, 100);
-    usleep(1.5e6);
+    m_ax12_left_can->set(AX12_SUCTION_TAKE_OUTER_CANS, 100);
+    m_stepper_elevator->goToPosition(5); // mm
 
-    m_stepper_elevator->goToPosition(150); // mm
-    m_servo_lever->set(SERVO_FINGER_LOW, 100);
+    usleep(0.5e6);
+    m_servo_lever->set(SERVO_FINGER_HIGHER_TAKE_OUTER_CANS, 100);
+    usleep(0.5e6);
 
+    m_ax12_left_can->set(AX12_LEFT_EXT, 10);
+    m_ax12_right_can->set(AX12_RIGHT_EXT, 10);
     usleep(2.5e6);
 
-    m_ax12_left_can->set(AX12_LEFT_GRAB, 100);
-    m_ax12_right_can->set(AX12_RIGHT_GRAB, 100);
+    m_stepper_elevator->goToPosition(140); // mm
+    m_servo_lever->set(SERVO_FINGER_LOW, 100);
+
+    usleep(2.0e6);
+    m_ax12_left_can->set(AX12_SUCTION_HIGH, 100);
+    usleep(0.5e6);
+
+    m_ax12_left_can->set(AX12_LEFT_GRAB, 10);
+    m_ax12_right_can->set(AX12_RIGHT_GRAB, 10);
 
     usleep(2.5e6);
     m_pump_plank->setPumping(false);
     m_pump_plank->release();
 
     usleep(1.5e6);
-    m_ax12_suction_cup->set(AX12_SUCTION_HIGH, 100);
+    m_ax12_suction_cup->set(AX12_SUCTION_TRANSPORT, 100);
     m_servo_magnet_1->set(SERVO_RIGHTMOST_CAN_RELEASE, 100);
     m_servo_magnet_2->set(SERVO_RIGHTCENTER_CAN_RELEASE, 100);
     m_servo_magnet_3->set(SERVO_LEFTCENTER_CAN_RELEASE, 100);
