@@ -2006,6 +2006,7 @@ void GoalStrat::loop()
             if (m_year == 2025)
             {
                 pushBanner();
+                m_grabi->initGrabi();
             }
         }
         break;

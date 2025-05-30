@@ -31,6 +31,8 @@ public:
     void initializeElevator();
     void resetElevatorLow();
 
+    void initGrabi();
+
     bool elevatorInitDone();
     void updateCanDetected(uint8_t a_can_detected)
     {

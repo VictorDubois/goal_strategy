@@ -205,6 +205,7 @@ private:
     bool m_tirette;
     float m_vacuum_level;
     int m_vacuum_state;
+    bool m_all_done_do_funny = false;
 
     Actuators m_actuators;
     Actuators2023 m_actuators2023;
