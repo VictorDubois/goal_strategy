@@ -197,7 +197,7 @@ bool Grabi::drop_plateforme(bool a_do_sleep)
     m_pump_plank->release();
 
     usleep(1.5e6);
-    m_ax12_suction_cup->set(AX12_SUCTION_TRANSPORT, 100);
+    m_ax12_suction_cup->set(AX12_SUCTION_HIGH, 100);
     m_servo_magnet_1->set(SERVO_RIGHTMOST_CAN_RELEASE, 100);
     m_servo_magnet_2->set(SERVO_RIGHTCENTER_CAN_RELEASE, 100);
     m_servo_magnet_3->set(SERVO_LEFTCENTER_CAN_RELEASE, 100);
