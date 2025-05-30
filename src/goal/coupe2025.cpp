@@ -96,7 +96,7 @@ Coupe2025::Coupe2025(const bool isYellow, const StartingPosition2025 starting_po
     // Definition de zones de construction
     // Us
     int zone_contruction_front = Etape::makeEtape(new AireDeConstruction(
-      Pose(positionC(-0.275f, 0.775f), Angle(0.0f)), Owner::us, AireSize::AIRE_BIG));
+      Pose(positionC(-0.250f, 0.775f), Angle(0.0f)), Owner::us, AireSize::AIRE_BIG));
     int zone_contruction_cote = Etape::makeEtape(new AireDeConstruction(
       Pose(positionC(1.275f, 0.125f), Angle(0.0f)), Owner::us, AireSize::AIRE_BIG));
     int zone_contruction_backstage
@@ -108,7 +108,7 @@ Coupe2025::Coupe2025(const bool isYellow, const StartingPosition2025 starting_po
     int mini_zone_contruction_coin = Etape::makeEtape(new AireDeConstruction(
       Pose(positionC(1.275f, 0.925f), Angle(0.0f)), Owner::us, AireSize::AIRE_SMALL));
     int mini_zone_contruction_front = Etape::makeEtape(new AireDeConstruction(
-      Pose(positionC(-0.725f, 0.925f), Angle(0.0f)), Owner::us, AireSize::AIRE_SMALL));
+      Pose(positionC(-0.725f, 0.890f), Angle(0.0f)), Owner::us, AireSize::AIRE_SMALL));
 
     // Them
     int zone_contruction_front_them = Etape::makeEtape(new AireDeConstruction(
