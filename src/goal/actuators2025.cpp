@@ -128,8 +128,8 @@ void Actuators2025::publish()
     m_message.ax12_4.current_limit = m_AX12_4->getCurrentLimit();
     m_message.ax12_4.max_accel = m_AX12_4->getCurrentLimit();
 
-    m_message.vacuum_1.enable_pump = false;
-    m_message.vacuum_1.release = false;
+    m_message.vacuum_1.enable_pump = m_grabber_pump->getPumping();
+    m_message.vacuum_1.release = m_grabber_pump->getRelease();
     m_message.vacuum_2.enable_pump = false;
     m_message.vacuum_2.release = false;
 
