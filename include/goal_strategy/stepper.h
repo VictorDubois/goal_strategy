@@ -37,7 +37,7 @@ public:
     };
 
     explicit StepperMotor()
-      : StepperMotor(100, 2000, 5000)
+      : StepperMotor(150, 150, 100)
     {
     }
     // void publish(float a_speed, float a_angle);
