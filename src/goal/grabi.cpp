@@ -79,15 +79,8 @@ void Grabi::initGrabi()
     initializeElevator();
 }
 
-bool Grabi::grab_plateforme(bool a_do_sleep)
+bool Grabi::pre_grab_plateforme()
 {
-    /*if (elevatorInitHasFailed())
-    {
-        return false;
-    }*/
-
-    /* @todo raise plank */
-
     m_ax12_left_can->set(AX12_LEFT_GRAB, 100);
     m_ax12_right_can->set(AX12_RIGHT_GRAB, 100);
     m_ax12_suction_cup->set(AX12_SUCTION_HIGH, 100);
@@ -115,8 +108,22 @@ bool Grabi::grab_plateforme(bool a_do_sleep)
 
     usleep(1.5e6);
 
-    m_ax12_suction_cup->set(AX12_SUCTION_GRAB, 100);
     m_servo_lever->set(SERVO_FINGER_HIGH, 100);
+
+    m_ax12_suction_cup->set(AX12_SUCTION_TRANSPORT, 100);
+    usleep(1.5e6);
+}
+
+bool Grabi::grab_plateforme(bool a_do_sleep)
+{
+    /*if (elevatorInitHasFailed())
+    {
+        return false;
+    }*/
+
+    /* @todo raise plank */
+
+    m_ax12_suction_cup->set(AX12_SUCTION_GRAB, 100);
 
     usleep(1.5e6);
 

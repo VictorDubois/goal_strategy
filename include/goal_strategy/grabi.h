@@ -53,6 +53,7 @@ public:
 
     bool grab_plateforme(bool a_do_sleep = true);
     bool drop_plateforme(bool a_do_sleep = true);
+    bool pre_grab_plateforme();
     void setInFront();
     void setInside();
     float getReach();

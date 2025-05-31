@@ -73,6 +73,39 @@ void GoalStrat::recule(rclcpp::Duration a_time)
 {
     recule(a_time, Distance(1000));
 }
+
+void GoalStrat::avance(rclcpp::Duration a_time, Distance a_distance)
+{
+    updateCurrentPose();
+    auto l_initial_pose = m_current_pose.getPosition();
+
+    RCLCPP_INFO_STREAM(rclcpp::get_logger("rclcpp"), "avance !!");
+    recalage_bordure();
+    // m_strat_mvnt.reverse_gear = 1;
+    override_gear = krabi_msgs::msg::StratMovement::FORWARD;
+
+    if (m_year == 2024)
+    {
+        override_gear = krabi_msgs::msg::StratMovement::REVERSE;
+    }
+
+    publishStratMovement();
+    auto recalageTimeoutDeadline = this->now() + a_time;
+
+    Distance l_distance_parcourue = Distance(0);
+
+    while (this->now().seconds() < recalageTimeoutDeadline.seconds()
+           && l_distance_parcourue < a_distance)
+    {
+        // todo fix and reenable
+        // rclcpp::spin_some(shared_from_this());
+        updateCurrentPose();
+        l_distance_parcourue = (l_initial_pose - m_current_pose.getPosition()).getNorme();
+        usleep(0.1e6);
+    }
+    override_gear = krabi_msgs::msg::StratMovement::FORWARD_OR_REVERSE;
+}
+
 void GoalStrat::recule(rclcpp::Duration a_time, Distance a_distance)
 {
     updateCurrentPose();
@@ -1786,11 +1819,22 @@ void GoalStrat::stateRun()
             startAngular();
             break;
         case Etape::EtapeType::STOCK_MATIERE_PREMIERE:
-            m_strat_graph->grabPlateformes(m_strat_graph->getEtapeEnCours());
             stopLinear();
             stopAngular();
+            m_strat_graph->grabPlateformes(m_strat_graph->getEtapeEnCours());
+
             RCLCPP_INFO_STREAM(rclcpp::get_logger("rclcpp"), "Grab plateforme");
+
+            m_grabi->pre_grab_plateforme();
+
+            startLinear();
+            startAngular();
+            avance(rclcpp::Duration(2, 0), Distance(0.07));
+            stopLinear();
+            stopAngular();
+
             m_grabi->grab_plateforme();
+
             RCLCPP_INFO_STREAM(rclcpp::get_logger("rclcpp"), "Done grabbing plateforme");
 
             while (!m_grabi->allCansDetected())
