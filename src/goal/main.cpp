@@ -1776,7 +1776,7 @@ void GoalStrat::stateRun()
             m_grabi->drop_plateforme();
             startLinear();
             startAngular();
-            recule(rclcpp::Duration(3, 0), Distance(0.2));
+            recule(rclcpp::Duration(4, 0), Distance(0.2));
             stopLinear();
             stopAngular();
             RCLCPP_INFO_STREAM(rclcpp::get_logger("rclcpp"), "Resetting elevator");
