@@ -1780,7 +1780,7 @@ void GoalStrat::stateRun()
             stopLinear();
             stopAngular();
             RCLCPP_INFO_STREAM(rclcpp::get_logger("rclcpp"), "Resetting elevator");
-            m_grabi->resetElevatorLow();
+            m_grabi->initGrabi();
             RCLCPP_INFO_STREAM(rclcpp::get_logger("rclcpp"), "Done resetting elevator");
             startLinear();
             startAngular();
