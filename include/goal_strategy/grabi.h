@@ -60,7 +60,7 @@ public:
     void initializeElevator();
     void resetElevatorLow();
 
-    void initGrabi();
+    void initGrabi(bool a_force_init_elevator);
 
     bool elevatorInitDone();
     void updateCanDetected(uint8_t a_can_detected)

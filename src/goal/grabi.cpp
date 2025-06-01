@@ -65,7 +65,7 @@ bool Grabi::elevatorInitDone()
     return m_stepper_elevator->homingDone();
 }
 
-void Grabi::initGrabi()
+void Grabi::initGrabi(bool a_force_init_elevator)
 {
     m_ax12_left_can->set(AX12_LEFT_GRAB, 100);
     m_ax12_right_can->set(AX12_RIGHT_GRAB, 100);
@@ -76,7 +76,15 @@ void Grabi::initGrabi()
     m_servo_magnet_4->set(SERVO_LEFTMOST_CAN_GRAB, 100);
     m_servo_lever->set(SERVO_FINGER_LOW, 100);
     m_pump_plank->setPumping(false);
-    initializeElevator();
+
+    if (a_force_init_elevator)
+    {
+        initializeElevator();
+    }
+    else
+    {
+        m_stepper_elevator->goToPosition(0); // mm
+    }
 }
 
 bool Grabi::grab_plateforme(bool a_do_sleep)

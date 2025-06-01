@@ -1780,7 +1780,7 @@ void GoalStrat::stateRun()
             stopLinear();
             stopAngular();
             RCLCPP_INFO_STREAM(rclcpp::get_logger("rclcpp"), "Resetting elevator");
-            m_grabi->initGrabi();
+            m_grabi->initGrabi(false);
             RCLCPP_INFO_STREAM(rclcpp::get_logger("rclcpp"), "Done resetting elevator");
             startLinear();
             startAngular();
@@ -2006,7 +2006,7 @@ void GoalStrat::loop()
             if (m_year == 2025)
             {
                 pushBanner();
-                m_grabi->initGrabi();
+                m_grabi->initGrabi(true);
             }
         }
         break;
