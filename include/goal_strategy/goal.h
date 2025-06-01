@@ -91,7 +91,6 @@ private:
     void clamp_mode();
     void recule(rclcpp::Duration a_time);
     void recule(rclcpp::Duration a_time, Distance a_distance);
-    void avance(rclcpp::Duration a_time, Distance a_distance);
     void reculeDroit(rclcpp::Duration a_time, Distance a_distance);
     void stopAngular();
     void startAngular();
