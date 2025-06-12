@@ -67,7 +67,8 @@ public:
         INIT,
         WAIT_TIRETTE,
         RUN,
-        EXIT
+        EXIT,
+        ALL_DONE
     };
     bool isArrivedAtGoal();
     void stop();

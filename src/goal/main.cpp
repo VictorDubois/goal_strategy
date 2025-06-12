@@ -389,6 +389,10 @@ void GoalStrat::updateCurrentPose()
  */
 void GoalStrat::goToNextMission()
 {
+    if (m_state == State::ALL_DONE)
+    {
+        return;
+    }
     m_servo_out = false;
 
     m_moving_timeout_deadline = this->now() + rclcpp::Duration(m_timeout_moving, 0);
@@ -494,8 +498,8 @@ void GoalStrat::goToNextMission()
         RCLCPP_DEBUG_STREAM(rclcpp::get_logger("rclcpp"), "Graph status is -1: we're done");
         RCLCPP_INFO(rclcpp::get_logger("rclcpp"), "All goals accomplished");
         m_all_done_do_funny = true;
-        // m_state = State::EXIT;
-        // return;
+        m_state = State::ALL_DONE;
+        return;
     }
     if ((!m_claws_openned_once
          && (m_strat_graph->getEtapeEnCours()->getEtapeType() == Etape::EtapeType::PILE_GATEAU
@@ -2011,6 +2015,9 @@ void GoalStrat::loop()
         }
         break;
     case State::RUN:
+        stateRun();
+        break;
+    case State::ALL_DONE:
         stateRun();
         break;
     case State::EXIT:

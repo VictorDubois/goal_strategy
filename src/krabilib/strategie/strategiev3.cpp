@@ -11,6 +11,8 @@
 #include "krabilib/strategie/dijkstra.h"
 #include "krabilib/strategie/etape.h"
 
+#include "rclcpp/rclcpp.hpp"
+
 #ifdef QTGUI
 #include <QDebug>
 #endif
@@ -241,9 +243,19 @@ int StrategieV3::update()
 
             // On recalcul les distances par rapport à l'étape où l'on vient d'arriver
             m_dijkstra->setEtapeCourante(m_etape_en_cours);
+            m_tableau_etapes_total[m_etape_en_cours]->activeEtapesApres();
 
             if (m_dijkstra->run() != 0)
             {
+                RCLCPP_INFO_STREAM(rclcpp::get_logger("rclcpp"), "m_dijkstra->run() != 0)");
+                RCLCPP_INFO_STREAM(rclcpp::get_logger("rclcpp"),
+                                   "m_etape_en_cours = " << m_etape_en_cours);
+                RCLCPP_INFO_STREAM(rclcpp::get_logger("rclcpp"),
+                                   "m_tableau_etapes_total[m_etape_en_cours] = "
+                                     << m_tableau_etapes_total[m_etape_en_cours]);
+                RCLCPP_INFO_STREAM(rclcpp::get_logger("rclcpp"),
+                                   "m_tableau_etapes_total[m_etape_en_cours]->getAction() = "
+                                     << m_tableau_etapes_total[m_etape_en_cours]->getAction());
                 // Si run renvoit autre chose que 0, c'est que l'étape en cours a changée.
                 // Cela arrive pour débloquer le robot
                 // Etape* ancienneEtape = m_tableau_etapes_total[m_etape_en_cours];
@@ -263,8 +275,9 @@ int StrategieV3::update()
                 //        score =
                 //        modificateurTemporel*(10000-m_tableau_etapes_total[i]->getDistance() +
                 //        scoreTypeEtape);
-                score = (100000 - m_tableau_etapes_total[i]->getDistance()*1000 + scoreTypeEtape*1000);
-		m_tableau_etapes_total[i]->setHeuristicScore(score);
+                score = (100000 - m_tableau_etapes_total[i]->getDistance() * 1000
+                         + scoreTypeEtape * 1000);
+                m_tableau_etapes_total[i]->setHeuristicScore(score);
                 if ((scoreMaxi < score) && scoreTypeEtape
                     && (m_tableau_etapes_total[i]->getDistance() != -1))
                 {

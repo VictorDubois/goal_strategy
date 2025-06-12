@@ -15,21 +15,21 @@ public:
     enum EtapeType
     {
         DEPART = 0x01,
-        //#ifdef GOLDO2018
-        //2018
+        // #ifdef GOLDO2018
+        // 2018
         ABEILLE = 0x03,
         RESERVOIR_EAU = 0x05,
-        //2019
+        // 2019
         GOLDENIUM = 0x06,
         ACCELERATOR = 0x07,
         PRE_BAFFE = 0x09,
-        //#elif KRABI2016
+        // #elif KRABI2016
         CUBE_DEBUT = 0x02,
         // 2016
         DUNE = 0x04,
         ZONE_CONSTRUCTION = 0x08,
         CABINE = 0x10,
-        //2020+2021
+        // 2020+2021
         PHARE = 0x11,
         MANCHE_A_AIR = 0x12,
         PORT = 0x13,
@@ -45,14 +45,12 @@ public:
         // 2023
         PILE_GATEAU = 0x22,
         ASSIETTE = 0x23,
-        //2024 
+        // 2024
         PLANT_GROUP = 0x24,
         AIRE_DE_DEPOSE = 0x25,
-        //2025
+        // 2025
         STOCK_MATIERE_PREMIERE = 0x26,
         AIRE_DE_CONSTRUCTION = 0x27,
-
-
 
         POINT_PASSAGE = 0x30,
 
@@ -61,6 +59,9 @@ public:
     };
 
     static int makeEtape(MediumLevelAction* action);
+    static int makeEtape(MediumLevelAction* action, std::string a_name);
+    static int makeEtape(Position position, std::string a_name, EtapeType type = POINT_PASSAGE);
+
     static int makeEtape(Position position, EtapeType type = POINT_PASSAGE);
 
     /** @brief Renvoi un pointeur vers une des etapes attachees a celle-ci *
@@ -164,6 +165,16 @@ public:
     /** @brief Renvoi le nom de l'étape */
     std::string getName();
 
+    std::string getCustomName()
+    {
+        return m_custom_name;
+    };
+
+    void setCustomName(std::string a_custom_name)
+    {
+        m_custom_name = a_custom_name;
+    };
+
     /** @brief Ajoute un voisin au tableau de voisins */
     void addVoisin(Etape* newVoisin, bool autreSens = true);
 
@@ -213,6 +224,14 @@ public:
 
     static std::vector<Etape*>& getTableauEtapesTotal();
 
+    void setEtapesActiveesApres(std::vector<Etape*> a_etapes_a_activer_apres);
+
+    void active();
+
+    void desactive();
+
+    void activeEtapesApres();
+
 private:
     /** @brief Constructeur d'une etape *
      *   @param position Position de cette étape *
@@ -259,7 +278,8 @@ private:
     /** @brief Score de l'étape, correspondant à si on veut que le robot la réalise ou pas*/
     int score;
 
-    /** @brief Score de l'étape, correspondant à si on veut que le robot la réalise ou pas en prenant en compte la distance*/
+    /** @brief Score de l'étape, correspondant à si on veut que le robot la réalise ou pas en
+     * prenant en compte la distance*/
     int heuristicScore;
     /** @brief Etape à laquelle on fini l'action de l'étape */
     int numeroEtapeFinAction;
@@ -278,4 +298,9 @@ private:
     static std::vector<Etape*> tableauEtapesTotal;
 
     void postInit();
+
+    std::string m_custom_name = "Undefined";
+
+    bool m_active = true;
+    std::vector<Etape*> m_etapes_a_activer_apres;
 };

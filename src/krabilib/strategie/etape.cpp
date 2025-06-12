@@ -35,31 +35,45 @@ std::string Etape::getName()
 {
     switch (getEtapeType())
     {
-        case EtapeType::DEPART:
-            return "Depart";
-            break;
-        case EtapeType::PILE_GATEAU:
-            return "PILE_GATEAU";
-            break;
-        case EtapeType::ASSIETTE:
-            return "ASSIETTE";
-            break;
-        case EtapeType::PLANT_GROUP:
-            return "Plante";
-            break;
-        case EtapeType::AIRE_DE_DEPOSE:
-            return "Depose";
-            break;
-        case EtapeType::POINT_PASSAGE:
-            return "PP";
-            break;
-        case EtapeType::ROBOT_VU_ICI:
-            return "OBS";
-            break;
-        default:
-            return "";
-            break;
+    case EtapeType::DEPART:
+        return "Depart";
+        break;
+    case EtapeType::PILE_GATEAU:
+        return "PILE_GATEAU";
+        break;
+    case EtapeType::ASSIETTE:
+        return "ASSIETTE";
+        break;
+    case EtapeType::PLANT_GROUP:
+        return "Plante";
+        break;
+    case EtapeType::AIRE_DE_DEPOSE:
+        return "Depose";
+        break;
+    case EtapeType::POINT_PASSAGE:
+        return "PP";
+        break;
+    case EtapeType::ROBOT_VU_ICI:
+        return "OBS";
+        break;
+    default:
+        return "";
+        break;
     }
+}
+
+int Etape::makeEtape(MediumLevelAction* action, std::string a_name)
+{
+    auto new_etape = makeEtape(action);
+    Etape::get(new_etape)->setCustomName(a_name);
+    return new_etape;
+}
+
+int Etape::makeEtape(Position position, std::string a_name, EtapeType type)
+{
+    auto new_etape = makeEtape(position, type);
+    Etape::get(new_etape)->setCustomName(a_name);
+    return new_etape;
 }
 
 int Etape::makeEtape(MediumLevelAction* action)
@@ -195,7 +209,7 @@ float* Etape::getDistances()
     return this->distances;
 }
 
-void Etape::setDistances(float  * distances)
+void Etape::setDistances(float* distances)
 {
     this->distances = distances;
 }
@@ -245,6 +259,10 @@ void Etape::setScore(int score)
 
 int Etape::getScore()
 {
+    if (!m_active)
+    {
+        return 0;
+    }
     return this->score;
 }
 
@@ -255,7 +273,34 @@ void Etape::setHeuristicScore(int score)
 
 int Etape::getHeuristicScore()
 {
+    if (!m_active)
+    {
+        return 0;
+    }
     return this->heuristicScore;
+}
+
+void Etape::setEtapesActiveesApres(std::vector<Etape*> a_etapes_a_activer_apres)
+{
+    m_etapes_a_activer_apres = a_etapes_a_activer_apres;
+}
+
+void Etape::active()
+{
+    m_active = true;
+}
+
+void Etape::desactive()
+{
+    m_active = false;
+}
+
+void Etape::activeEtapesApres()
+{
+    for (auto* l_etape : m_etapes_a_activer_apres)
+    {
+        l_etape->active();
+    }
 }
 
 void Etape::setAction(MediumLevelAction* action)
@@ -379,10 +424,10 @@ QString Etape::getNameType(EtapeType type)
         return "Passage";
     case DEPART:
         return "Départ";
-        //#ifdef GOLDO2018
+        // #ifdef GOLDO2018
     case ABEILLE:
         return "Abeille";
-        //#elif KRABI2016
+        // #elif KRABI2016
     case CABINE:
         return "Cabine";
     case DUNE:
@@ -392,7 +437,7 @@ QString Etape::getNameType(EtapeType type)
 
     case CUBE_DEBUT:
         return "Pousser les cubes a l'init";
-        //#endif
+        // #endif
     default:
         return QString::number(type);
     }
@@ -406,10 +451,10 @@ QString Etape::getShortNameType(EtapeType type)
         return "";
     case DEPART:
         return "Start";
-        //#ifdef GOLDO2018
+        // #ifdef GOLDO2018
     case ABEILLE:
         return "Abeille";
-        //#elif KRABI2016
+        // #elif KRABI2016
     case CABINE:
         return "Cabine";
     case DUNE:
@@ -419,7 +464,7 @@ QString Etape::getShortNameType(EtapeType type)
 
     case CUBE_DEBUT:
         return "Cube debut";
-        //#endif
+        // #endif
     default:
         return "";
     }
