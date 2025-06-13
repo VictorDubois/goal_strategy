@@ -101,14 +101,14 @@ Coupe2025::Coupe2025(const bool isYellow, const StartingPosition2025 starting_po
     // Definition de zones de construction
     // Us
     int zone_construction_front
-      = Etape::makeEtape(new AireDeConstruction(Pose(positionC(-0.250f, 0.875f), Angle(0.0f)),
+      = Etape::makeEtape(new AireDeConstruction(Pose(positionC(-0.250f, 0.8f), Angle(0.0f)),
                                                 Pose(positionC(-0.250f, 0.775f), Angle(0.0f)),
                                                 Owner::us,
                                                 AireSize::AIRE_BIG),
                          "zone_construction_front");
 
     int zone_construction_front_2
-      = Etape::makeEtape(new AireDeConstruction(Pose(positionC(-0.250f, 0.775f), Angle(0.0f)),
+      = Etape::makeEtape(new AireDeConstruction(Pose(positionC(-0.250f, 0.7f), Angle(0.0f)),
                                                 Pose(positionC(-0.250f, 0.775f), Angle(0.0f)),
                                                 Owner::us,
                                                 AireSize::AIRE_BIG),
@@ -118,7 +118,7 @@ Coupe2025::Coupe2025(const bool isYellow, const StartingPosition2025 starting_po
       ->setEtapesActiveesApres({ Etape::get(zone_construction_front_2) });
 
     int zone_construction_front_3
-      = Etape::makeEtape(new AireDeConstruction(Pose(positionC(-0.250f, 0.675f), Angle(0.0f)),
+      = Etape::makeEtape(new AireDeConstruction(Pose(positionC(-0.250f, 0.6f), Angle(0.0f)),
                                                 Pose(positionC(-0.250f, 0.775f), Angle(0.0f)),
                                                 Owner::us,
                                                 AireSize::AIRE_BIG),
@@ -143,10 +143,12 @@ Coupe2025::Coupe2025(const bool isYellow, const StartingPosition2025 starting_po
       new AireDeConstruction(
         Pose(positionC(1.275f, 0.925f), Angle(0.0f)), Owner::us, AireSize::AIRE_SMALL),
       "mini_zone_construction_coin");
-    int mini_zone_construction_front = Etape::makeEtape(
-      new AireDeConstruction(
-        Pose(positionC(-0.725f, 0.890f), Angle(0.0f)), Owner::us, AireSize::AIRE_SMALL),
-      "mini_zone_construction_front");
+    int mini_zone_construction_front
+      = Etape::makeEtape(new AireDeConstruction(Pose(positionC(-0.725f, 0.85f), Angle(0.0f)),
+                                                Pose(positionC(-0.725f, 0.925f), Angle(0.0f)),
+                                                Owner::us,
+                                                AireSize::AIRE_SMALL),
+                         "mini_zone_construction_front");
 
     // Them
     int zone_construction_front_them = Etape::makeEtape(
