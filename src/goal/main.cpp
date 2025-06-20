@@ -71,9 +71,24 @@ void GoalStrat::recalage_bordure()
 
 void GoalStrat::recule(rclcpp::Duration a_time)
 {
-    recule(a_time, Distance(1000));
+    reculeOuAvance(a_time, Distance(1000), true /*recule*/);
 }
 void GoalStrat::recule(rclcpp::Duration a_time, Distance a_distance)
+{
+    reculeOuAvance(a_time, a_distance, true /*recule*/);
+}
+
+void GoalStrat::avance(rclcpp::Duration a_time)
+{
+    reculeOuAvance(a_time, Distance(1000), false /*avance*/);
+}
+
+void GoalStrat::avance(rclcpp::Duration a_time, Distance a_distance)
+{
+    reculeOuAvance(a_time, a_distance, false /*avance*/);
+}
+
+void GoalStrat::reculeOuAvance(rclcpp::Duration a_time, Distance a_distance, bool sensRecule)
 {
     updateCurrentPose();
     auto l_initial_pose = m_current_pose.getPosition();
@@ -81,9 +96,15 @@ void GoalStrat::recule(rclcpp::Duration a_time, Distance a_distance)
     RCLCPP_INFO_STREAM(rclcpp::get_logger("rclcpp"), "recule !!");
     recalage_bordure();
     // m_strat_mvnt.reverse_gear = 1;
-    override_gear = krabi_msgs::msg::StratMovement::REVERSE;
 
     if (m_year == 2024)
+    {
+        sensRecule = !sensRecule;
+    }
+
+    override_gear = krabi_msgs::msg::StratMovement::REVERSE;
+
+    if (sensRecule == false)
     {
         override_gear = krabi_msgs::msg::StratMovement::FORWARD;
     }
@@ -104,7 +125,18 @@ void GoalStrat::recule(rclcpp::Duration a_time, Distance a_distance)
     }
     override_gear = krabi_msgs::msg::StratMovement::FORWARD_OR_REVERSE;
 }
+
 void GoalStrat::reculeDroit(rclcpp::Duration a_time, Distance a_distance)
+{
+    reculeOuAvanceDroit(a_time, a_distance, true /*recule*/);
+}
+
+void GoalStrat::avanceDroit(rclcpp::Duration a_time, Distance a_distance)
+{
+    reculeOuAvanceDroit(a_time, a_distance, false /*avance*/);
+}
+
+void GoalStrat::reculeOuAvanceDroit(rclcpp::Duration a_time, Distance a_distance, bool sensRecule)
 {
     updateCurrentPose();
     auto l_initial_pose = m_current_pose.getPosition();
@@ -113,10 +145,15 @@ void GoalStrat::reculeDroit(rclcpp::Duration a_time, Distance a_distance)
     // recalage_bordure();
     // m_strat_mvnt.reverse_gear = 1;
 
-    override_gear = krabi_msgs::msg::StratMovement::REVERSE;
-
-    Position l_position_recule = m_current_pose.getPosition();
     if (m_year == 2024) // On recule dans l'autre sens
+    {
+        sensRecule = !sensRecule;
+    }
+
+    override_gear = krabi_msgs::msg::StratMovement::REVERSE;
+    Position l_position_recule = m_current_pose.getPosition();
+
+    if (sensRecule == false)
     {
         override_gear = krabi_msgs::msg::StratMovement::FORWARD;
         l_position_recule.setX(
@@ -544,6 +581,7 @@ void GoalStrat::dropCherries()
 void GoalStrat::pushBanner()
 {
     reculeDroit(rclcpp::Duration(2, 0), Distance(0.1));
+    avance(rclcpp::Duration(2, 0), Distance(0.1));
 }
 
 void GoalStrat::closeCherriesDispenser()
