@@ -56,7 +56,10 @@ public:
 
     Position positionCAbsolute(double x_yellow_from_top_left, double y_yellow_from_top_left);
 
-    AireDeConstruction* getBestAreaForFunny(); // 2024 and 2025
+    AireDeConstruction* getBestAreaForFunny()
+    {
+        return nullptr;
+    }; // 2024 and 2025
 
     std::vector<Plateforme> getStock();
 
