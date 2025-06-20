@@ -1822,7 +1822,7 @@ void GoalStrat::stateRun()
             stopLinear();
             stopAngular();
             RCLCPP_INFO_STREAM(rclcpp::get_logger("rclcpp"), "Resetting elevator");
-            m_grabi->initGrabi(false);
+            m_grabi->auto_initGrabi(false);
             RCLCPP_INFO_STREAM(rclcpp::get_logger("rclcpp"), "Done resetting elevator");
             startLinear();
             startAngular();

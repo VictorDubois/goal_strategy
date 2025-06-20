@@ -65,7 +65,13 @@ bool Grabi::elevatorInitDone()
     return m_stepper_elevator->homingDone();
 }
 
-void Grabi::initGrabi(bool a_force_init_elevator)
+void Grabi::auto_initGrabi(bool a_first_elevator_init)
+{
+    auto init_grabi_thread = std::thread(&Grabi::initGrabi, this, a_first_elevator_init);
+    init_grabi_thread.detach();
+}
+
+void Grabi::initGrabi(bool a_first_elevator_init)
 {
     m_ax12_left_can->set(AX12_LEFT_GRAB, 100);
     m_ax12_right_can->set(AX12_RIGHT_GRAB, 100);

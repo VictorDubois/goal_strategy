@@ -59,6 +59,7 @@ public:
     Angle getAngle();
     void initializeElevator();
     void resetElevatorLow();
+    void auto_initGrabi(bool a_force_init_elevator);
 
     void initGrabi(bool a_force_init_elevator);
 
