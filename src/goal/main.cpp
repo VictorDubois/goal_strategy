@@ -1179,8 +1179,8 @@ void GoalStrat::publishScore()
     m_actuators.set_score(m_score_match_at_end);
     m_actuators2023.set_score(m_score_match_at_end);
     m_actuators2025.set_score(m_score_match_at_end);
-    RCLCPP_WARN_STREAM(rclcpp::get_logger("rclcpp"),
-                       " score at end " << m_score_match_at_end << std::endl);
+    // RCLCPP_WARN_STREAM(rclcpp::get_logger("rclcpp"),
+    //                    " score at end " << m_score_match_at_end << std::endl);
 }
 
 /**
