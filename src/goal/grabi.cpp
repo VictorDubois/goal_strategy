@@ -83,51 +83,17 @@ void Grabi::initGrabi(bool a_first_elevator_init)
     m_servo_lever->set(SERVO_FINGER_LOW, 100);
     m_pump_plank->setPumping(false);
 
-    if (a_force_init_elevator)
-    {
-        initializeElevator();
-    }
-    else
+    if (!a_first_elevator_init)
     {
         m_stepper_elevator->goToPosition(0); // mm
+        usleep(1.5e6);
     }
+    initializeElevator();
 }
 
 bool Grabi::grab_plateforme(bool a_do_sleep)
 {
-    /*if (elevatorInitHasFailed())
-    {
-        return false;
-    }*/
-
-    /* @todo raise plank */
-
-    m_ax12_left_can->set(AX12_LEFT_GRAB, 100);
-    m_ax12_right_can->set(AX12_RIGHT_GRAB, 100);
-    m_ax12_suction_cup->set(AX12_SUCTION_HIGH, 100);
-
-    m_servo_lever->set(SERVO_FINGER_LOW, 100);
-
-    m_stepper_elevator->goToPosition(0); // mm
-    usleep(1.5e6);
-    if (m_stepper_elevator->movmentDone())
-    {
-        RCLCPP_INFO_STREAM(rclcpp::get_logger("rclcpp"), "Elevator ready on grab position");
-    }
-    else
-    {
-        RCLCPP_INFO_STREAM(rclcpp::get_logger("rclcpp"),
-                           "Failed to get Elevator on grab position :(");
-    }
-
-    m_servo_magnet_1->set(SERVO_RIGHTMOST_CAN_GRAB, 100);
-    m_servo_magnet_2->set(SERVO_RIGHTCENTER_CAN_GRAB, 100);
-    m_servo_magnet_3->set(SERVO_LEFTCENTER_CAN_GRAB, 100);
-    m_servo_magnet_4->set(SERVO_LEFTMOST_CAN_GRAB, 100);
-
     m_pump_plank->setPumping(true);
-
-    usleep(1.5e6);
 
     m_ax12_suction_cup->set(AX12_SUCTION_GRAB, 100);
     m_servo_lever->set(SERVO_FINGER_HIGH, 100);
@@ -138,7 +104,6 @@ bool Grabi::grab_plateforme(bool a_do_sleep)
 
     // @todo check that the cans are grabbed
 
-    // m_stepper_elevator->goToPosition(150); // mm
     return true;
 }
 
@@ -182,6 +147,7 @@ bool Grabi::drop_plateforme(bool a_do_sleep)
             success = true;
         }
     }*/
+
     m_ax12_left_can->set(AX12_SUCTION_TAKE_OUTER_CANS, 100);
     m_stepper_elevator->goToPosition(5); // mm
 
