@@ -145,6 +145,7 @@ private:
     void publishDebugInfos();
     void publishGoal();
     void publishAll();
+    void publishIsBlue();
 
     void pushCarreFouille();
     void retractePusher();
@@ -172,6 +173,7 @@ private:
 
     rclcpp::TimerBase::SharedPtr m_timer;
 
+    rclcpp::Publisher<std_msgs::msg::Bool>::SharedPtr m_is_blue_pub;
     rclcpp::Publisher<geometry_msgs::msg::PoseStamped>::SharedPtr m_goal_pose_pub;
     rclcpp::Publisher<krabi_msgs::msg::ServosCmd>::SharedPtr m_arm_servo_pub;
     // rclcpp::Publisher<geometry_msgs::msg::Pose>::SharedPtr m_stop_linear_pub;

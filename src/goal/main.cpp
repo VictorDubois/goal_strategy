@@ -635,6 +635,8 @@ GoalStrat::GoalStrat()
     override_gear = krabi_msgs::msg::StratMovement::FORWARD_OR_REVERSE; // don't care
 
     m_goal_pose_pub = this->create_publisher<geometry_msgs::msg::PoseStamped>("goal_pose", 5);
+    m_is_blue_pub = this->create_publisher<std_msgs::msg::Bool>("is_blue", 5);
+
     m_arm_servo_pub = this->create_publisher<krabi_msgs::msg::ServosCmd>("cmd_servos", 5);
     m_debug_ma_etapes_pub
       = this->create_publisher<visualization_msgs::msg::MarkerArray>("debug_etapes", 5);
@@ -827,6 +829,13 @@ GoalStrat::GoalStrat()
     m_timer = this->create_wall_timer(100ms, std::bind(&GoalStrat::loop, this));
 }
 
+void GoalStrat::publishIsBlue()
+{
+    auto isBlueMsg = std_msgs::msg::Bool();
+    isBlueMsg.data = m_is_blue;
+    m_is_blue_pub->publish(isBlueMsg);
+}
+
 void GoalStrat::publishAll()
 {
     std::string s = "mainPubAll";
@@ -840,6 +849,7 @@ void GoalStrat::publishAll()
         checkStopMatch();
         publishScore();
         m_arm_servo_pub->publish(m_servos_cmd);
+        publishIsBlue();
         if (m_goal_init_done)
         {
             // publishGoal();
