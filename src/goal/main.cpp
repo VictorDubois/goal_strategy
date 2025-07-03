@@ -3,7 +3,7 @@
 
 // #include <std_msgs/msg/uint16.hpp>
 
-#define goal_MAX_ALLOWED_ANGULAR_SPEED 1.f // rad/s
+#define goal_MAX_ALLOWED_ANGULAR_SPEED 2.f // rad/s
 using namespace std::chrono_literals;
 /**
  * @brief Set the arm to a specified position used in 2019checkFunnyAction
