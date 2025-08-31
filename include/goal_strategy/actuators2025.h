@@ -2,10 +2,12 @@
 #include "AX12.h"
 #include "krabi_msgs/msg/actuators2025.hpp"
 #include "pump.h"
-#include "rclcpp/rclcpp.hpp"
 #include "servomotor.h"
 #include "stepper.h"
 #include <thread>
+
+#include "rclcpp/node.hpp"
+#include "rclcpp/publisher.hpp"
 
 class Actuators2025
 

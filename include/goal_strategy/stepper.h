@@ -1,6 +1,5 @@
 #pragma once
 #include "krabi_msgs/msg/infos_stepper.hpp"
-#include "rclcpp/rclcpp.hpp"
 
 enum StepperMode
 {

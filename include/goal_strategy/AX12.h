@@ -1,6 +1,6 @@
 #pragma once
-#include "rclcpp/rclcpp.hpp"
 #include "servomotor.h"
+#include <stdint.h>
 
 class AX12 : public Servomotor
 {

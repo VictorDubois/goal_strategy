@@ -9,8 +9,8 @@
 #include <stdlib.h>
 #include <thread>
 
-#include "rclcpp/rclcpp.hpp"
 #include <geometry_msgs/msg/pose_array.hpp>
+#include <rclcpp/node.hpp>
 #include <std_msgs/msg/bool.hpp>
 // #include <builtin_interfaces/msg/duration.hpp>
 #include "builtin_interfaces/msg/duration.hpp"

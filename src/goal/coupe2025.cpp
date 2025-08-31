@@ -3,7 +3,6 @@
 #include "krabilib/strategie/aireDeConstruction.h"
 #include "krabilib/strategie/plateforme.h"
 
-#include "rclcpp/rclcpp.hpp"
 #include <cmath>
 #include <iostream>
 #include <tf2_ros/transform_listener.h>
