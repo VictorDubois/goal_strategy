@@ -1,5 +1,4 @@
 #include "goal_strategy/coupe2025.h"
-#include "goal_strategy/grabber.h"
 #include "krabilib/pose.h"
 #include "krabilib/strategie/aireDeConstruction.h"
 #include "krabilib/strategie/plateforme.h"

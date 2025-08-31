@@ -69,16 +69,8 @@ add_library(krabilib_strat
 
 add_executable(goal_strategy_node 
   src/goal/main.cpp
-  src/goal/actuators.cpp
-  src/goal/actuators2023.cpp
   #src/goal/AX12.cpp
-  src/goal/claws.cpp
-  src/goal/coupe2021.cpp
-  src/goal/coupe2022.cpp
-  src/goal/coupe2023.cpp
-  src/goal/coupe2024.cpp
   src/goal/coupe2025.cpp
-  src/goal/grabber.cpp
   src/goal/pump.cpp
   src/goal/servomotor.cpp
   src/goal/grabi.cpp

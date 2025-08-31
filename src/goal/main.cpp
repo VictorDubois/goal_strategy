@@ -5,51 +5,8 @@
 
 #define goal_MAX_ALLOWED_ANGULAR_SPEED 1.f // rad/s
 using namespace std::chrono_literals;
-/**
- * @brief Set the arm to a specified position used in 2019checkFunnyAction
- *
- * @param position FOLDED, IN, OUT, UP, RELEASE, DOWN
- */
-void GoalStrat::moveArm(enum PositionServo position)
-{
-    switch (position)
-    {
-    case FOLDED:
-        m_servos_cmd.s3_speed = 128;
-        m_servos_cmd.s3_angle = 155;
-        RCLCPP_DEBUG_STREAM(rclcpp::get_logger("rclcpp"), "Actually fold servo" << std::endl);
-        break;
-    case IN:
-        m_servos_cmd.s3_speed = 255;
-        m_servos_cmd.s3_angle = 155;
-        RCLCPP_DEBUG_STREAM(rclcpp::get_logger("rclcpp"), "Actually move servo IN" << std::endl);
-        break;
-    case OUT:
-        m_servos_cmd.s3_speed = 255;
-        m_servos_cmd.s3_angle = 23;
-        RCLCPP_DEBUG_STREAM(rclcpp::get_logger("rclcpp"), "Actually move servo OUT" << std::endl);
-        break;
-    case UP:
-        m_servos_cmd.brak_speed = 128;
-        m_servos_cmd.brak_angle = 148;
-        RCLCPP_DEBUG_STREAM(rclcpp::get_logger("rclcpp"), "Actually move servo UP" << std::endl);
-        break;
-    case RELEASE:
-        m_servos_cmd.s3_speed = 128;
-        m_servos_cmd.s3_angle = 155;
-        RCLCPP_DEBUG_STREAM(rclcpp::get_logger("rclcpp"), "Actually release servo" << std::endl);
-        break;
-    case DOWN:
-        m_servos_cmd.brak_speed = 128;
-        m_servos_cmd.brak_angle = 42;
-        RCLCPP_DEBUG_STREAM(rclcpp::get_logger("rclcpp"), "Actually move servo DOWN" << std::endl);
-        break;
-    default:
-        break;
-    }
-    m_servos_cmd.enable = true;
-    // m_arm_servo_pub->publish(m_servos_cmd);
-}
+
+/// ################ Movement methods ################
 
 /**
  * @brief Send cmd to clamp the robot to its position (used in 2021 for manches a air)
@@ -73,6 +30,7 @@ void GoalStrat::recule(rclcpp::Duration a_time)
 {
     reculeOuAvance(a_time, Distance(1000), true /*recule*/);
 }
+
 void GoalStrat::recule(rclcpp::Duration a_time, Distance a_distance)
 {
     reculeOuAvance(a_time, a_distance, true /*recule*/);
@@ -299,18 +257,6 @@ bool GoalStrat::isArrivedAtGoal(Distance a_offset)
                           << "Distance to objective: " << m_dist_to_goal);
 
     float l_reach_dist = REACH_DIST;
-    if (m_strat_graph->getEtapeEnCours()->getEtapeType() == Etape::EtapeType::BOUEE
-        || m_strat_graph->getEtapeEnCours()->getEtapeType() == Etape::EtapeType::HEXAGON_PLAT)
-    {
-        l_reach_dist = m_theThing->getReach();
-    }
-    if (m_strat_graph->getEtapeEnCours()->getEtapeType() == Etape::EtapeType::PILE_GATEAU
-        || m_strat_graph->getEtapeEnCours()->getEtapeType() == Etape::EtapeType::ASSIETTE
-        || m_strat_graph->getEtapeEnCours()->getEtapeType() == Etape::EtapeType::PLANT_GROUP
-        || m_strat_graph->getEtapeEnCours()->getEtapeType() == Etape::EtapeType::AIRE_DE_DEPOSE)
-    {
-        l_reach_dist = m_claws->getReach();
-    }
     if (m_strat_graph->getEtapeEnCours()->getEtapeType() == Etape::EtapeType::STOCK_MATIERE_PREMIERE
         || m_strat_graph->getEtapeEnCours()->getEtapeType()
              == Etape::EtapeType::AIRE_DE_CONSTRUCTION)
@@ -362,6 +308,8 @@ bool GoalStrat::isAlignedWithAngle(Angle angle)
     }
     return false;
 }
+
+/// ################ ROS2 messages ################
 
 /**
  * @brief Publish the cmd to move the robot toward the goal
@@ -539,56 +487,14 @@ void GoalStrat::goToNextMission()
         m_state = State::ALL_DONE;
         return;
     }
-    if ((!m_claws_openned_once
-         && (m_strat_graph->getEtapeEnCours()->getEtapeType() == Etape::EtapeType::PILE_GATEAU
-             || m_strat_graph->getEtapeEnCours()->getEtapeType() == Etape::EtapeType::PLANT_GROUP))
-        || (m_claws_openned_once && m_previous_etape_type != Etape::EtapeType::AIRE_DE_DEPOSE
-            && m_strat_graph->getStock().size() == 0))
-    {
-        m_claws->open_wide(false);
-
-        m_claws_openned_once = true;
-    }
-
-    // if (!m_claws_openned_once && (m_strat_graph->getEtapeEnCours()->getEtapeType() ==
-    // Etape::EtapeType::PILE_GATEAU || m_strat_graph->getEtapeEnCours()->getEtapeType() ==
-    // Etape::EtapeType::PLANT_GROUP))
-    // {
-    //     m_claws->release_pile(false);
-    //     m_claws_openned_once = true;
-    // }
 
     return;
-}
-
-void GoalStrat::pushCarreFouille()
-{
-    m_servo_pusher->setAngle(130);
-    usleep(0.6e6); // takes 330ms, with a x2 margin
-}
-
-void GoalStrat::retractePusher()
-{
-    // m_servo_pusher->setAngle(82);
-    // usleep(0.6e6); // takes 330ms, with a x2 margin
-}
-
-void GoalStrat::dropCherries()
-{
-    m_servo_cherries->setAngle(110);
-    usleep(5.0e6);
 }
 
 void GoalStrat::pushBanner()
 {
     reculeDroit(rclcpp::Duration(2, 0), Distance(0.1));
     avance(rclcpp::Duration(2, 0), Distance(0.1));
-}
-
-void GoalStrat::closeCherriesDispenser()
-{
-    m_servo_cherries->setAngle(140);
-    // usleep(1.0e6);
 }
 
 void GoalStrat::initTF()
@@ -653,88 +559,13 @@ GoalStrat::GoalStrat()
 
     m_year = 2025;
 
-    m_servo_pusher = std::make_shared<Servomotor>(255, 75);
-    auto l_pump_arm = std::make_shared<Pump>(false, true);
-    auto l_fake_statuette_pump = std::make_shared<Pump>(false, true);
-    auto l_servo_arm_base = std::make_shared<Servomotor>(10, 40);
-    auto l_servo_arm_mid = std::make_shared<Servomotor>(10, 25);
-    auto l_servo_arm_suction_cup = std::make_shared<Servomotor>(10, 90);
-
-    m_theThing = std::make_shared<Grabber>(Position(Eigen::Vector2d(0.0, -0.5)),
-                                           l_servo_arm_base,
-                                           l_servo_arm_mid,
-                                           l_servo_arm_suction_cup,
-                                           l_pump_arm);
-
-    m_actuators = Actuators(rclcpp::Node::SharedPtr(this),
-                            actuators_name + "old",
-                            m_servo_pusher,
-                            l_fake_statuette_pump,
-                            l_servo_arm_base,
-                            l_servo_arm_mid,
-                            l_servo_arm_suction_cup,
-                            l_pump_arm);
-
-    if (m_year == 2022)
-    {
-        m_actuators.start();
-        retractePusher();
-        m_theThing->release_statuette();
-    }
-
-    while (false) // Test the grabber
-    {
-        m_theThing->grab_statuette();
-        pushCarreFouille();
-
-        m_theThing->release_statuette();
-        retractePusher();
-    }
-
-    m_servo_cherries = std::make_shared<Servomotor>(255, 75);
-    auto l_servo_left_claw = std::make_shared<Servomotor>(10, 90);
-    auto l_servo_right_claw = std::make_shared<Servomotor>(10, 90);
-
-    m_actuators2023 = Actuators2023(rclcpp::Node::SharedPtr(this),
-                                    actuators_name + "2023",
-                                    m_servo_cherries,
-                                    l_servo_left_claw,
-                                    l_servo_right_claw,
-                                    l_servo_arm_base,
-                                    l_servo_arm_mid,
-                                    l_servo_arm_suction_cup,
-                                    l_pump_arm);
-
-    if (m_year == 2023 || m_year == 2024)
-    {
-        m_actuators2023.start();
-    }
-
-    m_claws = std::make_shared<Claws>(Position(Eigen::Vector2d(0.32f, 0.f)),
-                                      Position(Eigen::Vector2d(0.08f, 0.f)),
-                                      l_servo_left_claw,
-                                      l_servo_right_claw);
-
-    m_claws->setInside();
-    /* servo check */
-    /*m_claws->retract();
-    usleep(1000000);
-    m_claws->release_pile();
-    usleep(2000000);
-    m_claws->grab_pile();
-    usleep(2000000);*/
-
-    /* servo init */
-    m_claws->retract(false);
-
-    closeCherriesDispenser();
-
     // 2025
 
     auto l_servo_grabi_left_most = std::make_shared<Servomotor>(10, 67);
     auto l_servo_grabi_center_left = std::make_shared<Servomotor>(10, 52);
     auto l_servo_grabi_center_right = std::make_shared<Servomotor>(10, 67);
     auto l_servo_grabi_right_most = std::make_shared<Servomotor>(10, 62);
+    auto l_additionnal_servo = std::make_shared<Servomotor>(10, 62);
     auto l_pump_plank = std::make_shared<Pump>(false, true);
     auto l_ax12_1 = std::make_shared<AX12>(10, 400);
     auto l_ax12_2 = std::make_shared<AX12>(10, 320);
@@ -765,9 +596,9 @@ GoalStrat::GoalStrat()
                                     l_servo_grabi_center_right,
                                     l_servo_grabi_right_most,
                                     l_servo_grabi_lever,
-                                    l_servo_arm_suction_cup,
-                                    l_servo_arm_suction_cup,
-                                    l_servo_arm_suction_cup,
+                                    l_additionnal_servo,
+                                    l_additionnal_servo,
+                                    l_additionnal_servo,
                                     l_ax12_1,
                                     l_ax12_2,
                                     l_ax12_3,
@@ -1104,42 +935,6 @@ bool GoalStrat::isParked()
         l_valid_end_locations.push_back(m_strat_graph->positionCAbsolute(0.3, 0.7f));
         l_valid_end_locations.push_back(m_strat_graph->positionCAbsolute(3 - 0.975f, 1.375f));
     }
-    else if (m_year == 2023)
-    {
-        // Auto add all of our assiettes as valid end locations
-        for (auto& etape : Etape::getTableauEtapesTotal())
-        {
-            if (etape)
-            {
-                if (etape->getEtapeType() == Etape::EtapeType::ASSIETTE)
-                {
-                    auto assiette = static_cast<Assiette&>(*(etape->getAction()));
-                    if (assiette.getOwner() == Owner::us)
-                    {
-                        l_valid_end_locations.push_back(etape->getPosition());
-                    }
-                }
-            }
-        }
-    }
-    else if (m_year == 2024)
-    {
-        // Auto add all of our assiettes as valid end locations
-        for (auto& etape : Etape::getTableauEtapesTotal())
-        {
-            if (etape)
-            {
-                if (etape->getEtapeType() == Etape::EtapeType::AIRE_DE_DEPOSE)
-                {
-                    auto aireDeDepose = static_cast<AireDeDepose&>(*(etape->getAction()));
-                    if (aireDeDepose.isValidAreaForFunny())
-                    {
-                        l_valid_end_locations.push_back(etape->getPosition());
-                    }
-                }
-            }
-        }
-    }
     else if (m_year == 2025)
     {
         // Only one spot in 2025
@@ -1187,8 +982,6 @@ void GoalStrat::publishScore()
         m_score_match_at_end = l_score;
     }
 
-    m_actuators.set_score(m_score_match_at_end);
-    m_actuators2023.set_score(m_score_match_at_end);
     m_actuators2025.set_score(m_score_match_at_end);
     // RCLCPP_WARN_STREAM(rclcpp::get_logger("rclcpp"),
     //                    " score at end " << m_score_match_at_end << std::endl);
@@ -1202,10 +995,6 @@ void GoalStrat::stopActuators()
 {
     m_servos_cmd.enable = false;
     m_arm_servo_pub->publish(m_servos_cmd);
-
-    m_actuators2023.disguise();
-    m_actuators.shutdown();
-    m_actuators2023.shutdown();
 }
 
 /**
@@ -1305,12 +1094,6 @@ void GoalStrat::stateRun()
     {
         const rclcpp::Duration funny_action_timing_2 = rclcpp::Duration(1, 0); // 1s before T=0;
 
-        if (m_remainig_time.seconds() < funny_action_timing_2.seconds())
-        {
-            // monte le bras pusher, au cas où on est coincé
-            pushCarreFouille();
-        }
-
         // runHome
         m_strat_mvnt.max_speed_at_arrival = 0.0f; // Set to 0 if you don't want an overshoot
         m_strat_mvnt.max_speed.linear.x = 1.f;
@@ -1325,14 +1108,6 @@ void GoalStrat::stateRun()
         {
             // try to update
             m_area_funny = m_strat_graph->getBestAreaForFunny();
-            if (m_strat_graph->getStock().size() == 0)
-            {
-                m_claws->grab_pile(false);
-            }
-            else
-            {
-                m_claws->release_pile(false);
-            }
             if (m_area_funny != nullptr) // If no error
             {
                 RCLCPP_WARN_STREAM(
@@ -1361,14 +1136,6 @@ void GoalStrat::stateRun()
         return;
     }
 
-    // prepare arm if needed
-    if (!m_is_blue && !m_servo_out
-        && m_strat_graph->getEtapeEnCours()->getEtapeType() == Etape::EtapeType::MANCHE_A_AIR)
-    {
-        moveArm(OUT);
-        m_servo_out = true;
-    }
-
     if (!m_is_first_action && (this->now() >= m_moving_timeout_deadline))
     {
         isLate = true;
@@ -1385,11 +1152,6 @@ void GoalStrat::stateRun()
             // Does not work yet, but not a real problem
             // stopAngular();
         }
-        // retract arm if needed
-        if (m_previous_etape_type == Etape::EtapeType::MANCHE_A_AIR)
-        {
-            moveArm(IN);
-        }
 
         bool l_has_timed_out;
         rclcpp::Time recalageTimeoutDeadline;
@@ -1401,426 +1163,6 @@ void GoalStrat::stateRun()
         float target_angle = 0;
         switch (m_strat_graph->getEtapeEnCours()->getEtapeType())
         {
-        case Etape::MOUILLAGE_SUD:
-        case Etape::MOUILLAGE_NORD:
-            // m_score_match += 20;
-            stopAngular();
-            stopLinear();
-
-            while (true)
-            {
-                m_strat_mvnt.max_speed.angular.z = 0;
-                m_strat_mvnt.max_speed.linear.x = 0;
-                publishStratMovement();
-                // todo fix and reenable
-                // rclcpp::spin_some(shared_from_this());
-                usleep(0.1e6);
-            }
-
-            break;
-
-        case Etape::STATUETTE:
-            stopLinear();
-            startAngular();
-
-            target_angle = (l_coin - m_current_pose.getPosition()).getAngle();
-
-            l_has_timed_out = alignWithAngleWithTimeout(Angle(target_angle));
-            RCLCPP_INFO_STREAM(rclcpp::get_logger("rclcpp"),
-                               "In front of STATUETTE, orienting towards" << target_angle
-                                                                          << std::endl);
-
-            if (l_has_timed_out)
-            {
-                m_action_aborted = true;
-                RCLCPP_WARN_STREAM(rclcpp::get_logger("rclcpp"),
-                                   "orienting toward STATUETTE has timed out :(" << std::endl);
-            }
-            stopAngular();
-
-            RCLCPP_INFO_STREAM(rclcpp::get_logger("rclcpp"),
-                               "Recalage bordure statuette" << std::endl);
-            startLinear();
-            recalage_bordure();
-            publishStratMovement();
-            recalageTimeoutDeadline = this->now() + rclcpp::Duration(6, 0);
-
-            while (this->now().seconds() < recalageTimeoutDeadline.seconds())
-            {
-                // todo fix and reenable
-                // rclcpp::spin_some(shared_from_this());
-                usleep(0.1e6);
-            }
-
-            clamp_mode();
-            publishStratMovement();
-
-            RCLCPP_INFO_STREAM(rclcpp::get_logger("rclcpp"), "Grabing STATUETTE" << std::endl);
-
-            m_theThing->grab_statuette();
-            RCLCPP_INFO_STREAM(rclcpp::get_logger("rclcpp"), "STATUETTE caught" << std::endl);
-
-            stopAngular();
-            RCLCPP_INFO_STREAM(rclcpp::get_logger("rclcpp"),
-                               "Ecartement bordure statuette" << std::endl);
-            startLinear();
-            recalage_bordure();
-            // m_strat_mvnt.reverse_gear = 1;
-            override_gear = krabi_msgs::msg::StratMovement::REVERSE;
-            publishStratMovement();
-            recalageTimeoutDeadline = this->now() + rclcpp::Duration(4, 0);
-
-            while (this->now().seconds() < recalageTimeoutDeadline.seconds())
-            {
-                // todo fix and reenable
-                // rclcpp::spin_some(shared_from_this());
-                usleep(0.1e6);
-            }
-            override_gear = krabi_msgs::msg::StratMovement::FORWARD_OR_REVERSE;
-
-            if (m_vacuum_state != STRONG_VACUUM)
-            {
-                m_action_aborted = true;
-                if (m_vacuum_state == OPEN_AIR)
-                {
-                    m_strat_graph->dropStatuette(); // Count it as dropped, do not attempt to put it
-                                                    // in the vitrine
-                }
-            }
-
-            startAngular();
-            startLinear();
-            break;
-
-        case Etape::VITRINE:
-            stopLinear();
-
-            target_angle = (l_position_vitrine - m_current_pose.getPosition()).getAngle();
-
-            l_has_timed_out = alignWithAngleWithTimeout(Angle(target_angle));
-            RCLCPP_INFO_STREAM(rclcpp::get_logger("rclcpp"),
-                               "In front of VITRINE, orienting towards" << target_angle
-                                                                        << std::endl);
-
-            if (l_has_timed_out)
-            {
-                m_action_aborted = true;
-                RCLCPP_WARN_STREAM(rclcpp::get_logger("rclcpp"),
-                                   "orienting toward VITRINE has timed out :(" << std::endl);
-            }
-            stopAngular();
-
-            RCLCPP_INFO_STREAM(rclcpp::get_logger("rclcpp"),
-                               "Recalage bordure statuette" << std::endl);
-            startLinear();
-            recalage_bordure();
-            publishStratMovement();
-            recalageTimeoutDeadline = this->now() + rclcpp::Duration(6, 0);
-
-            while (this->now().seconds() < recalageTimeoutDeadline.seconds())
-            {
-                // todo fix and reenable
-                // rclcpp::spin_some(shared_from_this());
-                usleep(0.1e6);
-            }
-
-            clamp_mode();
-            publishStratMovement();
-            RCLCPP_INFO_STREAM(rclcpp::get_logger("rclcpp"), "Dropping STATUETTE" << std::endl);
-
-            m_theThing->release_statuette();
-
-            RCLCPP_INFO_STREAM(rclcpp::get_logger("rclcpp"), "STATUETTE dropped" << std::endl);
-
-            stopAngular();
-            RCLCPP_INFO_STREAM(rclcpp::get_logger("rclcpp"),
-                               "Ecartement bordure vitrine" << std::endl);
-            startLinear();
-            recalage_bordure();
-            // m_strat_mvnt.reverse_gear = 1;
-            override_gear = krabi_msgs::msg::StratMovement::REVERSE;
-            publishStratMovement();
-            recalageTimeoutDeadline = this->now() + rclcpp::Duration(4, 0);
-
-            while (this->now().seconds() < recalageTimeoutDeadline.seconds())
-            {
-                // todo fix and reenable
-                // rclcpp::spin_some(shared_from_this());
-                usleep(0.1e6);
-            }
-            override_gear = krabi_msgs::msg::StratMovement::FORWARD_OR_REVERSE;
-
-            startAngular();
-            startLinear();
-            break;
-
-        case Etape::CARRE_FOUILLE:
-            RCLCPP_INFO_STREAM(rclcpp::get_logger("rclcpp"),
-                               "In front of CARRE_FOUILLE, orienting" << std::endl);
-            stopLinear();
-
-            if (!m_is_blue)
-            {
-                target_angle = M_PI;
-            }
-
-            l_has_timed_out = alignWithAngleWithTimeout(Angle(target_angle));
-
-            if (l_has_timed_out)
-            {
-                m_action_aborted = true;
-                RCLCPP_WARN_STREAM(rclcpp::get_logger("rclcpp"),
-                                   "orienting toward CARRE_FOUILLE has timed out :(" << std::endl);
-            }
-            stopAngular();
-            clamp_mode();
-            publishStratMovement();
-
-            RCLCPP_INFO_STREAM(rclcpp::get_logger("rclcpp"), "Pushing CARRE_FOUILLE" << std::endl);
-
-            pushCarreFouille();
-
-            retractePusher();
-
-            RCLCPP_INFO_STREAM(rclcpp::get_logger("rclcpp"), "CARRE_FOUILLE done" << std::endl);
-
-            startAngular();
-            startLinear();
-            break;
-
-        case Etape::EtapeType::MANCHE_A_AIR:
-
-            stopLinear();
-
-            RCLCPP_INFO_STREAM(rclcpp::get_logger("rclcpp"),
-                               "In front of Manche A Air, orienting" << std::endl);
-
-            l_has_timed_out = alignWithAngleWithTimeout(Angle(-M_PI / 2));
-
-            if (l_has_timed_out)
-            {
-                RCLCPP_WARN_STREAM(rclcpp::get_logger("rclcpp"), "Timeout while orienting");
-            }
-
-            startLinear();
-            recalage_bordure();
-            position_calage = m_goal_pose.getPosition();
-            position_calage.setY(Distance(position_calage.getY() - Distance(1)));
-            m_goal_pose.setPosition(position_calage);
-            publishStratMovement();
-            recalageTimeoutDeadline = this->now() + rclcpp::Duration(6, 0);
-
-            while (this->now().seconds() < recalageTimeoutDeadline.seconds())
-            {
-                // todo fix and reenable
-                // rclcpp::spin_some(shared_from_this());
-                usleep(0.1e6);
-            }
-
-            usleep(1.1e6); // Wait for motors to be up again
-
-            if (l_has_timed_out)
-            {
-                m_action_aborted = true;
-            }
-            else
-            {
-
-                clamp_mode();
-            }
-            publishStratMovement();
-
-            RCLCPP_INFO_STREAM(rclcpp::get_logger("rclcpp"), "Start Manche A Air" << std::endl);
-
-            if (!m_is_blue)
-            {
-                moveArm(IN);
-            }
-            else
-            {
-                moveArm(OUT);
-            }
-            usleep(2.5e6);
-
-            // m_strat_mvnt.reverse_gear = 1;
-            override_gear = krabi_msgs::msg::StratMovement::REVERSE;
-
-            startLinear();
-            recalage_bordure();
-            position_calage.setY(Distance(position_calage.getY() + Distance(1.1)));
-            m_goal_pose.setPosition(position_calage);
-            recalageTimeoutDeadline = this->now() + rclcpp::Duration(2, 0);
-            publishStratMovement();
-
-            while (this->now().seconds() < recalageTimeoutDeadline.seconds())
-            {
-                // todo fix and reenable
-                // rclcpp::spin_some(shared_from_this());
-                usleep(0.1e6);
-            }
-            override_gear = krabi_msgs::msg::StratMovement::FORWARD_OR_REVERSE;
-
-            startLinear();
-
-            RCLCPP_INFO_STREAM(rclcpp::get_logger("rclcpp"), "Manche A Air Done" << std::endl);
-            break;
-        case Etape::EtapeType::PHARE:
-            stopLinear();
-
-            RCLCPP_INFO_STREAM(rclcpp::get_logger("rclcpp"),
-                               "In front of Phare, orienting" << std::endl);
-            if (alignWithAngleWithTimeout((l_phare - m_current_pose.getPosition()).getAngle()))
-            {
-                RCLCPP_WARN_STREAM(rclcpp::get_logger("rclcpp"), "Timeout while orienting");
-            }
-
-            RCLCPP_INFO_STREAM(rclcpp::get_logger("rclcpp"), "MOVING SERVO DOWN" << std::endl);
-            stopAngular();
-            publishStratMovement();
-            moveArm(DOWN);
-            usleep(1e6);
-            moveArm(DOWN);
-            usleep(0.5e6);
-
-            RCLCPP_INFO_STREAM(rclcpp::get_logger("rclcpp"), "MOVING SERVO UP" << std::endl);
-            moveArm(UP);
-            usleep(1.5e6);
-            RCLCPP_INFO_STREAM(rclcpp::get_logger("rclcpp"), "Phare Done" << std::endl);
-            startAngular();
-            break;
-        case Etape::EtapeType::BOUEE:
-            stopLinear();
-            RCLCPP_INFO_STREAM(rclcpp::get_logger("rclcpp"), "Orienting grabber" << std::endl);
-
-            if (alignWithAngleWithTimeout(
-                  Angle((m_goal_pose.getPosition() - m_current_pose.getPosition()).getAngle()
-                        - m_theThing->getAngle())))
-            {
-                RCLCPP_WARN_STREAM(rclcpp::get_logger("rclcpp"), "Timeout while orienting");
-            }
-            m_theThing->grab_hexagon(GrabberContent::ANY);
-            RCLCPP_INFO_STREAM(rclcpp::get_logger("rclcpp"), "Bouee grabbed" << std::endl);
-            break;
-        case Etape::EtapeType::PORT:
-            m_theThing->release_hexagon_on_ground(GrabberContent::ANY);
-            RCLCPP_INFO_STREAM(rclcpp::get_logger("rclcpp"), "Bouee released" << std::endl);
-            break;
-
-        case Etape::EtapeType::ASSIETTE:
-            m_score_match += m_strat_graph->dropGateau(m_strat_graph->getEtapeEnCours());
-            stopLinear();
-
-            /*RCLCPP_INFO_STREAM(rclcpp::get_logger("rclcpp"), "Orienting grabber" << std::endl);
-            RCLCPP_WARN_STREAM_COND(
-              alignWithAngleWithTimeout(
-                Angle((m_goal_pose.getPosition() - m_current_pose.getPosition()).getAngle()
-                      - m_claws->getAngle())),
-              "Timeout while orienting");*/
-            publishStratMovement();
-            m_claws->release_pile();
-
-            // recule(rclcpp::Duration(5,0), Distance(0.15));
-            startLinear();
-
-            m_claws->setInside();
-
-            reculeDroit(rclcpp::Duration(3, 0), Distance(0.14));
-
-            RCLCPP_INFO_STREAM(rclcpp::get_logger("rclcpp"), "Assiete" << std::endl);
-            break;
-
-        case Etape::EtapeType::PILE_GATEAU:
-            m_strat_graph->grabGateau(m_strat_graph->getEtapeEnCours());
-            stopLinear();
-
-            /*// Ouvre la pince + orientation
-            stopLinear();
-            m_claws->release_pile();
-            //m_strat_mvnt.reverse_gear = 0;
-            override_gear = 0;
-            RCLCPP_INFO_STREAM(rclcpp::get_logger("rclcpp"), "Orienting grabber" << std::endl);
-            RCLCPP_WARN_STREAM_COND(
-              alignWithAngleWithTimeout(
-                Angle((m_goal_pose.getPosition() - m_current_pose.getPosition()).getAngle()
-                      - m_claws->getAngle())),
-              "Timeout while orienting");
-
-            m_claws->setInside();
-
-            // Approche
-            startLinear(); // est ce que ça suffit à le faire avancer ?
-            RCLCPP_INFO_STREAM(rclcpp::get_logger("rclcpp"), "Grabber approching" << std::endl);
-            RCLCPP_WARN_STREAM_COND(isArrivedAtGoal(), "Timeout while advancing");
-            m_claws->grab_pile();
-            RCLCPP_INFO_STREAM(rclcpp::get_logger("rclcpp"), "Pile Gateau" << std::endl);
-            override_gear = 2;*/
-            publishStratMovement();
-            m_claws->grab_pile();
-            m_claws->setInside();
-            RCLCPP_INFO_STREAM(rclcpp::get_logger("rclcpp"), "Pile Gateau caught" << std::endl);
-            startLinear();
-
-            break;
-
-        case Etape::EtapeType::AIRE_DE_DEPOSE:
-            m_score_match += m_strat_graph->dropPlant(m_strat_graph->getEtapeEnCours());
-            stopLinear();
-
-            /*RCLCPP_INFO_STREAM(rclcpp::get_logger("rclcpp"), "Orienting grabber" << std::endl);
-            RCLCPP_WARN_STREAM_COND(
-              alignWithAngleWithTimeout(
-                Angle((m_goal_pose.getPosition() - m_current_pose.getPosition()).getAngle()
-                      - m_claws->getAngle())),
-              "Timeout while orienting");*/
-            publishStratMovement();
-            m_claws->release_pile();
-
-            // recule(rclcpp::Duration(5,0), Distance(0.15));
-            startLinear();
-
-            m_claws->setInside();
-            // todo add again if repaired
-            // reculeDroit(rclcpp::Duration(3,0), Distance(0.14));
-
-            RCLCPP_INFO_STREAM(rclcpp::get_logger("rclcpp"), "Drop plants in area" << std::endl);
-            break;
-
-        case Etape::EtapeType::PLANT_GROUP:
-            m_strat_graph->grabPlant(m_strat_graph->getEtapeEnCours());
-            stopLinear();
-
-            /*// Ouvre la pince + orientation
-            stopLinear();
-            m_claws->release_pile();
-            //m_strat_mvnt.reverse_gear = 0;
-            override_gear = 0;
-            RCLCPP_INFO_STREAM(rclcpp::get_logger("rclcpp"), "Orienting grabber" << std::endl);
-            RCLCPP_WARN_STREAM_COND(
-              alignWithAngleWithTimeout(
-                Angle((m_goal_pose.getPosition() - m_current_pose.getPosition()).getAngle()
-                      - m_claws->getAngle())),
-              "Timeout while orienting");
-
-            m_claws->setInside();
-
-            // Approche
-            startLinear(); // est ce que ça suffit à le faire avancer ?
-            RCLCPP_INFO_STREAM(rclcpp::get_logger("rclcpp"), "Grabber approching" << std::endl);
-            RCLCPP_WARN_STREAM_COND(isArrivedAtGoal(), "Timeout while advancing");
-            m_claws->grab_pile();
-            RCLCPP_INFO_STREAM(rclcpp::get_logger("rclcpp"), "Pile Gateau" << std::endl);
-            override_gear = 2;*/
-            publishStratMovement();
-            m_claws->grab_pile();
-            m_claws->setInside();
-            RCLCPP_INFO_STREAM(rclcpp::get_logger("rclcpp"), "Plant group caught" << std::endl);
-            startLinear();
-            // todo remove this
-
-            // recule(rclcpp::Duration(1000,0), Distance(0.1));
-
-            break;
-
         case Etape::EtapeType::AIRE_DE_CONSTRUCTION:
             m_score_match += m_strat_graph->dropPlateformes(m_strat_graph->getEtapeEnCours());
             stopLinear();
@@ -1878,11 +1220,6 @@ void GoalStrat::stateRun()
                              << std::endl);
         abortAction();
         goToNextMission();
-
-        if (m_previous_etape_type == Etape::EtapeType::CARRE_FOUILLE)
-        {
-            pushCarreFouille();
-        }
     }
     Position goal_position = m_strat_graph->getEtapeEnCours()->getPosition();
     m_goal_pose.setPosition(goal_position);
@@ -1930,10 +1267,6 @@ void GoalStrat::init()
     m_servos_cmd.brak_angle = 148;*/
     m_servos_cmd.pavillon_speed = 10;
     m_servos_cmd.pavillon_angle = 50;
-    /*m_servos_cmd.s3_speed = 10;
-    m_servos_cmd.s3_angle = 148;*/
-    moveArm(FOLDED);
-    moveArm(UP);
 
     m_dist_to_goal = 100.;
     m_state_msg_displayed = false;
@@ -1966,36 +1299,7 @@ void GoalStrat::init()
     // Choose starting position
     this->declare_parameter("startingPosition", "FRONT_START");
     std::string l_starting_position_string = this->get_parameter("startingPosition").as_string();
-    if (m_year == 2024)
-    {
-        m_starting_position = SOLAR_PANEL;
-        if (l_starting_position_string == "SOLAR_PANEL")
-        {
-            RCLCPP_DEBUG_STREAM(rclcpp::get_logger("rclcpp"),
-                                "We start near the solar panels" << std::endl);
-            m_starting_position = SOLAR_PANEL;
-        }
-        else if (l_starting_position_string == "CENTER")
-        {
-            RCLCPP_DEBUG_STREAM(rclcpp::get_logger("rclcpp"),
-                                "We start in the opposite site, in the center" << std::endl);
-            m_starting_position = CENTER;
-        }
-        else if ((l_starting_position_string == "PAMI"))
-        {
-            RCLCPP_DEBUG_STREAM(rclcpp::get_logger("rclcpp"),
-                                "We start near the pami" << std::endl);
-            m_starting_position = PAMI;
-        }
-        else
-        {
-            RCLCPP_WARN_STREAM(rclcpp::get_logger("rclcpp"),
-                               "Unkown starting position" << std::endl);
-        }
-
-        // m_strat_graph = std::make_unique<Coupe2024>(!m_is_blue, m_starting_position);
-    }
-    else
+    if (m_year == 2025)
     {
         m_starting_position_2025 = FRONT_START;
         if (l_starting_position_string == "FRONT")
@@ -2052,10 +1356,6 @@ void GoalStrat::loop()
         if (m_state == State::WAIT_TIRETTE && m_tirette && m_remainig_time > rclcpp::Duration(1, 0))
         {
             m_state = State::RUN;
-            if (m_year == 2023)
-            {
-                dropCherries();
-            }
             if (m_year == 2025)
             {
                 pushBanner();

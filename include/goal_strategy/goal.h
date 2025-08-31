@@ -22,14 +22,8 @@
 #include "tf2_ros/buffer.h"
 #include "tf2_ros/transform_listener.h"
 
-#include "coupe2023.h"
-#include "coupe2024.h"
 #include "coupe2025.h"
-#include "goal_strategy/actuators.h"
-#include "goal_strategy/actuators2023.h"
 #include "goal_strategy/actuators2025.h"
-#include "goal_strategy/claws.h"
-#include "goal_strategy/grabber.h"
 #include "goal_strategy/grabi.h"
 #include "krabi_msgs/msg/ax12_info.hpp"
 #include "krabi_msgs/msg/servos_cmd.hpp"
@@ -147,11 +141,7 @@ private:
     void publishAll();
     void publishIsBlue();
 
-    void pushCarreFouille();
-    void retractePusher();
-    void dropCherries();
     void pushBanner();
-    void closeCherriesDispenser();
 
     void setDistancesFromRobotsToEtapes();
 
@@ -217,8 +207,6 @@ private:
     int m_vacuum_state;
     bool m_all_done_do_funny = false;
 
-    Actuators m_actuators;
-    Actuators2023 m_actuators2023;
     Actuators2025 m_actuators2025;
     bool m_goal_init_done;
     bool m_at_least_one_carre_fouille_done;
@@ -226,10 +214,6 @@ private:
 
     int m_year;
 
-    std::shared_ptr<Grabber> m_theThing;
-    std::shared_ptr<Claws> m_claws;
-    std::shared_ptr<Servomotor> m_servo_pusher;
-    std::shared_ptr<Servomotor> m_servo_cherries;
     std::shared_ptr<Grabi> m_grabi;
     std::shared_ptr<Servomotor> m_servo_banner;
 
@@ -238,8 +222,5 @@ private:
     int override_gear;
     AireDeConstruction* m_area_funny = nullptr;
 
-    bool m_claws_openned_once = false;
-
-    StartingPosition m_starting_position;
     StartingPosition2025 m_starting_position_2025;
 };
