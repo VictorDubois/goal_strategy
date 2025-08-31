@@ -132,7 +132,6 @@ private:
     };
 
     bool isAlignedWithAngle(Angle angle);
-    bool isArrivedAtGoal(Distance a_offset);
 
     void publishScore();
     void printCurrentAction();

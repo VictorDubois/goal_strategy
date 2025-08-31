@@ -233,17 +233,12 @@ void GoalStrat::alignWithAngle(Angle a_angle)
     publishStratMovement();
 }
 
-bool GoalStrat::isArrivedAtGoal()
-{
-    return isArrivedAtGoal(Distance(0));
-}
-
 /**
  * @brief Check if the robot reached the goal position
  *
  * @return true if the robot center is closer than REACH_DIST
  */
-bool GoalStrat::isArrivedAtGoal(Distance a_offset)
+bool GoalStrat::isArrivedAtGoal()
 {
     updateCurrentPose();
     m_dist_to_goal
@@ -1153,14 +1148,8 @@ void GoalStrat::stateRun()
             // stopAngular();
         }
 
-        bool l_has_timed_out;
         rclcpp::Time recalageTimeoutDeadline;
-        Position position_calage;
-        Position l_phare = m_strat_graph->positionCAbsolute(0.2f, 0);
-        Position l_coin = m_strat_graph->positionCAbsolute(0.0f, 2.f);
-        Position l_position_vitrine = m_strat_graph->positionCAbsolute(0.15f, 0);
 
-        float target_angle = 0;
         switch (m_strat_graph->getEtapeEnCours()->getEtapeType())
         {
         case Etape::EtapeType::AIRE_DE_CONSTRUCTION:

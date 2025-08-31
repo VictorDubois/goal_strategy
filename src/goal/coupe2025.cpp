@@ -69,9 +69,8 @@ Coupe2025::Coupe2025(const bool isYellow, const StartingPosition2025 starting_po
     }
 
     // todo crad remove
-    int area_pami_us2, area_pami_us3, area_solar_panel_us2, area_solar_panel_us3;
+    // int area_pami_us2, area_pami_us3, area_solar_panel_us2, area_solar_panel_us3;
 
-    float distance_to_wall = 0.4f;
     // Definition des zone de stock
     int stock_bord_cote_publique
       = Etape::makeEtape(new StockDeMatierePremiere(Pose(positionC(1.425f, 0.6f), Angle(M_PI / 2))),
@@ -293,7 +292,6 @@ void Coupe2025::etape_type_to_marker(visualization_msgs::msg::Marker& m, Etape* 
     m.scale.y = 0.05;
     m.scale.z = 0.05;
     m.type = visualization_msgs::msg::Marker::CUBE;
-    CoucheGateau type_couche = CoucheGateau::glacage_rose;
     Owner owner;
     AireDeConstruction* l_adc;
 
@@ -366,6 +364,8 @@ void Coupe2025::etape_type_to_marker(visualization_msgs::msg::Marker& m, Etape* 
         m.scale.x = 0.2;
         m.scale.y = 0.2;
         m.scale.z = 0.2;
+        break;
+    default:
         break;
     }
 }
@@ -569,16 +569,13 @@ int Coupe2025::dropPlateformes(Etape* e)
 {
     int l_scored = 0;
     AireDeConstruction* l_area;
-    Plateforme* l_plateforme;
     std::vector<Plateforme> l_stock_area;
-    Owner l_owner_area;
     switch (e->getEtapeType())
     {
         // A faire : remplacer la priorite par le nombre de points obtenables a l'etape
 
     case Etape::AIRE_DE_CONSTRUCTION:
         l_area = static_cast<AireDeConstruction*>(e->getAction());
-        l_owner_area = l_area->getOwner();
 
         if (m_stock.size())
         {

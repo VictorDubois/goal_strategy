@@ -39,30 +39,11 @@ add_library(krabilib
 )
 
 add_library(krabilib_strat
-  src/krabilib/strategie/abeille.cpp
-  src/krabilib/strategie/assiette.cpp
-  src/krabilib/strategie/aireDeDepose.cpp
-  src/krabilib/strategie/bouee.cpp
-  src/krabilib/strategie/carreFouille.cpp
-  src/krabilib/strategie/galerie.cpp
-  src/krabilib/strategie/hexagon_plat.cpp
   src/krabilib/strategie/dijkstra.cpp   
-  src/krabilib/strategie/pileGateau.cpp   
-  src/krabilib/strategie/plantGroup.cpp   
-  src/krabilib/strategie/port.cpp   
   src/krabilib/strategie/strategiev3.cpp
-  src/krabilib/strategie/accelerator.cpp  
   src/krabilib/strategie/etape.cpp      
   src/krabilib/strategie/mediumLevelAction.cpp
   src/krabilib/strategie/actionGoTo.cpp   
-  src/krabilib/strategie/goldenium.cpp  
-  src/krabilib/strategie/reservoirEau.cpp
-  src/krabilib/strategie/vitrine.cpp
-  src/krabilib/strategie/phare.cpp
-  src/krabilib/strategie/mancheAAir.cpp
-  src/krabilib/strategie/mouillageNord.cpp
-  src/krabilib/strategie/mouillageSud.cpp
-  src/krabilib/strategie/statuette.cpp
   src/krabilib/strategie/aireDeConstruction.cpp
   src/krabilib/strategie/stockDeMatierePremiere.cpp
 )

@@ -1,9 +1,8 @@
 #pragma once
 
-#include "krabilib/position.h"
 #include "krabilib/pose.h"
+#include "krabilib/position.h"
 #include "krabilib/strategie/mediumLevelAction.h"
-#include "krabilib/strategie/assiette.h"
 #include "krabilib/strategie/stockDeMatierePremiere.h" // pour def plateforme
 
 #ifndef STANDALONE_STRATEGIE
@@ -14,6 +13,12 @@ enum AireSize
 {
     AIRE_BIG,
     AIRE_SMALL
+};
+
+enum Owner
+{
+    us,
+    them
 };
 
 class AireDeConstruction : public MediumLevelAction
@@ -27,11 +32,10 @@ public:
     ~AireDeConstruction();
 
     int update();
-    
+
     Etape::EtapeType getType();
 
     Owner getOwner();
-
 
     void addPlateforme(Plateforme added_plateforme);
 
@@ -41,7 +45,10 @@ public:
     Position getGoalPosition();
     Pose getGoalPose();
 
-    bool isBig(){return m_size == AireSize::AIRE_BIG;} 
+    bool isBig()
+    {
+        return m_size == AireSize::AIRE_BIG;
+    }
 
 protected:
     Pose m_goal_pose;

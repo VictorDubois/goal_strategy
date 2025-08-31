@@ -2,24 +2,10 @@
 
 #define NOMBRE_ETAPES 50
 
-#include "krabilib/strategie/abeille.h"
-#include "krabilib/strategie/accelerator.h"
 #include "krabilib/strategie/aireDeConstruction.h"
-#include "krabilib/strategie/aireDeDepose.h"
-#include "krabilib/strategie/assiette.h"
-#include "krabilib/strategie/bouee.h"
-#include "krabilib/strategie/carreFouille.h"
 #include "krabilib/strategie/etape.h"
-#include "krabilib/strategie/galerie.h"
-#include "krabilib/strategie/goldenium.h"
-#include "krabilib/strategie/hexagon_plat.h"
-#include "krabilib/strategie/pileGateau.h"
-#include "krabilib/strategie/plantGroup.h"
-#include "krabilib/strategie/reservoirEau.h"
-#include "krabilib/strategie/statuette.h"
 #include "krabilib/strategie/stockDeMatierePremiere.h"
 #include "krabilib/strategie/strategiev3.h"
-#include "krabilib/strategie/vitrine.h"
 #include <geometry_msgs/msg/point.hpp>
 
 #include <geometry_msgs/msg/pose.hpp>
@@ -43,11 +29,17 @@ public:
     void catchStatuette() {}; // 2022 only
     void dropStatuette() {};  // 2022 only
 
-    void grabGateau(Etape* e) {}; // 2023 only
-    int dropGateau(Etape* e) {};  // 2023 only
+    void grabGateau(Etape* /*e*/) {}; // 2023 only
+    int dropGateau(Etape* /*e*/)
+    {
+        return 0;
+    }; // 2023 only
 
-    void grabPlant(Etape* e) {}; // 2024 only
-    int dropPlant(Etape* e) {};  // 2024 only
+    void grabPlant(Etape* /*e*/) {}; // 2024 only
+    int dropPlant(Etape* /*e*/)
+    {
+        return 0;
+    }; // 2024 only
 
     void grabPlateformes(Etape* e); // 2025 only
     int dropPlateformes(Etape* e);  // 2025 only
