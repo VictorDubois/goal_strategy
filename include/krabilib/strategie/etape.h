@@ -181,14 +181,33 @@ public:
     /** @brief Ajoute un voisin au tableau de voisins */
     void addVoisin(int newVoisinIndex, bool autreSens = true);
 
+    void addVoisins(int newVoisinIndex);
+    void addVoisins(int newVoisinIndex, int newVoisinIndex2);
+    void addVoisins(int newVoisinIndex, int newVoisinIndex2, int newVoisinIndex3);
+    void addVoisins(int newVoisinIndex,
+                    int newVoisinIndex2,
+                    int newVoisinIndex3,
+                    int newVoisinIndex4);
+    void addVoisins(int newVoisinIndex,
+                    int newVoisinIndex2,
+                    int newVoisinIndex3,
+                    int newVoisinIndex4,
+                    int newVoisinIndex5);
+    void addVoisins(int newVoisinIndex,
+                    int newVoisinIndex2,
+                    int newVoisinIndex3,
+                    int newVoisinIndex4,
+                    int newVoisinIndex5,
+                    int newVoisinIndex6);
+
     /** @brief Ajoute un voisin au tableau de voisins */
-    void addVoisins();
+    /*void addVoisins();
     template<typename... Types>
     void addVoisins(int newVoisinIndex1, Types... otherIndexes)
     {
         this->addVoisin(newVoisinIndex1);
         addVoisins(otherIndexes...);
-    }
+    }*/
 
     /** @brief Setter de l'étape à laquelle on fini l'action de l'étape */
     void setNumeroEtapeFinAction(int newNumeroEtapeFinAction);

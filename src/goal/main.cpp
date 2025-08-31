@@ -414,6 +414,7 @@ void GoalStrat::updateCurrentPose()
     catch (tf2::TransformException& ex)
     {
         RCLCPP_WARN(rclcpp::get_logger("rclcpp"), "%s", ex.what());
+        // @todo diagnostic
     }
 
     RCLCPP_DEBUG_STREAM(rclcpp::get_logger("rclcpp"),
@@ -730,16 +731,16 @@ GoalStrat::GoalStrat()
 
     // 2025
 
-    auto l_servo_grabi_left_most = std::make_shared<Servomotor>(10, SERVO_RIGHTMOST_CAN_GRAB);
-    auto l_servo_grabi_center_left = std::make_shared<Servomotor>(10, SERVO_RIGHTCENTER_CAN_GRAB);
-    auto l_servo_grabi_center_right = std::make_shared<Servomotor>(10, SERVO_LEFTCENTER_CAN_GRAB);
-    auto l_servo_grabi_right_most = std::make_shared<Servomotor>(10, SERVO_LEFTMOST_CAN_GRAB);
+    auto l_servo_grabi_left_most = std::make_shared<Servomotor>(10, 67);
+    auto l_servo_grabi_center_left = std::make_shared<Servomotor>(10, 52);
+    auto l_servo_grabi_center_right = std::make_shared<Servomotor>(10, 67);
+    auto l_servo_grabi_right_most = std::make_shared<Servomotor>(10, 62);
     auto l_pump_plank = std::make_shared<Pump>(false, true);
-    auto l_ax12_1 = std::make_shared<AX12>(10, AX12_LEFT_GRAB);
-    auto l_ax12_2 = std::make_shared<AX12>(10, AX12_RIGHT_GRAB);
-    auto l_ax12_3 = std::make_shared<AX12>(10, AX12_SUCTION_HIGH);
+    auto l_ax12_1 = std::make_shared<AX12>(10, 400);
+    auto l_ax12_2 = std::make_shared<AX12>(10, 320);
+    auto l_ax12_3 = std::make_shared<AX12>(10, 828);
     auto l_ax12_4 = std::make_shared<AX12>(10, 90);
-    auto l_servo_grabi_lever = std::make_shared<Servomotor>(10, SERVO_FINGER_LOW);
+    auto l_servo_grabi_lever = std::make_shared<Servomotor>(10, 175);
     m_servo_banner = std::make_shared<Servomotor>(10, 90);
     auto l_stepper_grabi_elevator = std::make_shared<StepperElevator>(
       100 /* mm/s */, 100 /* mm/s2 */, 100 /* x50mA */, 300 /*mm de haut max*/);

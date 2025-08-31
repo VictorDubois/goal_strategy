@@ -1,5 +1,35 @@
 #include <goal_strategy/grabi.h>
 
+#define AX12_LEFT_EXT 100
+#define AX12_LEFT_INT 615
+#define AX12_LEFT_GRAB 400
+
+#define AX12_RIGHT_EXT 615
+#define AX12_RIGHT_INT 101
+#define AX12_RIGHT_GRAB 321
+
+#define AX12_SUCTION_HIGH 828
+#define AX12_SUCTION_LOW 340
+#define AX12_SUCTION_GRAB 490
+#define AX12_SUCTION_TRANSPORT 520       // todo: tune
+#define AX12_SUCTION_TAKE_OUTER_CANS 600 // todo: tune
+
+#define SERVO_RIGHTMOST_CAN_GRAB 67
+#define SERVO_RIGHTMOST_CAN_RELEASE 144
+
+#define SERVO_RIGHTCENTER_CAN_GRAB 52
+#define SERVO_RIGHTCENTER_CAN_RELEASE 132
+
+#define SERVO_LEFTCENTER_CAN_GRAB 67
+#define SERVO_LEFTCENTER_CAN_RELEASE 144
+
+#define SERVO_LEFTMOST_CAN_GRAB 62
+#define SERVO_LEFTMOST_CAN_RELEASE 150
+
+#define SERVO_FINGER_HIGH 100
+#define SERVO_FINGER_HIGHER_TAKE_OUTER_CANS 100 // was 105 but bad idea
+#define SERVO_FINGER_LOW 175
+
 Grabi::Grabi(Position a_relative_position_in_front,
              Position a_relative_position_inside,
              std::shared_ptr<Servomotor> a_servo_magnet_1,

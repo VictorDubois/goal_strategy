@@ -38,27 +38,7 @@ add_library(krabilib
   src/krabilib/pose.cpp  
 )
 
-add_executable(goal_strategy_node 
-  src/goal/main.cpp
-  src/goal/actuators.cpp
-  src/goal/actuators2023.cpp
-  #src/goal/AX12.cpp
-  src/goal/claws.cpp
-  src/goal/coupe2021.cpp
-  src/goal/coupe2022.cpp
-  src/goal/coupe2023.cpp
-  src/goal/coupe2024.cpp
-  src/goal/coupe2025.cpp
-  src/goal/grabber.cpp
-  src/goal/pump.cpp
-  src/goal/servomotor.cpp
-  src/goal/grabi.cpp
-  src/goal/stepper.cpp
-  src/goal/actuators2025.cpp
-  src/krabilib/angle.cpp  
-  src/krabilib/distance.cpp  
-  src/krabilib/position.cpp  
-  src/krabilib/pose.cpp  
+add_library(krabilib_strat
   src/krabilib/strategie/abeille.cpp
   src/krabilib/strategie/assiette.cpp
   src/krabilib/strategie/aireDeDepose.cpp
@@ -87,7 +67,26 @@ add_executable(goal_strategy_node
   src/krabilib/strategie/stockDeMatierePremiere.cpp
 )
 
+add_executable(goal_strategy_node 
+  src/goal/main.cpp
+  src/goal/actuators.cpp
+  src/goal/actuators2023.cpp
+  #src/goal/AX12.cpp
+  src/goal/claws.cpp
+  src/goal/coupe2021.cpp
+  src/goal/coupe2022.cpp
+  src/goal/coupe2023.cpp
+  src/goal/coupe2024.cpp
+  src/goal/coupe2025.cpp
+  src/goal/grabber.cpp
+  src/goal/pump.cpp
+  src/goal/servomotor.cpp
+  src/goal/grabi.cpp
+  src/goal/stepper.cpp
+  src/goal/actuators2025.cpp
+)
 
+target_link_libraries(goal_strategy_node krabilib_strat krabilib )
 
 ament_target_dependencies(goal_strategy_node 
   rclcpp
@@ -102,6 +101,14 @@ ament_target_dependencies(goal_strategy_node
   #tf_conversions
   #sensor_msgs
 )
+
+ament_target_dependencies(krabilib_strat 
+  rclcpp 
+  tf2_eigen
+  tf2_ros
+  tf2_geometry_msgs
+)
+
 
 ament_target_dependencies(krabilib 
   rclcpp 

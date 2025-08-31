@@ -380,8 +380,57 @@ void Etape::addVoisin(int newVoisinIndex, bool autreSens)
     this->addVoisin(get(newVoisinIndex), autreSens);
 }
 
-void Etape::addVoisins()
+void Etape::addVoisins(int newVoisinIndex)
 {
+    this->addVoisin(get(newVoisinIndex), true);
+}
+void Etape::addVoisins(int newVoisinIndex, int newVoisinIndex2)
+{
+    this->addVoisin(get(newVoisinIndex), true);
+    this->addVoisin(get(newVoisinIndex2), true);
+}
+void Etape::addVoisins(int newVoisinIndex, int newVoisinIndex2, int newVoisinIndex3)
+{
+    this->addVoisin(get(newVoisinIndex), true);
+    this->addVoisin(get(newVoisinIndex2), true);
+    this->addVoisin(get(newVoisinIndex3), true);
+}
+void Etape::addVoisins(int newVoisinIndex,
+                       int newVoisinIndex2,
+                       int newVoisinIndex3,
+                       int newVoisinIndex4)
+{
+    this->addVoisin(get(newVoisinIndex), true);
+    this->addVoisin(get(newVoisinIndex2), true);
+    this->addVoisin(get(newVoisinIndex3), true);
+    this->addVoisin(get(newVoisinIndex4), true);
+}
+void Etape::addVoisins(int newVoisinIndex,
+                       int newVoisinIndex2,
+                       int newVoisinIndex3,
+                       int newVoisinIndex4,
+                       int newVoisinIndex5)
+{
+    this->addVoisin(get(newVoisinIndex), true);
+    this->addVoisin(get(newVoisinIndex2), true);
+    this->addVoisin(get(newVoisinIndex3), true);
+    this->addVoisin(get(newVoisinIndex4), true);
+    this->addVoisin(get(newVoisinIndex5), true);
+}
+
+void Etape::addVoisins(int newVoisinIndex,
+                       int newVoisinIndex2,
+                       int newVoisinIndex3,
+                       int newVoisinIndex4,
+                       int newVoisinIndex5,
+                       int newVoisinIndex6)
+{
+    this->addVoisin(get(newVoisinIndex), true);
+    this->addVoisin(get(newVoisinIndex2), true);
+    this->addVoisin(get(newVoisinIndex3), true);
+    this->addVoisin(get(newVoisinIndex4), true);
+    this->addVoisin(get(newVoisinIndex5), true);
+    this->addVoisin(get(newVoisinIndex6), true);
 }
 
 void Etape::setNumeroEtapeFinAction(int newNumeroEtapeFinAction)
