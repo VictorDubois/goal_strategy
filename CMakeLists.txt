@@ -50,6 +50,7 @@ add_library(krabilib_strat
 
 add_executable(goal_strategy_node 
   src/goal/main.cpp
+  src/goal/subscriptionCreator.cpp
   #src/goal/AX12.cpp
   src/goal/coupe2025.cpp
   src/goal/pump.cpp

@@ -148,6 +148,8 @@ private:
 
     bool isParked();
 
+    void create_subscriptions(rclcpp::SubscriptionOptions l_sub_options);
+
     State m_state = State::RUN;
     Distance m_dist_to_goal;
     bool m_state_msg_displayed;
