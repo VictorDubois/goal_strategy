@@ -1,4 +1,5 @@
 #include "goal_strategy/goal.h"
+#include "goal_strategy/subscriptionCreator.h"
 #include <std_msgs/msg/float32.hpp>
 
 // #include <std_msgs/msg/uint16.hpp>
@@ -607,7 +608,28 @@ GoalStrat::GoalStrat()
 
     init(); // to do before subscribing to /remaining_time
 
-    create_subscriptions(l_sub_options);
+    create_subscriptions(m_remaining_time_match_sub,
+                         std::bind(&GoalStrat::updateRemainingTime, this, std::placeholders::_1),
+                         m_tirette_sub,
+                         std::bind(&GoalStrat::updateTirette, this, std::placeholders::_1),
+                         m_vacuum_sub,
+                         std::bind(&GoalStrat::updateVacuum, this, std::placeholders::_1),
+                         m_other_robots_sub,
+                         std::bind(&GoalStrat::updateOtherRobots, this, std::placeholders::_1),
+                         m_elevator_sub,
+                         std::bind(&GoalStrat::updateStepperElevator, this, std::placeholders::_1),
+                         m_ax12_1_info_sub,
+                         std::bind(&GoalStrat::updateAX12Info1, this, std::placeholders::_1),
+                         m_ax12_2_info_sub,
+                         std::bind(&GoalStrat::updateAX12Info2, this, std::placeholders::_1),
+                         m_ax12_3_info_sub,
+                         std::bind(&GoalStrat::updateAX12Info3, this, std::placeholders::_1),
+                         m_ax12_4_info_sub,
+                         std::bind(&GoalStrat::updateAX12Info4, this, std::placeholders::_1),
+                         m_digital_reads_sub,
+                         std::bind(&GoalStrat::updateDigitalReads, this, std::placeholders::_1),
+                         l_sub_options,
+                         this);
 
     m_timer = this->create_wall_timer(100ms, std::bind(&GoalStrat::loop, this));
 }
@@ -641,18 +663,18 @@ void GoalStrat::publishAll()
     }
 }
 
-void GoalStrat::updateAX12Info(krabi_msgs::msg::AX12Info a_ax12_msg, uint8_t id)
+void GoalStrat::updateAX12Info(krabi_msgs::msg::AX12Info::SharedPtr a_ax12_msg, uint8_t id)
 {
-    m_grabi->updateAX12Infos(a_ax12_msg.current_position,
-                             a_ax12_msg.present_temperature,
-                             a_ax12_msg.present_current,
-                             a_ax12_msg.moving,
+    m_grabi->updateAX12Infos(a_ax12_msg->current_position,
+                             a_ax12_msg->present_temperature,
+                             a_ax12_msg->present_current,
+                             a_ax12_msg->moving,
                              id);
 }
 
-void GoalStrat::updateDigitalReads(std_msgs::msg::Byte digitalReads)
+void GoalStrat::updateDigitalReads(std_msgs::msg::Byte::SharedPtr digitalReads)
 {
-    m_grabi->updateCanDetected(digitalReads.data);
+    m_grabi->updateCanDetected(digitalReads->data);
 }
 
 /**
@@ -660,9 +682,9 @@ void GoalStrat::updateDigitalReads(std_msgs::msg::Byte digitalReads)
  *
  * @param tirette msg
  */
-void GoalStrat::updateTirette(std_msgs::msg::Bool tirette)
+void GoalStrat::updateTirette(std_msgs::msg::Bool::SharedPtr tirette)
 {
-    m_tirette = tirette.data;
+    m_tirette = tirette->data;
 }
 
 /**
@@ -671,10 +693,10 @@ void GoalStrat::updateTirette(std_msgs::msg::Bool tirette)
  * @param a_potential_other_robots geometry_msgs::msg::PoseArray
  *
  */
-void GoalStrat::updateOtherRobots(geometry_msgs::msg::PoseArray a_potential_other_robots)
+void GoalStrat::updateOtherRobots(geometry_msgs::msg::PoseArray::SharedPtr a_potential_other_robots)
 {
     m_potential_other_robots.clear();
-    for (auto l_potential_robot : a_potential_other_robots.poses)
+    for (auto l_potential_robot : a_potential_other_robots->poses)
     {
         m_potential_other_robots.push_back(Pose(l_potential_robot).getPosition());
     }
@@ -687,9 +709,9 @@ void GoalStrat::updateOtherRobots(geometry_msgs::msg::PoseArray a_potential_othe
  *
  * @param vacuum_msg the ROS message
  */
-void GoalStrat::updateVacuum(std_msgs::msg::Float32 vacuum_msg)
+void GoalStrat::updateVacuum(std_msgs::msg::Float32::SharedPtr vacuum_msg)
 {
-    m_vacuum_level = vacuum_msg.data;
+    m_vacuum_level = vacuum_msg->data;
     m_vacuum_state = OPEN_AIR;
     if (abs(m_vacuum_level) > 5000) // Pa
     {
@@ -707,9 +729,10 @@ void GoalStrat::updateVacuum(std_msgs::msg::Float32 vacuum_msg)
  *
  * @param a_remaining_time_match
  */
-void GoalStrat::updateRemainingTime(builtin_interfaces::msg::Duration a_remaining_time_match)
+void GoalStrat::updateRemainingTime(
+  builtin_interfaces::msg::Duration::SharedPtr a_remaining_time_match)
 {
-    m_remainig_time = rclcpp::Duration(a_remaining_time_match);
+    m_remainig_time = rclcpp::Duration(*a_remaining_time_match);
     m_strat_graph->setRemainingTime(m_remainig_time.seconds() * 1000);
     checkFunnyAction();
     checkStopMatch();

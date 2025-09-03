@@ -15,9 +15,9 @@ protected:
     StepperMode m_stepper_mode;
     int16_t m_target_position; // mm
     int16_t m_distance_to_go;  // mm
-    void updateInfos(krabi_msgs::msg::InfosStepper a_new_infos)
+    void updateInfos(krabi_msgs::msg::InfosStepper::SharedPtr a_new_infos)
     {
-        m_distance_to_go = a_new_infos.distance_to_go;
+        m_distance_to_go = a_new_infos->distance_to_go;
     };
 
 private:
@@ -85,10 +85,10 @@ private:
     uint16_t m_max_height_mm;
 
 public:
-    void updateElevatorInfos(krabi_msgs::msg::InfosStepper a_new_infos)
+    void updateElevatorInfos(krabi_msgs::msg::InfosStepper::SharedPtr a_new_infos)
     {
-        m_homing_done = a_new_infos.homing_switch_on;
-        m_homing_sequences_done = a_new_infos.homing_sequences_done;
+        m_homing_done = a_new_infos->homing_switch_on;
+        m_homing_sequences_done = a_new_infos->homing_sequences_done;
         updateInfos(a_new_infos);
     };
     void doHoming()

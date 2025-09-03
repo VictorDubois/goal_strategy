@@ -1,4 +1,19 @@
-#include "goal_strategy/subscriptionCreator.h"
+#include "builtin_interfaces/msg/duration.hpp"
+#include <geometry_msgs/msg/pose_array.hpp>
+#include <std_msgs/msg/bool.hpp>
+#include <std_msgs/msg/byte.hpp>
+#include <std_msgs/msg/float32.hpp>
+#include <std_msgs/msg/int16.hpp>
+#include <std_msgs/msg/int32.hpp>
+
+#include "krabi_msgs/msg/ax12_info.hpp"
+#include "krabi_msgs/msg/infos_stepper.hpp"
+#include "krabi_msgs/msg/servos_cmd.hpp"
+#include "krabi_msgs/msg/strat_movement.hpp"
+
+#include "rclcpp/node.hpp"
+#include "rclcpp/subscription.hpp"
+#include <memory>
 
 void create_subscriptions(
   rclcpp::Subscription<builtin_interfaces::msg::Duration>::SharedPtr a_remaining_time_match_sub,
@@ -23,24 +38,4 @@ void create_subscriptions(
   rclcpp::Subscription<std_msgs::msg::Byte>::SharedPtr a_digital_reads_sub,
   std::function<void(const std_msgs::msg::Byte::SharedPtr)> callback_digital_reads_sub,
   rclcpp::SubscriptionOptions l_sub_options,
-  rclcpp::Node* goal_node)
-{
-    a_remaining_time_match_sub = goal_node->create_subscription<builtin_interfaces::msg::Duration>(
-      "/remaining_time", 5, callback_remaining_time_match, l_sub_options);
-    a_tirette_sub = goal_node->create_subscription<std_msgs::msg::Bool>(
-      "tirette", 5, callback_tirette_sub, l_sub_options);
-    a_vacuum_sub = goal_node->create_subscription<std_msgs::msg::Float32>(
-      "vacuum", 5, callback_vacuum_sub, l_sub_options);
-    a_ax12_1_info_sub = goal_node->create_subscription<krabi_msgs::msg::AX12Info>(
-      "ax12_1_info", 5, callback_ax12_1_info_sub, l_sub_options);
-    a_ax12_2_info_sub = goal_node->create_subscription<krabi_msgs::msg::AX12Info>(
-      "ax12_2_info", 5, callback_ax12_2_info_sub, l_sub_options);
-    a_ax12_3_info_sub = goal_node->create_subscription<krabi_msgs::msg::AX12Info>(
-      "ax12_3_info", 5, callback_ax12_3_info_sub, l_sub_options);
-    a_ax12_4_info_sub = goal_node->create_subscription<krabi_msgs::msg::AX12Info>(
-      "ax12_4_info", 5, callback_ax12_4_info_sub, l_sub_options);
-    a_digital_reads_sub = goal_node->create_subscription<std_msgs::msg::Byte>(
-      "digitalRead", 5, callback_digital_reads_sub, l_sub_options);
-    a_other_robots_sub = goal_node->create_subscription<geometry_msgs::msg::PoseArray>(
-      "dynamic_obstacles", 5, callback_other_robots_sub, l_sub_options);
-}
+  rclcpp::Node* goal_node);

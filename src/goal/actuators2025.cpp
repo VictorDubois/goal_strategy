@@ -37,7 +37,7 @@ Actuators2025::Actuators2025(rclcpp::Node::SharedPtr a_node,
     m_shutdown = false;
 }
 
-void Actuators2025::updateStepperElevator(krabi_msgs::msg::InfosStepper stepper_info_msg)
+void Actuators2025::updateStepperElevator(krabi_msgs::msg::InfosStepper::SharedPtr stepper_info_msg)
 {
     m_stepper_elevator_1->updateElevatorInfos(stepper_info_msg);
 }

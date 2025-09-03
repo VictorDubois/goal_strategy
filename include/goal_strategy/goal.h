@@ -9,8 +9,9 @@
 #include <stdlib.h>
 #include <thread>
 
-#include <geometry_msgs/msg/pose_array.hpp>
 #include <rclcpp/node.hpp>
+
+#include <geometry_msgs/msg/pose_array.hpp>
 #include <std_msgs/msg/bool.hpp>
 // #include <builtin_interfaces/msg/duration.hpp>
 #include "builtin_interfaces/msg/duration.hpp"
@@ -28,6 +29,8 @@
 #include "krabi_msgs/msg/ax12_info.hpp"
 #include "krabi_msgs/msg/servos_cmd.hpp"
 #include "krabi_msgs/msg/strat_movement.hpp"
+
+#include "goal_strategy/subscriptionCreator.h"
 #include "krabilib/pose.h"
 
 // The distance to a goal (in m)
@@ -104,29 +107,29 @@ private:
     bool checkFunnyAction();
 
     void updateCurrentPose();
-    void updateRemainingTime(builtin_interfaces::msg::Duration remainingTime);
-    void updateTirette(std_msgs::msg::Bool tirette);
-    void updateVacuum(std_msgs::msg::Float32 vacuum_msg);
-    void updateAX12Info(krabi_msgs::msg::AX12Info ax12_msg, uint8_t);
-    void updateAX12Info1(krabi_msgs::msg::AX12Info ax12_msg)
+    void updateRemainingTime(builtin_interfaces::msg::Duration::SharedPtr remainingTime);
+    void updateTirette(std_msgs::msg::Bool::SharedPtr tirette);
+    void updateVacuum(std_msgs::msg::Float32::SharedPtr vacuum_msg);
+    void updateAX12Info(krabi_msgs::msg::AX12Info::SharedPtr ax12_msg, uint8_t);
+    void updateAX12Info1(krabi_msgs::msg::AX12Info::SharedPtr ax12_msg)
     {
         updateAX12Info(ax12_msg, 1);
     };
-    void updateAX12Info2(krabi_msgs::msg::AX12Info ax12_msg)
+    void updateAX12Info2(krabi_msgs::msg::AX12Info::SharedPtr ax12_msg)
     {
         updateAX12Info(ax12_msg, 2);
     };
-    void updateAX12Info3(krabi_msgs::msg::AX12Info ax12_msg)
+    void updateAX12Info3(krabi_msgs::msg::AX12Info::SharedPtr ax12_msg)
     {
         updateAX12Info(ax12_msg, 3);
     };
-    void updateAX12Info4(krabi_msgs::msg::AX12Info ax12_msg)
+    void updateAX12Info4(krabi_msgs::msg::AX12Info::SharedPtr ax12_msg)
     {
         updateAX12Info(ax12_msg, 4);
     };
-    void updateDigitalReads(std_msgs::msg::Byte digitalReads);
-    void updateOtherRobots(geometry_msgs::msg::PoseArray);
-    void updateStepperElevator(krabi_msgs::msg::InfosStepper stepper_info_msg)
+    void updateDigitalReads(std_msgs::msg::Byte::SharedPtr digitalReads);
+    void updateOtherRobots(geometry_msgs::msg::PoseArray::SharedPtr);
+    void updateStepperElevator(krabi_msgs::msg::InfosStepper::SharedPtr stepper_info_msg)
     {
         m_actuators2025.updateStepperElevator(stepper_info_msg);
     };
@@ -147,8 +150,6 @@ private:
     void publishStratMovement();
 
     bool isParked();
-
-    void create_subscriptions(rclcpp::SubscriptionOptions l_sub_options);
 
     State m_state = State::RUN;
     Distance m_dist_to_goal;

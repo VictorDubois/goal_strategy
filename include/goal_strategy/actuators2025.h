@@ -62,5 +62,5 @@ public:
     void start();
     void shutdown();
     void set_score(int a_score);
-    void updateStepperElevator(krabi_msgs::msg::InfosStepper stepper_info_msg);
+    void updateStepperElevator(krabi_msgs::msg::InfosStepper::SharedPtr stepper_info_msg);
 };
