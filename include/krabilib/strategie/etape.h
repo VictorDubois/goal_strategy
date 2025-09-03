@@ -15,39 +15,6 @@ public:
     enum EtapeType
     {
         DEPART = 0x01,
-        // #ifdef GOLDO2018
-        // 2018
-        ABEILLE = 0x03,
-        RESERVOIR_EAU = 0x05,
-        // 2019
-        GOLDENIUM = 0x06,
-        ACCELERATOR = 0x07,
-        PRE_BAFFE = 0x09,
-        // #elif KRABI2016
-        CUBE_DEBUT = 0x02,
-        // 2016
-        DUNE = 0x04,
-        ZONE_CONSTRUCTION = 0x08,
-        CABINE = 0x10,
-        // 2020+2021
-        PHARE = 0x11,
-        MANCHE_A_AIR = 0x12,
-        PORT = 0x13,
-        MOUILLAGE_NORD = 0x14,
-        MOUILLAGE_SUD = 0x15,
-        BOUEE = 0x16,
-        // 2022
-        HEXAGON_PLAT = 0x17,
-        CARRE_FOUILLE = 0x18,
-        STATUETTE = 0x19,
-        VITRINE = 0x20,
-        GALERIE = 0x21,
-        // 2023
-        PILE_GATEAU = 0x22,
-        ASSIETTE = 0x23,
-        // 2024
-        PLANT_GROUP = 0x24,
-        AIRE_DE_DEPOSE = 0x25,
         // 2025
         STOCK_MATIERE_PREMIERE = 0x26,
         AIRE_DE_CONSTRUCTION = 0x27,

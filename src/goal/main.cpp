@@ -375,7 +375,6 @@ void GoalStrat::goToNextMission()
     {
         return;
     }
-    m_servo_out = false;
 
     m_moving_timeout_deadline = this->now() + rclcpp::Duration(m_timeout_moving, 0);
 
@@ -394,62 +393,6 @@ void GoalStrat::goToNextMission()
         // Check if we scored points
         switch (m_previous_etape_type)
         {
-        case Etape::EtapeType::CARRE_FOUILLE:
-            m_score_match += 3; // 3 carres valides sur 5 rapportent 5 points
-            if (!m_at_least_one_carre_fouille_done)
-            {
-                m_score_match += 5;
-                m_score_match += 2; // first is always good
-            }
-            m_at_least_one_carre_fouille_done = true;
-            break;
-        case Etape::EtapeType::STATUETTE:
-            // m_score_match += 10;//replique
-            m_score_match += 5; // statuette gone
-            m_strat_graph->catchStatuette();
-            break;
-        case Etape::EtapeType::VITRINE:
-            m_score_match += 10; // drop statuette
-            m_score_match += 10; // allume vitrine
-            m_strat_graph->dropStatuette();
-            break;
-        case Etape::EtapeType::PHARE:
-            m_score_match += 3;
-            // Will the phare have enough time to be raised?
-            if (m_remainig_time.seconds() > 10.)
-            {
-                m_score_match += 10;
-            }
-            break;
-        case Etape::EtapeType::PORT:
-            switch (m_strat_graph->getEtapeEnCours()->getNumero())
-            {
-            case 10:
-                m_score_match += 3;
-                break;
-            case 11:
-                m_score_match += 3;
-                break;
-            case 17:
-                m_score_match += 6;
-                break;
-            default:
-                RCLCPP_DEBUG_STREAM(rclcpp::get_logger("rclcpp"),
-                                    "Warning, unkown port!" << std::endl);
-                m_score_match += 2;
-                break;
-            }
-            break;
-        case Etape::EtapeType::MANCHE_A_AIR:
-            // 5 for the first, 10 for the second
-            m_score_match += 5;
-            if (m_first_manche_a_air_done)
-            {
-                m_score_match += 5;
-            }
-            m_first_manche_a_air_done = true;
-            break;
-
         default:
             break;
         }
@@ -540,7 +483,6 @@ GoalStrat::GoalStrat()
     m_goal_pose_pub = this->create_publisher<geometry_msgs::msg::PoseStamped>("goal_pose", 5);
     m_is_blue_pub = this->create_publisher<std_msgs::msg::Bool>("is_blue", 5);
 
-    m_arm_servo_pub = this->create_publisher<krabi_msgs::msg::ServosCmd>("cmd_servos", 5);
     m_debug_ma_etapes_pub
       = this->create_publisher<visualization_msgs::msg::MarkerArray>("debug_etapes", 5);
     m_strat_movement_pub
@@ -653,7 +595,6 @@ void GoalStrat::publishAll()
         checkFunnyAction();
         checkStopMatch();
         publishScore();
-        m_arm_servo_pub->publish(m_servos_cmd);
         publishIsBlue();
         if (m_goal_init_done)
         {
@@ -814,47 +755,16 @@ void GoalStrat::chooseGear()
         l_reverseGear.data = (override_gear == krabi_msgs::msg::StratMovement::REVERSE);
     }
 
-    else if ( // 2020&2021
-      m_previous_etape_type == Etape::EtapeType::MANCHE_A_AIR
-      || m_strat_graph->getEtapeEnCours()->getEtapeType() == Etape::EtapeType::PHARE
-      || m_previous_etape_type == Etape::EtapeType::PORT
-      // 2022
-      || m_previous_etape_type == Etape::EtapeType::STATUETTE
-      || m_previous_etape_type == Etape::EtapeType::VITRINE
-      || (m_strat_graph->getEtapeEnCours()->getEtapeType() == Etape::EtapeType::CARRE_FOUILLE
-          && m_is_blue)
-      // 2023
-      || m_previous_etape_type == Etape::EtapeType::ASSIETTE
-      || (m_previous_etape_type == Etape::EtapeType::PILE_GATEAU
-          && m_strat_graph->getEtapeEnCours()->getEtapeType() != Etape::EtapeType::ASSIETTE)
-      // 2024
-      || m_strat_graph->getEtapeEnCours()->getEtapeType() == Etape::EtapeType::AIRE_DE_DEPOSE
-      || m_strat_graph->getEtapeEnCours()->getEtapeType() == Etape::EtapeType::PLANT_GROUP
+    else if (
       // 2025
-      || m_previous_etape_type == Etape::EtapeType::AIRE_DE_CONSTRUCTION)
+      m_previous_etape_type == Etape::EtapeType::AIRE_DE_CONSTRUCTION)
     {
         l_reverseGear.data = true;
         m_strat_mvnt.reverse_gear = krabi_msgs::msg::StratMovement::REVERSE;
     }
-    else if ( // 2020&2021
-      m_strat_graph->getEtapeEnCours()->getEtapeType() == Etape::EtapeType::MANCHE_A_AIR
-      || m_previous_etape_type == Etape::EtapeType::PHARE
-      || m_strat_graph->getEtapeEnCours()->getEtapeType() == Etape::EtapeType::PORT
-      // 2022
-      || m_strat_graph->getEtapeEnCours()->getEtapeType() == Etape::EtapeType::STATUETTE
-      || m_strat_graph->getEtapeEnCours()->getEtapeType() == Etape::EtapeType::VITRINE
-      || (m_strat_graph->getEtapeEnCours()->getEtapeType() == Etape::EtapeType::CARRE_FOUILLE
-          && !m_is_blue)
-      // 2023
-      || m_strat_graph->getEtapeEnCours()->getEtapeType() == Etape::EtapeType::PILE_GATEAU
-      || m_strat_graph->getEtapeEnCours()->getEtapeType() == Etape::EtapeType::ASSIETTE
-      // 2024
-      || (m_previous_etape_type == Etape::EtapeType::PLANT_GROUP
-          && m_strat_graph->getEtapeEnCours()->getEtapeType() != Etape::EtapeType::AIRE_DE_DEPOSE)
-      || m_previous_etape_type == Etape::EtapeType::AIRE_DE_DEPOSE
+    else if (
       // 2025
-      || m_strat_graph->getEtapeEnCours()->getEtapeType()
-           == Etape::EtapeType::STOCK_MATIERE_PREMIERE
+      m_strat_graph->getEtapeEnCours()->getEtapeType() == Etape::EtapeType::STOCK_MATIERE_PREMIERE
       // || m_previous_etape_type == Etape::EtapeType::DEPART // should not be needed
       || m_strat_graph->getEtapeEnCours()->getEtapeType() == Etape::EtapeType::AIRE_DE_CONSTRUCTION)
     {
@@ -871,11 +781,6 @@ void GoalStrat::chooseGear()
             l_reverseGear.data = true;
             m_strat_mvnt.reverse_gear = krabi_msgs::msg::StratMovement::REVERSE;
         }
-        /*else
-        {
-            l_reverseGear.data = false;
-            m_strat_mvnt.reverse_gear = krabi_msgs::msg::StratMovement::FORWARD;
-        }*/
     }
 
     // l_reverseGear.data = true;
@@ -967,8 +872,6 @@ void GoalStrat::publishScore()
  */
 void GoalStrat::stopActuators()
 {
-    m_servos_cmd.enable = false;
-    m_arm_servo_pub->publish(m_servos_cmd);
 }
 
 /**
@@ -999,26 +902,10 @@ void GoalStrat::chooseEffector(bool enable)
         return;
     }
 
-    if (m_strat_graph->getEtapeEnCours()->getEtapeType() == Etape::EtapeType::BOUEE)
-    {
-        // m_strat_mvnt.endpoint_frame_id = tf::resolve(rclcpp::this_node::getNamespace(),
-        // "suction_cup"); //1.7 Removal of support for tf_prefix
-        m_strat_mvnt.endpoint_frame_id = "suction_cup";
-    }
-    if (m_strat_graph->getEtapeEnCours()->getEtapeType() == Etape::EtapeType::ASSIETTE
-        || m_strat_graph->getEtapeEnCours()->getEtapeType() == Etape::EtapeType::PILE_GATEAU)
-    {
-        // m_strat_mvnt.endpoint_frame_id = tf::resolve(rclcpp::this_node::getNamespace(),
-        // "claws_inside"); //1.7 Removal of support for tf_prefix
-        m_strat_mvnt.endpoint_frame_id = "claws_inside";
-    }
-
     if (m_strat_graph->getEtapeEnCours()->getEtapeType() == Etape::EtapeType::AIRE_DE_CONSTRUCTION
         || m_strat_graph->getEtapeEnCours()->getEtapeType()
              == Etape::EtapeType::STOCK_MATIERE_PREMIERE)
     {
-        // m_strat_mvnt.endpoint_frame_id = tf::resolve(rclcpp::this_node::getNamespace(),
-        // "claws_inside"); //1.7 Removal of support for tf_prefix
         m_strat_mvnt.endpoint_frame_id = "grabi";
     }
 }
@@ -1047,7 +934,6 @@ void GoalStrat::stateRun()
 
     publishScore();
     publishDebugInfos();
-    m_arm_servo_pub->publish(m_servos_cmd);
     bool isLate = false;
     printCurrentAction();
 
@@ -1056,13 +942,12 @@ void GoalStrat::stateRun()
 
     if (m_vacuum_state == OPEN_AIR)
     {
-        m_strat_graph
-          ->dropStatuette(); // Count it as dropped, do not attempt to put it in the vitrine
-        if (m_strat_graph->getEtapeEnCours()->getEtapeType() == Etape::EtapeType::VITRINE)
+        // Count it as dropped, do not attempt to put it in the vitrine
+        /*if (m_strat_graph->getEtapeEnCours()->getEtapeType() == Etape::EtapeType::VITRINE)
         {
             m_action_aborted = true;
             goToNextMission();
-        }
+        }*/
     }
     if (checkFunnyAction())
     {
@@ -1213,7 +1098,6 @@ void GoalStrat::stateExit()
 void GoalStrat::init()
 {
     m_funny_action_counted = false;
-    m_first_manche_a_air_done = false;
 
     if (m_year == 2023)
     {
@@ -1230,12 +1114,6 @@ void GoalStrat::init()
         m_score_match = 20; // Banner
     }
 
-    m_servos_cmd.enable = true;
-    /*m_servos_cmd.brak_speed = 10;
-    m_servos_cmd.brak_angle = 148;*/
-    m_servos_cmd.pavillon_speed = 10;
-    m_servos_cmd.pavillon_angle = 50;
-
     m_dist_to_goal = 100.;
     m_state_msg_displayed = false;
 
@@ -1247,7 +1125,6 @@ void GoalStrat::init()
     m_timeout_moving = 15; // sec
     m_timeout_orient = 10; // sec
     m_is_first_action = true;
-    m_servo_out = false;
 
     // Choose side
     this->declare_parameter("isBlue", true);

@@ -38,18 +38,6 @@ std::string Etape::getName()
     case EtapeType::DEPART:
         return "Depart";
         break;
-    case EtapeType::PILE_GATEAU:
-        return "PILE_GATEAU";
-        break;
-    case EtapeType::ASSIETTE:
-        return "ASSIETTE";
-        break;
-    case EtapeType::PLANT_GROUP:
-        return "Plante";
-        break;
-    case EtapeType::AIRE_DE_DEPOSE:
-        return "Depose";
-        break;
     case EtapeType::POINT_PASSAGE:
         return "PP";
         break;

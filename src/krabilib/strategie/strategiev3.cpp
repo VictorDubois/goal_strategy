@@ -493,13 +493,10 @@ void StrategieV3::updateStock()
     case Etape::DEPART:
         m_tableau_etapes_total[m_etape_en_cours]->setEtapeType(Etape::POINT_PASSAGE);
         break;
-    case Etape::PRE_BAFFE:
-        m_tableau_etapes_total[m_etape_en_cours]->setEtapeType(Etape::POINT_PASSAGE);
-        break;
-    case Etape::ASSIETTE:
+    // Certaines étapes restent en l'état après y être passé
+    /*case Etape::ASSIETTE:
         // Une assiette reste une assiette
-        // m_tableau_etapes_total[m_etape_en_cours]->setEtapeType(Etape::POINT_PASSAGE);
-        break;
+        break;*/
     default:
         m_tableau_etapes_total[m_etape_en_cours]->setEtapeType(Etape::POINT_PASSAGE);
         break;

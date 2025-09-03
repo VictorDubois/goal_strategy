@@ -37,16 +37,6 @@
 #define REACH_DIST 0.02                            // m
 #define REACH_ANG AngleTools::deg2rad(AngleDeg(2)) // °
 
-enum PositionServo
-{
-    UP,
-    DOWN,
-    RELEASE,
-    OUT,
-    IN,
-    FOLDED
-};
-
 enum VacuumState
 {
     OPEN_AIR,
@@ -83,8 +73,6 @@ private:
     void alignWithAngle(Angle a_angle);
     bool alignWithAngleWithTimeout(Angle angle);
     void goToNextMission();
-    void hissezLesPavillons();
-    void moveArm(enum PositionServo position);
     void setMaxSpeedAtArrival();
     void clamp_mode();
     void recule(rclcpp::Duration a_time);
@@ -154,11 +142,7 @@ private:
     State m_state = State::RUN;
     Distance m_dist_to_goal;
     bool m_state_msg_displayed;
-#ifdef YEAR_2025
     std::unique_ptr<Coupe2025> m_strat_graph;
-#else
-    std::unique_ptr<Coupe2024> m_strat_graph;
-#endif
 
     long m_timeout_moving, m_timeout_orient;
     bool m_is_first_action;
@@ -167,12 +151,8 @@ private:
 
     rclcpp::Publisher<std_msgs::msg::Bool>::SharedPtr m_is_blue_pub;
     rclcpp::Publisher<geometry_msgs::msg::PoseStamped>::SharedPtr m_goal_pose_pub;
-    rclcpp::Publisher<krabi_msgs::msg::ServosCmd>::SharedPtr m_arm_servo_pub;
-    // rclcpp::Publisher<geometry_msgs::msg::Pose>::SharedPtr m_stop_linear_pub;
-    // rclcpp::Publisher<geometry_msgs::msg::Pose>::SharedPtr m_score_pub;
     rclcpp::Publisher<visualization_msgs::msg::MarkerArray>::SharedPtr m_debug_ma_etapes_pub;
     rclcpp::Publisher<krabi_msgs::msg::StratMovement>::SharedPtr m_strat_movement_pub;
-
     rclcpp::Subscription<builtin_interfaces::msg::Duration>::SharedPtr m_remaining_time_match_sub;
     rclcpp::Subscription<std_msgs::msg::Bool>::SharedPtr m_tirette_sub;
     rclcpp::Subscription<std_msgs::msg::Float32>::SharedPtr m_vacuum_sub;
@@ -193,14 +173,11 @@ private:
     bool m_is_blue; // true if blue
     float goal_MAX_ALLOWED_ANGULAR_SPEED;
 
-    krabi_msgs::msg::ServosCmd m_servos_cmd;
     rclcpp::Duration m_remainig_time = rclcpp::Duration(1000, 0);
     Etape::EtapeType m_previous_etape_type;
     bool m_action_aborted;
     float m_score_match;
     float m_score_match_at_end;
-    bool m_first_manche_a_air_done;
-    bool m_servo_out;
     rclcpp::Time m_moving_timeout_deadline;
     bool m_funny_action_counted;
     krabi_msgs::msg::StratMovement m_strat_mvnt;
