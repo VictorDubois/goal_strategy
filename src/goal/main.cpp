@@ -430,6 +430,7 @@ void GoalStrat::goToNextMission()
     return;
 }
 
+// 2025 banner deployment
 void GoalStrat::pushBanner()
 {
     reculeDroit(rclcpp::Duration(2, 0), Distance(0.1));

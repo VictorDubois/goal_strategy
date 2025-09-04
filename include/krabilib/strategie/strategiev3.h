@@ -7,12 +7,7 @@
 #include "krabilib/strategie/dijkstra.h"
 #include "krabilib/strategie/mediumLevelAction.h"
 
-//#define SMOOTH_MOVE
-
-#ifdef QTGUI
-#include <QColor>
-#include <QPainter>
-#endif
+// #define SMOOTH_MOVE
 
 class StrategieV3
 {
@@ -81,10 +76,6 @@ public:
      */
     void setDistancesFromRobotsToEtapes(std::vector<Position> a_potential_other_robots);
 
-#ifdef QTGUI
-    virtual void paint(QPainter* p);
-#endif
-
 protected:
     bool m_yellow;
     bool m_use_x_symetry;
@@ -126,15 +117,6 @@ protected:
 
     void updateStock();
     virtual int getScoreEtape(int i) = 0;
-
-#ifdef QTGUI
-    QColor colorLiaisonsEtapes;
-    QColor colorEtapeGoal;
-    QColor colorEtapesIntermediaires;
-    QColor colorEtapes;
-    QColor colorTexteEtapes;
-    QColor colorEtapesRobotVu;
-#endif
 
 private:
     bool updateScores();

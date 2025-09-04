@@ -1,21 +1,9 @@
 #include "krabilib/strategie/strategiev3.h"
 
-#ifndef STANDALONE_STRATEGIE
-#include "krabilib/asservissement.h"
-#include "krabilib/leds.h"
-#include "krabilib/odometrie.h"
-#include "krabilib/strategie/actionGoTo.h"
-#include "krabilib/strategieV2.h"
-#endif
-
 #include "krabilib/strategie/dijkstra.h"
 #include "krabilib/strategie/etape.h"
 
-#include "rclcpp/rclcpp.hpp"
-
-#ifdef QTGUI
-#include <QDebug>
-#endif
+#include "rclcpp/logging.hpp"
 
 StrategieV3::StrategieV3(bool isYellow, bool useXSymetry)
   : m_tableau_etapes_total(Etape::getTableauEtapesTotal())
@@ -28,15 +16,6 @@ StrategieV3::StrategieV3(bool isYellow, bool useXSymetry)
     m_remaining_time_ms = 90 * 1000;
     m_yellow = isYellow;
     m_use_x_symetry = useXSymetry;
-
-#ifdef QTGUI
-    colorLiaisonsEtapes = QColor(150, 100, 50);
-    colorEtapeGoal = QColor("red");
-    colorEtapesIntermediaires = QColor("yellow");
-    colorEtapes = QColor("orange");
-    colorTexteEtapes = QColor("black");
-    colorEtapesRobotVu = QColor("black");
-#endif
 }
 
 Etape* StrategieV3::getEtapeEnCours()
@@ -95,10 +74,6 @@ int StrategieV3::update()
     // à éviter
     if (m_avoiding)
     {
-#ifdef QTGUI
-        qDebug() << "En train d'eviter";
-#endif
-
         m_tableau_etapes_total[m_etape_en_cours]->robotVu();
         // m_tableau_etapes_total[m_etape_en_cours]->setState(-2);
         m_tableau_etapes_total[m_etape_en_cours]->getParent()->setParent(
@@ -158,9 +133,7 @@ int StrategieV3::update()
     }
     else
     {
-#ifdef QTGUI
-        qDebug() << "Pas en train d'eviter";
-#endif
+        // Pas en train d'eviter
 
         // On reset toute les directions à aller en marche avant
         for (int i = 0; i < m_nombre_etapes; i++)
@@ -228,9 +201,8 @@ int StrategieV3::update()
                     {
                         m_status_strat = -1; // Plus rien à faire, on passe à l'action suivante
                                              // de stratégieV2
-#ifdef QTGUI
-                        qDebug() << "Fin de StrategieV3";
-#endif
+
+                        // Fin de StrategieV3
                         return m_status_strat;
                     }
                     else
@@ -329,9 +301,6 @@ void StrategieV3::updateIntermedaire()
     // Ainsi, le parent du parent du parent... de n'importe quelle étape est l'étape d'origine
     //(sauf peut être le parent de l'étape d'origine, mais on s'en fout
 
-#ifdef QTGUI
-    qDebug() << "updateIntermedaire\n";
-#endif
     int etapeOuOnVientDArriver = m_etape_en_cours;
     m_etape_en_cours = m_goal;
     m_next_step = -1;
@@ -341,9 +310,7 @@ void StrategieV3::updateIntermedaire()
     if (((m_tableau_etapes_total[m_etape_en_cours]->getParent()->getNumero()))
         == etapeOuOnVientDArriver)
     {
-#ifdef QTGUI
-        qDebug() << "la prochaine etape est le goal\n" << etapeOuOnVientDArriver;
-#endif
+
         m_status_strat = 1;
     }
 
@@ -380,96 +347,6 @@ void StrategieV3::updateIntermedaire()
 #endif // STANDALONE_STRATEGIE
     }
 }
-
-#ifdef QTGUI
-void StrategieV3::paint(QPainter* p)
-{
-    for (int numeroEtape = 0; numeroEtape < m_nombre_etapes; numeroEtape++)
-    {
-        QPoint position = QPoint(m_tableau_etapes_total[numeroEtape]->getPosition().getX(),
-                                 m_tableau_etapes_total[numeroEtape]->getPosition().getY());
-
-        // Affichage des étapes
-        p->setPen(colorEtapesIntermediaires);   //"orange"));
-        p->setBrush(colorEtapesIntermediaires); //"orange"));
-        p->setOpacity(1.0f);
-        p->drawEllipse(position, 10, 10);
-
-        // Etape - but en surbrillance
-        if (numeroEtape == m_goal)
-        {
-            p->setPen(colorEtapeGoal);
-            p->setBrush(colorEtapeGoal);
-            p->setOpacity(1.0f);
-            p->drawEllipse(position, 30, 30);
-        }
-
-        // Etape actuelle en surbrillance
-        if (numeroEtape == m_etape_en_cours)
-        {
-            p->setPen(colorEtapesIntermediaires);
-            p->setBrush(colorEtapesIntermediaires);
-            p->setOpacity(1.0f);
-            p->drawEllipse(position, 25, 25);
-        }
-
-        // Etapes où on a vu un robot
-        if (m_tableau_etapes_total[numeroEtape]->aEviter())
-        {
-            p->setPen(colorEtapesRobotVu);
-            p->setBrush(colorEtapesRobotVu);
-            p->setOpacity(1.0f);
-            p->drawEllipse(position, 20, 20);
-        }
-
-        // Affichage du numéro des étapes
-        QFont font;
-        font.setPixelSize(50);
-        p->setFont(font);
-        p->setOpacity(1);
-        p->setPen(colorTexteEtapes);
-        p->setBrush(colorTexteEtapes);
-        p->drawText(position, QString::number(m_tableau_etapes_total[numeroEtape]->getNumero()));
-
-        // Affichage des liaisons entre étapes
-        for (int numeroChild = 0;
-             numeroChild < m_tableau_etapes_total[numeroEtape]->getNbChildren();
-             numeroChild++)
-        {
-            //            Affichages de liaisons
-            //            QPoint positionChild = QPoint(
-            //            m_tableau_etapes_total[numeroEtape]->getChildren()[numeroChild]->getPosition().getX(),
-            //            -(m_tableau_etapes_total[numeroEtape]->getChildren()[numeroChild]->getPosition().getY()));
-
-            // Affichage des demi-liaisons, pour mieux voir les liens mono-directionnels
-            QPoint positionChild = QPoint(
-              (m_tableau_etapes_total[numeroEtape]->getChildren()[numeroChild]->getPosition().getX()
-               + m_tableau_etapes_total[numeroEtape]->getPosition().getX())
-                / 2,
-              (m_tableau_etapes_total[numeroEtape]->getChildren()[numeroChild]->getPosition().getY()
-               + m_tableau_etapes_total[numeroEtape]->getPosition().getY())
-                / 2);
-            p->setOpacity(0.5f);
-            p->setPen(colorLiaisonsEtapes);
-            p->setBrush(colorLiaisonsEtapes);
-            p->drawLine(position.x(), position.y(), positionChild.x(), positionChild.y());
-            p->drawEllipse(position, 10, 10);
-        }
-
-        // Affichage du type d'étape
-        QPoint positionTypeEtape
-          = QPoint(m_tableau_etapes_total[numeroEtape]->getPosition().getX(),
-                   m_tableau_etapes_total[numeroEtape]->getPosition().getY() + 50);
-        p->setFont(font);
-        p->setOpacity(0.5);
-        p->setPen(colorTexteEtapes);
-        p->setBrush(colorTexteEtapes);
-        p->drawText(positionTypeEtape,
-                    Etape::getShortNameType(m_tableau_etapes_total[numeroEtape]->getEtapeType()));
-    }
-    p->setOpacity(1);
-}
-#endif
 
 void StrategieV3::startDijkstra()
 {

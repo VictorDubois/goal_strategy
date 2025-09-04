@@ -26,21 +26,6 @@ public:
     void debugEtapes(visualization_msgs::msg::MarkerArray& ma);
     void etape_type_to_marker(visualization_msgs::msg::Marker& m, Etape* e);
 
-    void catchStatuette() {}; // 2022 only
-    void dropStatuette() {};  // 2022 only
-
-    void grabGateau(Etape* /*e*/) {}; // 2023 only
-    int dropGateau(Etape* /*e*/)
-    {
-        return 0;
-    }; // 2023 only
-
-    void grabPlant(Etape* /*e*/) {}; // 2024 only
-    int dropPlant(Etape* /*e*/)
-    {
-        return 0;
-    }; // 2024 only
-
     void grabPlateformes(Etape* e); // 2025 only
     int dropPlateformes(Etape* e);  // 2025 only
 

@@ -7,9 +7,6 @@
 #include <iostream>
 #include <tf2_ros/transform_listener.h>
 
-#ifdef QTGUI
-#include <QDebug>
-#endif
 // todo delete this when strategie is done and it's not used anymore
 Position Coupe2025::positionCAbsolute(double x_yellow_from_top_left, double y_yellow_from_top_left)
 {
@@ -267,10 +264,6 @@ Coupe2025::Coupe2025(const bool isYellow, const StartingPosition2025 starting_po
     Etape::get(point_passage_2)->addVoisins(point_passage_1, stock_bord_cote_publique);*/
 
     m_numero_etape_garage = zone_construction_backstage; // Must be set!
-
-#ifdef QTGUI
-    qDebug() << Etape::getTotalEtapes();
-#endif
 
     m_nombre_etapes = Etape::getTotalEtapes();
 
