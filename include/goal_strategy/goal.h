@@ -11,10 +11,9 @@
 
 #include <rclcpp/node.hpp>
 
+#include "builtin_interfaces/msg/duration.hpp"
 #include <geometry_msgs/msg/pose_array.hpp>
 #include <std_msgs/msg/bool.hpp>
-// #include <builtin_interfaces/msg/duration.hpp>
-#include "builtin_interfaces/msg/duration.hpp"
 #include <std_msgs/msg/byte.hpp>
 #include <std_msgs/msg/float32.hpp>
 #include <std_msgs/msg/int16.hpp>
@@ -138,6 +137,8 @@ private:
     void publishStratMovement();
 
     bool isParked();
+
+    void publisherCreator();
 
     State m_state = State::RUN;
     Distance m_dist_to_goal;

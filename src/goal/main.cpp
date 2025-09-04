@@ -481,13 +481,7 @@ GoalStrat::GoalStrat()
 
     override_gear = krabi_msgs::msg::StratMovement::FORWARD_OR_REVERSE; // don't care
 
-    m_goal_pose_pub = this->create_publisher<geometry_msgs::msg::PoseStamped>("goal_pose", 5);
-    m_is_blue_pub = this->create_publisher<std_msgs::msg::Bool>("is_blue", 5);
-
-    m_debug_ma_etapes_pub
-      = this->create_publisher<visualization_msgs::msg::MarkerArray>("debug_etapes", 5);
-    m_strat_movement_pub
-      = this->create_publisher<krabi_msgs::msg::StratMovement>("strat_movement", 5);
+    publisherCreator();
 
     auto my_callback_group = create_callback_group(rclcpp::CallbackGroupType::Reentrant);
 
