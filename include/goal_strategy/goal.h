@@ -29,6 +29,7 @@
 #include "krabi_msgs/msg/servos_cmd.hpp"
 #include "krabi_msgs/msg/strat_movement.hpp"
 
+#include "goal_strategy/publisherCreator.h"
 #include "goal_strategy/subscriptionCreator.h"
 #include "krabilib/pose.h"
 
@@ -137,8 +138,6 @@ private:
     void publishStratMovement();
 
     bool isParked();
-
-    void publisherCreator();
 
     State m_state = State::RUN;
     Distance m_dist_to_goal;
