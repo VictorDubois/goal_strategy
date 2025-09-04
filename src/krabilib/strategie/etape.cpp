@@ -1,6 +1,6 @@
 #include "krabilib/strategie/etape.h"
-#include "krabilib/strategie/actionGoTo.h"
 #include "krabilib/strategie/dijkstra.h"
+#include "krabilib/strategie/mediumLevelAction.h"
 
 std::vector<Etape*> Etape::tableauEtapesTotal;
 int Etape::totalEtapesInstanciated = 0;
@@ -20,8 +20,6 @@ Etape::Etape(Position position, EtapeType type)
     this->numeroEtapeFinAction = idx;
     this->nombreEtapesLieesParFinirEtape = 0;
     this->distanceToPotentialObstacle = 5000;
-
-    this->actionGoTo = new ActionGoTo(getPosition());
 
     if (idx != ETAPE_INVALID_IDX)
         tableauEtapesTotal[idx] = this;
@@ -295,21 +293,12 @@ void Etape::setAction(MediumLevelAction* action)
     {
         this->position = action->getGoalPosition();
         this->type = action->getType();
-
-        if (this->actionGoTo != 0)
-            delete this->actionGoTo;
-        this->actionGoTo = new ActionGoTo(getPosition());
     }
 }
 
 MediumLevelAction* Etape::getAction()
 {
     return this->action;
-}
-
-ActionGoTo* Etape::getActionGoTo()
-{
-    return this->actionGoTo;
 }
 
 void Etape::addVoisin(Etape* newVoisin, bool autreSens)
@@ -347,16 +336,12 @@ void Etape::reset()
 {
     if (this->action != 0)
         this->action->reset();
-    if (this->actionGoTo != 0)
-        this->actionGoTo->reset();
 }
 
 void Etape::setGoBack(bool val)
 {
     if (this->action != 0)
         this->action->setGoBack(val);
-    if (this->actionGoTo != 0)
-        this->actionGoTo->setGoBack(val);
 }
 
 void Etape::addVoisin(int newVoisinIndex, bool autreSens)

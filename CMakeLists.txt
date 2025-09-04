@@ -43,7 +43,6 @@ add_library(krabilib_strat
   src/krabilib/strategie/strategiev3.cpp
   src/krabilib/strategie/etape.cpp      
   src/krabilib/strategie/mediumLevelAction.cpp
-  src/krabilib/strategie/actionGoTo.cpp   
   src/krabilib/strategie/aireDeConstruction.cpp
   src/krabilib/strategie/stockDeMatierePremiere.cpp
 )

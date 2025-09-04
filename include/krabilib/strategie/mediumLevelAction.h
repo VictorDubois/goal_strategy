@@ -4,6 +4,7 @@
 #include "krabilib/position.h"
 #include "krabilib/strategie/etape.h"
 
+class Etape;
 class MediumLevelAction
 {
 public:

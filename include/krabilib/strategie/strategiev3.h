@@ -3,8 +3,6 @@
 #include "krabilib/strategie/dijkstra.h"
 #include "krabilib/strategie/mediumLevelAction.h"
 
-// #define SMOOTH_MOVE
-
 class StrategieV3
 {
 

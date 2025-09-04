@@ -5,7 +5,6 @@
 
 #define ETAPE_INVALID_IDX -1
 
-class ActionGoTo;
 class MediumLevelAction;
 
 class Etape
@@ -186,8 +185,6 @@ public:
 
     MediumLevelAction* getAction();
 
-    ActionGoTo* getActionGoTo();
-
     void reset();
 
     void setGoBack(bool val);
@@ -272,8 +269,6 @@ private:
 
     /** @brief Distance à l'obstacle (potentiel autre robot) le plus proche */
     float distanceToPotentialObstacle;
-
-    ActionGoTo* actionGoTo;
 
     MediumLevelAction* action;
 
