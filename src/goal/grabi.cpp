@@ -124,7 +124,7 @@ void Grabi::initGrabi(bool a_first_elevator_init)
     initializeElevator();
 }
 
-bool Grabi::grab_plateforme(bool a_do_sleep)
+bool Grabi::grab_plateforme(bool /*a_do_sleep*/)
 {
     m_pump_plank->setPumping(true);
 
@@ -160,7 +160,7 @@ bool Grabi::elevatorInitHasFailed()
     return false;
 }
 
-bool Grabi::drop_plateforme(bool a_do_sleep)
+bool Grabi::drop_plateforme(bool /*a_do_sleep*/)
 {
     bool success = true;
 
