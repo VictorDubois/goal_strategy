@@ -1,14 +1,7 @@
 #include "krabilib/strategie/aireDeConstruction.h"
-#include "krabilib/strategie/stockDeMatierePremiere.h" // for plateforme definition
 #include "krabilib/position.h"
 #include "krabilib/strategie/mediumLevelAction.h"
-
-#ifndef STANDALONE_STRATEGIE
-#include "krabilib/command.h"
-#include "krabilib/strategie/strategieV2.h"
-//#define VITESSE_LINEAIRE_MAX 100
-#endif
-
+#include "krabilib/strategie/stockDeMatierePremiere.h" // for plateforme definition
 
 #define qDebug() std::cout
 
@@ -16,19 +9,21 @@ AireDeConstruction::AireDeConstruction()
 {
 }
 
-AireDeConstruction::AireDeConstruction(Pose goalPose, Owner us_or_them, AireSize a_size) 
-    : AireDeConstruction(goalPose, goalPose, us_or_them, a_size)
+AireDeConstruction::AireDeConstruction(Pose goalPose, Owner us_or_them, AireSize a_size)
+  : AireDeConstruction(goalPose, goalPose, us_or_them, a_size)
 {
 }
 
-
-AireDeConstruction::AireDeConstruction(Pose goalPose, Pose area_center, Owner us_or_them, AireSize a_size)
+AireDeConstruction::AireDeConstruction(Pose goalPose,
+                                       Pose area_center,
+                                       Owner us_or_them,
+                                       AireSize a_size)
   : MediumLevelAction(goalPose.getPosition())
 {
-  m_size = a_size;
-  m_goal_pose=goalPose;
-  m_us_or_them=us_or_them;
-  m_area_center=area_center;
+    m_size = a_size;
+    m_goal_pose = goalPose;
+    m_us_or_them = us_or_them;
+    m_area_center = area_center;
 }
 
 AireDeConstruction::~AireDeConstruction()

@@ -1,13 +1,9 @@
 #pragma once
 
-#include "krabilib/position.h"
 #include "krabilib/pose.h"
+#include "krabilib/position.h"
 #include "krabilib/strategie/mediumLevelAction.h"
 #include "krabilib/strategie/plateforme.h"
-
-#ifndef STANDALONE_STRATEGIE
-#include "krabilib/command.h"
-#endif // STANDALONE_STRATEGIE
 
 class StockDeMatierePremiere : public MediumLevelAction
 {
@@ -26,9 +22,11 @@ public:
 
     void EmptyStockDeMatierePremiere();
 
-    Pose getStockCenter(){return m_start_pose;}
+    Pose getStockCenter()
+    {
+        return m_start_pose;
+    }
 
-    
 protected:
     Position m_position;
     Pose m_start_pose;

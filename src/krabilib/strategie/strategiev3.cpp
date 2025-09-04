@@ -88,32 +88,21 @@ int StrategieV3::update()
             m_en_train_eviter_reculant = false;
             m_en_train_eviter_avancant = true;
 
-#ifndef STANDALONE_STRATEGIE
-            m_tableau_etapes_total[etapeEnCours]->getActionGoTo()->setGoBack(false);
-#else
-// @TODO setGoBack to false
-#endif // STANDALONE_STRATEGIE
-       // actionEtape[etapeEnCours]->setGoBack(false);
+            // @TODO setGoBack to false
+            // actionEtape[etapeEnCours]->setGoBack(false);
         }
         else
         {
             m_en_train_eviter_reculant = true;
             m_en_train_eviter_avancant = false;
-#ifndef STANDALONE_STRATEGIE
-            m_tableau_etapes_total[etapeEnCours]->getActionGoTo()->setGoBack(true);
-#else
-// @TODO setGoBack to true
-#endif // STANDALONE_STRATEGIE
-       // actionEtape[etapeEnCours]->setGoBack(true);
+
+            // @TODO setGoBack to true
+            // actionEtape[etapeEnCours]->setGoBack(true);
         }
 
-#ifndef STANDALONE_STRATEGIE
-        StrategieV2::addTemporaryAction(m_tableau_etapes_total[etapeEnCours]->getActionGoTo());
-#else
         // @TODO addTempAction
-#endif // STANDALONE_STRATEGIE
-       // StrategieV2::addTemporaryAction(actionEtape[etapeEnCours]);
-       // m_dijkstra->setEtapeCourante((m_tableau_etapes_total[m_etape_en_cours]->getParent()->getNumero()));
+
+        // m_dijkstra->setEtapeCourante((m_tableau_etapes_total[m_etape_en_cours]->getParent()->getNumero()));
         if (m_dijkstra->run() != 0)
         {
             // Si run renvoit autre chose que 0, c'est que l'étape en cours a changée.
@@ -325,26 +314,15 @@ void StrategieV3::updateIntermedaire()
 
     if (m_status_strat == 1)
     {
-// On réalise l'action de l'étape - but
-#ifndef STANDALONE_STRATEGIE
-        StrategieV2::addTemporaryAction(m_tableau_etapes_total[m_etape_en_cours]->getAction());
-#else
+        // On réalise l'action de l'étape - but
+
         // @TODO add temp action
-#endif // STANDALONE_STRATEGIE
     }
     else
     {
         // On ajoute l'action d'aller en ligne droite vers cette étape intermédiaire
-#ifdef SMOOTH_MOVE
-        m_tableau_etapes_total[m_etape_en_cours]->getActionGoTo()->setNextGoal(
-          m_tableau_etapes_total[m_next_step]->getPosition());
-#endif
 
-#ifndef STANDALONE_STRATEGIE
-        StrategieV2::addTemporaryAction(m_tableau_etapes_total[m_etape_en_cours]->getActionGoTo());
-#else
         // @TODO add temp action
-#endif // STANDALONE_STRATEGIE
     }
 }
 
