@@ -2,10 +2,6 @@
 #include "krabilib/strategie/actionGoTo.h"
 #include "krabilib/strategie/dijkstra.h"
 
-#ifdef QTGUI
-#include <QDebug>
-#endif
-
 std::vector<Etape*> Etape::tableauEtapesTotal;
 int Etape::totalEtapesInstanciated = 0;
 
@@ -451,60 +447,3 @@ std::vector<Etape*>& Etape::getTableauEtapesTotal()
 {
     return tableauEtapesTotal;
 }
-
-#ifdef QTGUI
-QString Etape::getNameType(EtapeType type)
-{
-    switch (type)
-    {
-    case POINT_PASSAGE:
-        return "Passage";
-    case DEPART:
-        return "Départ";
-        // #ifdef GOLDO2018
-    case ABEILLE:
-        return "Abeille";
-        // #elif KRABI2016
-    case CABINE:
-        return "Cabine";
-    case DUNE:
-        return "Dune";
-    case ZONE_CONSTRUCTION:
-        return "Zone de construction";
-
-    case CUBE_DEBUT:
-        return "Pousser les cubes a l'init";
-        // #endif
-    default:
-        return QString::number(type);
-    }
-}
-
-QString Etape::getShortNameType(EtapeType type)
-{
-    switch (type)
-    {
-    case POINT_PASSAGE:
-        return "";
-    case DEPART:
-        return "Start";
-        // #ifdef GOLDO2018
-    case ABEILLE:
-        return "Abeille";
-        // #elif KRABI2016
-    case CABINE:
-        return "Cabine";
-    case DUNE:
-        return "Dune";
-    case ZONE_CONSTRUCTION:
-        return "Z.C";
-
-    case CUBE_DEBUT:
-        return "Cube debut";
-        // #endif
-    default:
-        return "";
-    }
-}
-
-#endif

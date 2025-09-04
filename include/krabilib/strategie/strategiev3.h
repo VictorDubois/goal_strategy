@@ -1,9 +1,5 @@
 #pragma once
 
-#ifndef STANDALONE_STRATEGIE
-#include "krabilib/strategie/actionGoTo.h"
-#endif
-
 #include "krabilib/strategie/dijkstra.h"
 #include "krabilib/strategie/mediumLevelAction.h"
 

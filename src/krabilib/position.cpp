@@ -1,10 +1,10 @@
 #include "krabilib/position.h"
-#include <math.h>
 #include "tf2/LinearMath/Matrix3x3.h"
-#include "tf2/LinearMath/Transform.h"
 #include "tf2/LinearMath/Quaternion.h"
+#include "tf2/LinearMath/Transform.h"
 #include "tf2/transform_datatypes.h"
 #include "tf2_geometry_msgs/tf2_geometry_msgs.hpp"
+#include <math.h>
 
 // Constructeur par défaut avec des coordonnées nulles.
 Position::Position(Distance x, Distance y)
@@ -157,7 +157,8 @@ std::ostream& operator<<(std::ostream& os, const Position& p)
 
 std::ostream& operator<<(std::ostream& os, const PolarPosition& p)
 {
-    return os << "p:{r: " << double(p.getDistance()) << "m, theta: " << double(p.getAngle()) << "rad}";
+    return os << "p:{r: " << double(p.getDistance()) << "m, theta: " << double(p.getAngle())
+              << "rad}";
 }
 #endif
 
