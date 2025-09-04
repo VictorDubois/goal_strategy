@@ -35,9 +35,6 @@ public:
     /// @brief Surchage d'opérateur pour multiplier par un flottant
     Position operator*(float val) const;
 
-    /// @brief Surcharge d'opérateur pour assigner une position.
-    void operator=(Position position);
-
     /// @brief Surchage d'opérateur pour ajouter et copier des coordonnées
     Position& operator+=(const Position& position);
 

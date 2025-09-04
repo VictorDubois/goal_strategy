@@ -50,13 +50,6 @@ Position Position::operator*(float val) const
     return resultat;
 }
 
-void Position::operator=(Position position)
-{
-
-    m_pos.x() = position.m_pos.x();
-    m_pos.y() = position.m_pos.y();
-}
-
 Position& Position::operator+=(const Position& position)
 {
     m_pos.x() += position.m_pos.x();
