@@ -592,11 +592,8 @@ void GoalStrat::publishAll()
         checkStopMatch();
         publishScore();
         publishIsBlue();
-        if (m_goal_init_done)
-        {
-            // publishGoal();
-            publishDebugInfos();
-        }
+        // publishGoal();
+        publishDebugInfos();
     }
 }
 
@@ -1199,6 +1196,7 @@ void GoalStrat::loop()
             m_state = State::RUN;
             if (m_year == 2025)
             {
+                publishDebugInfos();
                 pushBanner();
                 m_grabi->initGrabi(true);
             }
