@@ -5,10 +5,6 @@
 #include "krabilib/strategie/mediumLevelAction.h"
 #include "krabilib/strategie/stockDeMatierePremiere.h" // pour def plateforme
 
-#ifndef STANDALONE_STRATEGIE
-#include "krabilib/command.h"
-#endif // STANDALONE_STRATEGIE
-
 enum AireSize
 {
     AIRE_BIG,

@@ -1,10 +1,5 @@
 #include "krabilib/strategie/mediumLevelAction.h"
 
-#ifndef STANDALONE_STRATEGIE
-// Only for color
-#include "krabilib/strategieV2.h"
-#endif // STANDALONE_STRATEGIE
-
 MediumLevelAction::MediumLevelAction(Position goalPos, bool goBack)
   : goalPosition(goalPos)
   , status(0)
