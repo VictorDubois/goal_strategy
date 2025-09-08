@@ -17,6 +17,9 @@ public:
         // 2025
         STOCK_MATIERE_PREMIERE = 0x26,
         AIRE_DE_CONSTRUCTION = 0x27,
+        GARDE_MANGER = 0x28,
+        ZONE_DE_RAMASSAGE = 0x29,
+        THERMOMETRE = 0x2A,
 
         POINT_PASSAGE = 0x30,
 

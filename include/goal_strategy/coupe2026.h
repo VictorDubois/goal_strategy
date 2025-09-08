@@ -1,0 +1,49 @@
+#pragma once
+
+#define NOMBRE_ETAPES 50
+
+#include "krabilib/strategie/etape.h"
+#include "krabilib/strategie/gardeManger.h"
+#include "krabilib/strategie/strategiev3.h"
+#include "krabilib/strategie/thermometre.h"
+#include "krabilib/strategie/zoneDeRamassage.h"
+#include <geometry_msgs/msg/point.hpp>
+
+#include <geometry_msgs/msg/pose.hpp>
+#include <visualization_msgs/msg/marker.hpp>
+#include <visualization_msgs/msg/marker_array.hpp>
+
+class Coupe2026 : public StrategieV3
+{
+public:
+    Coupe2026(bool isYellow);
+    void debugEtapes(visualization_msgs::msg::MarkerArray& ma);
+    void etape_type_to_marker(visualization_msgs::msg::Marker& m, Etape* e);
+
+    void grabCaisses(Etape* e); // 2025 only
+    int dropCaisses(Etape* e);  // 2025 only
+
+    void grabThermometre(Etape* e); // 2025 only
+    void dropThermometre(Etape* e); // 2025 only
+
+    Position positionCAbsolute(double x_yellow_from_top_left, double y_yellow_from_top_left);
+
+    Etape* getBestAreaForFunny()
+    {
+        return nullptr;
+    }; // 2024 and 2025
+
+    std::vector<Caisse> getStock();
+
+    Position getParkedPosition()
+    {
+        return positionC(-1.3f, -0.75f);
+    };
+
+private:
+    int getScoreEtape(int i);
+
+    uint32_t m_seq;
+
+    std::vector<Caisse> m_stock;
+};

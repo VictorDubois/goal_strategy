@@ -45,6 +45,9 @@ add_library(krabilib_strat
   src/krabilib/strategie/mediumLevelAction.cpp
   src/krabilib/strategie/aireDeConstruction.cpp
   src/krabilib/strategie/stockDeMatierePremiere.cpp
+  src/krabilib/strategie/thermometre.cpp
+  src/krabilib/strategie/zoneDeRamassage.cpp
+  src/krabilib/strategie/gardeManger.cpp
 )
 
 add_executable(goal_strategy_node 
@@ -53,6 +56,7 @@ add_executable(goal_strategy_node
   src/goal/publisherCreator.cpp
   #src/goal/AX12.cpp
   src/goal/coupe2025.cpp
+  src/goal/coupe2026.cpp
   src/goal/pump.cpp
   src/goal/servomotor.cpp
   src/goal/grabi.cpp

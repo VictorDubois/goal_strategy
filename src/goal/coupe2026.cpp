@@ -1,0 +1,363 @@
+#include "goal_strategy/coupe2026.h"
+#include "krabilib/pose.h"
+
+#include <cmath>
+#include <iostream>
+#include <tf2_ros/transform_listener.h>
+
+// todo delete this when strategie is done and it's not used anymore
+Position Coupe2026::positionCAbsolute(double x_yellow_from_top_left, double y_yellow_from_top_left)
+{
+    return positionC(1.5 - x_yellow_from_top_left, 1 - y_yellow_from_top_left);
+}
+//  ____________________________________________________
+// |                       Grenier                    NID|
+// |                                                     |
+// |                                                     |
+// |                        x                            |
+// |                      <----o                         |
+// |                           |                         |
+// |                           |                         |
+// |                           v y                       |
+// |___________________________Thermometre______________ |
+//                         PUBLIC
+//
+// "us" position are define as blue ("them" are yellow)
+
+/**
+ * @brief Initialize the graph of goals based on the color
+ *
+ * @param isYellow
+ * @param starting_position
+ */
+Coupe2026::Coupe2026(const bool isYellow)
+  : StrategieV3(isYellow, true)
+{
+    setRemainingTime(84 * 1000); // duration of the match
+
+    // Initialisation des tableaux d'étapes
+    m_tableau_etapes_total
+      = Etape::initTableauEtapeTotal(NOMBRE_ETAPES); // new Etape*[NOMBRE_ETAPES];
+
+    // Création des étapes
+    // Les étapes qui correspondant à des actions sont créées automatiquement lors de l'ajout
+    // d'actions
+
+    int nid = Etape::makeEtape(positionC(-0.775f, -0.775f), "NID", Etape::DEPART);
+
+    // Definition des zone de stock
+    int zone_de_ramassage_nid_petit_cote
+      = Etape::makeEtape(new ZoneDeRamassage(Pose(positionC(1.425f, 0.6f), Angle(M_PI / 2))),
+                         "stock_bord_cote_publique");
+
+    m_numero_etape_garage = nid; // Must be set!
+
+    m_nombre_etapes = Etape::getTotalEtapes();
+
+    // Lancer Dijkstra
+    startDijkstra();
+}
+
+/**
+ * @brief Convert a EtapeType into a marker
+ *
+ * @param m output marker
+ * @param e input etape
+ */
+void Coupe2026::etape_type_to_marker(visualization_msgs::msg::Marker& m, Etape* a_etape)
+{
+    // auto& color = m.color;
+    m.scale.x = 0.05;
+    m.scale.y = 0.05;
+    m.scale.z = 0.05;
+    m.type = visualization_msgs::msg::Marker::CUBE;
+
+    const Etape::EtapeType& e = a_etape->getEtapeType();
+    m.color.a = 1;
+
+    switch (e)
+    {
+    case Etape::EtapeType::DEPART:
+        m.color.r = 0;
+        m.color.g = 0;
+        m.color.b = 0;
+        m.scale.x = 0.01;
+        m.scale.y = 0.01;
+        m.scale.z = 0.01;
+        break;
+
+    case Etape::EtapeType::ZONE_DE_RAMASSAGE:
+        m.type = visualization_msgs::msg::Marker::CUBE;
+        m.scale.z = 0.01f;
+        m.color.a = 0.5f;
+        m.scale.x = 0.45f;
+        m.scale.y = 0.45f;
+
+        // Area blue
+        m.color.r = 0.f / 255.f;
+        m.color.g = 91.f / 255.f;
+        m.color.b = 140.f / 255.f;
+
+        break;
+    case Etape::EtapeType::GARDE_MANGER:
+        m.type = visualization_msgs::msg::Marker::CUBE;
+        m.scale.x = 0.4f;
+        m.scale.y = 0.1f;
+        m.scale.z = 0.01f;
+        m.color.r = 222.0f / 255.f;
+        m.color.g = 184.f / 255.f;
+        m.color.b = 135.0f / 255.f;
+        break;
+
+    case Etape::EtapeType::THERMOMETRE:
+        m.type = visualization_msgs::msg::Marker::CUBE;
+        m.scale.x = 0.4f;
+        m.scale.y = 0.1f;
+        m.scale.z = 0.01f;
+        m.color.r = 0.0f / 255.f;
+        m.color.g = 184.f / 255.f;
+        m.color.b = 135.0f / 255.f;
+        break;
+
+    case Etape::EtapeType::POINT_PASSAGE:
+        m.color.r = 0;
+        m.color.g = 0;
+        m.color.b = 1;
+        m.scale.x = 0.01;
+        m.scale.y = 0.01;
+        m.scale.z = 0.01;
+        m.type = visualization_msgs::msg::Marker::SPHERE;
+        break;
+
+    case Etape::EtapeType::ROBOT_VU_ICI:
+        m.color.r = 1;
+        m.color.g = 1;
+        m.color.b = 1;
+        m.scale.x = 0.2;
+        m.scale.y = 0.2;
+        m.scale.z = 0.2;
+        break;
+    default:
+        break;
+    }
+}
+
+/**
+ * @brief Convert the graph into marker array for debug purpose
+ *
+ * @param ma marker array
+ */
+void Coupe2026::debugEtapes(visualization_msgs::msg::MarkerArray& ma)
+{
+    uint i = 0;
+    for (auto& etape : Etape::getTableauEtapesTotal())
+    {
+        if (etape)
+        {
+
+            // Display etape
+            visualization_msgs::msg::Marker m;
+            m.header.frame_id = "map";
+            // m.header.seq = m_seq++;
+            m.ns = "debug_etapes";
+            m.id = i++;
+            m.action = visualization_msgs::msg::Marker::MODIFY;
+            m.pose = Pose(etape->getPosition(), Angle(0));
+            etape_type_to_marker(m, etape);
+
+            if (etape->getEtapeType() == Etape::EtapeType::ZONE_DE_RAMASSAGE)
+            {
+                ZoneDeRamassage* l_zdr = static_cast<ZoneDeRamassage*>(etape->getAction());
+                m.pose = l_zdr->getAreaCenter();
+            }
+            else if (etape->getEtapeType() == Etape::EtapeType::GARDE_MANGER)
+            {
+                GardeManger* l_gardeManger = static_cast<GardeManger*>(etape->getAction());
+                m.pose = l_gardeManger->getAreaCenter();
+            }
+            else if (etape->getEtapeType() == Etape::EtapeType::THERMOMETRE)
+            {
+                Thermometre* l_thermo = static_cast<Thermometre*>(etape->getAction());
+                m.pose = l_thermo->getAreaCenter();
+            }
+
+            if (etape->getNumero() == this->getGoal()->getNumero())
+            {
+                m.scale.z *= 10;
+            }
+
+            m.lifetime = rclcpp::Duration(0, 0); // Does not disapear
+            m.frame_locked = true;
+            ma.markers.push_back(m);
+
+            visualization_msgs::msg::Marker l_marker_info;
+            l_marker_info.type = visualization_msgs::msg::Marker::TEXT_VIEW_FACING;
+            l_marker_info.pose = Pose(etape->getPosition(), Angle(0));
+            l_marker_info.pose.position.z += 0.3f;
+
+            l_marker_info.header.frame_id = "map";
+            l_marker_info.ns = "debug_etapes";
+            l_marker_info.id = i++;
+            l_marker_info.action = visualization_msgs::msg::Marker::ADD;
+
+            l_marker_info.text = etape->getName() + "\n" + std::to_string(etape->getScore())
+                                 + "pts\n" + std::to_string(etape->getHeuristicScore()) + "<3\n"
+                                 + std::to_string(etape->getDistance()) + "mm\n"
+              /*+
+etape->getCustomName()*/
+              ;
+
+            l_marker_info.scale.x = 0.3;
+            l_marker_info.scale.y = 0.3;
+            l_marker_info.scale.z = 0.05;
+
+            l_marker_info.color.r = 0.5f;
+            l_marker_info.color.g = 0.5f;
+            l_marker_info.color.b = 0.2f;
+            l_marker_info.color.a = 1.0;
+
+            ma.markers.push_back(l_marker_info);
+
+            // Display lines
+            int nb_children = etape->getNbChildren();
+
+            for (int child_id = 0; child_id < nb_children; child_id++)
+            {
+                // Are we going here?
+                Etape* child = etape->getChild(child_id);
+                Position l_segment = child->getPosition() - etape->getPosition();
+                Position mid_way = Position(
+                  Distance((child->getPosition().getX() + etape->getPosition().getX()) / 2),
+                  Distance((child->getPosition().getY() + etape->getPosition().getY()) / 2));
+                Angle l_direction = l_segment.getAngle();
+                double l_distance = l_segment.getNorme();
+
+                visualization_msgs::msg::Marker line;
+                line.type = visualization_msgs::msg::Marker::CUBE;
+                line.pose = Pose(mid_way, l_direction);
+                line.scale.x = l_distance;
+                line.scale.y = 0.01;
+                line.scale.z = 0.01;
+                line.color.r = 1;
+                line.color.g = 0;
+                line.color.b = 0;
+                line.color.a = 0.5;
+                line.lifetime = rclcpp::Duration(0, 0); // Does not disapear
+                line.frame_locked = true;
+                line.action = visualization_msgs::msg::Marker::MODIFY;
+                line.ns = "debug_etapes";
+                line.header.frame_id = "map";
+                // line.header.seq = m_seq++;
+                line.id = i++;
+                ma.markers.push_back(line);
+            }
+        }
+    }
+}
+
+/**
+ * @brief Get the score for the current step
+ *
+ * @param i
+ * @return int
+ */
+int Coupe2026::getScoreEtape(int i)
+{
+    RCLCPP_INFO_STREAM(rclcpp::get_logger("rclcpp"),
+                       "getScoreEtape. Time: " << getRemainingTime() << std::endl);
+    int l_score = 0;
+    GardeManger* l_area;
+    unsigned int l_stock_area;
+
+    switch (this->m_tableau_etapes_total[i]->getEtapeType())
+    {
+        // A faire : remplacer la priorite par le nombre de points obtenables a l'etape
+
+    case Etape::DEPART:
+        l_score = 0;
+        break;
+    case Etape::ZONE_DE_RAMASSAGE:
+        l_score = 3;
+
+        if (m_stock.size() > 0)
+        {
+            l_score = -3;
+        }
+        break;
+    case Etape::GARDE_MANGER:
+        l_area = static_cast<GardeManger*>(this->m_tableau_etapes_total[i]->getAction());
+        l_stock_area = l_area->getCaisses().size();
+
+        if (m_stock.size() && l_stock_area == 0)
+        {
+            l_score = 6;
+            if (l_stock_area <= 4)
+            {
+                l_score = 12;
+            }
+            if (l_stock_area == 0)
+            {
+                l_score = 24;
+            }
+        }
+        break;
+    case Etape::POINT_PASSAGE:
+        l_score = 0;
+        break;
+    default:
+        return 0;
+    }
+    return l_score;
+}
+
+std::vector<Caisse> Coupe2026::getStock()
+{
+    return m_stock;
+}
+
+void Coupe2026::grabCaisses(Etape* e)
+{
+    ZoneDeRamassage* l_stock;
+    std::vector<Caisse> l_caisses;
+
+    switch (e->getEtapeType())
+    {
+    // A faire : remplacer la priorite par le nombre de points obtenables a l'etape
+    case Etape::ZONE_DE_RAMASSAGE:
+        l_stock = static_cast<ZoneDeRamassage*>(e->getAction());
+        l_caisses = l_stock->getCaisses();
+
+        m_stock.insert(m_stock.end(), l_caisses.begin(), l_caisses.end());
+        break;
+
+    default:
+        std::cerr << "Not supposed to grab a caisse from here!" << std::endl;
+    }
+}
+
+int Coupe2026::dropCaisses(Etape* e)
+{
+    int l_scored = 0;
+    GardeManger* l_area;
+    std::vector<Caisse> l_stock_area;
+    switch (e->getEtapeType())
+    {
+        // A faire : remplacer la priorite par le nombre de points obtenables a l'etape
+
+    case Etape::GARDE_MANGER:
+        l_area = static_cast<GardeManger*>(e->getAction());
+
+        if (m_stock.size())
+        {
+            l_area->addCaisse(m_stock.back());
+            m_stock.pop_back();
+            l_scored = 9;
+        }
+        break;
+
+    default:
+        std::cerr << "Not supposed to drop a caisse there!" << std::endl;
+    }
+
+    return l_scored;
+}
