@@ -45,10 +45,65 @@ Coupe2026::Coupe2026(const bool isYellow)
 
     int nid = Etape::makeEtape(positionC(-0.775f, -0.775f), "NID", Etape::DEPART);
 
+    float reach = 0.3f;
+
     // Definition des zone de stock
     int zone_de_ramassage_nid_petit_cote
-      = Etape::makeEtape(new ZoneDeRamassage(Pose(positionC(1.425f, 0.6f), Angle(M_PI / 2))),
-                         "stock_bord_cote_publique");
+      = Etape::makeEtape(new ZoneDeRamassage(Pose(positionC(1.425f - reach, -0.2f), Angle(0)),
+                                             Pose(positionC(1.425f, -0.2f), Angle(0))),
+                         "zone_de_ramassage_nid_petit_cote");
+
+    int zone_de_ramassage_public_petit_cote
+      = Etape::makeEtape(new ZoneDeRamassage(Pose(positionC(1.425f - reach, 0.6f), Angle(0)),
+                                             Pose(positionC(1.425f, 0.6f), Angle(0))),
+                         "zone_de_ramassage_public_petit_cote");
+
+    int zone_de_ramassage_public_grand_cote
+      = Etape::makeEtape(new ZoneDeRamassage(Pose(positionC(0.4f, 0.925f - reach), Angle(M_PI / 2)),
+                                             Pose(positionC(0.4f, 0.925f), Angle(M_PI / 2))),
+                         "zone_de_ramassage_public_petit_cote");
+
+    int zone_de_ramassage_centre
+      = Etape::makeEtape(new ZoneDeRamassage(Pose(positionC(0.4f, 0.225f + reach), Angle(M_PI / 2)),
+                                             Pose(positionC(0.4f, 0.225f), Angle(M_PI / 2))),
+                         "zone_de_ramassage_public_petit_cote");
+
+    // ######### Autre cote ##############
+
+    int zone_de_ramassage_nid_petit_cote_autre
+      = Etape::makeEtape(new ZoneDeRamassage(Pose(positionC(-1.425f + reach, -0.2f), Angle(0)),
+                                             Pose(positionC(-1.425f, -0.2f), Angle(0))),
+                         "zone_de_ramassage_nid_petit_cote");
+
+    int zone_de_ramassage_public_petit_cote_autre
+      = Etape::makeEtape(new ZoneDeRamassage(Pose(positionC(-1.425f + reach, 0.6f), Angle(0)),
+                                             Pose(positionC(-1.425f, 0.6f), Angle(0))),
+                         "zone_de_ramassage_public_petit_cote");
+
+    int zone_de_ramassage_public_grand_cote_autre = Etape::makeEtape(
+      new ZoneDeRamassage(Pose(positionC(-0.4f, 0.925f - reach), Angle(M_PI / 2)),
+                          Pose(positionC(-0.4f, 0.925f), Angle(M_PI / 2))),
+      "zone_de_ramassage_public_petit_cote");
+
+    int zone_de_ramassage_centre_autre = Etape::makeEtape(
+      new ZoneDeRamassage(Pose(positionC(-0.4f, 0.225f + reach), Angle(M_PI / 2)),
+                          Pose(positionC(-0.4f, 0.225f), Angle(M_PI / 2))),
+      "zone_de_ramassage_public_petit_cote");
+
+    Etape::get(nid)->addVoisins(zone_de_ramassage_nid_petit_cote);
+    Etape::get(zone_de_ramassage_nid_petit_cote)->addVoisins(zone_de_ramassage_public_petit_cote);
+    Etape::get(zone_de_ramassage_public_petit_cote)
+      ->addVoisins(zone_de_ramassage_public_grand_cote);
+
+    // ######### Autre cote ##############
+    Etape::get(zone_de_ramassage_public_grand_cote)
+      ->addVoisins(zone_de_ramassage_centre, zone_de_ramassage_public_grand_cote_autre);
+    Etape::get(zone_de_ramassage_public_grand_cote_autre)
+      ->addVoisins(zone_de_ramassage_centre_autre, zone_de_ramassage_centre);
+    Etape::get(zone_de_ramassage_public_petit_cote_autre)
+      ->addVoisins(zone_de_ramassage_public_grand_cote_autre);
+    Etape::get(zone_de_ramassage_nid_petit_cote_autre)
+      ->addVoisins(zone_de_ramassage_public_petit_cote_autre);
 
     m_numero_etape_garage = nid; // Must be set!
 
