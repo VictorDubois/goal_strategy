@@ -1,6 +1,6 @@
 #pragma once
 
-#define YEAR_2025
+#define YEAR_2026
 
 #include <math.h>
 #include <memory>
@@ -22,7 +22,12 @@
 #include "tf2_ros/buffer.h"
 #include "tf2_ros/transform_listener.h"
 
+#ifdef YEAR_2025
 #include "coupe2025.h"
+#else
+#include "coupe2026.h"
+#endif
+
 #include "goal_strategy/actuators2025.h"
 #include "goal_strategy/grabi.h"
 #include "krabi_msgs/msg/ax12_info.hpp"
@@ -142,7 +147,12 @@ private:
     State m_state = State::RUN;
     Distance m_dist_to_goal;
     bool m_state_msg_displayed;
+#ifdef YEAR_2025
     std::unique_ptr<Coupe2025> m_strat_graph;
+    StartingPosition2025 m_starting_position_2025;
+#else
+    std::unique_ptr<Coupe2026> m_strat_graph;
+#endif
 
     long m_timeout_moving, m_timeout_orient;
     bool m_is_first_action;
@@ -199,7 +209,5 @@ private:
     std::thread m_running;
 
     int override_gear;
-    AireDeConstruction* m_area_funny = nullptr;
-
-    StartingPosition2025 m_starting_position_2025;
+    Etape* m_area_funny = nullptr;
 };

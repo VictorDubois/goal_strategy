@@ -20,24 +20,25 @@ public:
     void debugEtapes(visualization_msgs::msg::MarkerArray& ma);
     void etape_type_to_marker(visualization_msgs::msg::Marker& m, Etape* e);
 
-    void grabCaisses(Etape* e); // 2025 only
-    int dropCaisses(Etape* e);  // 2025 only
+    void grabPlateformes(Etape*) {}; // 2025 only
+    int dropPlateformes(Etape*)
+    {
+        return 0;
+    }; // 2025 only
 
-    void grabThermometre(Etape* e); // 2025 only
-    void dropThermometre(Etape* e); // 2025 only
+    void grabCaisses(Etape* e); // 2026 only
+    int dropCaisses(Etape* e);  // 2026 only
+
+    void grabThermometre(Etape* e); // 2026 only
+    void dropThermometre(Etape* e); // 2026 only
 
     Position positionCAbsolute(double x_yellow_from_top_left, double y_yellow_from_top_left);
-
-    Etape* getBestAreaForFunny()
-    {
-        return nullptr;
-    }; // 2024 and 2025
 
     std::vector<Caisse> getStock();
 
     Position getParkedPosition()
     {
-        return positionC(-1.3f, -0.75f);
+        return positionC(-1.35f, -0.85f);
     };
 
 private:

@@ -491,7 +491,11 @@ GoalStrat::GoalStrat()
 
     std::string actuators_name = "actuators_msg";
 
+#ifdef YEAR_2025
     m_year = 2025;
+#else
+    m_year = 2026;
+#endif
 
     // 2025
 
@@ -807,7 +811,7 @@ bool GoalStrat::isParked()
         l_valid_end_locations.push_back(m_strat_graph->positionCAbsolute(0.3, 0.7f));
         l_valid_end_locations.push_back(m_strat_graph->positionCAbsolute(3 - 0.975f, 1.375f));
     }
-    else if (m_year == 2025)
+    else if (m_year == 2025 || m_year == 2026)
     {
         // Only one spot in 2025
         l_valid_end_locations.push_back(m_strat_graph->getParkedPosition());
@@ -956,27 +960,11 @@ void GoalStrat::stateRun()
         // Zone de fouille
         // m_goal_pose.setPosition(m_strat_graph->positionCAbsolute(0.975f, 1.375f));
         // Zone de départ
-        if (m_area_funny == nullptr) // Not initialized yet
-        {
-            // try to update
-            m_area_funny = m_strat_graph->getBestAreaForFunny();
-            if (m_area_funny != nullptr) // If no error
-            {
-                RCLCPP_WARN_STREAM(
-                  rclcpp::get_logger("rclcpp"),
-                  "best area found for funny: " << m_area_funny->getGoalPosition());
-            }
-        }
-
-        if (m_area_funny == nullptr)
+        // if (m_area_funny == nullptr)
         {
             RCLCPP_ERROR_STREAM(rclcpp::get_logger("rclcpp"),
                                 "FAIL getting best area for funny action, revert to default");
             m_goal_pose.setPosition(m_strat_graph->positionC(-1.2f, -0.480f));
-        }
-        else
-        {
-            m_goal_pose.setPosition(m_area_funny->getGoalPosition());
         }
 
         if (isParked() && (m_year == 2024 || m_year == 2025))
@@ -1134,6 +1122,7 @@ void GoalStrat::init()
 
     m_action_aborted = false;
 
+#ifdef YEAR_2025
     // Choose starting position
     this->declare_parameter("startingPosition", "FRONT_START");
     std::string l_starting_position_string = this->get_parameter("startingPosition").as_string();
@@ -1164,6 +1153,9 @@ void GoalStrat::init()
         }
         m_strat_graph = std::make_unique<Coupe2025>(!m_is_blue, m_starting_position_2025);
     }
+#else
+    m_strat_graph = std::make_unique<Coupe2026>(!m_is_blue);
+#endif
 
     m_strat_graph->update();
     m_previous_etape_type = Etape::EtapeType::POINT_PASSAGE;

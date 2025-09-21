@@ -4,24 +4,22 @@
 #include "krabilib/position.h"
 #include "krabilib/strategie/mediumLevelAction.h"
 
-enum Orientation
+enum OrientationCaisse
 {
-    us,
-    them,
     both_long_side,
     both_small_side
 };
 
 class Caisse
 {
-    Caisse(Orientation a_orientation)
+    Caisse(OrientationCaisse a_orientation)
       : m_orientation(a_orientation) {};
 
 public:
-    Orientation getOrientation();
+    OrientationCaisse getOrientation();
 
 private:
-    Orientation m_orientation;
+    OrientationCaisse m_orientation;
 };
 
 class ZoneDeRamassage : public MediumLevelAction
