@@ -231,8 +231,8 @@ void Coupe2026::etape_type_to_marker(visualization_msgs::msg::Marker& m, Etape* 
         m.type = visualization_msgs::msg::Marker::CUBE;
         m.scale.z = 0.01f;
         m.color.a = 0.5f;
-        m.scale.x = 0.45f;
-        m.scale.y = 0.45f;
+        m.scale.x = 0.15f;
+        m.scale.y = 0.20f;
 
         // Area blue
         m.color.r = 0.f / 255.f;
@@ -242,22 +242,22 @@ void Coupe2026::etape_type_to_marker(visualization_msgs::msg::Marker& m, Etape* 
         break;
     case Etape::EtapeType::GARDE_MANGER:
         m.type = visualization_msgs::msg::Marker::CUBE;
-        m.scale.x = 0.4f;
-        m.scale.y = 0.1f;
+        m.scale.x = 0.2f;
+        m.scale.y = 0.2f;
         m.scale.z = 0.01f;
         m.color.r = 222.0f / 255.f;
-        m.color.g = 184.f / 255.f;
-        m.color.b = 135.0f / 255.f;
+        m.color.g = 222.f / 255.f;
+        m.color.b = 222.0f / 255.f;
         break;
 
     case Etape::EtapeType::THERMOMETRE:
         m.type = visualization_msgs::msg::Marker::CUBE;
-        m.scale.x = 0.4f;
+        m.scale.x = 0.1f;
         m.scale.y = 0.1f;
         m.scale.z = 0.01f;
-        m.color.r = 0.0f / 255.f;
-        m.color.g = 184.f / 255.f;
-        m.color.b = 135.0f / 255.f;
+        m.color.r = 255.0f / 255.f;
+        m.color.g = 0.f / 255.f;
+        m.color.b = 0.0f / 255.f;
         break;
 
     case Etape::EtapeType::POINT_PASSAGE:
