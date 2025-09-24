@@ -48,47 +48,47 @@ Coupe2026::Coupe2026(const bool isYellow)
     float reach = 0.3f;
     float reachDepose = reach;
 
-    // Definition des zone de stock
+    // Definition des zone de ramassage
     int zone_de_ramassage_nid_petit_cote
-      = Etape::makeEtape(new ZoneDeRamassage(Pose(positionC(1.425f - reach, -0.2f), Angle(0)),
-                                             Pose(positionC(1.425f, -0.2f), Angle(0))),
+      = Etape::makeEtape(new ZoneDeRamassage(Pose(positionC(1.375f - reach, -0.2f), Angle(0)),
+                                             Pose(positionC(1.375f, -0.2f), Angle(0))),
                          "zone_de_ramassage_nid_petit_cote");
 
     int zone_de_ramassage_public_petit_cote
-      = Etape::makeEtape(new ZoneDeRamassage(Pose(positionC(1.425f - reach, 0.6f), Angle(0)),
-                                             Pose(positionC(1.425f, 0.6f), Angle(0))),
+      = Etape::makeEtape(new ZoneDeRamassage(Pose(positionC(1.375f - reach, 0.6f), Angle(0)),
+                                             Pose(positionC(1.375f, 0.6f), Angle(0))),
                          "zone_de_ramassage_public_petit_cote");
 
     int zone_de_ramassage_public_grand_cote
-      = Etape::makeEtape(new ZoneDeRamassage(Pose(positionC(0.4f, 0.925f - reach), Angle(M_PI / 2)),
-                                             Pose(positionC(0.4f, 0.925f), Angle(M_PI / 2))),
+      = Etape::makeEtape(new ZoneDeRamassage(Pose(positionC(0.4f, 0.875f - reach), Angle(M_PI / 2)),
+                                             Pose(positionC(0.4f, 0.875f), Angle(M_PI / 2))),
                          "zone_de_ramassage_public_petit_cote");
 
     int zone_de_ramassage_centre
-      = Etape::makeEtape(new ZoneDeRamassage(Pose(positionC(0.4f, 0.225f + reach), Angle(M_PI / 2)),
-                                             Pose(positionC(0.4f, 0.225f), Angle(M_PI / 2))),
+      = Etape::makeEtape(new ZoneDeRamassage(Pose(positionC(0.4f, 0.2f + reach), Angle(M_PI / 2)),
+                                             Pose(positionC(0.4f, 0.2f), Angle(M_PI / 2))),
                          "zone_de_ramassage_public_petit_cote");
 
     // ######### Autre cote ##############
 
     int zone_de_ramassage_nid_petit_cote_autre
-      = Etape::makeEtape(new ZoneDeRamassage(Pose(positionC(-1.425f + reach, -0.2f), Angle(0)),
-                                             Pose(positionC(-1.425f, -0.2f), Angle(0))),
+      = Etape::makeEtape(new ZoneDeRamassage(Pose(positionC(-1.375f + reach, -0.2f), Angle(0)),
+                                             Pose(positionC(-1.375f, -0.2f), Angle(0))),
                          "zone_de_ramassage_nid_petit_cote");
 
     int zone_de_ramassage_public_petit_cote_autre
-      = Etape::makeEtape(new ZoneDeRamassage(Pose(positionC(-1.425f + reach, 0.6f), Angle(0)),
-                                             Pose(positionC(-1.425f, 0.6f), Angle(0))),
+      = Etape::makeEtape(new ZoneDeRamassage(Pose(positionC(-1.375f + reach, 0.6f), Angle(0)),
+                                             Pose(positionC(-1.375f, 0.6f), Angle(0))),
                          "zone_de_ramassage_public_petit_cote");
 
     int zone_de_ramassage_public_grand_cote_autre = Etape::makeEtape(
-      new ZoneDeRamassage(Pose(positionC(-0.4f, 0.925f - reach), Angle(M_PI / 2)),
-                          Pose(positionC(-0.4f, 0.925f), Angle(M_PI / 2))),
+      new ZoneDeRamassage(Pose(positionC(-0.4f, 0.875f - reach), Angle(M_PI / 2)),
+                          Pose(positionC(-0.4f, 0.875f), Angle(M_PI / 2))),
       "zone_de_ramassage_public_petit_cote");
 
     int zone_de_ramassage_centre_autre = Etape::makeEtape(
-      new ZoneDeRamassage(Pose(positionC(-0.4f, 0.225f + reach), Angle(M_PI / 2)),
-                          Pose(positionC(-0.4f, 0.225f), Angle(M_PI / 2))),
+      new ZoneDeRamassage(Pose(positionC(-0.4f, 0.2f + reach), Angle(M_PI / 2)),
+                          Pose(positionC(-0.4f, 0.2f), Angle(M_PI / 2))),
       "zone_de_ramassage_public_petit_cote");
 
     // Définition des garde mangers
