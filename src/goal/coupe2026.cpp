@@ -35,6 +35,8 @@ Coupe2026::Coupe2026(const bool isYellow)
 {
     setRemainingTime(84 * 1000); // duration of the match
 
+    m_stock.clear();
+
     // Initialisation des tableaux d'étapes
     m_tableau_etapes_total
       = Etape::initTableauEtapeTotal(NOMBRE_ETAPES); // new Etape*[NOMBRE_ETAPES];
@@ -86,10 +88,10 @@ Coupe2026::Coupe2026(const bool isYellow)
                           Pose(positionC(-0.4f, 0.875f), Angle(M_PI / 2))),
       "zone_de_ramassage_public_petit_cote");
 
-    int zone_de_ramassage_centre_autre = Etape::makeEtape(
-      new ZoneDeRamassage(Pose(positionC(-0.4f, 0.2f + reach), Angle(M_PI / 2)),
-                          Pose(positionC(-0.4f, 0.2f), Angle(M_PI / 2))),
-      "zone_de_ramassage_public_petit_cote");
+    int zone_de_ramassage_centre_autre
+      = Etape::makeEtape(new ZoneDeRamassage(Pose(positionC(-0.4f, 0.2f + reach), Angle(M_PI / 2)),
+                                             Pose(positionC(-0.4f, 0.2f), Angle(M_PI / 2))),
+                         "zone_de_ramassage_public_petit_cote");
 
     // Définition des garde mangers
 
@@ -442,6 +444,9 @@ int Coupe2026::getScoreEtape(int i)
             }
         }
         break;
+    case Etape::THERMOMETRE:
+        // l_score = 10;
+        break;
     case Etape::POINT_PASSAGE:
         l_score = 0;
         break;
@@ -458,17 +463,19 @@ std::vector<Caisse> Coupe2026::getStock()
 
 void Coupe2026::grabCaisses(Etape* e)
 {
-    ZoneDeRamassage* l_stock;
+    ZoneDeRamassage* l_zone_ramassage;
     std::vector<Caisse> l_caisses;
 
     switch (e->getEtapeType())
     {
     // A faire : remplacer la priorite par le nombre de points obtenables a l'etape
     case Etape::ZONE_DE_RAMASSAGE:
-        l_stock = static_cast<ZoneDeRamassage*>(e->getAction());
-        l_caisses = l_stock->getCaisses();
+        l_zone_ramassage = static_cast<ZoneDeRamassage*>(e->getAction());
+        l_caisses = l_zone_ramassage->getCaisses();
 
         m_stock.insert(m_stock.end(), l_caisses.begin(), l_caisses.end());
+        std::cout << "Caisses grabbed, new stock: " << m_stock.size() << std::endl;
+
         break;
 
     default:
@@ -491,13 +498,15 @@ int Coupe2026::dropCaisses(Etape* e)
         if (m_stock.size())
         {
             l_area->addCaisse(m_stock.back());
-            m_stock.pop_back();
+            // m_stock.pop_back();
+            m_stock.clear();
+
             l_scored = 9;
         }
         break;
 
     default:
-        std::cerr << "Not supposed to drop a caisse there!" << std::endl;
+        std::cerr << "Not supposed to drop a caisse there! " << e->getEtapeType() << std::endl;
     }
 
     return l_scored;

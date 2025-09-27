@@ -80,15 +80,15 @@ private:
     void goToNextMission();
     void setMaxSpeedAtArrival();
     void clamp_mode();
-    void recule(rclcpp::Duration a_time);
-    void recule(rclcpp::Duration a_time, Distance a_distance);
-    void avance(rclcpp::Duration a_time);
-    void avance(rclcpp::Duration a_time, Distance a_distance);
+    bool recule(rclcpp::Duration a_time);
+    bool recule(rclcpp::Duration a_time, Distance a_distance);
+    bool avance(rclcpp::Duration a_time);
+    bool avance(rclcpp::Duration a_time, Distance a_distance);
 
-    void reculeOuAvance(rclcpp::Duration a_time, Distance a_distance, bool sensRecule = true);
-    void reculeDroit(rclcpp::Duration a_time, Distance a_distance);
-    void avanceDroit(rclcpp::Duration a_time, Distance a_distance);
-    void reculeOuAvanceDroit(rclcpp::Duration a_time, Distance a_distance, bool sensRecule = true);
+    bool reculeOuAvance(rclcpp::Duration a_time, Distance a_distance, bool sensRecule = true);
+    bool reculeDroit(rclcpp::Duration a_time, Distance a_distance);
+    bool avanceDroit(rclcpp::Duration a_time, Distance a_distance);
+    bool reculeOuAvanceDroit(rclcpp::Duration a_time, Distance a_distance, bool sensRecule = true);
 
     void stopAngular();
     void startAngular();

@@ -18,6 +18,12 @@ ZoneDeRamassage::ZoneDeRamassage(Pose goalPose, Pose area_center)
 {
     m_goal_pose = goalPose;
     m_area_center = area_center;
+
+    m_stock.clear();
+    m_stock.push_back(Caisse());
+    m_stock.push_back(Caisse());
+    m_stock.push_back(Caisse());
+    m_stock.push_back(Caisse());
 }
 
 ZoneDeRamassage::~ZoneDeRamassage()

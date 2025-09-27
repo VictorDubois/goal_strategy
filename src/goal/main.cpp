@@ -27,27 +27,27 @@ void GoalStrat::recalage_bordure()
     m_strat_mvnt.orient = krabi_msgs::msg::StratMovement::RECALAGE_BORDURE;
 }
 
-void GoalStrat::recule(rclcpp::Duration a_time)
+bool GoalStrat::recule(rclcpp::Duration a_time)
 {
-    reculeOuAvance(a_time, Distance(1000), true /*recule*/);
+    return reculeOuAvance(a_time, Distance(1000), true /*recule*/);
 }
 
-void GoalStrat::recule(rclcpp::Duration a_time, Distance a_distance)
+bool GoalStrat::recule(rclcpp::Duration a_time, Distance a_distance)
 {
-    reculeOuAvance(a_time, a_distance, true /*recule*/);
+    return reculeOuAvance(a_time, a_distance, true /*recule*/);
 }
 
-void GoalStrat::avance(rclcpp::Duration a_time)
+bool GoalStrat::avance(rclcpp::Duration a_time)
 {
-    reculeOuAvance(a_time, Distance(1000), false /*avance*/);
+    return reculeOuAvance(a_time, Distance(1000), false /*avance*/);
 }
 
-void GoalStrat::avance(rclcpp::Duration a_time, Distance a_distance)
+bool GoalStrat::avance(rclcpp::Duration a_time, Distance a_distance)
 {
-    reculeOuAvance(a_time, a_distance, false /*avance*/);
+    return reculeOuAvance(a_time, a_distance, false /*avance*/);
 }
 
-void GoalStrat::reculeOuAvance(rclcpp::Duration a_time, Distance a_distance, bool sensRecule)
+bool GoalStrat::reculeOuAvance(rclcpp::Duration a_time, Distance a_distance, bool sensRecule)
 {
     updateCurrentPose();
     auto l_initial_pose = m_current_pose.getPosition();
@@ -83,19 +83,26 @@ void GoalStrat::reculeOuAvance(rclcpp::Duration a_time, Distance a_distance, boo
         usleep(0.1e6);
     }
     override_gear = krabi_msgs::msg::StratMovement::FORWARD_OR_REVERSE;
+
+    if (this->now().seconds() > recalageTimeoutDeadline.seconds())
+    {
+        // Timeout reached
+        return false;
+    }
+    return true;
 }
 
-void GoalStrat::reculeDroit(rclcpp::Duration a_time, Distance a_distance)
+bool GoalStrat::reculeDroit(rclcpp::Duration a_time, Distance a_distance)
 {
-    reculeOuAvanceDroit(a_time, a_distance, true /*recule*/);
+    return reculeOuAvanceDroit(a_time, a_distance, true /*recule*/);
 }
 
-void GoalStrat::avanceDroit(rclcpp::Duration a_time, Distance a_distance)
+bool GoalStrat::avanceDroit(rclcpp::Duration a_time, Distance a_distance)
 {
-    reculeOuAvanceDroit(a_time, a_distance, false /*avance*/);
+    return reculeOuAvanceDroit(a_time, a_distance, false /*avance*/);
 }
 
-void GoalStrat::reculeOuAvanceDroit(rclcpp::Duration a_time, Distance a_distance, bool sensRecule)
+bool GoalStrat::reculeOuAvanceDroit(rclcpp::Duration a_time, Distance a_distance, bool sensRecule)
 {
     updateCurrentPose();
     auto l_initial_pose = m_current_pose.getPosition();
@@ -152,6 +159,12 @@ void GoalStrat::reculeOuAvanceDroit(rclcpp::Duration a_time, Distance a_distance
         usleep(0.1e6);
     }
     override_gear = krabi_msgs::msg::StratMovement::FORWARD_OR_REVERSE;
+
+    if (this->now().seconds() >= recalageTimeoutDeadline.seconds())
+    {
+        return false;
+    }
+    return true;
 }
 /**
  * @brief Send cmd to disable angular motion
@@ -994,6 +1007,7 @@ void GoalStrat::stateRun()
         }
 
         rclcpp::Time recalageTimeoutDeadline;
+        bool successAlign = true;
 
         switch (m_strat_graph->getEtapeEnCours()->getEtapeType())
         {
@@ -1036,6 +1050,34 @@ void GoalStrat::stateRun()
             startLinear();
             startAngular();
             break;
+        case Etape::EtapeType::THERMOMETRE:
+#ifdef YEAR_2026
+            stopLinear();
+            stopAngular();
+            RCLCPP_INFO_STREAM(rclcpp::get_logger("rclcpp"), "Grab thermometre");
+            m_strat_graph->grabThermometre();
+
+            successAlign = alignWithAngleWithTimeout(Angle((m_goal_pose.getAngle())));
+            if (!successAlign)
+            {
+                RCLCPP_WARN_STREAM(rclcpp::get_logger("rclcpp"),
+                                   "Timeout while orienting toward thermometre");
+            }
+
+            // m_grabi->grab_plateforme();
+            RCLCPP_INFO_STREAM(rclcpp::get_logger("rclcpp"), "Done grabbing thermometre");
+            startLinear();
+            startAngular();
+#endif
+            break;
+        case Etape::EtapeType::GARDE_MANGER:
+            m_strat_graph->dropCaisses(m_strat_graph->getEtapeEnCours());
+            break;
+
+        case Etape::EtapeType::ZONE_DE_RAMASSAGE:
+            m_strat_graph->grabCaisses(m_strat_graph->getEtapeEnCours());
+            break;
+
         default:
             // stopAngular();
             RCLCPP_INFO_STREAM(rclcpp::get_logger("rclcpp"), "No special action here\n");

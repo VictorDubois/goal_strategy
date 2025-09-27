@@ -6,16 +6,19 @@
 
 enum OrientationCaisse
 {
-    both_long_side,
-    both_small_side
+    unknown,
+    long_side,
+    small_side
 };
 
 class Caisse
 {
+public:
     Caisse(OrientationCaisse a_orientation)
       : m_orientation(a_orientation) {};
+    Caisse()
+      : m_orientation(OrientationCaisse::unknown) {};
 
-public:
     OrientationCaisse getOrientation();
 
 private:

@@ -29,8 +29,8 @@ public:
     void grabCaisses(Etape* e); // 2026 only
     int dropCaisses(Etape* e);  // 2026 only
 
-    void grabThermometre(Etape* e); // 2026 only
-    void dropThermometre(Etape* e); // 2026 only
+    void grabThermometre(){}; // 2026 only
+    void dropThermometre(){}; // 2026 only
 
     Position positionCAbsolute(double x_yellow_from_top_left, double y_yellow_from_top_left);
 
