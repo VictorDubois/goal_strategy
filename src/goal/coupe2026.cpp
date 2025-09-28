@@ -209,6 +209,20 @@ Coupe2026::Coupe2026(const bool isYellow)
  */
 void Coupe2026::etape_type_to_marker(visualization_msgs::msg::Marker& m, Etape* a_etape)
 {
+    std_msgs::msg::ColorRGBA yellow_color;
+    yellow_color.r = 1.0f;
+    yellow_color.g = 1.0f;
+    yellow_color.b = 0.0f;
+    yellow_color.a = 1.0f;
+
+    std_msgs::msg::ColorRGBA blue_color;
+    blue_color.r = 0.0f;
+    blue_color.g = 0.0f;
+    blue_color.b = 1.0f;
+    blue_color.a = 1.0f;
+
+    Position temp_pos;
+
     // auto& color = m.color;
     m.scale.x = 0.05;
     m.scale.y = 0.05;
@@ -230,11 +244,17 @@ void Coupe2026::etape_type_to_marker(visualization_msgs::msg::Marker& m, Etape* 
         break;
 
     case Etape::EtapeType::ZONE_DE_RAMASSAGE:
-        m.type = visualization_msgs::msg::Marker::CUBE;
-        m.scale.z = 0.01f;
+        m.type = visualization_msgs::msg::Marker::CUBE_LIST;
+        m.scale.z = 0.03f;
         m.color.a = 0.5f;
         m.scale.x = 0.15f;
-        m.scale.y = 0.20f;
+        m.scale.y = 0.05f;
+
+        temp_pos = Position(Distance(0.0), Distance(0.05f));
+
+        m.points = { temp_pos * (1.5f), temp_pos * (0.5f), temp_pos * (-0.5), temp_pos * (-1.5f) };
+
+        m.colors = { yellow_color, blue_color, yellow_color, blue_color };
 
         // Area blue
         m.color.r = 0.f / 255.f;

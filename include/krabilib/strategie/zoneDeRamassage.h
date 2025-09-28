@@ -7,8 +7,11 @@
 enum OrientationCaisse
 {
     unknown,
-    long_side,
-    small_side
+    unknown_team_side,
+    our_side,
+    other_side,
+    common_long_side,
+    common_small_side_wtf,
 };
 
 class Caisse
@@ -17,7 +20,7 @@ public:
     Caisse(OrientationCaisse a_orientation)
       : m_orientation(a_orientation) {};
     Caisse()
-      : m_orientation(OrientationCaisse::unknown) {};
+      : m_orientation(OrientationCaisse::unknown_team_side) {};
 
     OrientationCaisse getOrientation();
 
