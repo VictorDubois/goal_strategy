@@ -33,7 +33,9 @@ public:
     Position(const PolarPosition& pp);
 
     /// @brief Surchage d'opérateur pour multiplier par un flottant
-    Position operator*(float val) const;
+    Position operator*(const float val) const;
+
+    // Position operator*(const float val, const Position& position) const;
 
     /// @brief Surchage d'opérateur pour ajouter et copier des coordonnées
     Position& operator+=(const Position& position);
@@ -41,8 +43,11 @@ public:
     /// @brief Surchage d'opérateur pour soustraire et copier des coordonnées
     Position& operator-=(const Position& position);
 
+    /// @brief Surchage d'opérateur pour additionner et copier des coordonnées
+    Position operator+(const Position& position) const;
+
     /// @brief Surchage d'opérateur pour soustraire et copier des coordonnées
-    Position operator-(const Position& position);
+    Position operator-(const Position& position) const;
 
     /// @brief Surchage d'opérateur pour multiplier les coordonées
     Position& operator*=(float val);

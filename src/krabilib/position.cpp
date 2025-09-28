@@ -44,11 +44,16 @@ void Position::setY(Distance Y)
 }
 
 /// @brief Surchage d'opérateur pour multiplier par un flottant
-Position Position::operator*(float val) const
+Position Position::operator*(const float val) const
 {
     Position resultat(m_pos * val);
     return resultat;
 }
+
+/*Position operator*(const float val, const Position& position)
+{
+    return position * val;
+}*/
 
 Position& Position::operator+=(const Position& position)
 {
@@ -83,7 +88,12 @@ Position& Position::operator*=(float val)
     return *this;
 }
 
-Position Position::operator-(const Position& p)
+Position Position::operator+(const Position& p) const
+{
+    return Position(m_pos + p.m_pos);
+}
+
+Position Position::operator-(const Position& p) const
 {
     return Position(m_pos - p.m_pos);
 }
