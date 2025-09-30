@@ -22,7 +22,10 @@ public:
     Caisse()
       : m_orientation(OrientationCaisse::unknown_team_side) {};
 
-    OrientationCaisse getOrientation();
+    OrientationCaisse getOrientation()
+    {
+        return m_orientation;
+    };
 
 private:
     OrientationCaisse m_orientation;

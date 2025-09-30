@@ -229,6 +229,7 @@ void Coupe2026::etape_type_to_marker(visualization_msgs::msg::Marker& m, Etape* 
     m.scale.z = 0.05;
     m.type = visualization_msgs::msg::Marker::CUBE;
 
+    std::vector<Caisse> m_stock;
     const Etape::EtapeType& e = a_etape->getEtapeType();
     m.color.a = 1;
 
@@ -253,8 +254,32 @@ void Coupe2026::etape_type_to_marker(visualization_msgs::msg::Marker& m, Etape* 
         temp_pos = Position(Distance(0.0), Distance(0.05f));
 
         m.points = { temp_pos * (1.5f), temp_pos * (0.5f), temp_pos * (-0.5), temp_pos * (-1.5f) };
+        m_stock = static_cast<ZoneDeRamassage*>(a_etape->getAction())->getCaisses();
 
-        m.colors = { yellow_color, blue_color, yellow_color, blue_color };
+        m.colors = {
+            yellow_color, blue_color, yellow_color, blue_color
+        }; // Default config if no known color. Be be changed to grey once we have a measurement
+           // system
+
+        for (unsigned int i = 0; i < m_stock.size(); i++)
+        {
+            if (m_stock[i].getOrientation() == OrientationCaisse::our_side)
+            {
+                m.colors[i] = blue_color;
+                if (isYellow())
+                {
+                    m.colors[i] = yellow_color;
+                }
+            }
+            else if (m_stock[i].getOrientation() == OrientationCaisse::other_side)
+            {
+                m.colors[i] = yellow_color;
+                if (isYellow())
+                {
+                    m.colors[i] = blue_color;
+                }
+            }
+        }
 
         // Area blue
         m.color.r = 0.f / 255.f;
