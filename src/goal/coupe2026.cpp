@@ -52,68 +52,68 @@ Coupe2026::Coupe2026(const bool isYellow)
 
     // Definition des zone de ramassage
     int zone_de_ramassage_nid_petit_cote
-      = Etape::makeEtape(new ZoneDeRamassage(Pose(positionC(1.375f - reach, -0.2f), Angle(0)),
-                                             Pose(positionC(1.375f, -0.2f), Angle(0))),
+      = Etape::makeEtape(new ZoneDeRamassage(Pose(positionC(-1.375f + reach, -0.2f), Angle(0)),
+                                             Pose(positionC(-1.375f, -0.2f), Angle(0))),
                          "zone_de_ramassage_nid_petit_cote");
 
     int zone_de_ramassage_public_petit_cote
-      = Etape::makeEtape(new ZoneDeRamassage(Pose(positionC(1.375f - reach, 0.6f), Angle(0)),
+      = Etape::makeEtape(new ZoneDeRamassage(Pose(positionC(-1.375f + reach, 0.6f), Angle(0)),
                                              Pose(positionC(1.375f, 0.6f), Angle(0))),
                          "zone_de_ramassage_public_petit_cote");
 
-    int zone_de_ramassage_public_grand_cote
-      = Etape::makeEtape(new ZoneDeRamassage(Pose(positionC(0.4f, 0.875f - reach), Angle(M_PI / 2)),
-                                             Pose(positionC(0.4f, 0.875f), Angle(M_PI / 2))),
-                         "zone_de_ramassage_public_petit_cote");
+    int zone_de_ramassage_public_grand_cote = Etape::makeEtape(
+      new ZoneDeRamassage(Pose(positionC(-0.4f, 0.875f - reach), Angle(M_PI / 2)),
+                          Pose(positionC(-0.4f, 0.875f), Angle(M_PI / 2))),
+      "zone_de_ramassage_public_petit_cote");
 
     int zone_de_ramassage_centre
-      = Etape::makeEtape(new ZoneDeRamassage(Pose(positionC(0.4f, 0.2f + reach), Angle(M_PI / 2)),
-                                             Pose(positionC(0.4f, 0.2f), Angle(M_PI / 2))),
+      = Etape::makeEtape(new ZoneDeRamassage(Pose(positionC(-0.4f, 0.2f + reach), Angle(M_PI / 2)),
+                                             Pose(positionC(-0.4f, 0.2f), Angle(M_PI / 2))),
                          "zone_de_ramassage_public_petit_cote");
 
     // ######### Autre cote ##############
 
     int zone_de_ramassage_nid_petit_cote_autre
-      = Etape::makeEtape(new ZoneDeRamassage(Pose(positionC(-1.375f + reach, -0.2f), Angle(0)),
-                                             Pose(positionC(-1.375f, -0.2f), Angle(0))),
+      = Etape::makeEtape(new ZoneDeRamassage(Pose(positionC(1.375f - reach, -0.2f), Angle(0)),
+                                             Pose(positionC(1.375f, -0.2f), Angle(0))),
                          "zone_de_ramassage_nid_petit_cote");
 
     int zone_de_ramassage_public_petit_cote_autre
-      = Etape::makeEtape(new ZoneDeRamassage(Pose(positionC(-1.375f + reach, 0.6f), Angle(0)),
-                                             Pose(positionC(-1.375f, 0.6f), Angle(0))),
+      = Etape::makeEtape(new ZoneDeRamassage(Pose(positionC(1.375f - reach, 0.6f), Angle(0)),
+                                             Pose(positionC(1.375f, 0.6f), Angle(0))),
                          "zone_de_ramassage_public_petit_cote");
 
-    int zone_de_ramassage_public_grand_cote_autre = Etape::makeEtape(
-      new ZoneDeRamassage(Pose(positionC(-0.4f, 0.875f - reach), Angle(M_PI / 2)),
-                          Pose(positionC(-0.4f, 0.875f), Angle(M_PI / 2))),
-      "zone_de_ramassage_public_petit_cote");
+    int zone_de_ramassage_public_grand_cote_autre
+      = Etape::makeEtape(new ZoneDeRamassage(Pose(positionC(0.4f, 0.875f - reach), Angle(M_PI / 2)),
+                                             Pose(positionC(0.4f, 0.875f), Angle(M_PI / 2))),
+                         "zone_de_ramassage_public_petit_cote");
 
     int zone_de_ramassage_centre_autre
-      = Etape::makeEtape(new ZoneDeRamassage(Pose(positionC(-0.4f, 0.2f + reach), Angle(M_PI / 2)),
-                                             Pose(positionC(-0.4f, 0.2f), Angle(M_PI / 2))),
+      = Etape::makeEtape(new ZoneDeRamassage(Pose(positionC(0.4f, 0.2f + reach), Angle(M_PI / 2)),
+                                             Pose(positionC(0.4f, 0.2f), Angle(M_PI / 2))),
                          "zone_de_ramassage_public_petit_cote");
 
     // Définition des garde mangers
 
     int garde_manger_petit_cote
-      = Etape::makeEtape(new GardeManger(Pose(positionC(1.4f - reachDepose, 0.2f), Angle(0)),
-                                         Pose(positionC(1.4f, 0.2f), Angle(0))),
+      = Etape::makeEtape(new GardeManger(Pose(positionC(-1.4f + reachDepose, 0.2f), Angle(0)),
+                                         Pose(positionC(-1.4f, 0.2f), Angle(0))),
                          "garde_manger_petit_cote");
 
-    int garde_manger_public_us
-      = Etape::makeEtape(new GardeManger(Pose(positionC(0.8f, 0.9f - reachDepose), Angle(M_PI / 2)),
-                                         Pose(positionC(0.8f, 0.9f), Angle(M_PI / 2))),
-                         "garde_manger_public_us");
+    int garde_manger_public_us = Etape::makeEtape(
+      new GardeManger(Pose(positionC(-0.8f, 0.9f - reachDepose), Angle(M_PI / 2)),
+                      Pose(positionC(-0.8f, 0.9f), Angle(M_PI / 2))),
+      "garde_manger_public_us");
 
     int garde_manger_public_milieu
       = Etape::makeEtape(new GardeManger(Pose(positionC(0.0f, 0.9f - reachDepose), Angle(M_PI / 2)),
                                          Pose(positionC(0.0f, 0.9f), Angle(M_PI / 2))),
                          "garde_manger_public_milieu");
 
-    int garde_manger_centre_us
-      = Etape::makeEtape(new GardeManger(Pose(positionC(0.7f, 0.2f + reachDepose), Angle(M_PI / 2)),
-                                         Pose(positionC(0.7f, 0.2f), Angle(M_PI / 2))),
-                         "garde_manger_centre_us");
+    int garde_manger_centre_us = Etape::makeEtape(
+      new GardeManger(Pose(positionC(-0.7f, 0.2f + reachDepose), Angle(M_PI / 2)),
+                      Pose(positionC(-0.7f, 0.2f), Angle(M_PI / 2))),
+      "garde_manger_centre_us");
 
     int garde_manger_centre_milieu
       = Etape::makeEtape(new GardeManger(Pose(positionC(0.0f, 0.2f + reachDepose), Angle(M_PI / 2)),
@@ -121,38 +121,38 @@ Coupe2026::Coupe2026(const bool isYellow)
                          "garde_manger_centre_milieu");
 
     int garde_manger_frigo_us = Etape::makeEtape(
-      new GardeManger(Pose(positionC(0.25f, -0.45f + reachDepose), Angle(M_PI / 2)),
-                      Pose(positionC(0.25f, -0.45f), Angle(M_PI / 2))),
+      new GardeManger(Pose(positionC(-0.25f, -0.45f + reachDepose), Angle(M_PI / 2)),
+                      Pose(positionC(-0.25f, -0.45f), Angle(M_PI / 2))),
       "garde_manger_frigo_us");
 
     // ######### Autre cote ##############
     int garde_manger_petit_cote_them
-      = Etape::makeEtape(new GardeManger(Pose(positionC(-1.4f + reachDepose, 0.2f), Angle(0)),
-                                         Pose(positionC(-1.4f, 0.2f), Angle(0))),
+      = Etape::makeEtape(new GardeManger(Pose(positionC(1.4f - reachDepose, 0.2f), Angle(0)),
+                                         Pose(positionC(1.4f, 0.2f), Angle(0))),
                          "garde_manger_petit_cote_them");
 
-    int garde_manger_public_them = Etape::makeEtape(
-      new GardeManger(Pose(positionC(-0.8f, 0.9f - reachDepose), Angle(M_PI / 2)),
-                      Pose(positionC(-0.8f, 0.9f), Angle(M_PI / 2))),
-      "garde_manger_public_them");
+    int garde_manger_public_them
+      = Etape::makeEtape(new GardeManger(Pose(positionC(0.8f, 0.9f - reachDepose), Angle(M_PI / 2)),
+                                         Pose(positionC(0.8f, 0.9f), Angle(M_PI / 2))),
+                         "garde_manger_public_them");
 
-    int garde_manger_centre_them = Etape::makeEtape(
-      new GardeManger(Pose(positionC(-0.7f, 0.2f + reachDepose), Angle(M_PI / 2)),
-                      Pose(positionC(-0.7f, 0.2f), Angle(M_PI / 2))),
-      "garde_manger_centre_them");
+    int garde_manger_centre_them
+      = Etape::makeEtape(new GardeManger(Pose(positionC(0.7f, 0.2f + reachDepose), Angle(M_PI / 2)),
+                                         Pose(positionC(0.7f, 0.2f), Angle(M_PI / 2))),
+                         "garde_manger_centre_them");
 
     int garde_manger_frigo_them = Etape::makeEtape(
-      new GardeManger(Pose(positionC(-0.25f, -0.45f + reachDepose), Angle(M_PI / 2)),
-                      Pose(positionC(-0.25f, -0.45f), Angle(M_PI / 2))),
+      new GardeManger(Pose(positionC(0.25f, -0.45f + reachDepose), Angle(M_PI / 2)),
+                      Pose(positionC(0.25f, -0.45f), Angle(M_PI / 2))),
       "garde_manger_frigo_them");
 
     // Thermometre
     int debut_thermometre
-      = Etape::makeEtape(new Thermometre(Pose(positionC(0.2f, 1.0f - 0.3f), Angle(M_PI / 2)),
-                                         Pose(positionC(0.2f, 1.0f), Angle(M_PI / 2))),
+      = Etape::makeEtape(new Thermometre(Pose(positionC(-0.2f, 1.0f - 0.3f), Angle(M_PI / 2)),
+                                         Pose(positionC(-0.2f, 1.0f), Angle(M_PI / 2))),
                          "debut_thermometre");
     int fin_thermometre = Etape::makeEtape(
-      positionC(0.8f, 1.0f - 0.3f), "fin_thermometre", Etape::EtapeType::POINT_PASSAGE);
+      positionC(-0.8f, 1.0f - 0.3f), "fin_thermometre", Etape::EtapeType::POINT_PASSAGE);
 
     Etape::get(debut_thermometre)->setNumeroEtapeFinAction(fin_thermometre);
 
