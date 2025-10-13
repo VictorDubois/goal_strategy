@@ -45,7 +45,7 @@ Coupe2026::Coupe2026(const bool isYellow)
     // Les étapes qui correspondant à des actions sont créées automatiquement lors de l'ajout
     // d'actions
 
-    int nid = Etape::makeEtape(positionC(-0.775f, -0.775f), "NID", Etape::DEPART);
+    int nid = Etape::makeEtape(positionC(-1.25f, -0.75f), "NID", Etape::DEPART);
 
     float reach = 0.3f;
     float reachDepose = reach;
