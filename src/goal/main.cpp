@@ -104,19 +104,8 @@ bool GoalStrat::avanceDroit(rclcpp::Duration a_time, Distance a_distance)
 
 bool GoalStrat::reculeOuAvanceDroit(rclcpp::Duration a_time, Distance a_distance, bool sensRecule)
 {
-    updateCurrentPose();
-    auto l_initial_pose = m_current_pose.getPosition();
+    RCLCPP_INFO_STREAM(rclcpp::get_logger("rclcpp"), "recule/avance droit !!");
 
-    RCLCPP_INFO_STREAM(rclcpp::get_logger("rclcpp"), "recule droit !!");
-    // recalage_bordure();
-    // m_strat_mvnt.reverse_gear = 1;
-
-    if (m_year == 2024) // On recule dans l'autre sens
-    {
-        sensRecule = !sensRecule;
-    }
-
-    override_gear = krabi_msgs::msg::StratMovement::REVERSE;
     Position l_position_recule = m_current_pose.getPosition();
 
     if (sensRecule == false)
@@ -135,14 +124,36 @@ bool GoalStrat::reculeOuAvanceDroit(rclcpp::Duration a_time, Distance a_distance
           Distance(l_position_recule.getY() - a_distance * sin(m_current_pose.getAngle())));
     }
 
-    m_goal_pose.setPosition(l_position_recule);
+    return goToDroit(l_position_recule, a_time, a_distance, sensRecule, false);
+}
 
+bool GoalStrat::goToDroit(Position& a_position,
+                          rclcpp::Duration a_time,
+                          Distance a_distance,
+                          bool sensRecule,
+                          bool a_position_precise = true)
+{
+    updateCurrentPose();
+    auto l_initial_pose = m_current_pose.getPosition();
+
+    // recalage_bordure();
+    // m_strat_mvnt.reverse_gear = 1;
+
+    if (m_year == 2024) // On recule dans l'autre sens
+    {
+        sensRecule = !sensRecule;
+    }
+
+    override_gear = krabi_msgs::msg::StratMovement::REVERSE;
+
+    m_goal_pose.setPosition(a_position);
     chooseEffector(false);
-    publishStratMovement();
+    publishGoal();
 
     auto recalageTimeoutDeadline = this->now() + a_time;
 
     Distance l_distance_parcourue = Distance(0);
+    Distance l_distance_to_objective = Distance(0);
     Distance l_epsilon_distance = Distance(0.05);
 
     while (this->now().seconds() < recalageTimeoutDeadline.seconds()
@@ -157,6 +168,15 @@ bool GoalStrat::reculeOuAvanceDroit(rclcpp::Duration a_time, Distance a_distance
         publishStratMovement();
 
         usleep(0.1e6);
+
+        l_distance_to_objective = (a_position - m_current_pose.getPosition()).getNorme();
+        RCLCPP_INFO_STREAM(rclcpp::get_logger("rclcpp"),
+                           "l_distance_to_objective: " << l_distance_to_objective);
+        if (a_position_precise && l_distance_to_objective < REACH_DIST)
+        {
+            // Success!
+            break;
+        }
     }
     override_gear = krabi_msgs::msg::StratMovement::FORWARD_OR_REVERSE;
 
@@ -1008,6 +1028,8 @@ void GoalStrat::stateRun()
 
         rclcpp::Time recalageTimeoutDeadline;
         bool successAlign = true;
+        bool successGoTo = true;
+        Position positionDeposeThermometre;
 
         switch (m_strat_graph->getEtapeEnCours()->getEtapeType())
         {
@@ -1057,14 +1079,36 @@ void GoalStrat::stateRun()
             RCLCPP_INFO_STREAM(rclcpp::get_logger("rclcpp"), "Grab thermometre");
             m_strat_graph->grabThermometre();
 
-            successAlign = alignWithAngleWithTimeout(Angle((m_goal_pose.getAngle())));
+            startAngular();
+            successAlign = alignWithAngleWithTimeout(Angle(0));
             if (!successAlign)
             {
                 RCLCPP_WARN_STREAM(rclcpp::get_logger("rclcpp"),
                                    "Timeout while orienting toward thermometre");
+                // @todo add diagnostic?
+            }
+            positionDeposeThermometre = Position(Distance(0.8f), Distance(0.7f));
+
+            if (m_is_blue)
+            {
+                positionDeposeThermometre = Position(Distance(-0.8f), Distance(0.7f));
+            }
+            startLinear();
+            startAngular();
+
+            successGoTo = goToDroit(positionDeposeThermometre,
+                                    rclcpp::Duration(3 * m_timeout_orient, 0),
+                                    Distance(10000),
+                                    true);
+            if (!successGoTo)
+            {
+                RCLCPP_WARN_STREAM(rclcpp::get_logger("rclcpp"),
+                                   "Timeout while moving the thermometre");
+                // @todo add diagnostic?
             }
 
-            // m_grabi->grab_plateforme();
+            m_strat_graph->dropThermometre();
+
             RCLCPP_INFO_STREAM(rclcpp::get_logger("rclcpp"), "Done grabbing thermometre");
             startLinear();
             startAngular();

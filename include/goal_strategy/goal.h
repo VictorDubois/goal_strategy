@@ -89,6 +89,11 @@ private:
     bool reculeDroit(rclcpp::Duration a_time, Distance a_distance);
     bool avanceDroit(rclcpp::Duration a_time, Distance a_distance);
     bool reculeOuAvanceDroit(rclcpp::Duration a_time, Distance a_distance, bool sensRecule = true);
+    bool goToDroit(Position& a_position,
+                   rclcpp::Duration a_time,
+                   Distance a_distance,
+                   bool sensRecule,
+                   bool a_position_precise);
 
     void stopAngular();
     void startAngular();
