@@ -801,11 +801,29 @@ void GoalStrat::chooseGear()
         l_reverseGear.data = false;
         m_strat_mvnt.reverse_gear = krabi_msgs::msg::StratMovement::FORWARD;
     }
+    else if (
+      // 2025
+      m_strat_graph->getEtapeEnCours()->getEtapeType() == Etape::EtapeType::THERMOMETRE
+      || m_strat_graph->getEtapeEnCours()->getEtapeType() == Etape::EtapeType::ZONE_DE_RAMASSAGE
+      || m_strat_graph->getEtapeEnCours()->getEtapeType() == Etape::EtapeType::GARDE_MANGER)
+    {
+        l_reverseGear.data = false;
+        m_strat_mvnt.reverse_gear = krabi_msgs::msg::StratMovement::FORWARD;
+    }
     else
     {
         // // Don't care
         // l_reverseGear.data = false;
         m_strat_mvnt.reverse_gear = krabi_msgs::msg::StratMovement::FORWARD_OR_REVERSE;
+
+        if (m_strat_mvnt.orient
+            == krabi_msgs::msg::StratMovement::ORIENT_TOWARD_GOALPOSE_ORIENTATION)
+        {
+            // When we are aligning the robot, we want a specific angle. If we let the main_strat
+            // decide, we risk a 180deg descrepency!
+            m_strat_mvnt.reverse_gear = krabi_msgs::msg::StratMovement::FORWARD;
+        }
+
         if (m_year == 2024)
         {
             l_reverseGear.data = true;
@@ -1030,6 +1048,8 @@ void GoalStrat::stateRun()
         bool successAlign = true;
         bool successGoTo = true;
         Position positionDeposeThermometre;
+        ZoneDeRamassage* l_zone_de_ramassage;
+        GardeManger* l_garde_manger;
 
         switch (m_strat_graph->getEtapeEnCours()->getEtapeType())
         {
@@ -1074,11 +1094,8 @@ void GoalStrat::stateRun()
             break;
         case Etape::EtapeType::THERMOMETRE:
 #ifdef YEAR_2026
-            stopLinear();
-            stopAngular();
             RCLCPP_INFO_STREAM(rclcpp::get_logger("rclcpp"), "Grab thermometre");
-            m_strat_graph->grabThermometre();
-
+            stopLinear();
             startAngular();
             successAlign = alignWithAngleWithTimeout(Angle(0));
             if (!successAlign)
@@ -1087,6 +1104,8 @@ void GoalStrat::stateRun()
                                    "Timeout while orienting toward thermometre");
                 // @todo add diagnostic?
             }
+            m_strat_graph->grabThermometre();
+
             positionDeposeThermometre = Position(Distance(0.8f), Distance(0.7f));
 
             if (m_is_blue)
@@ -1112,15 +1131,58 @@ void GoalStrat::stateRun()
             RCLCPP_INFO_STREAM(rclcpp::get_logger("rclcpp"), "Done grabbing thermometre");
             startLinear();
             startAngular();
-#endif
             break;
         case Etape::EtapeType::GARDE_MANGER:
+            RCLCPP_INFO_STREAM(rclcpp::get_logger("rclcpp"), "Drop caisse in garde manger");
+            stopLinear();
+            startAngular();
+
+            l_garde_manger
+              = static_cast<GardeManger*>(m_strat_graph->getEtapeEnCours()->getAction());
+            // m_strat_mvnt.reverse_gear = krabi_msgs::msg::StratMovement::REVERSE;// use
+            // override_gear instead? Or even better, just modify chooseGear
+
+            successAlign = alignWithAngleWithTimeout(l_garde_manger->getGoalPose().getAngle()
+                                                     + Angle(M_PI / 2));
+            if (!successAlign)
+            {
+                RCLCPP_WARN_STREAM(rclcpp::get_logger("rclcpp"),
+                                   "Timeout while orienting toward garde manger");
+                // @todo add diagnostic?
+            }
+            else
+            {
+                RCLCPP_INFO_STREAM(rclcpp::get_logger("rclcpp"), "Aligned, ready to drop caisse");
+            }
             m_strat_graph->dropCaisses(m_strat_graph->getEtapeEnCours());
             break;
 
         case Etape::EtapeType::ZONE_DE_RAMASSAGE:
+            RCLCPP_INFO_STREAM(rclcpp::get_logger("rclcpp"), "Grab caisse");
+            stopLinear();
+            startAngular();
+
+            l_zone_de_ramassage
+              = static_cast<ZoneDeRamassage*>(m_strat_graph->getEtapeEnCours()->getAction());
+
+            // m_strat_mvnt.reverse_gear = krabi_msgs::msg::StratMovement::REVERSE; // use
+            // override_gear instead? Or even better, just modify chooseGear
+
+            successAlign = alignWithAngleWithTimeout(l_zone_de_ramassage->getGoalPose().getAngle()
+                                                     + Angle(M_PI / 2));
+            if (!successAlign)
+            {
+                RCLCPP_WARN_STREAM(rclcpp::get_logger("rclcpp"),
+                                   "Timeout while orienting toward caisse");
+                // @todo add diagnostic?
+            }
+            else
+            {
+                RCLCPP_INFO_STREAM(rclcpp::get_logger("rclcpp"), "Aligned, ready to grab caisse");
+            }
             m_strat_graph->grabCaisses(m_strat_graph->getEtapeEnCours());
             break;
+#endif
 
         default:
             // stopAngular();

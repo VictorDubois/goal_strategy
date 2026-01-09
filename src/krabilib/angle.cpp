@@ -115,6 +115,11 @@ Angle operator-(Angle d1, Angle d2)
     return Angle(double(d1) - d2);
 }
 
+Angle operator+(Angle d1, Angle d2)
+{
+    return Angle(double(d1) + d2);
+}
+
 VitesseAngulaire operator-(VitesseAngulaire d1, VitesseAngulaire d2)
 {
     return VitesseAngulaire(double(d1) - d2);

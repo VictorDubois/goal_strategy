@@ -49,5 +49,6 @@ AngleDeg operator/(AngleDeg d, float k);
 AngleDeg operator/(AngleDeg d, double k);
 
 Angle operator-(Angle d1, Angle d2);
+Angle operator+(Angle d1, Angle d2);
 VitesseAngulaire operator-(VitesseAngulaire d1, VitesseAngulaire d2);
 AngleDeg operator-(AngleDeg d1, AngleDeg d2);
