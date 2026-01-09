@@ -1013,8 +1013,8 @@ void GoalStrat::stateRun()
         // Zone de départ
         // if (m_area_funny == nullptr)
         {
-            RCLCPP_ERROR_STREAM(rclcpp::get_logger("rclcpp"),
-                                "FAIL getting best area for funny action, revert to default");
+            // RCLCPP_ERROR_STREAM(rclcpp::get_logger("rclcpp"), "FAIL getting best area for funny
+            // action, revert to default");
             m_goal_pose.setPosition(m_strat_graph->getParkedPosition());
         }
 
