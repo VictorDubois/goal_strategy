@@ -267,6 +267,11 @@ void GoalStrat::alignWithAngle(Angle a_angle)
     publishStratMovement();
 }
 
+bool GoalStrat::isCurrentEtapeTheGoal()
+{
+    return m_strat_graph->getGoal()->getNumero() == m_strat_graph->getEtapeEnCours()->getNumero();
+}
+
 /**
  * @brief Check if the robot reached the goal position
  *
@@ -274,21 +279,29 @@ void GoalStrat::alignWithAngle(Angle a_angle)
  */
 bool GoalStrat::isArrivedAtGoal()
 {
+    return isArrivedAt(m_strat_graph->getGoal());
+}
+
+bool GoalStrat::isArrivedAtIntermediate()
+{
+    return isArrivedAt(m_strat_graph->getEtapeEnCours());
+}
+
+bool GoalStrat::isArrivedAt(Etape* a_etape)
+{
     updateCurrentPose();
-    m_dist_to_goal
-      = (m_current_pose.getPosition() - m_strat_graph->getEtapeEnCours()->getPosition()).getNorme();
+    m_dist_to_goal = (m_current_pose.getPosition() - a_etape->getPosition()).getNorme();
     RCLCPP_DEBUG_STREAM(rclcpp::get_logger("rclcpp"),
                         "current pose: x = "
-                          << m_current_pose.getPosition().getX() << ", y = "
-                          << m_current_pose.getPosition().getY() << ", etape_en_cours: x = "
-                          << m_strat_graph->getEtapeEnCours()->getPosition().getX() << ", y = "
-                          << m_strat_graph->getEtapeEnCours()->getPosition().getY() << std::endl
+                          << m_current_pose.getPosition().getX()
+                          << ", y = " << m_current_pose.getPosition().getY()
+                          << ", etape_en_cours: x = " << a_etape->getPosition().getX()
+                          << ", y = " << a_etape->getPosition().getY() << std::endl
                           << "Distance to objective: " << m_dist_to_goal);
 
     float l_reach_dist = REACH_DIST;
-    if (m_strat_graph->getEtapeEnCours()->getEtapeType() == Etape::EtapeType::STOCK_MATIERE_PREMIERE
-        || m_strat_graph->getEtapeEnCours()->getEtapeType()
-             == Etape::EtapeType::AIRE_DE_CONSTRUCTION)
+    if (a_etape->getEtapeType() == Etape::EtapeType::STOCK_MATIERE_PREMIERE
+        || a_etape->getEtapeType() == Etape::EtapeType::AIRE_DE_CONSTRUCTION)
     {
         l_reach_dist = m_grabi->getReach();
     }
@@ -1036,7 +1049,7 @@ void GoalStrat::stateRun()
                              << std::endl);
     }
 
-    if (isArrivedAtGoal())
+    if (isArrivedAtIntermediate())
     {
         if (isParked())
         {
@@ -1094,93 +1107,104 @@ void GoalStrat::stateRun()
             break;
         case Etape::EtapeType::THERMOMETRE:
 #ifdef YEAR_2026
-            RCLCPP_INFO_STREAM(rclcpp::get_logger("rclcpp"), "Grab thermometre");
-            stopLinear();
-            startAngular();
-            successAlign = alignWithAngleWithTimeout(Angle(0));
-            if (!successAlign)
+            if (isCurrentEtapeTheGoal())
             {
-                RCLCPP_WARN_STREAM(rclcpp::get_logger("rclcpp"),
-                                   "Timeout while orienting toward thermometre");
-                // @todo add diagnostic?
+                RCLCPP_INFO_STREAM(rclcpp::get_logger("rclcpp"), "Grab thermometre");
+                stopLinear();
+                startAngular();
+                successAlign = alignWithAngleWithTimeout(Angle(0));
+                if (!successAlign)
+                {
+                    RCLCPP_WARN_STREAM(rclcpp::get_logger("rclcpp"),
+                                       "Timeout while orienting toward thermometre");
+                    // @todo add diagnostic?
+                }
+                m_strat_graph->grabThermometre();
+
+                positionDeposeThermometre = Position(Distance(0.8f), Distance(0.7f));
+
+                if (m_is_blue)
+                {
+                    positionDeposeThermometre = Position(Distance(-0.8f), Distance(0.7f));
+                }
+                startLinear();
+                startAngular();
+
+                successGoTo = goToDroit(positionDeposeThermometre,
+                                        rclcpp::Duration(3 * m_timeout_orient, 0),
+                                        Distance(10000),
+                                        true);
+                if (!successGoTo)
+                {
+                    RCLCPP_WARN_STREAM(rclcpp::get_logger("rclcpp"),
+                                       "Timeout while moving the thermometre");
+                    // @todo add diagnostic?
+                }
+
+                m_strat_graph->dropThermometre();
+
+                RCLCPP_INFO_STREAM(rclcpp::get_logger("rclcpp"), "Done grabbing thermometre");
+                startLinear();
+                startAngular();
             }
-            m_strat_graph->grabThermometre();
-
-            positionDeposeThermometre = Position(Distance(0.8f), Distance(0.7f));
-
-            if (m_is_blue)
-            {
-                positionDeposeThermometre = Position(Distance(-0.8f), Distance(0.7f));
-            }
-            startLinear();
-            startAngular();
-
-            successGoTo = goToDroit(positionDeposeThermometre,
-                                    rclcpp::Duration(3 * m_timeout_orient, 0),
-                                    Distance(10000),
-                                    true);
-            if (!successGoTo)
-            {
-                RCLCPP_WARN_STREAM(rclcpp::get_logger("rclcpp"),
-                                   "Timeout while moving the thermometre");
-                // @todo add diagnostic?
-            }
-
-            m_strat_graph->dropThermometre();
-
-            RCLCPP_INFO_STREAM(rclcpp::get_logger("rclcpp"), "Done grabbing thermometre");
-            startLinear();
-            startAngular();
             break;
         case Etape::EtapeType::GARDE_MANGER:
-            RCLCPP_INFO_STREAM(rclcpp::get_logger("rclcpp"), "Drop caisse in garde manger");
-            stopLinear();
-            startAngular();
-
-            l_garde_manger
-              = static_cast<GardeManger*>(m_strat_graph->getEtapeEnCours()->getAction());
-            // m_strat_mvnt.reverse_gear = krabi_msgs::msg::StratMovement::REVERSE;// use
-            // override_gear instead? Or even better, just modify chooseGear
-
-            successAlign = alignWithAngleWithTimeout(l_garde_manger->getGoalPose().getAngle()
-                                                     + Angle(M_PI / 2));
-            if (!successAlign)
+            if (isCurrentEtapeTheGoal())
             {
-                RCLCPP_WARN_STREAM(rclcpp::get_logger("rclcpp"),
-                                   "Timeout while orienting toward garde manger");
-                // @todo add diagnostic?
+                RCLCPP_INFO_STREAM(rclcpp::get_logger("rclcpp"), "Drop caisse in garde manger");
+                stopLinear();
+                startAngular();
+
+                l_garde_manger
+                  = static_cast<GardeManger*>(m_strat_graph->getEtapeEnCours()->getAction());
+                // m_strat_mvnt.reverse_gear = krabi_msgs::msg::StratMovement::REVERSE;// use
+                // override_gear instead? Or even better, just modify chooseGear
+
+                successAlign = alignWithAngleWithTimeout(l_garde_manger->getGoalPose().getAngle()
+                                                         + Angle(M_PI / 2));
+                if (!successAlign)
+                {
+                    RCLCPP_WARN_STREAM(rclcpp::get_logger("rclcpp"),
+                                       "Timeout while orienting toward garde manger");
+                    // @todo add diagnostic?
+                }
+                else
+                {
+                    RCLCPP_INFO_STREAM(rclcpp::get_logger("rclcpp"),
+                                       "Aligned, ready to drop caisse");
+                }
+                m_strat_graph->dropCaisses(m_strat_graph->getEtapeEnCours());
             }
-            else
-            {
-                RCLCPP_INFO_STREAM(rclcpp::get_logger("rclcpp"), "Aligned, ready to drop caisse");
-            }
-            m_strat_graph->dropCaisses(m_strat_graph->getEtapeEnCours());
             break;
 
         case Etape::EtapeType::ZONE_DE_RAMASSAGE:
-            RCLCPP_INFO_STREAM(rclcpp::get_logger("rclcpp"), "Grab caisse");
-            stopLinear();
-            startAngular();
-
-            l_zone_de_ramassage
-              = static_cast<ZoneDeRamassage*>(m_strat_graph->getEtapeEnCours()->getAction());
-
-            // m_strat_mvnt.reverse_gear = krabi_msgs::msg::StratMovement::REVERSE; // use
-            // override_gear instead? Or even better, just modify chooseGear
-
-            successAlign = alignWithAngleWithTimeout(l_zone_de_ramassage->getGoalPose().getAngle()
-                                                     + Angle(M_PI / 2));
-            if (!successAlign)
+            if (isCurrentEtapeTheGoal())
             {
-                RCLCPP_WARN_STREAM(rclcpp::get_logger("rclcpp"),
-                                   "Timeout while orienting toward caisse");
-                // @todo add diagnostic?
+                RCLCPP_INFO_STREAM(rclcpp::get_logger("rclcpp"), "Grab caisse");
+                stopLinear();
+                startAngular();
+
+                l_zone_de_ramassage
+                  = static_cast<ZoneDeRamassage*>(m_strat_graph->getEtapeEnCours()->getAction());
+
+                // m_strat_mvnt.reverse_gear = krabi_msgs::msg::StratMovement::REVERSE; // use
+                // override_gear instead? Or even better, just modify chooseGear
+
+                successAlign = alignWithAngleWithTimeout(
+                  l_zone_de_ramassage->getGoalPose().getAngle() + Angle(M_PI / 2));
+                if (!successAlign)
+                {
+                    RCLCPP_WARN_STREAM(rclcpp::get_logger("rclcpp"),
+                                       "Timeout while orienting toward caisse");
+                    // @todo add diagnostic?
+                }
+                else
+                {
+                    RCLCPP_INFO_STREAM(rclcpp::get_logger("rclcpp"),
+                                       "Aligned, ready to grab caisse");
+                }
+                m_strat_graph->grabCaisses(m_strat_graph->getEtapeEnCours());
             }
-            else
-            {
-                RCLCPP_INFO_STREAM(rclcpp::get_logger("rclcpp"), "Aligned, ready to grab caisse");
-            }
-            m_strat_graph->grabCaisses(m_strat_graph->getEtapeEnCours());
             break;
 #endif
 

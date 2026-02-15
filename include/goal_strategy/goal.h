@@ -149,6 +149,10 @@ private:
 
     bool isParked();
 
+    bool isArrivedAtIntermediate();
+    bool isArrivedAt(Etape* a_etape);
+    bool isCurrentEtapeTheGoal();
+
     State m_state = State::RUN;
     Distance m_dist_to_goal;
     bool m_state_msg_displayed;
