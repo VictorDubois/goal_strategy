@@ -1031,7 +1031,20 @@ void GoalStrat::stateRun()
             m_goal_pose.setPosition(m_strat_graph->getParkedPosition());
         }
 
-        if (isParked() && (m_year == 2024 || m_year == 2025))
+        if (m_year == 2026)
+        {
+            Position positionFunny = m_strat_graph->getParkedPosition();
+
+            if ((m_is_blue && m_current_pose.getPosition().getX() > -1.2)
+                || (!m_is_blue && m_current_pose.getPosition().getX() < 1.2))
+            {
+                // Avoid the grenier: set intermediate waypoint
+                positionFunny.setY(Distance(positionFunny.getY() + Distance(0.5)));
+            }
+            m_goal_pose.setPosition(positionFunny);
+        }
+
+        if (isParked() && (m_year == 2024 || m_year == 2025 || m_year == 2026))
         {
             // avoid turning inside the area
             m_strat_mvnt.orient = krabi_msgs::msg::StratMovement::STOP_ANGULAR;
