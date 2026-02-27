@@ -58,7 +58,7 @@ Coupe2026::Coupe2026(const bool isYellow)
 
     int zone_de_ramassage_public_petit_cote
       = Etape::makeEtape(new ZoneDeRamassage(Pose(positionC(-1.325f + reach, 0.6f), Angle(0)),
-                                             Pose(positionC(1.325f, 0.6f), Angle(0))),
+                                             Pose(positionC(-1.325f, 0.6f), Angle(0))),
                          "zone_de_ramassage_public_petit_cote");
 
     int zone_de_ramassage_public_grand_cote = Etape::makeEtape(
