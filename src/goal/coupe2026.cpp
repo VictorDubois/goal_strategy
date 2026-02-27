@@ -96,8 +96,8 @@ Coupe2026::Coupe2026(const bool isYellow)
     // Définition des garde mangers
 
     int garde_manger_petit_cote
-      = Etape::makeEtape(new GardeManger(Pose(positionC(-1.4f + reachDepose, 0.2f), Angle(M_PI)),
-                                         Pose(positionC(-1.4f, 0.2f), Angle(M_PI))),
+      = Etape::makeEtape(new GardeManger(Pose(positionC(-1.4f + reachDepose, 0.2f), Angle(0)),
+                                         Pose(positionC(-1.4f, 0.2f), Angle(0))),
                          "garde_manger_petit_cote");
 
     int garde_manger_public_us = Etape::makeEtape(
@@ -127,14 +127,14 @@ Coupe2026::Coupe2026(const bool isYellow)
 
     // ######### Autre cote ##############
     int garde_manger_petit_cote_them
-      = Etape::makeEtape(new GardeManger(Pose(positionC(1.4f - reachDepose, 0.2f), Angle(0)),
-                                         Pose(positionC(1.4f, 0.2f), Angle(0))),
+      = Etape::makeEtape(new GardeManger(Pose(positionC(1.4f - reachDepose, 0.2f), Angle(M_PI)),
+                                         Pose(positionC(1.4f, 0.2f), Angle(M_PI))),
                          "garde_manger_petit_cote_them");
 
-    int garde_manger_public_them
-      = Etape::makeEtape(new GardeManger(Pose(positionC(0.8f, 0.9f - reachDepose), Angle(M_PI / 2)),
-                                         Pose(positionC(0.8f, 0.9f), Angle(M_PI / 2))),
-                         "garde_manger_public_them");
+    int garde_manger_public_them = Etape::makeEtape(
+      new GardeManger(Pose(positionC(0.8f, 0.9f - reachDepose), Angle(-M_PI / 2)),
+                      Pose(positionC(0.8f, 0.9f), Angle(-M_PI / 2))),
+      "garde_manger_public_them");
 
     int garde_manger_centre_them
       = Etape::makeEtape(new GardeManger(Pose(positionC(0.7f, 0.2f + reachDepose), Angle(M_PI / 2)),
@@ -288,7 +288,7 @@ void Coupe2026::etape_type_to_marker(visualization_msgs::msg::Marker& m, Etape* 
 
         break;
     case Etape::EtapeType::GARDE_MANGER:
-        m.type = visualization_msgs::msg::Marker::CUBE;
+        m.type = visualization_msgs::msg::Marker::CUBE; // ARROW to debug orientation
         m.scale.x = 0.2f;
         m.scale.y = 0.2f;
         m.scale.z = 0.01f;
