@@ -9,7 +9,8 @@ def generate_launch_description():
     xRobotPos_value = LaunchConfiguration('xRobotPos')
     yRobotPos_value = LaunchConfiguration('yRobotPos')
     zRobotOrientation_value = LaunchConfiguration('zRobotOrientation')
-    
+    use_sim_time_value = LaunchConfiguration('use_sim_time')
+
     isBlue_launch_arg = DeclareLaunchArgument(
         'isBlue',
         default_value='False'
@@ -26,8 +27,13 @@ def generate_launch_description():
         'zRobotOrientation',
         default_value='0.0'
     )
+    use_sim_time_launch_arg = DeclareLaunchArgument(
+        'use_sim_time',
+        default_value='True'
+    )
     return LaunchDescription([
         isBlue_launch_arg, xRobotPos_launch_arg, yRobotPos_launch_arg, zRobotOrientation_launch_arg,
+        use_sim_time_launch_arg,
         launch_ros.actions.SetParameter(name='isBlue', value=isBlue_value),
         launch_ros.actions.SetParameter(name='xRobotPos', value=xRobotPos_value),
         launch_ros.actions.SetParameter(name='yRobotPos', value=yRobotPos_value),
@@ -37,7 +43,8 @@ def generate_launch_description():
             package='goal_strategy',
             namespace='krabi_ns',
             executable='goal_strategy_node',
-            name='goal_strat'
+            name='goal_strat',
+            parameters=[{"use_sim_time": use_sim_time_value}]
             #,remappings=[
             #    ('/input/pose', '/turtlesim1/turtle1/pose'),
             #    ('/output/cmd_vel', '/turtlesim2/turtle1/cmd_vel'),
