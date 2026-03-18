@@ -860,7 +860,7 @@ bool GoalStrat::alignWithAngleWithTimeout(Angle angle)
         // rclcpp::spin_some(shared_from_this());
         r.sleep();
     }
-    return this->now().seconds() >= orientTimeoutDeadline.seconds();
+    return this->now().seconds() < orientTimeoutDeadline.seconds();
 }
 
 /**
