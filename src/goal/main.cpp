@@ -300,11 +300,22 @@ bool GoalStrat::isArrivedAt(Etape* a_etape)
                           << "Distance to objective: " << m_dist_to_goal);
 
     float l_reach_dist = REACH_DIST;
+
+#ifdef YEAR_2025
     if (a_etape->getEtapeType() == Etape::EtapeType::STOCK_MATIERE_PREMIERE
         || a_etape->getEtapeType() == Etape::EtapeType::AIRE_DE_CONSTRUCTION)
     {
+
         l_reach_dist = m_grabi->getReach();
     }
+#elif defined(YEAR_2026)
+    if (a_etape->getEtapeType() == Etape::EtapeType::GARDE_MANGER
+        || a_etape->getEtapeType() == Etape::EtapeType::ZONE_DE_RAMASSAGE)
+    {
+
+        l_reach_dist = m_billig->getReach();
+    }
+#endif
     if (isParked())
     {
         // l_reach_dist *= 2;
@@ -539,11 +550,13 @@ GoalStrat::GoalStrat()
 
 #ifdef YEAR_2025
     m_year = 2025;
-#else
+#elif defined(YEAR_2026)
     m_year = 2026;
 #endif
 
     // 2025
+
+#ifdef YEAR_2025
 
     auto l_servo_grabi_left_most = std::make_shared<Servomotor>(10, 67);
     auto l_servo_grabi_center_left = std::make_shared<Servomotor>(10, 52);
@@ -593,6 +606,61 @@ GoalStrat::GoalStrat()
     m_actuators2025.start();
 
     m_actuators2025.set_score(42);
+#elif defined(YEAR_2026)
+    auto l_servo_grabi_left_most = std::make_shared<Servomotor>(10, 67);
+    auto l_servo_grabi_center_left = std::make_shared<Servomotor>(10, 52);
+    auto l_servo_grabi_center_right = std::make_shared<Servomotor>(10, 67);
+    auto l_servo_grabi_right_most = std::make_shared<Servomotor>(10, 62);
+    auto l_additionnal_servo = std::make_shared<Servomotor>(10, 62);
+    auto l_pump_1 = std::make_shared<Pump>(false, true);
+    auto l_pump_2 = std::make_shared<Pump>(false, true);
+    auto l_pump_3 = std::make_shared<Pump>(false, true);
+    auto l_pump_4 = std::make_shared<Pump>(false, true);
+    auto l_ax12_1 = std::make_shared<AX12>(10, 400);
+    auto l_ax12_2 = std::make_shared<AX12>(10, 320);
+    auto l_ax12_3 = std::make_shared<AX12>(10, 828);
+    auto l_ax12_4 = std::make_shared<AX12>(10, 90);
+    auto l_servo_grabi_lever = std::make_shared<Servomotor>(10, 175);
+    m_servo_banner = std::make_shared<Servomotor>(10, 90);
+    auto l_stepper_grabi_elevator = std::make_shared<StepperElevator>(
+      100 /* mm/s */, 100 /* mm/s2 */, 100 /* x50mA */, 300 /*mm de haut max*/);
+
+    m_billig = std::make_shared<Billig>(Position(Eigen::Vector2d(0.191767f, 0.f)),
+                                        Position(Eigen::Vector2d(0.08f, 0.f)),
+                                        l_servo_grabi_left_most,
+                                        l_servo_grabi_center_left,
+                                        l_servo_grabi_center_right,
+                                        l_servo_grabi_right_most,
+                                        l_ax12_1,
+                                        l_ax12_2,
+                                        l_ax12_3,
+                                        l_ax12_4,
+                                        l_stepper_grabi_elevator,
+                                        l_pump_1,
+                                        l_pump_2,
+                                        l_pump_3,
+                                        l_pump_4);
+
+    m_actuators2026 = Actuators2026(rclcpp::Node::SharedPtr(this),
+                                    "actuators2026",
+                                    l_servo_grabi_left_most,
+                                    l_servo_grabi_center_left,
+                                    l_servo_grabi_center_right,
+                                    l_servo_grabi_right_most,
+                                    l_servo_grabi_lever,
+                                    l_additionnal_servo,
+                                    l_additionnal_servo,
+                                    l_additionnal_servo,
+                                    l_ax12_1,
+                                    l_ax12_2,
+                                    l_ax12_3,
+                                    l_ax12_4,
+                                    l_stepper_grabi_elevator,
+                                    l_pump_1,
+                                    l_pump_2,
+                                    l_pump_3,
+                                    l_pump_4);
+#endif
 
     init(); // to do before subscribing to /remaining_time
 
@@ -649,16 +717,26 @@ void GoalStrat::publishAll()
 
 void GoalStrat::updateAX12Info(krabi_msgs::msg::AX12Info::SharedPtr a_ax12_msg, uint8_t id)
 {
+#ifdef YEAR_2025
     m_grabi->updateAX12Infos(a_ax12_msg->current_position,
                              a_ax12_msg->present_temperature,
                              a_ax12_msg->present_current,
                              a_ax12_msg->moving,
                              id);
+#elif defined(YEAR_2026)
+    m_billig->updateAX12Infos(a_ax12_msg->current_position,
+                              a_ax12_msg->present_temperature,
+                              a_ax12_msg->present_current,
+                              a_ax12_msg->moving,
+                              id);
+#endif
 }
 
 void GoalStrat::updateDigitalReads(std_msgs::msg::Byte::SharedPtr digitalReads)
 {
+#ifdef YEAR_2025
     m_grabi->updateCanDetected(digitalReads->data);
+#endif
 }
 
 /**
@@ -922,7 +1000,11 @@ void GoalStrat::publishScore()
         m_score_match_at_end = l_score;
     }
 
+#ifdef YEAR_2025
     m_actuators2025.set_score(m_score_match_at_end);
+#elif defined(YEAR_2026)
+    m_actuators2026.set_score(m_score_match_at_end);
+#endif
     // RCLCPP_WARN_STREAM(rclcpp::get_logger("rclcpp"),
     //                    " score at end " << m_score_match_at_end << std::endl);
 }
@@ -1079,6 +1161,7 @@ void GoalStrat::stateRun()
 
         switch (m_strat_graph->getEtapeEnCours()->getEtapeType())
         {
+#ifdef YEAR_2025
         case Etape::EtapeType::AIRE_DE_CONSTRUCTION:
             m_score_match += m_strat_graph->dropPlateformes(m_strat_graph->getEtapeEnCours());
             stopLinear();
@@ -1118,6 +1201,7 @@ void GoalStrat::stateRun()
             startLinear();
             startAngular();
             break;
+#endif
         case Etape::EtapeType::THERMOMETRE:
 #ifdef YEAR_2026
             if (isCurrentEtapeTheGoal())
@@ -1186,6 +1270,7 @@ void GoalStrat::stateRun()
                     RCLCPP_INFO_STREAM(rclcpp::get_logger("rclcpp"),
                                        "Aligned, ready to drop caisse");
                 }
+                m_billig->drop_caisses();
                 m_strat_graph->dropCaisses(m_strat_graph->getEtapeEnCours());
             }
             break;
@@ -1216,6 +1301,7 @@ void GoalStrat::stateRun()
                     RCLCPP_INFO_STREAM(rclcpp::get_logger("rclcpp"),
                                        "Aligned, ready to grab caisse");
                 }
+                m_billig->grab_caisses();
                 m_strat_graph->grabCaisses(m_strat_graph->getEtapeEnCours());
             }
             break;
@@ -1338,7 +1424,7 @@ void GoalStrat::init()
         }
         m_strat_graph = std::make_unique<Coupe2025>(!m_is_blue, m_starting_position_2025);
     }
-#else
+#elif defined(YEAR_2026)
     m_strat_graph = std::make_unique<Coupe2026>(!m_is_blue);
 #endif
 
@@ -1367,7 +1453,11 @@ void GoalStrat::loop()
         // init(); //init before
         break;
     case State::WAIT_TIRETTE:
+#ifdef YEAR_2025
         m_grabi->initializeElevator();
+#elif defined(YEAR_2026)
+        m_billig->initializeElevator();
+#endif
         if (m_state == State::WAIT_TIRETTE && m_tirette && m_remainig_time > rclcpp::Duration(1, 0))
         {
             m_state = State::RUN;
@@ -1375,7 +1465,11 @@ void GoalStrat::loop()
             {
                 publishDebugInfos();
                 pushBanner();
+#ifdef YEAR_2025
                 m_grabi->initGrabi(true);
+#elif defined(YEAR_2026)
+                m_billig->initBillig(true);
+#endif
             }
         }
         break;
