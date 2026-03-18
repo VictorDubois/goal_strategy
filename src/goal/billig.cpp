@@ -190,7 +190,86 @@ bool Billig::drop_caisses(bool /*a_do_sleep*/)
     m_pump_3->setPumping(false);
     m_pump_4->setPumping(false);
     usleep(1.5e6);
-    m_stepper_elevator->goToPosition(TRANSPORT_HEIGHT); // mm
+    m_stepper_elevator->goToPosition(TRANSPORT_HEIGHT);
+
+    return success;
+}
+
+bool Billig::flip_caisses(bool leftmost_up,
+                          bool leftcenter_up,
+                          bool rightcenter_up,
+                          bool rightmost_up,
+                          bool a_do_sleep)
+{
+    bool success = true;
+    m_stepper_elevator->goToPosition(GRABERS_HEIGHT);
+    usleep(1.5e6);
+
+    m_ax12_1->set(AX12_LEFTMOST_GRAB, 100);
+    m_ax12_2->set(AX12_LEFTCENTER_GRAB, 100);
+    m_ax12_3->set(AX12_RIGHTCENTER_GRAB, 100);
+    m_ax12_4->set(AX12_RIGHTMOST_GRAB, 100);
+    usleep(1.5e6);
+
+    m_pump_1->setPumping(false);
+    m_pump_2->setPumping(false);
+    m_pump_3->setPumping(false);
+    m_pump_4->setPumping(false);
+    usleep(1.5e6);
+    m_stepper_elevator->goToPosition(ABOVE_GRABBERS);
+    usleep(1.5e6);
+
+    if (leftmost_up)
+    {
+        m_servo_magnet_1->set(SERVO_LEFTMOST_UP, 100);
+    }
+    else
+    {
+        m_servo_magnet_1->set(SERVO_LEFTMOST_DOWN, 100);
+    }
+
+    if (leftcenter_up)
+    {
+        m_servo_magnet_2->set(SERVO_LEFTCENTER_UP, 100);
+    }
+    else
+    {
+        m_servo_magnet_2->set(SERVO_LEFTCENTER_DOWN, 100);
+    }
+
+    if (rightcenter_up)
+    {
+        m_servo_magnet_3->set(SERVO_RIGHTCENTER_UP, 100);
+    }
+    else
+    {
+        m_servo_magnet_3->set(SERVO_RIGHTCENTER_DOWN, 100);
+    }
+
+    if (rightmost_up)
+    {
+        m_servo_magnet_4->set(SERVO_RIGHTMOST_UP, 100);
+    }
+    else
+    {
+        m_servo_magnet_4->set(SERVO_RIGHTMOST_DOWN, 100);
+    }
+
+    usleep(1.5e6);
+
+    m_pump_1->setPumping(true);
+    m_pump_2->setPumping(true);
+    m_pump_3->setPumping(true);
+    m_pump_4->setPumping(true);
+    usleep(0.5e6);
+    m_stepper_elevator->goToPosition(GRABERS_HEIGHT);
+
+    usleep(1.5e6);
+
+    m_ax12_1->set(AX12_LEFTMOST_RELEASE, 100);
+    m_ax12_2->set(AX12_LEFTCENTER_RELEASE, 100);
+    m_ax12_3->set(AX12_RIGHTCENTER_RELEASE, 100);
+    m_ax12_4->set(AX12_RIGHTMOST_RELEASE, 100);
 
     return success;
 }

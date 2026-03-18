@@ -27,6 +27,11 @@ public:
 
     bool grab_caisses(bool a_do_sleep = true);
     bool drop_caisses(bool a_do_sleep = true);
+    bool flip_caisses(bool leftmost_up,
+                      bool leftcenter_up,
+                      bool rightcenter_up,
+                      bool rightmost_up,
+                      bool a_do_sleep = true);
     void setInFront();
     void setInside();
     float getReach();
