@@ -3,35 +3,35 @@
 #include <rclcpp/time.hpp>
 #include <thread>
 
-#define AX12_LEFT_EXT 100
-#define AX12_LEFT_INT 615
-#define AX12_LEFT_GRAB 400
+#define AX12_LEFTMOST_GRAB 100
+#define AX12_LEFTMOST_RELEASE 100
 
-#define AX12_RIGHT_EXT 615
-#define AX12_RIGHT_INT 101
-#define AX12_RIGHT_GRAB 321
+#define AX12_LEFTCENTER_GRAB 100
+#define AX12_LEFTCENTER_RELEASE 100
 
-#define AX12_SUCTION_HIGH 828
-#define AX12_SUCTION_LOW 340
-#define AX12_SUCTION_GRAB 490
-#define AX12_SUCTION_TRANSPORT 520       // todo: tune
-#define AX12_SUCTION_TAKE_OUTER_CANS 600 // todo: tune
+#define AX12_RIGHTCENTER_GRAB 100
+#define AX12_RIGHTCENTER_RELEASE 100
 
-#define SERVO_RIGHTMOST_CAN_GRAB 67
-#define SERVO_RIGHTMOST_CAN_RELEASE 144
+#define AX12_RIGHTMOST_GRAB 100
+#define AX12_RIGHTMOST_RELEASE 100
 
-#define SERVO_RIGHTCENTER_CAN_GRAB 52
-#define SERVO_RIGHTCENTER_CAN_RELEASE 132
+#define SERVO_RIGHTMOST_UP 0
+#define SERVO_RIGHTMOST_DOWN 180
 
-#define SERVO_LEFTCENTER_CAN_GRAB 67
-#define SERVO_LEFTCENTER_CAN_RELEASE 144
+#define SERVO_RIGHTCENTER_UP 0
+#define SERVO_RIGHTCENTER_DOWN 180
 
-#define SERVO_LEFTMOST_CAN_GRAB 62
-#define SERVO_LEFTMOST_CAN_RELEASE 150
+#define SERVO_LEFTCENTER_UP 0
+#define SERVO_LEFTCENTER_DOWN 180
 
-#define SERVO_FINGER_HIGH 100
-#define SERVO_FINGER_HIGHER_TAKE_OUTER_CANS 100 // was 105 but bad idea
-#define SERVO_FINGER_LOW 175
+#define SERVO_LEFTMOST_UP 0
+#define SERVO_LEFTMOST_DOWN 180
+
+#define GRABERS_HEIGHT 100   // mm
+#define ABOVE_GRABBERS 150   // mm
+#define TRANSPORT_HEIGHT 100 // mm
+#define CATCH_HEIGHT 0       // mm
+#define RELEASE_HEIGHT 5     // mm
 
 Billig::Billig(Position a_relative_position_in_front,
                Position a_relative_position_inside,
@@ -112,14 +112,14 @@ void Billig::auto_initBillig(bool a_first_elevator_init)
 
 void Billig::initBillig(bool a_first_elevator_init)
 {
-    m_ax12_1->set(AX12_LEFT_GRAB, 100);
-    m_ax12_2->set(AX12_RIGHT_GRAB, 100);
-    m_ax12_3->set(AX12_SUCTION_HIGH, 100);
-    m_ax12_4->set(AX12_SUCTION_HIGH, 100);
-    m_servo_magnet_1->set(SERVO_RIGHTMOST_CAN_GRAB, 100);
-    m_servo_magnet_2->set(SERVO_RIGHTCENTER_CAN_GRAB, 100);
-    m_servo_magnet_3->set(SERVO_LEFTCENTER_CAN_GRAB, 100);
-    m_servo_magnet_4->set(SERVO_LEFTMOST_CAN_GRAB, 100);
+    m_ax12_1->set(AX12_LEFTMOST_RELEASE, 100);
+    m_ax12_2->set(AX12_LEFTCENTER_RELEASE, 100);
+    m_ax12_3->set(AX12_RIGHTCENTER_RELEASE, 100);
+    m_ax12_4->set(AX12_RIGHTMOST_RELEASE, 100);
+    m_servo_magnet_1->set(SERVO_RIGHTMOST_UP, 100);
+    m_servo_magnet_2->set(SERVO_RIGHTCENTER_UP, 100);
+    m_servo_magnet_3->set(SERVO_LEFTCENTER_UP, 100);
+    m_servo_magnet_4->set(SERVO_LEFTMOST_UP, 100);
     m_pump_1->setPumping(false);
     m_pump_2->setPumping(false);
     m_pump_3->setPumping(false);
@@ -127,23 +127,32 @@ void Billig::initBillig(bool a_first_elevator_init)
 
     if (!a_first_elevator_init)
     {
-        m_stepper_elevator->goToPosition(0); // mm
+        m_stepper_elevator->goToPosition(TRANSPORT_HEIGHT); // mm
         usleep(1.5e6);
     }
     initializeElevator();
+    m_stepper_elevator->goToPosition(TRANSPORT_HEIGHT); // mm
 }
 
 bool Billig::grab_caisses(bool /*a_do_sleep*/)
 {
-    m_pump_1->setPumping(true);
+    m_ax12_1->set(AX12_LEFTMOST_RELEASE, 100);
+    m_ax12_2->set(AX12_LEFTCENTER_RELEASE, 100);
+    m_ax12_3->set(AX12_RIGHTCENTER_RELEASE, 100);
+    m_ax12_4->set(AX12_RIGHTMOST_RELEASE, 100);
 
-    m_ax12_1->set(AX12_SUCTION_GRAB, 100);
+    m_pump_1->setPumping(true);
+    m_pump_2->setPumping(true);
+    m_pump_3->setPumping(true);
+    m_pump_4->setPumping(true);
+
+    usleep(0.5e6);
+
+    m_stepper_elevator->goToPosition(CATCH_HEIGHT); // mm
 
     usleep(1.5e6);
 
-    m_ax12_1->set(AX12_SUCTION_TRANSPORT, 100);
-
-    // @todo check that the cans are grabbed
+    m_stepper_elevator->goToPosition(GRABERS_HEIGHT); // mm
 
     return true;
 }
@@ -177,49 +186,17 @@ bool Billig::drop_caisses(bool /*a_do_sleep*/)
         return false;
     }*/
 
-    m_stepper_elevator->goToPosition(0); // mm
-    /*rclcpp::Time timeout = rclcpp::Clock{ RCL_STEADY_TIME }.now() + rclcpp::Duration(3, 0);
-    bool success = false;
-    while (a_do_sleep && !success && rclcpp::Clock{ RCL_STEADY_TIME }.now() < timeout)
-    {
-        usleep(10);
-        if (m_stepper_elevator->movmentDone())
-        {
-            success = true;
-        }
-    }*/
-
-    m_ax12_1->set(AX12_SUCTION_TAKE_OUTER_CANS, 100);
-    m_stepper_elevator->goToPosition(5); // mm
+    m_stepper_elevator->goToPosition(RELEASE_HEIGHT); // mm
 
     usleep(0.5e6);
 
-    m_ax12_1->set(AX12_LEFT_EXT, 10);
-    m_ax12_2->set(AX12_RIGHT_EXT, 10);
-    usleep(2.5e6);
-
-    m_stepper_elevator->goToPosition(140); // mm
-
-    usleep(2.0e6);
-    m_ax12_1->set(AX12_SUCTION_HIGH, 100);
-    usleep(0.5e6);
-
-    m_ax12_1->set(AX12_LEFT_GRAB, 10);
-    m_ax12_2->set(AX12_RIGHT_GRAB, 10);
-    usleep(1.5e6);
-
-    m_stepper_elevator->goToPosition(120); // mm
-
-    usleep(1.0e6);
     m_pump_1->setPumping(false);
-    m_pump_1->release();
-
+    m_pump_2->setPumping(false);
+    m_pump_3->setPumping(false);
+    m_pump_4->setPumping(false);
     usleep(1.5e6);
-    m_ax12_3->set(AX12_SUCTION_HIGH, 100);
-    m_servo_magnet_1->set(SERVO_RIGHTMOST_CAN_RELEASE, 100);
-    m_servo_magnet_2->set(SERVO_RIGHTCENTER_CAN_RELEASE, 100);
-    m_servo_magnet_3->set(SERVO_LEFTCENTER_CAN_RELEASE, 100);
-    m_servo_magnet_4->set(SERVO_LEFTMOST_CAN_RELEASE, 100);
+    m_stepper_elevator->goToPosition(TRANSPORT_HEIGHT); // mm
+
     return success;
 }
 
