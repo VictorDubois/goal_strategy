@@ -89,11 +89,6 @@ Angle Billig::getAngle()
     return m_relative_position.getAngle();
 }
 
-void Billig::resetElevatorLow()
-{
-    m_stepper_elevator->goToPosition(0); // mm
-}
-
 void Billig::initializeElevator()
 {
     m_stepper_elevator->doHoming();
@@ -186,7 +181,7 @@ bool Billig::drop_caisses(bool /*a_do_sleep*/)
         return false;
     }*/
 
-    m_stepper_elevator->goToPosition(RELEASE_HEIGHT); // mm
+    m_stepper_elevator->goToPosition(RELEASE_HEIGHT);
 
     usleep(0.5e6);
 

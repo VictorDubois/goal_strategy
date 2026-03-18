@@ -32,7 +32,6 @@ public:
     float getReach();
     Angle getAngle();
     void initializeElevator();
-    void resetElevatorLow();
     void auto_initBillig(bool a_force_init_elevator);
 
     void initBillig(bool a_force_init_elevator);

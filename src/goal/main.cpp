@@ -313,7 +313,7 @@ bool GoalStrat::isArrivedAt(Etape* a_etape)
         || a_etape->getEtapeType() == Etape::EtapeType::ZONE_DE_RAMASSAGE)
     {
 
-        l_reach_dist = m_billig->getReach();
+        // l_reach_dist = m_billig->getReach(); // no reach for 2026 as the actuator is on the side
     }
 #endif
     if (isParked())
@@ -625,8 +625,8 @@ GoalStrat::GoalStrat()
     auto l_stepper_grabi_elevator = std::make_shared<StepperElevator>(
       100 /* mm/s */, 100 /* mm/s2 */, 100 /* x50mA */, 300 /*mm de haut max*/);
 
-    m_billig = std::make_shared<Billig>(Position(Eigen::Vector2d(0.191767f, 0.f)),
-                                        Position(Eigen::Vector2d(0.08f, 0.f)),
+    m_billig = std::make_shared<Billig>(Position(Eigen::Vector2d(0.0f, 0.f)),
+                                        Position(Eigen::Vector2d(0.0f, 0.f)),
                                         l_servo_grabi_left_most,
                                         l_servo_grabi_center_left,
                                         l_servo_grabi_center_right,
@@ -892,15 +892,7 @@ void GoalStrat::chooseGear()
         l_reverseGear.data = false;
         m_strat_mvnt.reverse_gear = krabi_msgs::msg::StratMovement::FORWARD;
     }
-    else if (
-      // 2025
-      m_strat_graph->getEtapeEnCours()->getEtapeType() == Etape::EtapeType::THERMOMETRE
-      || m_strat_graph->getEtapeEnCours()->getEtapeType() == Etape::EtapeType::ZONE_DE_RAMASSAGE
-      || m_strat_graph->getEtapeEnCours()->getEtapeType() == Etape::EtapeType::GARDE_MANGER)
-    {
-        l_reverseGear.data = false;
-        m_strat_mvnt.reverse_gear = krabi_msgs::msg::StratMovement::FORWARD;
-    }
+    // 2026 => no need
     else
     {
         // // Don't care
@@ -1467,9 +1459,12 @@ void GoalStrat::loop()
                 pushBanner();
 #ifdef YEAR_2025
                 m_grabi->initGrabi(true);
-#elif defined(YEAR_2026)
-                m_billig->initBillig(true);
 #endif
+            }
+            else if (m_year == 2026)
+            {
+                publishDebugInfos();
+                m_billig->initBillig(true);
             }
         }
         break;
