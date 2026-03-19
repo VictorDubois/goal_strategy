@@ -411,8 +411,33 @@ etape->getCustomName()*/
 
             for (int child_id = 0; child_id < nb_children; child_id++)
             {
-                // Are we going here?
                 Etape* child = etape->getChild(child_id);
+
+                bool is_on_the_path = false;
+                auto l_etape_path = this->getGoal();
+                while (true)
+                {
+                    auto l_etape_parent = l_etape_path->getParent();
+
+                    // Is this link on the path to the goal?
+                    if ((l_etape_path->getNumero() == etape->getNumero()
+                         && l_etape_parent->getNumero() == child->getNumero())
+                        || (l_etape_path->getNumero() == child->getNumero()
+                            && l_etape_parent->getNumero() == etape->getNumero()))
+                    {
+                        is_on_the_path = true;
+                    }
+
+                    if (l_etape_parent->getDistance() <= 0)
+                    {
+                        // We have arrived to the current pose, no need to update further
+                        break;
+                    }
+
+                    l_etape_path = l_etape_parent;
+                }
+
+                // Are we going here?
                 Position l_segment = child->getPosition() - etape->getPosition();
                 Position mid_way = Position(
                   Distance((child->getPosition().getX() + etape->getPosition().getX()) / 2),
@@ -426,6 +451,12 @@ etape->getCustomName()*/
                 line.scale.x = l_distance;
                 line.scale.y = 0.01;
                 line.scale.z = 0.01;
+
+                if (is_on_the_path)
+                {
+                    line.scale.y *= 4;
+                    line.scale.z *= 4;
+                }
                 line.color.r = 1;
                 line.color.g = 0;
                 line.color.b = 0;
