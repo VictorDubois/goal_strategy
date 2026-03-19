@@ -175,7 +175,23 @@ Coupe2026::Coupe2026(const bool isYellow)
                    zone_de_ramassage_public_grand_cote,
                    zone_de_ramassage_centre);
 
+    Etape::get(garde_manger_public_milieu)
+      ->addVoisins(zone_de_ramassage_centre,
+                   zone_de_ramassage_centre_autre,
+                   zone_de_ramassage_public_grand_cote,
+                   zone_de_ramassage_public_grand_cote_autre);
+
+    Etape::get(garde_manger_centre_milieu)
+      ->addVoisins(zone_de_ramassage_centre,
+                   zone_de_ramassage_centre_autre,
+                   zone_de_ramassage_public_grand_cote,
+                   zone_de_ramassage_public_grand_cote_autre);
+
     // ######### Autre cote ##############
+    Etape::get(garde_manger_petit_cote_them)
+      ->addVoisins(zone_de_ramassage_nid_petit_cote_autre,
+                   zone_de_ramassage_public_petit_cote_autre);
+
     Etape::get(zone_de_ramassage_public_grand_cote)
       ->addVoisins(zone_de_ramassage_centre, zone_de_ramassage_public_grand_cote_autre);
     Etape::get(zone_de_ramassage_public_grand_cote_autre)
@@ -184,6 +200,16 @@ Coupe2026::Coupe2026(const bool isYellow)
       ->addVoisins(zone_de_ramassage_public_grand_cote_autre);
     Etape::get(zone_de_ramassage_nid_petit_cote_autre)
       ->addVoisins(zone_de_ramassage_public_petit_cote_autre);
+
+    Etape::get(garde_manger_public_them)
+      ->addVoisins(garde_manger_petit_cote_them,
+                   garde_manger_centre_them,
+                   zone_de_ramassage_public_petit_cote_autre,
+                   zone_de_ramassage_public_grand_cote_autre);
+    Etape::get(garde_manger_centre_them)
+      ->addVoisins(zone_de_ramassage_public_petit_cote_autre,
+                   zone_de_ramassage_public_grand_cote_autre,
+                   zone_de_ramassage_centre_autre);
 
     Etape::get(debut_thermometre)
       ->addVoisins(garde_manger_public_milieu,
