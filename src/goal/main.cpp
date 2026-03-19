@@ -620,7 +620,6 @@ GoalStrat::GoalStrat()
     auto l_ax12_2 = std::make_shared<AX12>(10, 320);
     auto l_ax12_3 = std::make_shared<AX12>(10, 828);
     auto l_ax12_4 = std::make_shared<AX12>(10, 90);
-    auto l_servo_grabi_lever = std::make_shared<Servomotor>(10, 175);
     m_servo_banner = std::make_shared<Servomotor>(10, 90);
     auto l_stepper_grabi_elevator = std::make_shared<StepperElevator>(
       100 /* mm/s */, 100 /* mm/s2 */, 100 /* x50mA */, 300 /*mm de haut max*/);
