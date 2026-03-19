@@ -7,6 +7,7 @@
 #include <std_msgs/msg/int32.hpp>
 
 #include "krabi_msgs/msg/ax12_info.hpp"
+#include "krabi_msgs/msg/caisses_sides.hpp"
 #include "krabi_msgs/msg/infos_stepper.hpp"
 #include "krabi_msgs/msg/servos_cmd.hpp"
 #include "krabi_msgs/msg/strat_movement.hpp"
@@ -37,5 +38,7 @@ void create_subscriptions(
   std::function<void(const krabi_msgs::msg::AX12Info::SharedPtr)> callback_ax12_4_info_sub,
   rclcpp::Subscription<std_msgs::msg::Byte>::SharedPtr& a_digital_reads_sub,
   std::function<void(const std_msgs::msg::Byte::SharedPtr)> callback_digital_reads_sub,
+  rclcpp::Subscription<krabi_msgs::msg::CaissesSides>::SharedPtr& a_caisses_sides_sub,
+  std::function<void(const krabi_msgs::msg::CaissesSides::SharedPtr)> callback_caisses_sides_sub,
   rclcpp::SubscriptionOptions l_sub_options,
   rclcpp::Node* goal_node);

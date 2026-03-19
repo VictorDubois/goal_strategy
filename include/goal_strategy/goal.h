@@ -32,6 +32,7 @@
 #include "goal_strategy/actuators2025.h"
 
 #include "krabi_msgs/msg/ax12_info.hpp"
+#include "krabi_msgs/msg/caisses_sides.hpp"
 #include "krabi_msgs/msg/servos_cmd.hpp"
 #include "krabi_msgs/msg/strat_movement.hpp"
 
@@ -109,6 +110,7 @@ private:
     void updateRemainingTime(builtin_interfaces::msg::Duration::SharedPtr remainingTime);
     void updateTirette(std_msgs::msg::Bool::SharedPtr tirette);
     void updateVacuum(std_msgs::msg::Float32::SharedPtr vacuum_msg);
+    void updateCaissesSides(krabi_msgs::msg::CaissesSides::SharedPtr a_caisses_sides_msg);
     void updateAX12Info(krabi_msgs::msg::AX12Info::SharedPtr ax12_msg, uint8_t);
     void updateAX12Info1(krabi_msgs::msg::AX12Info::SharedPtr ax12_msg)
     {
@@ -183,6 +185,7 @@ private:
     rclcpp::Subscription<krabi_msgs::msg::AX12Info>::SharedPtr m_ax12_3_info_sub;
     rclcpp::Subscription<krabi_msgs::msg::AX12Info>::SharedPtr m_ax12_4_info_sub;
     rclcpp::Subscription<std_msgs::msg::Byte>::SharedPtr m_digital_reads_sub;
+    rclcpp::Subscription<krabi_msgs::msg::CaissesSides>::SharedPtr m_caisses_sides_sub;
 
     std::shared_ptr<tf2_ros::TransformListener> m_tf_listener_{ nullptr };
     std::unique_ptr<tf2_ros::Buffer> m_tf_buffer_;
@@ -225,4 +228,9 @@ private:
 
     int override_gear;
     Etape* m_area_funny = nullptr;
+
+    bool m_leftmost_caisse_is_our_side_up = true;
+    bool m_leftcenter_caisse_is_our_side_up = true;
+    bool m_rightcenter_caisse_is_our_side_up = false;
+    bool m_rightmost_caisse_is_our_side_up = false;
 };

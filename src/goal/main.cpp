@@ -687,6 +687,8 @@ GoalStrat::GoalStrat()
                          std::bind(&GoalStrat::updateAX12Info4, this, std::placeholders::_1),
                          m_digital_reads_sub,
                          std::bind(&GoalStrat::updateDigitalReads, this, std::placeholders::_1),
+                         m_caisses_sides_sub,
+                         std::bind(&GoalStrat::updateCaissesSides, this, std::placeholders::_1),
                          l_sub_options,
                          this);
 
@@ -718,6 +720,13 @@ void GoalStrat::publishAll()
     }
 }
 
+void GoalStrat::updateCaissesSides(krabi_msgs::msg::CaissesSides::SharedPtr a_caisses_sides_msg)
+{
+    m_leftmost_caisse_is_our_side_up = a_caisses_sides_msg->leftmost_is_our_side_up;
+    m_leftcenter_caisse_is_our_side_up = a_caisses_sides_msg->leftcenter_is_our_side_up;
+    m_rightcenter_caisse_is_our_side_up = a_caisses_sides_msg->rightcenter_is_our_side_up;
+    m_rightmost_caisse_is_our_side_up = a_caisses_sides_msg->rightmost_is_our_side_up;
+}
 void GoalStrat::updateAX12Info(krabi_msgs::msg::AX12Info::SharedPtr a_ax12_msg, uint8_t id)
 {
 #ifdef YEAR_2025
@@ -735,7 +744,7 @@ void GoalStrat::updateAX12Info(krabi_msgs::msg::AX12Info::SharedPtr a_ax12_msg, 
 #endif
 }
 
-void GoalStrat::updateDigitalReads(std_msgs::msg::Byte::SharedPtr digitalReads)
+void GoalStrat::updateDigitalReads([[maybe_unused]] std_msgs::msg::Byte::SharedPtr digitalReads)
 {
 #ifdef YEAR_2025
     m_grabi->updateCanDetected(digitalReads->data);
@@ -1294,7 +1303,11 @@ void GoalStrat::stateRun()
                 }
                 m_billig->grab_caisses();
                 m_strat_graph->grabCaisses(m_strat_graph->getEtapeEnCours());
-                m_billig->auto_flip_caisses(true, true, false, false);
+
+                m_billig->auto_flip_caisses(m_leftmost_caisse_is_our_side_up,
+                                            m_leftcenter_caisse_is_our_side_up,
+                                            m_rightcenter_caisse_is_our_side_up,
+                                            m_rightmost_caisse_is_our_side_up);
             }
             break;
 #endif

@@ -22,6 +22,8 @@ void create_subscriptions(
   std::function<void(const krabi_msgs::msg::AX12Info::SharedPtr)> callback_ax12_4_info_sub,
   rclcpp::Subscription<std_msgs::msg::Byte>::SharedPtr& a_digital_reads_sub,
   std::function<void(const std_msgs::msg::Byte::SharedPtr)> callback_digital_reads_sub,
+  rclcpp::Subscription<krabi_msgs::msg::CaissesSides>::SharedPtr& a_caisses_sides_sub,
+  std::function<void(const krabi_msgs::msg::CaissesSides::SharedPtr)> callback_caisses_sides_sub,
   rclcpp::SubscriptionOptions l_sub_options,
   rclcpp::Node* goal_node)
 {
@@ -43,4 +45,6 @@ void create_subscriptions(
       "digitalRead", 5, callback_digital_reads_sub, l_sub_options);
     a_other_robots_sub = goal_node->create_subscription<geometry_msgs::msg::PoseArray>(
       "dynamic_obstacles", 5, callback_other_robots_sub, l_sub_options);
+    a_caisses_sides_sub = goal_node->create_subscription<krabi_msgs::msg::CaissesSides>(
+      "caisses_sides", 5, callback_caisses_sides_sub, l_sub_options);
 }
