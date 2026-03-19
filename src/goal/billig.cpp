@@ -222,7 +222,7 @@ bool Billig::flip_caisses(bool leftmost_up,
                           bool leftcenter_up,
                           bool rightcenter_up,
                           bool rightmost_up,
-                          bool a_do_sleep)
+                          bool /*a_do_sleep*/)
 {
     bool success = true;
     m_stepper_elevator->goToPosition(GRABERS_HEIGHT);

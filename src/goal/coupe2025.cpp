@@ -68,13 +68,13 @@ Coupe2025::Coupe2025(const bool isYellow, const StartingPosition2025 starting_po
     // int area_pami_us2, area_pami_us3, area_solar_panel_us2, area_solar_panel_us3;
 
     // Definition des zone de stock
-    int stock_bord_cote_publique
+    [[maybe_unused]] int stock_bord_cote_publique
       = Etape::makeEtape(new StockDeMatierePremiere(Pose(positionC(1.425f, 0.6f), Angle(M_PI / 2))),
                          "stock_bord_cote_publique");
     int stock_bord_cote_publique_them = Etape::makeEtape(
       new StockDeMatierePremiere(Pose(positionC(-1.425f, 0.6f), Angle(M_PI / 2))),
       "stock_bord_cote_publique_them");
-    int stock_bord_cote_backstage = Etape::makeEtape(
+    [[maybe_unused]] int stock_bord_cote_backstage = Etape::makeEtape(
       new StockDeMatierePremiere(Pose(positionC(1.425f, -0.325f), Angle(M_PI / 2))),
       "stock_bord_cote_backstage");
     int stock_bord_cote_backstage_them = Etape::makeEtape(
@@ -85,11 +85,11 @@ Coupe2025::Coupe2025(const bool isYellow, const StartingPosition2025 starting_po
                          "stock_proche_rampe");
     int stock_centre_us = Etape::makeEtape(
       new StockDeMatierePremiere(Pose(positionC(-0.4f, 0.0f), Angle(0.0f))), "stock_centre_us");
-    int stock_centre_them = Etape::makeEtape(
+    [[maybe_unused]] int stock_centre_them = Etape::makeEtape(
       new StockDeMatierePremiere(Pose(positionC(0.4f, 0.05f), Angle(0.0f))), "stock_centre_them");
     int stock_front_us = Etape::makeEtape(
       new StockDeMatierePremiere(Pose(positionC(-0.725f, 0.75f), Angle(0.0f))), "stock_front_us");
-    int stock_front_them = Etape::makeEtape(
+    [[maybe_unused]] int stock_front_them = Etape::makeEtape(
       new StockDeMatierePremiere(Pose(positionC(0.725f, 0.75f), Angle(0.0f))), "stock_front_them");
 
     // Definition de zones de construction
@@ -121,7 +121,7 @@ Coupe2025::Coupe2025(const bool isYellow, const StartingPosition2025 starting_po
     Etape::get(zone_construction_front_2)
       ->setEtapesActiveesApres({ Etape::get(zone_construction_front_3) });
 
-    int zone_construction_cote = Etape::makeEtape(
+    [[maybe_unused]] int zone_construction_cote = Etape::makeEtape(
       new AireDeConstruction(
         Pose(positionC(1.275f, 0.125f), Angle(0.0f)), Owner::us, AireSize::AIRE_BIG),
       "zone_construction_cote");
@@ -133,7 +133,7 @@ Coupe2025::Coupe2025(const bool isYellow, const StartingPosition2025 starting_po
       ,
       "zone_construction_backstage");
 
-    int mini_zone_construction_coin = Etape::makeEtape(
+    [[maybe_unused]] int mini_zone_construction_coin = Etape::makeEtape(
       new AireDeConstruction(
         Pose(positionC(1.275f, 0.925f), Angle(0.0f)), Owner::us, AireSize::AIRE_SMALL),
       "mini_zone_construction_coin");
@@ -145,24 +145,24 @@ Coupe2025::Coupe2025(const bool isYellow, const StartingPosition2025 starting_po
                          "mini_zone_construction_front");
 
     // Them
-    int zone_construction_front_them = Etape::makeEtape(
+    [[maybe_unused]] int zone_construction_front_them = Etape::makeEtape(
       new AireDeConstruction(
         Pose(positionC(0.275f, 0.775f), Angle(0.0f)), Owner::them, AireSize::AIRE_BIG),
       "zone_construction_front_them");
-    int zone_construction_cote_them = Etape::makeEtape(
+    [[maybe_unused]] int zone_construction_cote_them = Etape::makeEtape(
       new AireDeConstruction(
         Pose(positionC(-1.275f, 0.125f), Angle(0.0f)), Owner::them, AireSize::AIRE_BIG),
       "zone_construction_cote_them");
-    int zone_construction_them_backstage = Etape::makeEtape(
+    [[maybe_unused]] int zone_construction_them_backstage = Etape::makeEtape(
       new AireDeConstruction(
         Pose(positionC(1.125f, -0.775f), Angle(0.0f)), Owner::them, AireSize::AIRE_BIG),
       "zone_construction_them_backstage");
 
-    int mini_zone_construction_coin_them = Etape::makeEtape(
+    [[maybe_unused]] int mini_zone_construction_coin_them = Etape::makeEtape(
       new AireDeConstruction(
         Pose(positionC(-1.275f, 0.925f), Angle(0.0f)), Owner::them, AireSize::AIRE_SMALL),
       "mini_zone_construction_coin_them");
-    int mini_zone_construction_front_them = Etape::makeEtape(
+    [[maybe_unused]] int mini_zone_construction_front_them = Etape::makeEtape(
       new AireDeConstruction(
         Pose(positionC(0.725f, 0.925f), Angle(0.0f)), Owner::them, AireSize::AIRE_SMALL),
       "mini_zone_construction_front_them");
@@ -173,16 +173,18 @@ Coupe2025::Coupe2025(const bool isYellow, const StartingPosition2025 starting_po
     int point_passage_stock_centre_us_back
       = Etape::makeEtape(positionC(-0.4f, -0.22f), "point_passage_stock_centre_us_back");
 
-    int point_passage_stock_centre_them_publique
+    [[maybe_unused]] int point_passage_stock_centre_them_publique
       = Etape::makeEtape(positionC(0.4f, 0.32f), "point_passage_stock_centre_them_publique");
-    int point_passage_stock_centre_them_back
+    [[maybe_unused]] int point_passage_stock_centre_them_back
       = Etape::makeEtape(positionC(0.4f, -0.22f), "point_passage_stock_centre_them_back");
 
-    int point_passage_zone_construction_cote
+    [[maybe_unused]] int point_passage_zone_construction_cote
       = Etape::makeEtape(positionC(1.075f, 0.125f), "point_passage_zone_construction_cote");
 
-    int point_passage_1 = Etape::makeEtape(positionC(0.8, 0.32f), "point_passage_1");
-    int point_passage_2 = Etape::makeEtape(positionC(0.725f, 0.6f), "point_passage_2");
+    [[maybe_unused]] int point_passage_1
+      = Etape::makeEtape(positionC(0.8, 0.32f), "point_passage_1");
+    [[maybe_unused]] int point_passage_2
+      = Etape::makeEtape(positionC(0.725f, 0.6f), "point_passage_2");
 
     int point_passage_stock_front_us
       = Etape::makeEtape(positionC(-0.75f, 0.32f), "point_passage_stock_front_us");
