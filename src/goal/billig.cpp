@@ -107,26 +107,39 @@ void Billig::auto_initBillig(bool a_first_elevator_init)
 
 void Billig::initBillig(bool a_first_elevator_init)
 {
-    m_ax12_1->set(AX12_LEFTMOST_RELEASE, 100);
-    m_ax12_2->set(AX12_LEFTCENTER_RELEASE, 100);
-    m_ax12_3->set(AX12_RIGHTCENTER_RELEASE, 100);
-    m_ax12_4->set(AX12_RIGHTMOST_RELEASE, 100);
-    m_servo_magnet_1->set(SERVO_RIGHTMOST_UP, 100);
-    m_servo_magnet_2->set(SERVO_RIGHTCENTER_UP, 100);
-    m_servo_magnet_3->set(SERVO_LEFTCENTER_UP, 100);
-    m_servo_magnet_4->set(SERVO_LEFTMOST_UP, 100);
+    m_stepper_elevator->goToPosition(ABOVE_GRABBERS);
     m_pump_1->setPumping(false);
     m_pump_2->setPumping(false);
     m_pump_3->setPumping(false);
     m_pump_4->setPumping(false);
+    usleep(1.5e6);
+
+    // close grabbers before turning
+    m_ax12_1->set(AX12_LEFTMOST_GRAB, 100);
+    m_ax12_2->set(AX12_LEFTCENTER_GRAB, 100);
+    m_ax12_3->set(AX12_RIGHTCENTER_GRAB, 100);
+    m_ax12_4->set(AX12_RIGHTMOST_GRAB, 100);
+
+    usleep(1.5e6);
+
+    m_servo_magnet_1->set(SERVO_RIGHTMOST_UP, 100);
+    m_servo_magnet_2->set(SERVO_RIGHTCENTER_UP, 100);
+    m_servo_magnet_3->set(SERVO_LEFTCENTER_UP, 100);
+    m_servo_magnet_4->set(SERVO_LEFTMOST_UP, 100);
+    usleep(1.5e6);
+
+    m_ax12_1->set(AX12_LEFTMOST_RELEASE, 100);
+    m_ax12_2->set(AX12_LEFTCENTER_RELEASE, 100);
+    m_ax12_3->set(AX12_RIGHTCENTER_RELEASE, 100);
+    m_ax12_4->set(AX12_RIGHTMOST_RELEASE, 100);
 
     if (!a_first_elevator_init)
     {
-        m_stepper_elevator->goToPosition(TRANSPORT_HEIGHT); // mm
+        m_stepper_elevator->goToPosition(TRANSPORT_HEIGHT);
         usleep(1.5e6);
     }
     initializeElevator();
-    m_stepper_elevator->goToPosition(TRANSPORT_HEIGHT); // mm
+    m_stepper_elevator->goToPosition(TRANSPORT_HEIGHT);
 }
 
 bool Billig::grab_caisses(bool /*a_do_sleep*/)
