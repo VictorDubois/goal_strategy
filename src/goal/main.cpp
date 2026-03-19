@@ -1295,6 +1295,7 @@ void GoalStrat::stateRun()
                 }
                 m_billig->grab_caisses();
                 m_strat_graph->grabCaisses(m_strat_graph->getEtapeEnCours());
+                m_billig->auto_flip_caisses(true, true, false, false);
             }
             break;
 #endif

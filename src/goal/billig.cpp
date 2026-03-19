@@ -105,6 +105,16 @@ void Billig::auto_initBillig(bool a_first_elevator_init)
     init_billig_thread.detach();
 }
 
+void Billig::auto_flip_caisses(bool leftmost_up,
+                               bool leftcenter_up,
+                               bool rightcenter_up,
+                               bool rightmost_up)
+{
+    auto flip_caisses_thread = std::thread(
+      &Billig::flip_caisses, this, leftmost_up, leftcenter_up, rightcenter_up, rightmost_up, true);
+    flip_caisses_thread.detach();
+}
+
 void Billig::initBillig(bool a_first_elevator_init)
 {
     m_stepper_elevator->goToPosition(ABOVE_GRABBERS);
