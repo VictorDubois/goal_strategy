@@ -20,6 +20,7 @@ Etape::Etape(Position position, EtapeType type)
     this->numeroEtapeFinAction = idx;
     this->nombreEtapesLieesParFinirEtape = 0;
     this->distanceToPotentialObstacle = 5000;
+    this->numerosEtapesLieesParFinirEtape.clear();
 
     if (idx != ETAPE_INVALID_IDX)
         tableauEtapesTotal[idx] = this;
@@ -214,23 +215,29 @@ void Etape::computeChildDistances()
     }
 }
 
-int* Etape::getEtapesLieesParFinirEtape()
+std::vector<int> Etape::getEtapesLieesParFinirEtape()
 {
     return this->numerosEtapesLieesParFinirEtape;
 }
 
-void Etape::setEtapesLieesParFinirEtape(int* numerosEtapesLieesParFinirEtape)
+void Etape::addEtapeLieeParFinirEtape(int numerosEtapeLieesParFinirEtape)
+{
+    this->numerosEtapesLieesParFinirEtape.push_back(numerosEtapeLieesParFinirEtape);
+}
+
+void Etape::setEtapesLieesParFinirEtape(std::vector<int> numerosEtapesLieesParFinirEtape)
 {
     this->numerosEtapesLieesParFinirEtape = numerosEtapesLieesParFinirEtape;
 }
 
 int Etape::getNombreEtapesLieesParFinirEtape()
 {
-    return this->nombreEtapesLieesParFinirEtape;
+    return this->numerosEtapesLieesParFinirEtape.size();
 }
 
 void Etape::finir(void)
 {
+    this->setEtapeType(Etape::POINT_PASSAGE);
     return;
 }
 

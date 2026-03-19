@@ -102,13 +102,20 @@ public:
 
     /** @brief Renvoi un tableau des étapes qui doivent être considérées comme finie si celle-ci
      * l'est */
-    int* getEtapesLieesParFinirEtape();
+    std::vector<int> getEtapesLieesParFinirEtape();
 
-    /** @brief set un tableau des étapes qui doivent être considérées comme finie si celle-ci l'est
+    /** @brief ajoute dans un vector une étape qui doit être considérée comme finie si celle-ci
+     * l'est
      * *
-     *   @param children Tableau des étapes qui doivent être considérées comme finie si celle-ci
+     *   @param children étape qui doit être considérée comme finie si celle-ci
      * l'est */
-    void setEtapesLieesParFinirEtape(int* numerosEtapesLieesParFinirEtape);
+    void addEtapeLieeParFinirEtape(int numerosEtapeLieesParFinirEtape);
+
+    /** @brief set un vector des étapes qui doivent être considérées comme finie si celle-ci l'est
+     * *
+     *   @param children vector des étapes qui doivent être considérées comme finie si celle-ci
+     * l'est */
+    void setEtapesLieesParFinirEtape(std::vector<int> numerosEtapesLieesParFinirEtape);
 
     /** @brief Renvoi le nombre d'étapes qui doivent être considérées comme finie si celle-ci l'est
      */
@@ -259,7 +266,7 @@ private:
     int nombreEtapesLieesParFinirEtape;
 
     /** @brief Tableau des étapes qui doivent être considérées comme finie si celle-ci l'est */
-    int* numerosEtapesLieesParFinirEtape;
+    std::vector<int> numerosEtapesLieesParFinirEtape;
 
     /** @brief Score de l'étape, correspondant à si on veut que le robot la réalise ou pas*/
     int score;

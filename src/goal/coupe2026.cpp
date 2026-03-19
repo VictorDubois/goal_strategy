@@ -75,6 +75,10 @@ Coupe2026::Coupe2026(const bool isYellow)
       = Etape::makeEtape(new ZoneDeRamassage(Pose(positionC(-0.4f, 0.2f - reach), Angle(-M_PI / 2)),
                                              Pose(positionC(-0.4f, 0.2f), Angle(-M_PI / 2))),
                          "zone_de_ramassage_centre_from_top");
+    Etape::get(zone_de_ramassage_centre_from_top)
+      ->addEtapeLieeParFinirEtape(zone_de_ramassage_centre);
+    Etape::get(zone_de_ramassage_centre)
+      ->addEtapeLieeParFinirEtape(zone_de_ramassage_centre_from_top);
 
     // ######### Autre cote ##############
 
@@ -103,6 +107,11 @@ Coupe2026::Coupe2026(const bool isYellow)
                                              Pose(positionC(0.4f, 0.2f), Angle(-M_PI / 2))),
                          "zone_de_ramassage_public_petit_cote_from_top");
 
+    Etape::get(zone_de_ramassage_centre_autre_from_top)
+      ->addEtapeLieeParFinirEtape(zone_de_ramassage_centre_autre);
+    Etape::get(zone_de_ramassage_centre_autre)
+      ->addEtapeLieeParFinirEtape(zone_de_ramassage_centre_autre_from_top);
+
     // Définition des garde mangers
 
     int garde_manger_petit_cote
@@ -130,16 +139,23 @@ Coupe2026::Coupe2026(const bool isYellow)
                       Pose(positionC(-0.7f, 0.2f), Angle(-M_PI / 2))),
       "garde_manger_centre_us_from_top");
 
-    // garde_manger_centre_us_from_top.setEtapesLieesParFinirEtape(garde_manger_centre_us)
+    Etape::get(garde_manger_centre_us_from_top)->addEtapeLieeParFinirEtape(garde_manger_centre_us);
+    Etape::get(garde_manger_centre_us)->addEtapeLieeParFinirEtape(garde_manger_centre_us_from_top);
 
     int garde_manger_centre_milieu
       = Etape::makeEtape(new GardeManger(Pose(positionC(0.0f, 0.2f + reachDepose), Angle(M_PI / 2)),
                                          Pose(positionC(0.0f, 0.2f), Angle(M_PI / 2))),
                          "garde_manger_centre_milieu");
+
     int garde_manger_centre_milieu_from_top = Etape::makeEtape(
       new GardeManger(Pose(positionC(0.0f, 0.2f - reachDepose), Angle(-M_PI / 2)),
                       Pose(positionC(0.0f, 0.2f), Angle(-M_PI / 2))),
       "garde_manger_centre_milieu");
+
+    Etape::get(garde_manger_centre_milieu_from_top)
+      ->addEtapeLieeParFinirEtape(garde_manger_centre_milieu);
+    Etape::get(garde_manger_centre_milieu)
+      ->addEtapeLieeParFinirEtape(garde_manger_centre_milieu_from_top);
 
     int garde_manger_frigo_us = Etape::makeEtape(
       new GardeManger(Pose(positionC(-0.25f, -0.45f + reachDepose), Angle(M_PI / 2)),
@@ -166,6 +182,10 @@ Coupe2026::Coupe2026(const bool isYellow)
       new GardeManger(Pose(positionC(0.7f, 0.2f - reachDepose), Angle(-M_PI / 2)),
                       Pose(positionC(0.7f, 0.2f), Angle(-M_PI / 2))),
       "garde_manger_centre_them_from_top");
+    Etape::get(garde_manger_centre_them)
+      ->addEtapeLieeParFinirEtape(garde_manger_centre_them_from_top);
+    Etape::get(garde_manger_centre_them_from_top)
+      ->addEtapeLieeParFinirEtape(garde_manger_centre_them);
 
     int garde_manger_frigo_them = Etape::makeEtape(
       new GardeManger(Pose(positionC(0.25f, -0.45f + reachDepose), Angle(M_PI / 2)),
