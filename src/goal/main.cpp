@@ -586,26 +586,26 @@ GoalStrat::GoalStrat()
                                       l_stepper_grabi_elevator,
                                       l_pump_plank);
 
-    m_actuators2025 = Actuators2025(rclcpp::Node::SharedPtr(this),
-                                    "actuators2025",
-                                    l_servo_grabi_left_most,
-                                    l_servo_grabi_center_left,
-                                    l_servo_grabi_center_right,
-                                    l_servo_grabi_right_most,
-                                    l_servo_grabi_lever,
-                                    l_additionnal_servo,
-                                    l_additionnal_servo,
-                                    l_additionnal_servo,
-                                    l_ax12_1,
-                                    l_ax12_2,
-                                    l_ax12_3,
-                                    l_ax12_4,
-                                    l_stepper_grabi_elevator,
-                                    l_pump_plank);
+    m_actuators = Actuators2025(rclcpp::Node::SharedPtr(this),
+                                "actuators2025",
+                                l_servo_grabi_left_most,
+                                l_servo_grabi_center_left,
+                                l_servo_grabi_center_right,
+                                l_servo_grabi_right_most,
+                                l_servo_grabi_lever,
+                                l_additionnal_servo,
+                                l_additionnal_servo,
+                                l_additionnal_servo,
+                                l_ax12_1,
+                                l_ax12_2,
+                                l_ax12_3,
+                                l_ax12_4,
+                                l_stepper_grabi_elevator,
+                                l_pump_plank,
+                                l_pump_plank,
+                                l_pump_plank,
+                                l_pump_plank);
 
-    m_actuators2025.start();
-
-    m_actuators2025.set_score(42);
 #elif defined(YEAR_2026)
     auto l_servo_grabi_left_most = std::make_shared<Servomotor>(10, 67);
     auto l_servo_grabi_center_left = std::make_shared<Servomotor>(10, 52);
@@ -641,26 +641,30 @@ GoalStrat::GoalStrat()
                                         l_pump_3,
                                         l_pump_4);
 
-    m_actuators2026 = Actuators2026(rclcpp::Node::SharedPtr(this),
-                                    "actuators2026",
-                                    l_servo_grabi_left_most,
-                                    l_servo_grabi_center_left,
-                                    l_servo_grabi_center_right,
-                                    l_servo_grabi_right_most,
-                                    l_servo_grabi_lever,
-                                    l_additionnal_servo,
-                                    l_additionnal_servo,
-                                    l_additionnal_servo,
-                                    l_ax12_1,
-                                    l_ax12_2,
-                                    l_ax12_3,
-                                    l_ax12_4,
-                                    l_stepper_grabi_elevator,
-                                    l_pump_1,
-                                    l_pump_2,
-                                    l_pump_3,
-                                    l_pump_4);
+    m_actuators = Actuators2025(rclcpp::Node::SharedPtr(this),
+                                "actuators2026",
+                                l_servo_grabi_left_most,
+                                l_servo_grabi_center_left,
+                                l_servo_grabi_center_right,
+                                l_servo_grabi_right_most,
+                                l_additionnal_servo,
+                                l_additionnal_servo,
+                                l_additionnal_servo,
+                                l_additionnal_servo,
+                                l_ax12_1,
+                                l_ax12_2,
+                                l_ax12_3,
+                                l_ax12_4,
+                                l_stepper_grabi_elevator,
+                                l_pump_1,
+                                l_pump_2,
+                                l_pump_3,
+                                l_pump_4);
 #endif
+
+    m_actuators.start();
+
+    m_actuators.set_score(42);
 
     init(); // to do before subscribing to /remaining_time
 
@@ -992,11 +996,7 @@ void GoalStrat::publishScore()
         m_score_match_at_end = l_score;
     }
 
-#ifdef YEAR_2025
-    m_actuators2025.set_score(m_score_match_at_end);
-#elif defined(YEAR_2026)
-    m_actuators2026.set_score(m_score_match_at_end);
-#endif
+    m_actuators.set_score(m_score_match_at_end);
     // RCLCPP_WARN_STREAM(rclcpp::get_logger("rclcpp"),
     //                    " score at end " << m_score_match_at_end << std::endl);
 }

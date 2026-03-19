@@ -24,13 +24,12 @@
 
 #ifdef YEAR_2025
 #include "coupe2025.h"
-#include "goal_strategy/actuators2025.h"
 #include "goal_strategy/grabi.h"
 #elif defined(YEAR_2026)
 #include "coupe2026.h"
-#include "goal_strategy/actuators2026.h"
 #include "goal_strategy/billig.h"
 #endif
+#include "goal_strategy/actuators2025.h"
 
 #include "krabi_msgs/msg/ax12_info.hpp"
 #include "krabi_msgs/msg/servos_cmd.hpp"
@@ -131,11 +130,7 @@ private:
     void updateOtherRobots(geometry_msgs::msg::PoseArray::SharedPtr);
     void updateStepperElevator(krabi_msgs::msg::InfosStepper::SharedPtr stepper_info_msg)
     {
-#ifdef YEAR_2025
-        m_actuators2025.updateStepperElevator(stepper_info_msg);
-#elif defined(YEAR_2026)
-        m_actuators2026.updateStepperElevator(stepper_info_msg);
-#endif
+        m_actuators.updateStepperElevator(stepper_info_msg);
     };
 
     bool isAlignedWithAngle(Angle angle);
@@ -211,11 +206,11 @@ private:
     int m_vacuum_state;
     bool m_all_done_do_funny = false;
 
+    Actuators2025 m_actuators; // also works for 2026
+
 #ifdef YEAR_2025
-    Actuators2025 m_actuators2025;
     std::shared_ptr<Grabi> m_grabi;
 #else
-    Actuators2026 m_actuators2026;
     std::shared_ptr<Billig> m_billig;
 #endif
     bool m_goal_init_done;

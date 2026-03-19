@@ -30,7 +30,10 @@ private:
     std::shared_ptr<AX12> m_AX12_3;
     std::shared_ptr<AX12> m_AX12_4;
     std::shared_ptr<StepperElevator> m_stepper_elevator_1;
-    std::shared_ptr<Pump> m_grabber_pump;
+    std::shared_ptr<Pump> m_pump_1;
+    std::shared_ptr<Pump> m_pump_2;
+    std::shared_ptr<Pump> m_pump_3;
+    std::shared_ptr<Pump> m_pump_4;
 
     std::thread m_running;
 
@@ -56,7 +59,10 @@ public:
                   std::shared_ptr<AX12> m_AX12_3,
                   std::shared_ptr<AX12> m_AX12_4,
                   std::shared_ptr<StepperElevator> m_stepper_elevator_1,
-                  std::shared_ptr<Pump> a_grabber_pump);
+                  std::shared_ptr<Pump> a_pump_1,
+                  std::shared_ptr<Pump> a_pump_2,
+                  std::shared_ptr<Pump> a_pump_3,
+                  std::shared_ptr<Pump> a_pump_4);
 
     void publish();
     void start();

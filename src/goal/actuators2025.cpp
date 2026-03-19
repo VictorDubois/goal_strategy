@@ -16,7 +16,10 @@ Actuators2025::Actuators2025(rclcpp::Node::SharedPtr a_node,
                              std::shared_ptr<AX12> a_AX12_3,
                              std::shared_ptr<AX12> a_AX12_4,
                              std::shared_ptr<StepperElevator> a_stepper_elevator_1,
-                             std::shared_ptr<Pump> a_grabber_pump)
+                             std::shared_ptr<Pump> a_pump_1,
+                             std::shared_ptr<Pump> a_pump_2,
+                             std::shared_ptr<Pump> a_pump_3,
+                             std::shared_ptr<Pump> a_pump_4)
   : m_node(a_node)
   , m_servo_1(a_servo_1)
   , m_servo_2(a_servo_2)
@@ -31,7 +34,10 @@ Actuators2025::Actuators2025(rclcpp::Node::SharedPtr a_node,
   , m_AX12_3(a_AX12_3)
   , m_AX12_4(a_AX12_4)
   , m_stepper_elevator_1(a_stepper_elevator_1)
-  , m_grabber_pump(a_grabber_pump)
+  , m_pump_1(a_pump_1)
+  , m_pump_2(a_pump_2)
+  , m_pump_3(a_pump_3)
+  , m_pump_4(a_pump_4)
 {
     m_pub = m_node->create_publisher<krabi_msgs::msg::Actuators2025>(a_name, 5);
     m_shutdown = false;
@@ -129,10 +135,14 @@ void Actuators2025::publish()
     m_message.ax12_4.current_limit = m_AX12_4->getCurrentLimit();
     m_message.ax12_4.max_accel = m_AX12_4->getCurrentLimit();
 
-    m_message.vacuum_1.enable_pump = m_grabber_pump->getPumping();
-    m_message.vacuum_1.release = m_grabber_pump->getRelease();
-    m_message.vacuum_2.enable_pump = false;
-    m_message.vacuum_2.release = false;
+    m_message.vacuum_1.enable_pump = m_pump_1->getPumping();
+    m_message.vacuum_1.release = m_pump_1->getRelease();
+    m_message.vacuum_2.enable_pump = m_pump_2->getPumping();
+    m_message.vacuum_2.release = m_pump_2->getRelease();
+    m_message.vacuum_3.enable_pump = m_pump_3->getPumping();
+    m_message.vacuum_3.release = m_pump_3->getRelease();
+    m_message.vacuum_4.enable_pump = m_pump_4->getPumping();
+    m_message.vacuum_4.release = m_pump_4->getRelease();
 
     m_message.stepper_1.speed = m_stepper_elevator_1->getSpeed();
     m_message.stepper_1.accel = m_stepper_elevator_1->getAccel();
@@ -158,6 +168,15 @@ void Actuators2025::publish()
         m_message.ax12_4.torque_enable = 0;
         m_message.stepper_1.mode = StepperMode::DISABLE;
         m_message.stepper_2.mode = StepperMode::DISABLE;
+
+        m_message.vacuum_1.enable_pump = false;
+        m_message.vacuum_1.release = true;
+        m_message.vacuum_2.enable_pump = false;
+        m_message.vacuum_2.release = true;
+        m_message.vacuum_3.enable_pump = false;
+        m_message.vacuum_3.release = true;
+        m_message.vacuum_4.enable_pump = false;
+        m_message.vacuum_4.release = true;
     }
 
     m_pub->publish(m_message);

@@ -62,7 +62,6 @@ add_executable(goal_strategy_node
   src/goal/grabi.cpp
   src/goal/stepper.cpp
   src/goal/actuators2025.cpp
-  src/goal/actuators2026.cpp
   src/goal/billig.cpp
 )
 
