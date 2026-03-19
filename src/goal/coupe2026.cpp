@@ -71,6 +71,11 @@ Coupe2026::Coupe2026(const bool isYellow)
                                              Pose(positionC(-0.4f, 0.2f), Angle(M_PI / 2))),
                          "zone_de_ramassage_public_petit_cote");
 
+    int zone_de_ramassage_centre_from_top
+      = Etape::makeEtape(new ZoneDeRamassage(Pose(positionC(-0.4f, 0.2f - reach), Angle(-M_PI / 2)),
+                                             Pose(positionC(-0.4f, 0.2f), Angle(-M_PI / 2))),
+                         "zone_de_ramassage_centre_from_top");
+
     // ######### Autre cote ##############
 
     int zone_de_ramassage_nid_petit_cote_autre
@@ -92,6 +97,11 @@ Coupe2026::Coupe2026(const bool isYellow)
       = Etape::makeEtape(new ZoneDeRamassage(Pose(positionC(0.4f, 0.2f + reach), Angle(M_PI / 2)),
                                              Pose(positionC(0.4f, 0.2f), Angle(M_PI / 2))),
                          "zone_de_ramassage_public_petit_cote");
+
+    int zone_de_ramassage_centre_autre_from_top
+      = Etape::makeEtape(new ZoneDeRamassage(Pose(positionC(0.4f, 0.2f - reach), Angle(-M_PI / 2)),
+                                             Pose(positionC(0.4f, 0.2f), Angle(-M_PI / 2))),
+                         "zone_de_ramassage_public_petit_cote_from_top");
 
     // Définition des garde mangers
 
@@ -115,10 +125,21 @@ Coupe2026::Coupe2026(const bool isYellow)
                       Pose(positionC(-0.7f, 0.2f), Angle(M_PI / 2))),
       "garde_manger_centre_us");
 
+    int garde_manger_centre_us_from_top = Etape::makeEtape(
+      new GardeManger(Pose(positionC(-0.7f, 0.2f - reachDepose), Angle(-M_PI / 2)),
+                      Pose(positionC(-0.7f, 0.2f), Angle(-M_PI / 2))),
+      "garde_manger_centre_us_from_top");
+
+    // garde_manger_centre_us_from_top.setEtapesLieesParFinirEtape(garde_manger_centre_us)
+
     int garde_manger_centre_milieu
       = Etape::makeEtape(new GardeManger(Pose(positionC(0.0f, 0.2f + reachDepose), Angle(M_PI / 2)),
                                          Pose(positionC(0.0f, 0.2f), Angle(M_PI / 2))),
                          "garde_manger_centre_milieu");
+    int garde_manger_centre_milieu_from_top = Etape::makeEtape(
+      new GardeManger(Pose(positionC(0.0f, 0.2f - reachDepose), Angle(-M_PI / 2)),
+                      Pose(positionC(0.0f, 0.2f), Angle(-M_PI / 2))),
+      "garde_manger_centre_milieu");
 
     int garde_manger_frigo_us = Etape::makeEtape(
       new GardeManger(Pose(positionC(-0.25f, -0.45f + reachDepose), Angle(M_PI / 2)),
@@ -140,6 +161,11 @@ Coupe2026::Coupe2026(const bool isYellow)
       = Etape::makeEtape(new GardeManger(Pose(positionC(0.7f, 0.2f + reachDepose), Angle(M_PI / 2)),
                                          Pose(positionC(0.7f, 0.2f), Angle(M_PI / 2))),
                          "garde_manger_centre_them");
+
+    int garde_manger_centre_them_from_top = Etape::makeEtape(
+      new GardeManger(Pose(positionC(0.7f, 0.2f - reachDepose), Angle(-M_PI / 2)),
+                      Pose(positionC(0.7f, 0.2f), Angle(-M_PI / 2))),
+      "garde_manger_centre_them_from_top");
 
     int garde_manger_frigo_them = Etape::makeEtape(
       new GardeManger(Pose(positionC(0.25f, -0.45f + reachDepose), Angle(M_PI / 2)),
@@ -210,6 +236,24 @@ Coupe2026::Coupe2026(const bool isYellow)
       ->addVoisins(zone_de_ramassage_public_petit_cote_autre,
                    zone_de_ramassage_public_grand_cote_autre,
                    zone_de_ramassage_centre_autre);
+
+    // From top
+
+    Etape::get(garde_manger_centre_us_from_top)
+      ->addVoisins(zone_de_ramassage_nid_petit_cote, zone_de_ramassage_centre_from_top);
+
+    Etape::get(garde_manger_centre_them_from_top)
+      ->addVoisins(zone_de_ramassage_nid_petit_cote_autre, zone_de_ramassage_centre_autre_from_top);
+
+    Etape::get(garde_manger_centre_milieu_from_top)
+      ->addVoisins(zone_de_ramassage_centre_from_top, zone_de_ramassage_centre_autre_from_top);
+
+    Etape::get(garde_manger_frigo_us)
+      ->addVoisins(zone_de_ramassage_centre_from_top, zone_de_ramassage_centre_autre_from_top);
+    Etape::get(garde_manger_frigo_them)
+      ->addVoisins(zone_de_ramassage_centre_from_top, zone_de_ramassage_centre_autre_from_top);
+
+    // Thermometre
 
     Etape::get(debut_thermometre)
       ->addVoisins(garde_manger_public_milieu,
