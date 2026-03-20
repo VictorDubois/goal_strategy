@@ -112,6 +112,9 @@ protected:
     void updateStock();
     virtual int getScoreEtape(int i) = 0;
 
+    /** @brief Robot vu pour toutes les etapes autour de celle en cours */
+    void robotVuDansCetteZone();
+
 private:
     bool updateScores();
     int64_t m_remaining_time_ms;

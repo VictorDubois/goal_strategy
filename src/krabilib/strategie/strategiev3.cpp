@@ -63,6 +63,21 @@ bool StrategieV3::useXSymetry()
     return m_use_x_symetry;
 }
 
+void StrategieV3::robotVuDansCetteZone()
+{
+    Position l_position_etape_en_cours = m_tableau_etapes_total[m_etape_en_cours]->getPosition();
+    for (int i = 0; i < m_nombre_etapes; i++)
+    {
+        Position l_position_etape = m_tableau_etapes_total[i]->getPosition();
+
+        // Si l'etape est proche de l'étape où le robot allait
+        if ((l_position_etape_en_cours - l_position_etape).getNorme() < 0.1) // moins de 10cm
+        {
+            m_tableau_etapes_total[i]->robotVu();
+        }
+    }
+}
+
 int StrategieV3::update()
 {
     // this->actionEtape[m_etape_en_cours]->reset();
@@ -74,7 +89,8 @@ int StrategieV3::update()
     // à éviter
     if (m_avoiding)
     {
-        m_tableau_etapes_total[m_etape_en_cours]->robotVu();
+        robotVuDansCetteZone();
+
         // m_tableau_etapes_total[m_etape_en_cours]->setState(-2);
         m_tableau_etapes_total[m_etape_en_cours]->getParent()->setParent(
           m_tableau_etapes_total[m_etape_en_cours]);
