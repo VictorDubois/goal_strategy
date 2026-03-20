@@ -1117,11 +1117,35 @@ void GoalStrat::stateRun()
         {
             Position positionFunny = m_strat_graph->getParkedPosition();
 
-            if ((m_is_blue && m_current_pose.getPosition().getX() > -1.2)
-                || (!m_is_blue && m_current_pose.getPosition().getX() < 1.2))
+            float l_X_threshold = 1.2;
+            if (m_funny_action_X_hysteresis)
             {
-                // Avoid the grenier: set intermediate waypoint
+                l_X_threshold -= 0.05;
+            }
+
+            // If we are still not in front of the nid
+            if ((m_is_blue && m_current_pose.getPosition().getX() > -l_X_threshold)
+                || (!m_is_blue && m_current_pose.getPosition().getX() < l_X_threshold))
+            {
+                // Avoid the grenier and garde mangers: set intermediate waypoint
                 positionFunny.setY(Distance(positionFunny.getY() + Distance(0.5)));
+
+                if ((!m_funny_action_Y_hysteresis && m_current_pose.getPosition().getY() > 0.1)
+                    || m_current_pose.getPosition().getY() > 0.3)
+                {
+                    positionFunny.setY(
+                      Distance(positionFunny.getY() + Distance(0.5) + Distance(0.3)));
+
+                    positionFunny.setX(positionFunny.getX() * 0.9);
+                }
+                else
+                {
+                    m_funny_action_Y_hysteresis = true;
+                }
+            }
+            else
+            {
+                m_funny_action_X_hysteresis = true;
             }
             m_goal_pose.setPosition(positionFunny);
         }

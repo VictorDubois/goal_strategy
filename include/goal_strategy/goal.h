@@ -233,4 +233,6 @@ private:
     bool m_leftcenter_caisse_is_our_side_up = true;
     bool m_rightcenter_caisse_is_our_side_up = false;
     bool m_rightmost_caisse_is_our_side_up = false;
+    bool m_funny_action_Y_hysteresis = false;
+    bool m_funny_action_X_hysteresis = false;
 };
