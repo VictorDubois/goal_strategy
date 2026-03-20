@@ -21,6 +21,7 @@ Etape::Etape(Position position, EtapeType type)
     this->nombreEtapesLieesParFinirEtape = 0;
     this->distanceToPotentialObstacle = 5000;
     this->numerosEtapesLieesParFinirEtape.clear();
+    this->numerosEtapeActiveApres.clear();
 
     if (idx != ETAPE_INVALID_IDX)
         tableauEtapesTotal[idx] = this;
@@ -180,7 +181,7 @@ bool Etape::aEviter()
 
 void Etape::oublieRobotVu()
 {
-    if (this->aEviter())
+    if (this->aEviter() && this->getEtapeType() != POINT_PASSAGE_DESACTIVE)
     {
         // On oublie qu'on a vu un robot
         this->setEtapeType((EtapeType)((int)this->getEtapeType() - ROBOT_VU_ICI));
@@ -223,6 +224,16 @@ std::vector<int> Etape::getEtapesLieesParFinirEtape()
 void Etape::addEtapeLieeParFinirEtape(int numerosEtapeLieesParFinirEtape)
 {
     this->numerosEtapesLieesParFinirEtape.push_back(numerosEtapeLieesParFinirEtape);
+}
+
+std::vector<int> Etape::getEtapeActiveApres()
+{
+    return this->numerosEtapeActiveApres;
+}
+
+void Etape::addEtapeActiveApres(int a_numeroEtapeActiveApres)
+{
+    this->numerosEtapeActiveApres.push_back(a_numeroEtapeActiveApres);
 }
 
 void Etape::setEtapesLieesParFinirEtape(std::vector<int> numerosEtapesLieesParFinirEtape)

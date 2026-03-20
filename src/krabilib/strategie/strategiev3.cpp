@@ -147,13 +147,21 @@ int StrategieV3::update()
                 // m_tableau_etapes_total[m_etape_en_cours]->finir();//Vieux, on utilise
                 // maintenant updateStock dans la strat de l'année en cours Idem pour les autres
                 // étapes correspondant au même objectif
-                for (int etapeLiee = 0; etapeLiee < m_tableau_etapes_total[m_etape_en_cours]
-                                                      ->getNombreEtapesLieesParFinirEtape();
-                     etapeLiee++)
+                for (int l_etape_liee :
+                     m_tableau_etapes_total[m_etape_en_cours]->getEtapesLieesParFinirEtape())
                 {
-                    int numeroEtapeLiee = m_tableau_etapes_total[m_etape_en_cours]
-                                            ->getEtapesLieesParFinirEtape()[etapeLiee];
-                    m_tableau_etapes_total[numeroEtapeLiee]->finir();
+                    Etape::get(l_etape_liee)->finir();
+                }
+
+                for (int l_etape_a_activer :
+                     m_tableau_etapes_total[m_etape_en_cours]->getEtapeActiveApres())
+                {
+                    if (Etape::get(l_etape_a_activer)->getEtapeType()
+                        == Etape::EtapeType::POINT_PASSAGE_DESACTIVE)
+                    {
+                        Etape::get(l_etape_a_activer)
+                          ->setEtapeType(Etape::EtapeType::POINT_PASSAGE);
+                    }
                 }
 
                 // Mise à jour du stock et l'objectif qu'on vient de remplir est maintenant un

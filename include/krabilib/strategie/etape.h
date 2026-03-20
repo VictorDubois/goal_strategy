@@ -23,8 +23,8 @@ public:
 
         POINT_PASSAGE = 0x30,
 
-        ROBOT_VU_ICI = 0x60
-
+        ROBOT_VU_ICI = 0x60,
+        POINT_PASSAGE_DESACTIVE = 0x121
     };
 
     static int makeEtape(MediumLevelAction* action);
@@ -120,6 +120,14 @@ public:
     /** @brief Renvoi le nombre d'étapes qui doivent être considérées comme finie si celle-ci l'est
      */
     int getNombreEtapesLieesParFinirEtape();
+
+    /** @brief revoi un vector d'étapes qui doivent être activées une fois celle-ci finie */
+    std::vector<int> getEtapeActiveApres();
+
+    /** @brief ajoute dans un vector une étape qui doit être activée une fois celle-ci finie
+     * *
+     *   @param children étape qui doit être activée une fois celle-ci finie */
+    void addEtapeActiveApres(int a_numeroEtapeActiveApres);
 
     /** @brief Effectue les changements nécessaires pour considérer l'étape comme effectuée */
     void finir(void);
@@ -267,6 +275,10 @@ private:
 
     /** @brief Tableau des étapes qui doivent être considérées comme finie si celle-ci l'est */
     std::vector<int> numerosEtapesLieesParFinirEtape;
+
+    /** @brief Tableau des étapes qui doivent devenir des points de passage une fois celle-ci finie
+     */
+    std::vector<int> numerosEtapeActiveApres;
 
     /** @brief Score de l'étape, correspondant à si on veut que le robot la réalise ou pas*/
     int score;
