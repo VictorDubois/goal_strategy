@@ -80,6 +80,14 @@ Coupe2026::Coupe2026(const bool isYellow)
     Etape::get(zone_de_ramassage_centre)
       ->addEtapeLieeParFinirEtape(zone_de_ramassage_centre_from_top);
 
+    int point_passage_zone_de_ramassage_centre
+      = Etape::makeEtape(positionC(-0.4f, 0.2f), Etape::POINT_PASSAGE_DESACTIVE);
+
+    Etape::get(zone_de_ramassage_centre_from_top)
+      ->addEtapeActiveApres(point_passage_zone_de_ramassage_centre);
+    Etape::get(zone_de_ramassage_centre)
+      ->addEtapeActiveApres(point_passage_zone_de_ramassage_centre);
+
     // ######### Autre cote ##############
 
     int zone_de_ramassage_nid_petit_cote_autre
@@ -111,6 +119,14 @@ Coupe2026::Coupe2026(const bool isYellow)
       ->addEtapeLieeParFinirEtape(zone_de_ramassage_centre_autre);
     Etape::get(zone_de_ramassage_centre_autre)
       ->addEtapeLieeParFinirEtape(zone_de_ramassage_centre_autre_from_top);
+
+    int point_passage_zone_de_ramassage_centre_autre
+      = Etape::makeEtape(positionC(0.4f, 0.2f), Etape::POINT_PASSAGE_DESACTIVE);
+
+    Etape::get(zone_de_ramassage_centre_autre_from_top)
+      ->addEtapeActiveApres(point_passage_zone_de_ramassage_centre_autre);
+    Etape::get(zone_de_ramassage_centre_autre)
+      ->addEtapeActiveApres(point_passage_zone_de_ramassage_centre_autre);
 
     // Définition des garde mangers
 
@@ -182,6 +198,7 @@ Coupe2026::Coupe2026(const bool isYellow)
       new GardeManger(Pose(positionC(0.7f, 0.2f - reachDepose), Angle(-M_PI / 2)),
                       Pose(positionC(0.7f, 0.2f), Angle(-M_PI / 2))),
       "garde_manger_centre_them_from_top");
+
     Etape::get(garde_manger_centre_them)
       ->addEtapeLieeParFinirEtape(garde_manger_centre_them_from_top);
     Etape::get(garde_manger_centre_them_from_top)
@@ -232,6 +249,11 @@ Coupe2026::Coupe2026(const bool isYellow)
                    zone_de_ramassage_centre_autre,
                    zone_de_ramassage_public_grand_cote,
                    zone_de_ramassage_public_grand_cote_autre);
+
+    Etape::get(point_passage_zone_de_ramassage_centre)
+      ->addVoisins(zone_de_ramassage_centre, zone_de_ramassage_centre_from_top);
+    Etape::get(point_passage_zone_de_ramassage_centre_autre)
+      ->addVoisins(zone_de_ramassage_centre_autre, zone_de_ramassage_centre_autre_from_top);
 
     // ######### Autre cote ##############
     Etape::get(garde_manger_petit_cote_them)
