@@ -1379,8 +1379,8 @@ void GoalStrat::init()
      *************************************************/
 
     // Initialize time
-    m_timeout_moving = 15; // sec
-    m_timeout_orient = 10; // sec
+    m_timeout_moving = 7; // sec
+    m_timeout_orient = 5; // sec
     m_is_first_action = true;
 
     // Choose side
