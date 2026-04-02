@@ -49,7 +49,7 @@ Coupe2026::Coupe2026(const bool isYellow)
 
     int nid = Etape::makeEtape(positionC(-1.25f, -0.75f), "NID", Etape::DEPART);
 
-    float reach = 0.3f;
+    float reach = 0.22f;
     float reachDepose = reach;
 
     // Definition des zone de ramassage
