@@ -293,10 +293,10 @@ Coupe2026::Coupe2026(const bool isYellow)
     Etape::get(garde_manger_centre_milieu_from_top)
       ->addVoisins(zone_de_ramassage_centre_from_top, zone_de_ramassage_centre_autre_from_top);
 
-    Etape::get(garde_manger_frigo_us)
+    /*Etape::get(garde_manger_frigo_us)
       ->addVoisins(zone_de_ramassage_centre_from_top, zone_de_ramassage_centre_autre_from_top);
     Etape::get(garde_manger_frigo_them)
-      ->addVoisins(zone_de_ramassage_centre_from_top, zone_de_ramassage_centre_autre_from_top);
+      ->addVoisins(zone_de_ramassage_centre_from_top, zone_de_ramassage_centre_autre_from_top);*/
 
     // Thermometre
 
