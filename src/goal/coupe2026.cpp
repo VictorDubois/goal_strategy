@@ -50,8 +50,8 @@ Coupe2026::Coupe2026(const bool isYellow)
 
     float reach = 0.22f; // Offset billig/centre de roues, en Y, en mètres
     float reachDepose = reach;
-    const float l_offset_GD = M_PI;       // gauche = 0, droite = M_PI
-    const float l_offset_billig_X = 0.0f; // Offset billig/axes de roues, en X, en mètres
+    const float l_offset_GD = M_PI;          // gauche = 0, droite = M_PI
+    const float l_offset_billig_X = 0.0077f; // Offset billig/axes de roues, en X, en mètres
 
     // Definition des zone de ramassage
     int zone_de_ramassage_nid_petit_cote = Etape::makeEtape(
@@ -193,7 +193,7 @@ Coupe2026::Coupe2026(const bool isYellow)
     Etape::get(garde_manger_centre_milieu)
       ->addEtapeLieeParFinirEtape(garde_manger_centre_milieu_from_top);
 
-    int garde_manger_frigo_us = Etape::makeEtape(
+    [[maybe_unused]] int garde_manger_frigo_us = Etape::makeEtape(
       new GardeManger(Pose(positionC(-0.25f - l_offset_billig_X, -0.45f + reachDepose),
                            Angle((M_PI / 2) + l_offset_GD)),
                       Pose(positionC(-0.25f, -0.45f), Angle((M_PI / 2) + l_offset_GD))),
@@ -229,7 +229,7 @@ Coupe2026::Coupe2026(const bool isYellow)
     Etape::get(garde_manger_centre_them_from_top)
       ->addEtapeLieeParFinirEtape(garde_manger_centre_them);
 
-    int garde_manger_frigo_them = Etape::makeEtape(
+    [[maybe_unused]] int garde_manger_frigo_them = Etape::makeEtape(
       new GardeManger(Pose(positionC(0.25f + l_offset_billig_X, -0.45f + reachDepose),
                            Angle(M_PI / 2 + l_offset_GD)),
                       Pose(positionC(0.25f, -0.45f), Angle(M_PI / 2 + l_offset_GD))),
