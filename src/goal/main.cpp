@@ -607,10 +607,10 @@ GoalStrat::GoalStrat()
                                 l_pump_plank);
 
 #elif defined(YEAR_2026)
-    auto l_servo_grabi_left_most = std::make_shared<Servomotor>(10, 67);
-    auto l_servo_grabi_center_left = std::make_shared<Servomotor>(10, 52);
-    auto l_servo_grabi_center_right = std::make_shared<Servomotor>(10, 67);
-    auto l_servo_grabi_right_most = std::make_shared<Servomotor>(10, 62);
+    auto l_servo_grabi_left_most = std::make_shared<Servomotor>(10, 180);
+    auto l_servo_grabi_center_left = std::make_shared<Servomotor>(10, 180);
+    auto l_servo_grabi_center_right = std::make_shared<Servomotor>(10, 180);
+    auto l_servo_grabi_right_most = std::make_shared<Servomotor>(10, 180);
     auto l_additionnal_servo = std::make_shared<Servomotor>(10, 62);
     auto l_pump_1 = std::make_shared<Pump>(false, true);
     auto l_pump_2 = std::make_shared<Pump>(false, true);
