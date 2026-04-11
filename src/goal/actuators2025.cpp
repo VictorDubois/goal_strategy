@@ -51,7 +51,7 @@ void Actuators2025::updateStepperElevator(krabi_msgs::msg::InfosStepper::SharedP
 void Actuators2025::start()
 {
     m_running = std::thread(&Actuators2025::run, this);
-    RCLCPP_INFO(rclcpp::get_logger("rclcpp"), "actuators 2025 running");
+    RCLCPP_INFO(m_node->get_logger(), "actuators 2025 running");
 }
 
 void Actuators2025::run()

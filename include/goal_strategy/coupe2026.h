@@ -9,6 +9,7 @@
 #include "krabilib/strategie/zoneDeRamassage.h"
 #include <geometry_msgs/msg/point.hpp>
 
+#include "rclcpp/node.hpp"
 #include <geometry_msgs/msg/pose.hpp>
 #include <visualization_msgs/msg/marker.hpp>
 #include <visualization_msgs/msg/marker_array.hpp>
@@ -16,7 +17,7 @@
 class Coupe2026 : public StrategieV3
 {
 public:
-    Coupe2026(bool isYellow);
+    Coupe2026(bool isYellow, rclcpp::Node::SharedPtr a_node);
     void debugEtapes(visualization_msgs::msg::MarkerArray& ma);
     void etape_type_to_marker(visualization_msgs::msg::Marker& m, Etape* e);
 
@@ -29,8 +30,8 @@ public:
     void grabCaisses(Etape* e); // 2026 only
     int dropCaisses(Etape* e);  // 2026 only
 
-    void grabThermometre(){}; // 2026 only
-    void dropThermometre(){}; // 2026 only
+    void grabThermometre() {}; // 2026 only
+    void dropThermometre() {}; // 2026 only
 
     Position positionCAbsolute(double x_yellow_from_top_left, double y_yellow_from_top_left);
 
@@ -47,4 +48,6 @@ private:
     uint32_t m_seq;
 
     std::vector<Caisse> m_stock;
+
+    rclcpp::Node::SharedPtr m_node;
 };

@@ -30,8 +30,9 @@ Position Coupe2026::positionCAbsolute(double x_yellow_from_top_left, double y_ye
  * @param isYellow
  * @param starting_position
  */
-Coupe2026::Coupe2026(const bool isYellow)
+Coupe2026::Coupe2026(const bool isYellow, rclcpp::Node::SharedPtr a_node)
   : StrategieV3(isYellow, true)
+  , m_node(a_node)
 {
 
     setRemainingTime(84 * 1000); // duration of the match
@@ -620,7 +621,7 @@ etape->getCustomName()*/
  */
 int Coupe2026::getScoreEtape(int i)
 {
-    RCLCPP_INFO_STREAM(rclcpp::get_logger("rclcpp"),
+    RCLCPP_INFO_STREAM(m_node->get_logger(),
                        "getScoreEtape. Time: " << getRemainingTime() << std::endl);
     int l_score = 0;
     GardeManger* l_area;

@@ -8,6 +8,7 @@
 #include "krabilib/strategie/strategiev3.h"
 #include <geometry_msgs/msg/point.hpp>
 
+#include "rclcpp/node.hpp"
 #include <geometry_msgs/msg/pose.hpp>
 #include <visualization_msgs/msg/marker.hpp>
 #include <visualization_msgs/msg/marker_array.hpp>
@@ -22,7 +23,9 @@ enum StartingPosition2025
 class Coupe2025 : public StrategieV3
 {
 public:
-    Coupe2025(bool isYellow, StartingPosition2025 starting_position);
+    Coupe2025(bool isYellow,
+              StartingPosition2025 starting_position,
+              rclcpp::Node::SharedPtr a_node);
     void debugEtapes(visualization_msgs::msg::MarkerArray& ma);
     void etape_type_to_marker(visualization_msgs::msg::Marker& m, Etape* e);
 
@@ -46,4 +49,6 @@ private:
     uint32_t m_seq;
 
     std::vector<Plateforme> m_stock;
+
+    rclcpp::Node::SharedPtr m_node;
 };

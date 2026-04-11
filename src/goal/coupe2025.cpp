@@ -32,8 +32,11 @@ Position Coupe2025::positionCAbsolute(double x_yellow_from_top_left, double y_ye
  * @param isYellow
  * @param starting_position
  */
-Coupe2025::Coupe2025(const bool isYellow, const StartingPosition2025 starting_position)
+Coupe2025::Coupe2025(const bool isYellow,
+                     const StartingPosition2025 starting_position,
+                     rclcpp::Node::SharedPtr a_node)
   : StrategieV3(isYellow, true)
+  , m_node(a_node)
 {
     setRemainingTime(84 * 1000); // duration of the match
 
@@ -485,7 +488,7 @@ etape->getCustomName()*/
  */
 int Coupe2025::getScoreEtape(int i)
 {
-    RCLCPP_INFO_STREAM(rclcpp::get_logger("rclcpp"),
+    RCLCPP_INFO_STREAM(m_node->get_logger(),
                        "getScoreEtape. Time: " << getRemainingTime() << std::endl);
     int l_score = 0;
     AireDeConstruction* l_area;
