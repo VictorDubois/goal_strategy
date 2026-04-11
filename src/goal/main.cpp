@@ -1476,7 +1476,7 @@ void GoalStrat::loop()
 #ifdef YEAR_2025
         m_grabi->initializeElevator();
 #elif defined(YEAR_2026)
-        m_billig->initializeElevator();
+        m_billig->initBillig(true);
 #endif
         if (m_state == State::WAIT_TIRETTE && m_tirette && m_remainig_time > rclcpp::Duration(1, 0))
         {
@@ -1492,7 +1492,6 @@ void GoalStrat::loop()
             else if (m_year == 2026)
             {
                 publishDebugInfos();
-                m_billig->initBillig(true);
             }
         }
         break;

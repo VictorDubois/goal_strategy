@@ -117,7 +117,14 @@ void Billig::auto_flip_caisses(bool leftmost_up,
 
 void Billig::initBillig(bool a_first_elevator_init)
 {
+    if (a_first_elevator_init)
+    {
+        initializeElevator();
+    }
+
     m_stepper_elevator->goToPosition(ABOVE_GRABBERS);
+    usleep(1.5e6);
+
     m_pump_1->setPumping(false);
     m_pump_2->setPumping(false);
     m_pump_3->setPumping(false);
@@ -143,13 +150,8 @@ void Billig::initBillig(bool a_first_elevator_init)
     m_ax12_3->set(AX12_RIGHTCENTER_RELEASE, 100);
     m_ax12_4->set(AX12_RIGHTMOST_RELEASE, 100);
 
-    if (!a_first_elevator_init)
-    {
-        m_stepper_elevator->goToPosition(TRANSPORT_HEIGHT);
-        usleep(1.5e6);
-    }
-    initializeElevator();
     m_stepper_elevator->goToPosition(TRANSPORT_HEIGHT);
+    usleep(1.5e6);
 }
 
 bool Billig::grab_caisses(bool /*a_do_sleep*/)
