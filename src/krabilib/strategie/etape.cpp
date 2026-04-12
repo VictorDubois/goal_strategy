@@ -40,6 +40,15 @@ std::string Etape::getName()
     case EtapeType::ROBOT_VU_ICI:
         return "OBS";
         break;
+    case EtapeType::ZONE_DE_RAMASSAGE:
+        return "ZdR";
+        break;
+    case EtapeType::GARDE_MANGER:
+        return "GM";
+        break;
+    case EtapeType::THERMOMETRE:
+        return "Thermo";
+        break;
     default:
         return "";
         break;
