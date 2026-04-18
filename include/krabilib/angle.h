@@ -5,6 +5,7 @@ BOOST_STRONG_TYPEDEF(double, Angle);
 BOOST_STRONG_TYPEDEF(double, AngleDeg);
 BOOST_STRONG_TYPEDEF(double, VitesseAngulaire);
 BOOST_STRONG_TYPEDEF(double, AccelerationAngulaire);
+BOOST_STRONG_TYPEDEF(double, JerkAngulaire);
 
 class AngleTools
 {
