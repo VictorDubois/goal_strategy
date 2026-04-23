@@ -262,7 +262,8 @@ void GoalStrat::alignWithAngle(Angle a_angle)
 
     m_strat_mvnt.goal_pose = l_posestamped;
     m_strat_mvnt.header.frame_id = "map";
-    m_strat_mvnt.orient = krabi_msgs::msg::StratMovement::ORIENT_TOWARD_GOALPOSE_ORIENTATION;
+    m_strat_mvnt.orient
+      = krabi_msgs::msg::StratMovement::ORIENT_TOWARD_GOALPOSE_ORIENTATION_AND_FINE_TUNE;
     publishStratMovement();
 }
 
@@ -863,7 +864,8 @@ bool GoalStrat::alignWithAngleWithTimeout(Angle angle)
     while (!isAlignedWithAngle(angle) && this->now().seconds() < orientTimeoutDeadline.seconds())
     {
         alignWithAngle(angle);
-        m_strat_mvnt.orient = krabi_msgs::msg::StratMovement::ORIENT_TOWARD_GOALPOSE_ORIENTATION;
+        m_strat_mvnt.orient
+          = krabi_msgs::msg::StratMovement::ORIENT_TOWARD_GOALPOSE_ORIENTATION_AND_FINE_TUNE;
         // todo fix and reenable
         // rclcpp::spin_some(shared_from_this());
         r.sleep();
@@ -908,7 +910,10 @@ void GoalStrat::chooseGear()
         m_strat_mvnt.reverse_gear = krabi_msgs::msg::StratMovement::FORWARD_OR_REVERSE;
 
         if (m_strat_mvnt.orient
-            == krabi_msgs::msg::StratMovement::ORIENT_TOWARD_GOALPOSE_ORIENTATION)
+              == krabi_msgs::msg::StratMovement::ORIENT_TOWARD_GOALPOSE_ORIENTATION
+            || m_strat_mvnt.orient
+                 == krabi_msgs::msg::StratMovement::
+                   ORIENT_TOWARD_GOALPOSE_ORIENTATION_AND_FINE_TUNE)
         {
             // When we are aligning the robot, we want a specific angle. If we let the main_strat
             // decide, we risk a 180deg descrepency!
