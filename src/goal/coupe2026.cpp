@@ -50,7 +50,8 @@ Coupe2026::Coupe2026(const bool isYellow, rclcpp::Node::SharedPtr a_node)
     int nid = Etape::makeEtape(positionC(-1.25f, -0.75f), "NID", Etape::DEPART);
 
     float reach = 0.22f; // Offset billig/centre de roues, en Y, en mètres
-    float reachDepose = reach;
+    float reachDepose = reach + 0.075f;
+    float reachDeposeCentre = reach;
     float l_offset_GD = 0;             // gauche = 0, droite = M_PI
     float l_offset_billig_X = 0.0077f; // Offset billig/axes de roues, en X, en mètres
     if (isYellow)
@@ -166,13 +167,13 @@ Coupe2026::Coupe2026(const bool isYellow, rclcpp::Node::SharedPtr a_node)
       "garde_manger_public_milieu");
 
     int garde_manger_centre_us = Etape::makeEtape(
-      new GardeManger(Pose(positionC(-0.7f - l_offset_billig_X, 0.2f + reachDepose),
+      new GardeManger(Pose(positionC(-0.7f - l_offset_billig_X, 0.2f + reachDeposeCentre),
                            Angle(M_PI / 2 + l_offset_GD)),
                       Pose(positionC(-0.7f, 0.2f), Angle(M_PI / 2 + l_offset_GD))),
       "garde_manger_centre_us");
 
     int garde_manger_centre_us_from_top = Etape::makeEtape(
-      new GardeManger(Pose(positionC(-0.7f + l_offset_billig_X, 0.2f - reachDepose),
+      new GardeManger(Pose(positionC(-0.7f + l_offset_billig_X, 0.2f - reachDeposeCentre),
                            Angle(-M_PI / 2 + l_offset_GD)),
                       Pose(positionC(-0.7f, 0.2f), Angle(-M_PI / 2 + l_offset_GD))),
       "garde_manger_centre_us_from_top");
@@ -181,13 +182,13 @@ Coupe2026::Coupe2026(const bool isYellow, rclcpp::Node::SharedPtr a_node)
     Etape::get(garde_manger_centre_us)->addEtapeLieeParFinirEtape(garde_manger_centre_us_from_top);
 
     int garde_manger_centre_milieu = Etape::makeEtape(
-      new GardeManger(Pose(positionC(0.0f - l_offset_billig_X, 0.2f + reachDepose),
+      new GardeManger(Pose(positionC(0.0f - l_offset_billig_X, 0.2f + reachDeposeCentre),
                            Angle(M_PI / 2 + l_offset_GD)),
                       Pose(positionC(0.0f, 0.2f), Angle(M_PI / 2 + l_offset_GD))),
       "garde_manger_centre_milieu");
 
     int garde_manger_centre_milieu_from_top = Etape::makeEtape(
-      new GardeManger(Pose(positionC(0.0f + l_offset_billig_X, 0.2f - reachDepose),
+      new GardeManger(Pose(positionC(0.0f + l_offset_billig_X, 0.2f - reachDeposeCentre),
                            Angle(-M_PI / 2 + l_offset_GD)),
                       Pose(positionC(0.0f, 0.2f), Angle(-M_PI / 2 + l_offset_GD))),
       "garde_manger_centre_milieu");
@@ -216,13 +217,13 @@ Coupe2026::Coupe2026(const bool isYellow, rclcpp::Node::SharedPtr a_node)
       "garde_manger_public_them");
 
     int garde_manger_centre_them = Etape::makeEtape(
-      new GardeManger(Pose(positionC(0.7f - l_offset_billig_X, 0.2f + reachDepose),
+      new GardeManger(Pose(positionC(0.7f - l_offset_billig_X, 0.2f + reachDeposeCentre),
                            Angle(M_PI / 2 + l_offset_GD)),
                       Pose(positionC(0.7f, 0.2f), Angle(M_PI / 2 + l_offset_GD))),
       "garde_manger_centre_them");
 
     int garde_manger_centre_them_from_top = Etape::makeEtape(
-      new GardeManger(Pose(positionC(0.7f + l_offset_billig_X, 0.2f - reachDepose),
+      new GardeManger(Pose(positionC(0.7f + l_offset_billig_X, 0.2f - reachDeposeCentre),
                            Angle(-M_PI / 2 + l_offset_GD)),
                       Pose(positionC(0.7f, 0.2f), Angle(-M_PI / 2 + l_offset_GD))),
       "garde_manger_centre_them_from_top");
