@@ -65,6 +65,9 @@ Coupe2026::Coupe2026(const bool isYellow, rclcpp::Node::SharedPtr a_node)
                           Pose(positionC(-1.325f, -0.2f), Angle(0))),
       "zone_de_ramassage_nid_petit_cote");
 
+    int point_passage_zone_de_ramassage_nid_petit_cote = Etape::makeEtape(
+      positionC(-1.325f + reach, -0.3f + l_offset_billig_X), Etape::POINT_PASSAGE);
+
     int zone_de_ramassage_public_petit_cote = Etape::makeEtape(
       new ZoneDeRamassage(Pose(positionC(-1.325f + reach, 0.6f + l_offset_billig_X), Angle(0)),
                           Pose(positionC(-1.325f, 0.6f), Angle(0))),
@@ -247,7 +250,9 @@ Coupe2026::Coupe2026(const bool isYellow, rclcpp::Node::SharedPtr a_node)
 
     // Définitions des voisins
 
-    Etape::get(nid)->addVoisins(zone_de_ramassage_nid_petit_cote);
+    Etape::get(point_passage_zone_de_ramassage_nid_petit_cote)
+      ->addVoisins(zone_de_ramassage_nid_petit_cote, nid);
+
     Etape::get(zone_de_ramassage_nid_petit_cote)->addVoisins(zone_de_ramassage_public_petit_cote);
     Etape::get(zone_de_ramassage_public_petit_cote)
       ->addVoisins(zone_de_ramassage_public_grand_cote);
