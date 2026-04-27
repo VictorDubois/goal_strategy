@@ -39,6 +39,10 @@ public:
 
     Position getParkedPosition()
     {
+        if (m_yellow)
+        {
+            return positionC(-1.28f, -0.85f);
+        }
         return positionC(-1.35f, -0.85f);
     };
 
