@@ -51,20 +51,23 @@ Coupe2026::Coupe2026(const bool isYellow, rclcpp::Node::SharedPtr a_node)
 
     float reach = 0.22f; // Offset billig/centre de roues, en Y, en mètres
     float reachDepose = reach;
-    const float l_offset_GD = M_PI;          // gauche = 0, droite = M_PI
-    const float l_offset_billig_X = 0.0077f; // Offset billig/axes de roues, en X, en mètres
+    float l_offset_GD = 0;             // gauche = 0, droite = M_PI
+    float l_offset_billig_X = 0.0077f; // Offset billig/axes de roues, en X, en mètres
+    if (isYellow)
+    {
+        l_offset_GD = M_PI;
+        l_offset_billig_X *= -1;
+    }
 
     // Definition des zone de ramassage
     int zone_de_ramassage_nid_petit_cote = Etape::makeEtape(
-      new ZoneDeRamassage(
-        Pose(positionC(-1.325f + reach, -0.2f + l_offset_billig_X), Angle(l_offset_GD)),
-        Pose(positionC(-1.325f, -0.2f), Angle(l_offset_GD))),
+      new ZoneDeRamassage(Pose(positionC(-1.325f + reach, -0.2f + l_offset_billig_X), Angle(0)),
+                          Pose(positionC(-1.325f, -0.2f), Angle(0))),
       "zone_de_ramassage_nid_petit_cote");
 
     int zone_de_ramassage_public_petit_cote = Etape::makeEtape(
-      new ZoneDeRamassage(
-        Pose(positionC(-1.325f + reach, 0.6f + l_offset_billig_X), Angle(l_offset_GD)),
-        Pose(positionC(-1.325f, 0.6f), Angle(l_offset_GD))),
+      new ZoneDeRamassage(Pose(positionC(-1.325f + reach, 0.6f + l_offset_billig_X), Angle(0)),
+                          Pose(positionC(-1.325f, 0.6f), Angle(0))),
       "zone_de_ramassage_public_petit_cote");
 
     int zone_de_ramassage_public_grand_cote = Etape::makeEtape(
@@ -100,15 +103,13 @@ Coupe2026::Coupe2026(const bool isYellow, rclcpp::Node::SharedPtr a_node)
     // ######### Autre cote ##############
 
     int zone_de_ramassage_nid_petit_cote_autre = Etape::makeEtape(
-      new ZoneDeRamassage(
-        Pose(positionC(1.325f - reach, -0.2f - l_offset_billig_X), Angle(M_PI + l_offset_GD)),
-        Pose(positionC(1.325f, -0.2f), Angle(M_PI + l_offset_GD))),
+      new ZoneDeRamassage(Pose(positionC(1.325f - reach, -0.2f - l_offset_billig_X), Angle(M_PI)),
+                          Pose(positionC(1.325f, -0.2f), Angle(M_PI + l_offset_GD))),
       "zone_de_ramassage_nid_petit_cote");
 
     int zone_de_ramassage_public_petit_cote_autre = Etape::makeEtape(
-      new ZoneDeRamassage(
-        Pose(positionC(1.325f - reach, 0.6f - l_offset_billig_X), Angle(M_PI + l_offset_GD)),
-        Pose(positionC(1.325f, 0.6f), Angle(M_PI + l_offset_GD))),
+      new ZoneDeRamassage(Pose(positionC(1.325f - reach, 0.6f - l_offset_billig_X), Angle(M_PI)),
+                          Pose(positionC(1.325f, 0.6f), Angle(M_PI + l_offset_GD))),
       "zone_de_ramassage_public_petit_cote");
 
     int zone_de_ramassage_public_grand_cote_autre = Etape::makeEtape(
@@ -145,9 +146,8 @@ Coupe2026::Coupe2026(const bool isYellow, rclcpp::Node::SharedPtr a_node)
     // Définition des garde mangers
 
     int garde_manger_petit_cote = Etape::makeEtape(
-      new GardeManger(
-        Pose(positionC(-1.4f + reachDepose, 0.2f + l_offset_billig_X), Angle(0 + l_offset_GD)),
-        Pose(positionC(-1.4f, 0.2f), Angle(0 + l_offset_GD))),
+      new GardeManger(Pose(positionC(-1.4f + reachDepose, 0.2f + l_offset_billig_X), Angle(0)),
+                      Pose(positionC(-1.4f, 0.2f), Angle(0))),
       "garde_manger_petit_cote");
 
     int garde_manger_public_us = Etape::makeEtape(
@@ -202,9 +202,8 @@ Coupe2026::Coupe2026(const bool isYellow, rclcpp::Node::SharedPtr a_node)
 
     // ######### Autre cote ##############
     int garde_manger_petit_cote_them = Etape::makeEtape(
-      new GardeManger(
-        Pose(positionC(1.4f - reachDepose, 0.2f - l_offset_billig_X), Angle(M_PI + l_offset_GD)),
-        Pose(positionC(1.4f, 0.2f), Angle(M_PI + l_offset_GD))),
+      new GardeManger(Pose(positionC(1.4f - reachDepose, 0.2f - l_offset_billig_X), Angle(M_PI)),
+                      Pose(positionC(1.4f, 0.2f), Angle(M_PI))),
       "garde_manger_petit_cote_them");
 
     int garde_manger_public_them = Etape::makeEtape(
