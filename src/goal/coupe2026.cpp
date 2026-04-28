@@ -82,14 +82,14 @@ Coupe2026::Coupe2026(const bool isYellow, rclcpp::Node::SharedPtr a_node)
 
     int zone_de_ramassage_centre = Etape::makeEtape(
       new ZoneDeRamassage(
-        Pose(positionC(-0.4f - l_offset_billig_X, 0.2f + reach), Angle(M_PI / 2 + l_offset_GD)),
-        Pose(positionC(-0.4f, 0.2f), Angle(M_PI / 2 + l_offset_GD))),
+        Pose(positionC(-0.35f - l_offset_billig_X, 0.2f + reach), Angle(M_PI / 2 + l_offset_GD)),
+        Pose(positionC(-0.35f, 0.2f), Angle(M_PI / 2 + l_offset_GD))),
       "zone_de_ramassage_public_petit_cote");
 
     int zone_de_ramassage_centre_from_top = Etape::makeEtape(
       new ZoneDeRamassage(
-        Pose(positionC(-0.4f + l_offset_billig_X, 0.2f - reach), Angle(-M_PI / 2 + l_offset_GD)),
-        Pose(positionC(-0.4f, 0.2f), Angle(-M_PI / 2 + l_offset_GD))),
+        Pose(positionC(-0.35f + l_offset_billig_X, 0.2f - reach), Angle(-M_PI / 2 + l_offset_GD)),
+        Pose(positionC(-0.35f, 0.2f), Angle(-M_PI / 2 + l_offset_GD))),
       "zone_de_ramassage_centre_from_top");
     Etape::get(zone_de_ramassage_centre_from_top)
       ->addEtapeLieeParFinirEtape(zone_de_ramassage_centre);
@@ -97,7 +97,7 @@ Coupe2026::Coupe2026(const bool isYellow, rclcpp::Node::SharedPtr a_node)
       ->addEtapeLieeParFinirEtape(zone_de_ramassage_centre_from_top);
 
     int point_passage_zone_de_ramassage_centre
-      = Etape::makeEtape(positionC(-0.4f, 0.2f), Etape::POINT_PASSAGE_DESACTIVE);
+      = Etape::makeEtape(positionC(-0.35f, 0.2f), Etape::POINT_PASSAGE_DESACTIVE);
 
     Etape::get(zone_de_ramassage_centre_from_top)
       ->addEtapeActiveApres(point_passage_zone_de_ramassage_centre);
@@ -124,14 +124,14 @@ Coupe2026::Coupe2026(const bool isYellow, rclcpp::Node::SharedPtr a_node)
 
     int zone_de_ramassage_centre_autre = Etape::makeEtape(
       new ZoneDeRamassage(
-        Pose(positionC(0.4f - l_offset_billig_X, 0.2f + reach), Angle(M_PI / 2 + l_offset_GD)),
-        Pose(positionC(0.4f, 0.2f), Angle(M_PI / 2 + l_offset_GD))),
+        Pose(positionC(0.35f - l_offset_billig_X, 0.2f + reach), Angle(M_PI / 2 + l_offset_GD)),
+        Pose(positionC(0.35f, 0.2f), Angle(M_PI / 2 + l_offset_GD))),
       "zone_de_ramassage_public_petit_cote");
 
     int zone_de_ramassage_centre_autre_from_top = Etape::makeEtape(
       new ZoneDeRamassage(
-        Pose(positionC(0.4f + l_offset_billig_X, 0.2f - reach), Angle(-M_PI / 2 + l_offset_GD)),
-        Pose(positionC(0.4f, 0.2f), Angle(-M_PI / 2 + l_offset_GD))),
+        Pose(positionC(0.35f + l_offset_billig_X, 0.2f - reach), Angle(-M_PI / 2 + l_offset_GD)),
+        Pose(positionC(0.35f, 0.2f), Angle(-M_PI / 2 + l_offset_GD))),
       "zone_de_ramassage_public_petit_cote_from_top");
 
     Etape::get(zone_de_ramassage_centre_autre_from_top)
@@ -140,7 +140,7 @@ Coupe2026::Coupe2026(const bool isYellow, rclcpp::Node::SharedPtr a_node)
       ->addEtapeLieeParFinirEtape(zone_de_ramassage_centre_autre_from_top);
 
     int point_passage_zone_de_ramassage_centre_autre
-      = Etape::makeEtape(positionC(0.4f, 0.2f), Etape::POINT_PASSAGE_DESACTIVE);
+      = Etape::makeEtape(positionC(0.35f, 0.2f), Etape::POINT_PASSAGE_DESACTIVE);
 
     Etape::get(zone_de_ramassage_centre_autre_from_top)
       ->addEtapeActiveApres(point_passage_zone_de_ramassage_centre_autre);
