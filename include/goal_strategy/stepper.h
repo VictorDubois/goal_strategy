@@ -82,7 +82,8 @@ private:
     // float m_;
     bool m_homing_done;
     uint8_t m_homing_sequences_done;
-    uint16_t m_max_height_mm;
+    int16_t m_max_height_mm;
+    int16_t m_min_height_mm = -150; // mm (negative value because the elevator goes down)
 
 public:
     void updateElevatorInfos(krabi_msgs::msg::InfosStepper::SharedPtr a_new_infos)
@@ -107,9 +108,14 @@ public:
         m_max_height_mm = a_max_height_mm;
     };
 
-    StepperElevator(uint16_t speed, uint16_t accel, uint16_t max_current, uint16_t a_max_height_mm)
+    StepperElevator(uint16_t speed,
+                    uint16_t accel,
+                    uint16_t max_current,
+                    int16_t a_max_height_mm,
+                    int16_t a_min_height_mm)
       : StepperMotor(speed, accel, max_current)
     {
         m_max_height_mm = a_max_height_mm;
+        m_min_height_mm = a_min_height_mm;
     };
 };

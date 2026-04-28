@@ -31,7 +31,8 @@ public:
                            bool leftcenter_up,
                            bool rightcenter_up,
                            bool rightmost_up);
-    bool reset_flipper(bool /*a_do_sleep*/);
+    void reset_flipper();
+    void auto_reset_flipper();
     bool flip_caisses(bool leftmost_up,
                       bool leftcenter_up,
                       bool rightcenter_up,
@@ -84,6 +85,7 @@ public:
 
 private:
     void conditionnal_sleep(uint a_microseconds, bool a_do_sleep);
+    void wait_for_mutex();
 
     Position m_relative_position_in_front;
     Position m_relative_position_inside;
@@ -104,4 +106,6 @@ private:
 
     bool elevatorInitHasFailed();
     uint8_t m_caisse_detected = 0;
+
+    bool m_mutexTaken = false;
 };
