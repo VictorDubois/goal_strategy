@@ -31,6 +31,7 @@ public:
                            bool leftcenter_up,
                            bool rightcenter_up,
                            bool rightmost_up);
+    bool reset_flipper(bool /*a_do_sleep*/);
     bool flip_caisses(bool leftmost_up,
                       bool leftcenter_up,
                       bool rightcenter_up,

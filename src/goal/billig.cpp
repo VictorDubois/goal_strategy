@@ -27,11 +27,15 @@
 #define SERVO_LEFTMOST_UP 0
 #define SERVO_LEFTMOST_DOWN 180
 
-#define GRABERS_HEIGHT 100   // mm
-#define ABOVE_GRABBERS 150   // mm
-#define TRANSPORT_HEIGHT 100 // mm
-#define CATCH_HEIGHT 0       // mm
-#define RELEASE_HEIGHT 5     // mm
+enum ElevatorPositionMM // Positions in millimiters, with respect to the top of the elevator
+                        //(0 when the elevator is at its highest position)
+{
+    GRABERS_LEVEL = -100,
+    ABOVE_GRABBERS = 0,
+    TRANSPORT = -50,
+    CATCH = -150,
+    RELEASE = -145
+};
 
 Billig::Billig(Position a_relative_position_in_front,
                Position a_relative_position_inside,
@@ -122,7 +126,7 @@ void Billig::initBillig(bool a_first_elevator_init)
         initializeElevator();
     }
 
-    m_stepper_elevator->goToPosition(ABOVE_GRABBERS);
+    m_stepper_elevator->goToPosition(ElevatorPositionMM::ABOVE_GRABBERS);
     usleep(1.5e6);
 
     m_pump_1->setPumping(false);
@@ -150,7 +154,7 @@ void Billig::initBillig(bool a_first_elevator_init)
     m_ax12_3->set(AX12_RIGHTCENTER_RELEASE, 100);
     m_ax12_4->set(AX12_RIGHTMOST_RELEASE, 100);
 
-    m_stepper_elevator->goToPosition(TRANSPORT_HEIGHT);
+    m_stepper_elevator->goToPosition(ElevatorPositionMM::TRANSPORT);
     usleep(1.5e6);
 }
 
@@ -168,11 +172,11 @@ bool Billig::grab_caisses(bool /*a_do_sleep*/)
 
     usleep(0.5e6);
 
-    m_stepper_elevator->goToPosition(CATCH_HEIGHT); // mm
+    m_stepper_elevator->goToPosition(ElevatorPositionMM::CATCH); // mm
 
     usleep(1.5e6);
 
-    m_stepper_elevator->goToPosition(GRABERS_HEIGHT); // mm
+    m_stepper_elevator->goToPosition(ElevatorPositionMM::GRABERS_LEVEL); // mm
 
     return true;
 }
@@ -206,7 +210,7 @@ bool Billig::drop_caisses(bool /*a_do_sleep*/)
         return false;
     }*/
 
-    m_stepper_elevator->goToPosition(RELEASE_HEIGHT);
+    m_stepper_elevator->goToPosition(ElevatorPositionMM::RELEASE);
 
     usleep(0.5e6);
 
@@ -215,7 +219,39 @@ bool Billig::drop_caisses(bool /*a_do_sleep*/)
     m_pump_3->setPumping(false);
     m_pump_4->setPumping(false);
     usleep(1.5e6);
-    m_stepper_elevator->goToPosition(TRANSPORT_HEIGHT);
+    m_stepper_elevator->goToPosition(ElevatorPositionMM::TRANSPORT);
+
+    return success;
+}
+
+bool Billig::reset_flipper(bool /*a_do_sleep*/)
+{
+    bool success = true;
+    m_stepper_elevator->goToPosition(ElevatorPositionMM::ABOVE_GRABBERS);
+    m_pump_1->release();
+    m_pump_2->release();
+    m_pump_3->release();
+    m_pump_4->release();
+    usleep(1.5e6);
+
+    m_ax12_1->set(AX12_LEFTMOST_GRAB, 100);
+    m_ax12_2->set(AX12_LEFTCENTER_GRAB, 100);
+    m_ax12_3->set(AX12_RIGHTCENTER_GRAB, 100);
+    m_ax12_4->set(AX12_RIGHTMOST_GRAB, 100);
+
+    usleep(1.5e6);
+
+    m_servo_magnet_1->set(SERVO_LEFTMOST_UP, 100);
+    m_servo_magnet_2->set(SERVO_LEFTCENTER_UP, 100);
+    m_servo_magnet_3->set(SERVO_RIGHTCENTER_UP, 100);
+    m_servo_magnet_4->set(SERVO_RIGHTMOST_UP, 100);
+
+    usleep(1.5e6);
+
+    m_ax12_1->set(AX12_LEFTMOST_RELEASE, 100);
+    m_ax12_2->set(AX12_LEFTCENTER_RELEASE, 100);
+    m_ax12_3->set(AX12_RIGHTCENTER_RELEASE, 100);
+    m_ax12_4->set(AX12_RIGHTMOST_RELEASE, 100);
 
     return success;
 }
@@ -227,7 +263,7 @@ bool Billig::flip_caisses(bool leftmost_up,
                           bool /*a_do_sleep*/)
 {
     bool success = true;
-    m_stepper_elevator->goToPosition(GRABERS_HEIGHT);
+    m_stepper_elevator->goToPosition(ElevatorPositionMM::GRABERS_LEVEL);
     usleep(1.5e6);
 
     m_ax12_1->set(AX12_LEFTMOST_GRAB, 100);
@@ -241,7 +277,7 @@ bool Billig::flip_caisses(bool leftmost_up,
     m_pump_3->setPumping(false);
     m_pump_4->setPumping(false);
     usleep(1.5e6);
-    m_stepper_elevator->goToPosition(ABOVE_GRABBERS);
+    m_stepper_elevator->goToPosition(ElevatorPositionMM::ABOVE_GRABBERS);
     usleep(1.5e6);
 
     if (leftmost_up)
@@ -287,7 +323,7 @@ bool Billig::flip_caisses(bool leftmost_up,
     m_pump_3->setPumping(true);
     m_pump_4->setPumping(true);
     usleep(0.5e6);
-    m_stepper_elevator->goToPosition(GRABERS_HEIGHT);
+    m_stepper_elevator->goToPosition(ElevatorPositionMM::GRABERS_LEVEL);
 
     usleep(1.5e6);
 
