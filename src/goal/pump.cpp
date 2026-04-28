@@ -18,6 +18,7 @@ void Pump::setPumping(bool a_enable)
 void Pump::release()
 {
     m_release = true;
+    m_enable = false;
 }
 
 bool Pump::getPumping()
