@@ -963,7 +963,7 @@ bool GoalStrat::isParked()
     }
     else if (m_year == 2025 || m_year == 2026)
     {
-        // Only one spot in 2025
+        // Only one spot in 2025 and 2026
         l_valid_end_locations.push_back(m_strat_graph->getParkedPosition());
     }
 
@@ -1121,7 +1121,7 @@ void GoalStrat::stateRun()
         {
             Position positionFunny = m_strat_graph->getParkedPosition();
 
-            float l_X_threshold = 1.2;
+            float l_X_threshold = abs(positionFunny.getX()) - 0.15;
             if (m_funny_action_X_hysteresis)
             {
                 l_X_threshold -= 0.05;
