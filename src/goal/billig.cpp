@@ -115,13 +115,18 @@ void Billig::auto_reset_flipper()
     reset_flipper_thread.detach();
 }
 
-void Billig::auto_flip_caisses(bool leftmost_up,
-                               bool leftcenter_up,
-                               bool rightcenter_up,
-                               bool rightmost_up)
+void Billig::auto_flip_caisses(bool leftmost_flip,
+                               bool leftcenter_flip,
+                               bool rightcenter_flip,
+                               bool rightmost_flip)
 {
-    auto flip_caisses_thread = std::thread(
-      &Billig::flip_caisses, this, leftmost_up, leftcenter_up, rightcenter_up, rightmost_up, true);
+    auto flip_caisses_thread = std::thread(&Billig::flip_caisses,
+                                           this,
+                                           leftmost_flip,
+                                           leftcenter_flip,
+                                           rightcenter_flip,
+                                           rightmost_flip,
+                                           true);
     flip_caisses_thread.detach();
 }
 
@@ -283,10 +288,10 @@ void Billig::wait_for_mutex()
     m_mutexTaken = true;
 }
 
-bool Billig::flip_caisses(bool leftmost_up,
-                          bool leftcenter_up,
-                          bool rightcenter_up,
-                          bool rightmost_up,
+bool Billig::flip_caisses(bool leftmost_flip,
+                          bool leftcenter_flip,
+                          bool rightcenter_flip,
+                          bool rightmost_flip,
                           bool /*a_do_sleep*/)
 {
     wait_for_mutex();
@@ -308,7 +313,7 @@ bool Billig::flip_caisses(bool leftmost_up,
     m_stepper_elevator->goToPosition(ElevatorPositionMM::ABOVE_GRABBERS);
     usleep(1.5e6);
 
-    if (leftmost_up)
+    if (leftmost_flip == (m_servo_magnet_1->getAngle() == SERVO_LEFTMOST_DOWN))
     {
         m_servo_magnet_1->set(SERVO_LEFTMOST_UP, 100);
     }
@@ -317,7 +322,7 @@ bool Billig::flip_caisses(bool leftmost_up,
         m_servo_magnet_1->set(SERVO_LEFTMOST_DOWN, 100);
     }
 
-    if (leftcenter_up)
+    if (leftcenter_flip == (m_servo_magnet_2->getAngle() == SERVO_LEFTCENTER_DOWN))
     {
         m_servo_magnet_2->set(SERVO_LEFTCENTER_UP, 100);
     }
@@ -326,7 +331,7 @@ bool Billig::flip_caisses(bool leftmost_up,
         m_servo_magnet_2->set(SERVO_LEFTCENTER_DOWN, 100);
     }
 
-    if (rightcenter_up)
+    if (rightcenter_flip == (m_servo_magnet_3->getAngle() == SERVO_RIGHTCENTER_DOWN))
     {
         m_servo_magnet_3->set(SERVO_RIGHTCENTER_UP, 100);
     }
@@ -335,7 +340,7 @@ bool Billig::flip_caisses(bool leftmost_up,
         m_servo_magnet_3->set(SERVO_RIGHTCENTER_DOWN, 100);
     }
 
-    if (rightmost_up)
+    if (rightmost_flip == (m_servo_magnet_4->getAngle() == SERVO_RIGHTMOST_DOWN))
     {
         m_servo_magnet_4->set(SERVO_RIGHTMOST_UP, 100);
     }

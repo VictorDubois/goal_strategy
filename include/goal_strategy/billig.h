@@ -27,16 +27,16 @@ public:
 
     bool grab_caisses(bool a_do_sleep = true);
     bool drop_caisses(bool a_do_sleep = true);
-    void auto_flip_caisses(bool leftmost_up,
-                           bool leftcenter_up,
-                           bool rightcenter_up,
-                           bool rightmost_up);
+    void auto_flip_caisses(bool leftmost_flip,
+                           bool leftcenter_flip,
+                           bool rightcenter_flip,
+                           bool rightmost_flip);
     void reset_flipper();
     void auto_reset_flipper();
-    bool flip_caisses(bool leftmost_up,
-                      bool leftcenter_up,
-                      bool rightcenter_up,
-                      bool rightmost_up,
+    bool flip_caisses(bool leftmost_flip,
+                      bool leftcenter_flip,
+                      bool rightcenter_flip,
+                      bool rightmost_flip,
                       bool a_do_sleep = true);
     void setInFront();
     void setInside();

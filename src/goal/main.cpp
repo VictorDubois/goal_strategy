@@ -1298,7 +1298,7 @@ void GoalStrat::stateRun()
                 }
                 m_billig->drop_caisses();
                 m_strat_graph->dropCaisses(m_strat_graph->getEtapeEnCours());
-                m_billig->auto_reset_flipper();
+                // m_billig->auto_reset_flipper();
             }
             break;
 
@@ -1329,10 +1329,10 @@ void GoalStrat::stateRun()
                 m_billig->grab_caisses();
                 m_strat_graph->grabCaisses(m_strat_graph->getEtapeEnCours());
 
-                m_billig->auto_flip_caisses(m_leftmost_caisse_is_our_side_up,
-                                            m_leftcenter_caisse_is_our_side_up,
-                                            m_rightcenter_caisse_is_our_side_up,
-                                            m_rightmost_caisse_is_our_side_up);
+                m_billig->auto_flip_caisses(!m_leftmost_caisse_is_our_side_up,
+                                            !m_leftcenter_caisse_is_our_side_up,
+                                            !m_rightcenter_caisse_is_our_side_up,
+                                            !m_rightmost_caisse_is_our_side_up);
             }
             break;
 #endif
