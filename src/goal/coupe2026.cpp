@@ -47,7 +47,7 @@ Coupe2026::Coupe2026(const bool isYellow, rclcpp::Node::SharedPtr a_node)
     // Les étapes qui correspondant à des actions sont créées automatiquement lors de l'ajout
     // d'actions
 
-    int nid = Etape::makeEtape(positionC(-1.25f, -0.75f), "NID", Etape::DEPART);
+    int nid = Etape::makeEtape(positionC(-1.1f, -0.75f), "NID", Etape::DEPART);
 
     float reach = 0.22f; // Offset billig/centre de roues, en Y, en mètres
     float reachDepose = reach + 0.075f;
