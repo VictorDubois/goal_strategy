@@ -6,6 +6,8 @@ void create_subscriptions(
     callback_remaining_time_match,
   rclcpp::Subscription<std_msgs::msg::Bool>::SharedPtr& a_tirette_sub,
   std::function<void(const std_msgs::msg::Bool::SharedPtr)> callback_tirette_sub,
+  rclcpp::Subscription<std_msgs::msg::Bool>::SharedPtr& a_recalage_sub,
+  std::function<void(const std_msgs::msg::Bool::SharedPtr)> callback_recalage_sub,
   rclcpp::Subscription<std_msgs::msg::Float32>::SharedPtr& a_vacuum_sub,
   std::function<void(const std_msgs::msg::Float32::SharedPtr)> callback_vacuum_sub,
   rclcpp::Subscription<geometry_msgs::msg::PoseArray>::SharedPtr& a_other_robots_sub,
@@ -47,4 +49,7 @@ void create_subscriptions(
       "dynamic_obstacles", 5, callback_other_robots_sub, l_sub_options);
     a_caisses_sides_sub = goal_node->create_subscription<krabi_msgs::msg::CaissesSides>(
       "caisses_sides", 5, callback_caisses_sides_sub, l_sub_options);
+
+    a_recalage_sub = goal_node->create_subscription<std_msgs::msg::Bool>(
+      "recalage", 5, callback_recalage_sub, l_sub_options);
 }

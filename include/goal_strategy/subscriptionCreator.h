@@ -22,6 +22,8 @@ void create_subscriptions(
     callback_remaining_time_match,
   rclcpp::Subscription<std_msgs::msg::Bool>::SharedPtr& a_tirette_sub,
   std::function<void(const std_msgs::msg::Bool::SharedPtr)> callback_tirette_sub,
+  rclcpp::Subscription<std_msgs::msg::Bool>::SharedPtr& a_recalage_sub,
+  std::function<void(const std_msgs::msg::Bool::SharedPtr)> callback_recalage_sub,
   rclcpp::Subscription<std_msgs::msg::Float32>::SharedPtr& a_vacuum_sub,
   std::function<void(const std_msgs::msg::Float32::SharedPtr)> callback_vacuum_sub,
   rclcpp::Subscription<geometry_msgs::msg::PoseArray>::SharedPtr& a_other_robots_sub,

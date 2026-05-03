@@ -59,6 +59,7 @@ public:
     enum class State
     {
         INIT,
+        RECALAGE_BORDURE,
         WAIT_TIRETTE,
         RUN,
         EXIT,
@@ -106,9 +107,12 @@ private:
     void checkStopMatch();
     bool checkFunnyAction();
 
+    void resetOdometry();
+
     void updateCurrentPose();
     void updateRemainingTime(builtin_interfaces::msg::Duration::SharedPtr remainingTime);
     void updateTirette(std_msgs::msg::Bool::SharedPtr tirette);
+    void updateRecalage(std_msgs::msg::Bool::SharedPtr recalage);
     void updateVacuum(std_msgs::msg::Float32::SharedPtr vacuum_msg);
     void updateCaissesSides(krabi_msgs::msg::CaissesSides::SharedPtr a_caisses_sides_msg);
     void updateAX12Info(krabi_msgs::msg::AX12Info::SharedPtr ax12_msg, uint8_t);
@@ -177,6 +181,7 @@ private:
     rclcpp::Publisher<krabi_msgs::msg::StratMovement>::SharedPtr m_strat_movement_pub;
     rclcpp::Subscription<builtin_interfaces::msg::Duration>::SharedPtr m_remaining_time_match_sub;
     rclcpp::Subscription<std_msgs::msg::Bool>::SharedPtr m_tirette_sub;
+    rclcpp::Subscription<std_msgs::msg::Bool>::SharedPtr m_recalage_sub;
     rclcpp::Subscription<std_msgs::msg::Float32>::SharedPtr m_vacuum_sub;
     rclcpp::Subscription<geometry_msgs::msg::PoseArray>::SharedPtr m_other_robots_sub;
     rclcpp::Subscription<krabi_msgs::msg::InfosStepper>::SharedPtr m_elevator_sub;
@@ -205,6 +210,7 @@ private:
     bool m_funny_action_counted;
     krabi_msgs::msg::StratMovement m_strat_mvnt;
     bool m_tirette;
+    bool m_recalage;
     float m_vacuum_level;
     int m_vacuum_state;
     bool m_all_done_do_funny = false;

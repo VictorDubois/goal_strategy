@@ -530,6 +530,7 @@ GoalStrat::GoalStrat()
 
     m_state = State::INIT;
     m_tirette = false;
+    m_recalage = false;
     m_vacuum_level = 0.f;
     m_vacuum_state = OPEN_AIR;
 
@@ -671,6 +672,8 @@ GoalStrat::GoalStrat()
                          std::bind(&GoalStrat::updateRemainingTime, this, std::placeholders::_1),
                          m_tirette_sub,
                          std::bind(&GoalStrat::updateTirette, this, std::placeholders::_1),
+                         m_recalage_sub,
+                         std::bind(&GoalStrat::updateRecalage, this, std::placeholders::_1),
                          m_vacuum_sub,
                          std::bind(&GoalStrat::updateVacuum, this, std::placeholders::_1),
                          m_other_robots_sub,
@@ -759,6 +762,16 @@ void GoalStrat::updateDigitalReads([[maybe_unused]] std_msgs::msg::Byte::SharedP
 void GoalStrat::updateTirette(std_msgs::msg::Bool::SharedPtr tirette)
 {
     m_tirette = tirette->data;
+}
+
+/**
+ * @brief Update the recalage state
+ *
+ * @param recalage msg
+ */
+void GoalStrat::updateRecalage(std_msgs::msg::Bool::SharedPtr recalage)
+{
+    m_recalage = recalage->data;
 }
 
 /**
@@ -1473,6 +1486,19 @@ void GoalStrat::init()
     m_running = std::thread(&GoalStrat::publishAll, this);
 }
 
+void GoalStrat::resetOdometry()
+{
+    m_strat_mvnt.reset_odometry = true;
+    m_strat_mvnt.max_speed.linear.x = 0;
+    m_strat_mvnt.max_speed.angular.z = 0;
+    for (int i = 0; i < 10; i++)
+    {
+        publishStratMovement();
+        usleep(100000); // Sleep 100ms to be sure the message is sent and processed
+    }
+    m_strat_mvnt.reset_odometry = false;
+}
+
 /**
  * @brief State machine that handles the different goals
  *
@@ -1488,12 +1514,33 @@ void GoalStrat::loop()
     case State::INIT:
         // init(); //init before
         break;
+    case State::RECALAGE_BORDURE:
+        recule(rclcpp::Duration(2, 0), Distance(0.2));
+
+        avanceDroit(rclcpp::Duration(3, 0), Distance(0.2));
+        alignWithAngleWithTimeout(Angle(M_PI / 2));
+
+        resetOdometry();
+
+        recule(rclcpp::Duration(2, 0), Distance(0.2));
+
+        avanceDroit(rclcpp::Duration(3, 0), Distance(0.2));
+        alignWithAngleWithTimeout(Angle(0));
+        resetOdometry();
+
+        m_state = State::WAIT_TIRETTE;
+        break;
     case State::WAIT_TIRETTE:
 #ifdef YEAR_2025
         m_grabi->initializeElevator();
 #elif defined(YEAR_2026)
         m_billig->initBillig(true);
 #endif
+        if (m_recalage)
+        {
+            m_state = State::RECALAGE_BORDURE;
+            break;
+        }
         if (m_state == State::WAIT_TIRETTE && m_tirette && m_remainig_time > rclcpp::Duration(1, 0))
         {
             m_state = State::RUN;
