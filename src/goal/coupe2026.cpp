@@ -69,7 +69,7 @@ Coupe2026::Coupe2026(const bool isYellow, rclcpp::Node::SharedPtr a_node)
       "zone_de_ramassage_nid_petit_cote");
 
     int point_passage_zone_de_ramassage_nid_petit_cote = Etape::makeEtape(
-      positionC(-1.325f + reach, -0.3f + l_offset_billig_X), Etape::POINT_PASSAGE);
+      positionC(-1.325f + reach, -0.4f + l_offset_billig_X), Etape::POINT_PASSAGE);
 
     int zone_de_ramassage_public_petit_cote = Etape::makeEtape(
       new ZoneDeRamassage(
