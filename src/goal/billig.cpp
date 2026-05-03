@@ -136,6 +136,12 @@ void Billig::initBillig(bool a_first_elevator_init)
 
     if (a_first_elevator_init)
     {
+        if (m_billig_init_done)
+        {
+            m_mutexTaken = false;
+            return;
+        }
+        m_billig_init_done = true;
         initializeElevator();
     }
 

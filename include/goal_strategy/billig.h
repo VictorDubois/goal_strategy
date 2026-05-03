@@ -106,6 +106,7 @@ private:
 
     bool elevatorInitHasFailed();
     uint8_t m_caisse_detected = 0;
+    bool m_billig_init_done = false;
 
     bool m_mutexTaken = false;
 };
