@@ -305,16 +305,41 @@ bool Billig::flip_caisses(bool leftmost_flip,
     m_stepper_elevator->goToPosition(ElevatorPositionMM::GRABERS_LEVEL);
     usleep(1.5e6);
 
-    m_ax12_1->set(AX12_LEFTMOST_GRAB, 100);
-    m_ax12_2->set(AX12_LEFTCENTER_GRAB, 100);
-    m_ax12_3->set(AX12_RIGHTCENTER_GRAB, 100);
-    m_ax12_4->set(AX12_RIGHTMOST_GRAB, 100);
+    if (leftmost_flip)
+    {
+        m_ax12_1->set(AX12_LEFTMOST_GRAB, 100);
+    }
+    if (leftcenter_flip)
+    {
+        m_ax12_2->set(AX12_LEFTCENTER_GRAB, 100);
+    }
+    if (rightcenter_flip)
+    {
+        m_ax12_3->set(AX12_RIGHTCENTER_GRAB, 100);
+    }
+    if (rightmost_flip)
+    {
+        m_ax12_4->set(AX12_RIGHTMOST_GRAB, 100);
+    }
     usleep(1.5e6);
 
-    m_pump_1->release();
-    m_pump_2->release();
-    m_pump_3->release();
-    m_pump_4->release();
+    if (leftmost_flip)
+    {
+        m_pump_1->release();
+    }
+    if (leftcenter_flip)
+    {
+        m_pump_2->release();
+    }
+    if (rightcenter_flip)
+    {
+        m_pump_3->release();
+    }
+    if (rightmost_flip)
+    {
+        m_pump_4->release();
+    }
+
     usleep(1.5e6);
     m_stepper_elevator->goToPosition(ElevatorPositionMM::ABOVE_GRABBERS);
     usleep(1.5e6);
