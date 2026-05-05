@@ -238,6 +238,16 @@ public:
 
     void activeEtapesApres();
 
+    void setBoostManuelDeScore(float boost)
+    {
+        m_boost_manuel_de_score = boost;
+    }
+
+    float getBoostManuelDeScore()
+    {
+        return m_boost_manuel_de_score;
+    }
+
 private:
     /** @brief Constructeur d'une etape *
      *   @param position Position de cette étape *
@@ -311,4 +321,6 @@ private:
 
     bool m_active = true;
     std::vector<Etape*> m_etapes_a_activer_apres;
+
+    float m_boost_manuel_de_score = 0.f;
 };

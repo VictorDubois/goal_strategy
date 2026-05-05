@@ -256,6 +256,10 @@ Coupe2026::Coupe2026(const bool isYellow, rclcpp::Node::SharedPtr a_node)
 
     Etape::get(debut_thermometre)->setNumeroEtapeFinAction(fin_thermometre);
 
+    Etape::get(zone_de_ramassage_public_grand_cote)->addEtapeActiveApres(debut_thermometre);
+    Etape::get(debut_thermometre)->addEtapeActiveApres(garde_manger_public_us);
+    Etape::get(zone_de_ramassage_public_grand_cote)->setBoostManuelDeScore(3);
+
     // Définitions des voisins
 
     Etape::get(point_passage_zone_de_ramassage_nid_petit_cote)
@@ -672,7 +676,7 @@ int Coupe2026::getScoreEtape(int i)
         }
         break;
     case Etape::THERMOMETRE:
-        // l_score = 10;
+        l_score = 10;
         break;
     case Etape::POINT_PASSAGE:
         l_score = 0;
@@ -680,6 +684,7 @@ int Coupe2026::getScoreEtape(int i)
     default:
         return 0;
     }
+    l_score += this->m_tableau_etapes_total[i]->getBoostManuelDeScore();
     return l_score;
 }
 
