@@ -684,7 +684,10 @@ int Coupe2026::getScoreEtape(int i)
     default:
         return 0;
     }
-    l_score += this->m_tableau_etapes_total[i]->getBoostManuelDeScore();
+    if (l_score > 0)
+    {
+        l_score += this->m_tableau_etapes_total[i]->getBoostManuelDeScore();
+    }
     return l_score;
 }
 
