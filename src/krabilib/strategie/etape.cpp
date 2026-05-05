@@ -190,7 +190,7 @@ bool Etape::aEviter()
 
 void Etape::oublieRobotVu()
 {
-    if (this->aEviter() && this->getEtapeType() != POINT_PASSAGE_DESACTIVE)
+    if (this->aEviter() && this->getEtapeType() < Etape::EtapeType::PIVOT_DESACTIVEE)
     {
         // On oublie qu'on a vu un robot
         this->setEtapeType((EtapeType)((int)this->getEtapeType() - ROBOT_VU_ICI));
@@ -243,6 +243,12 @@ std::vector<int> Etape::getEtapeActiveApres()
 void Etape::addEtapeActiveApres(int a_numeroEtapeActiveApres)
 {
     this->numerosEtapeActiveApres.push_back(a_numeroEtapeActiveApres);
+    if (Etape::get(a_numeroEtapeActiveApres)->getEtapeType() < Etape::EtapeType::PIVOT_DESACTIVEE)
+    {
+        Etape::get(a_numeroEtapeActiveApres)
+          ->setEtapeType((EtapeType)(Etape::get(a_numeroEtapeActiveApres)->getEtapeType()
+                                     + Etape::EtapeType::PIVOT_DESACTIVEE));
+    }
 }
 
 void Etape::setEtapesLieesParFinirEtape(std::vector<int> numerosEtapesLieesParFinirEtape)

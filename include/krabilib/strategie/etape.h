@@ -24,7 +24,12 @@ public:
         POINT_PASSAGE = 0x30,
 
         ROBOT_VU_ICI = 0x60,
-        POINT_PASSAGE_DESACTIVE = 0x121
+
+        PIVOT_DESACTIVEE = 0x100,
+
+        POINT_PASSAGE_DESACTIVE = 0x130,
+        THERMOMETRE_DESACTIVE = 0x12A,
+        GARDE_MANGER_DESACTIVE = 0x128
     };
 
     static int makeEtape(MediumLevelAction* action);

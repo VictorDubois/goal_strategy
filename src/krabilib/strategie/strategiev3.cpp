@@ -173,10 +173,12 @@ int StrategieV3::update()
                      m_tableau_etapes_total[m_etape_en_cours]->getEtapeActiveApres())
                 {
                     if (Etape::get(l_etape_a_activer)->getEtapeType()
-                        == Etape::EtapeType::POINT_PASSAGE_DESACTIVE)
+                        > Etape::EtapeType::PIVOT_DESACTIVEE)
                     {
                         Etape::get(l_etape_a_activer)
-                          ->setEtapeType(Etape::EtapeType::POINT_PASSAGE);
+                          ->setEtapeType(
+                            Etape::EtapeType(Etape::get(l_etape_a_activer)->getEtapeType()
+                                             - Etape::EtapeType::PIVOT_DESACTIVEE));
                     }
                 }
 
