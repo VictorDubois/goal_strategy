@@ -258,7 +258,7 @@ Coupe2026::Coupe2026(const bool isYellow, rclcpp::Node::SharedPtr a_node)
 
     Etape::get(zone_de_ramassage_public_grand_cote)->addEtapeActiveApres(debut_thermometre);
     Etape::get(debut_thermometre)->addEtapeActiveApres(garde_manger_public_us);
-    Etape::get(zone_de_ramassage_public_grand_cote)->setBoostManuelDeScore(3);
+    // Etape::get(zone_de_ramassage_public_grand_cote)->setBoostManuelDeScore(1);
 
     // Définitions des voisins
 
@@ -360,6 +360,10 @@ Coupe2026::Coupe2026(const bool isYellow, rclcpp::Node::SharedPtr a_node)
     m_numero_etape_garage = nid; // Must be set!
 
     m_nombre_etapes = Etape::getTotalEtapes();
+
+    // Etape::get(zone_de_ramassage_public_grand_cote)->setBoostManuelDeScore(1);
+    // Etape::get(zone_de_ramassage_nid_petit_cote)->setBoostManuelDeScore(1);
+    // Etape::get(zone_de_ramassage_public_petit_cote)->setBoostManuelDeScore(1);
 
     // Lancer Dijkstra
     startDijkstra();
