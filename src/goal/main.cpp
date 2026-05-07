@@ -1514,6 +1514,7 @@ void GoalStrat::loop()
     case State::INIT:
         // init(); //init before
         break;
+
     case State::RECALAGE_BORDURE:
         recule(rclcpp::Duration(2, 0), Distance(0.2));
 
@@ -1528,6 +1529,7 @@ void GoalStrat::loop()
         alignWithAngleWithTimeout(Angle(0));
         resetOdometry();
 
+        m_recalage = false;
         m_state = State::WAIT_TIRETTE;
         break;
     case State::WAIT_TIRETTE:
