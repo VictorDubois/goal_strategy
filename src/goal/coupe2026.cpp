@@ -68,7 +68,7 @@ Coupe2026::Coupe2026(const bool isYellow, rclcpp::Node::SharedPtr a_node)
         Pose(positionC(-1.325f, -0.2f), Angle(0 + l_offset_BY))),
       "zone_de_ramassage_nid_petit_cote");
 
-    int point_passage_zone_de_ramassage_nid_petit_cote = Etape::makeEtape(
+    [[maybe_unused]] int point_passage_zone_de_ramassage_nid_petit_cote = Etape::makeEtape(
       positionC(-1.325f + reach, -0.4f + l_offset_billig_X), Etape::POINT_PASSAGE);
 
     int zone_de_ramassage_public_petit_cote = Etape::makeEtape(
@@ -568,6 +568,18 @@ etape->getCustomName()*/
             {
                 Etape* child = etape->getChild(child_id);
 
+                // Is the line bidirectional?
+                bool is_bidirectional = false;
+                auto child_children = child->getChildren();
+                for (int i = 0; i < child->getNbChildren(); i++)
+                {
+                    if (child_children[i]->getNumero() == etape->getNumero())
+                    {
+                        is_bidirectional = true;
+                        break;
+                    }
+                }
+
                 bool is_on_the_path = false;
                 auto l_etape_path = this->getGoal();
                 while (true)
@@ -616,6 +628,14 @@ etape->getCustomName()*/
                 line.color.g = 0;
                 line.color.b = 0;
                 line.color.a = 0.5;
+
+                if (!is_bidirectional)
+                {
+                    line.color.a = 0.4;
+                    line.type = visualization_msgs::msg::Marker::ARROW;
+                    line.pose = Pose(etape->getPosition(), l_direction);
+                }
+
                 line.lifetime = rclcpp::Duration(0, 0); // Does not disapear
                 line.frame_locked = true;
                 line.action = visualization_msgs::msg::Marker::MODIFY;
