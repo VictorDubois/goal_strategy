@@ -262,8 +262,9 @@ Coupe2026::Coupe2026(const bool isYellow, rclcpp::Node::SharedPtr a_node)
 
     // Définitions des voisins
 
-    Etape::get(point_passage_zone_de_ramassage_nid_petit_cote)
-      ->addVoisins(zone_de_ramassage_nid_petit_cote, nid);
+    // Etape::get(point_passage_zone_de_ramassage_nid_petit_cote)->addVoisins(zone_de_ramassage_nid_petit_cote,
+    // nid);
+    Etape::get(nid)->addVoisin(zone_de_ramassage_nid_petit_cote);
 
     Etape::get(zone_de_ramassage_nid_petit_cote)->addVoisins(zone_de_ramassage_public_petit_cote);
     Etape::get(zone_de_ramassage_public_petit_cote)
@@ -282,16 +283,22 @@ Coupe2026::Coupe2026(const bool isYellow, rclcpp::Node::SharedPtr a_node)
                    zone_de_ramassage_centre);
 
     Etape::get(garde_manger_public_milieu)
-      ->addVoisins(zone_de_ramassage_centre,
-                   zone_de_ramassage_centre_autre,
+      ->addVoisins(/*zone_de_ramassage_centre,
+                   zone_de_ramassage_centre_autre,*/
                    zone_de_ramassage_public_grand_cote,
                    zone_de_ramassage_public_grand_cote_autre);
+    Etape::get(zone_de_ramassage_centre)->addVoisin(garde_manger_public_milieu, false);
+    Etape::get(zone_de_ramassage_centre_autre)->addVoisin(garde_manger_public_milieu, false);
 
     Etape::get(garde_manger_centre_milieu)
-      ->addVoisins(zone_de_ramassage_centre,
-                   zone_de_ramassage_centre_autre,
-                   zone_de_ramassage_public_grand_cote,
-                   zone_de_ramassage_public_grand_cote_autre);
+      ->addVoisins(garde_manger_public_milieu,
+                   zone_de_ramassage_centre,
+                   zone_de_ramassage_centre_autre
+                   /*,zone_de_ramassage_public_grand_cote,
+                   zone_de_ramassage_public_grand_cote_autre*/);
+    Etape::get(zone_de_ramassage_public_grand_cote)->addVoisin(garde_manger_centre_milieu, false);
+    Etape::get(zone_de_ramassage_public_grand_cote_autre)
+      ->addVoisin(garde_manger_centre_milieu, false);
 
     Etape::get(point_passage_zone_de_ramassage_centre)
       ->addVoisins(zone_de_ramassage_centre, zone_de_ramassage_centre_from_top);
@@ -304,9 +311,11 @@ Coupe2026::Coupe2026(const bool isYellow, rclcpp::Node::SharedPtr a_node)
                    zone_de_ramassage_public_petit_cote_autre);
 
     Etape::get(zone_de_ramassage_public_grand_cote)
-      ->addVoisins(zone_de_ramassage_centre, zone_de_ramassage_public_grand_cote_autre);
+      ->addVoisins(/*zone_de_ramassage_centre, */ zone_de_ramassage_public_grand_cote_autre);
+    // Etape::get(zone_de_ramassage_public_grand_cote_autre)->addVoisins(/*zone_de_ramassage_centre_autre,*/
+    // zone_de_ramassage_centre);
     Etape::get(zone_de_ramassage_public_grand_cote_autre)
-      ->addVoisins(zone_de_ramassage_centre_autre, zone_de_ramassage_centre);
+      ->addVoisin(zone_de_ramassage_centre, false);
     Etape::get(zone_de_ramassage_public_petit_cote_autre)
       ->addVoisins(zone_de_ramassage_public_grand_cote_autre);
     Etape::get(zone_de_ramassage_nid_petit_cote_autre)
@@ -319,7 +328,7 @@ Coupe2026::Coupe2026(const bool isYellow, rclcpp::Node::SharedPtr a_node)
                    zone_de_ramassage_public_grand_cote_autre);
     Etape::get(garde_manger_centre_them)
       ->addVoisins(zone_de_ramassage_public_petit_cote_autre,
-                   zone_de_ramassage_public_grand_cote_autre,
+                   /*zone_de_ramassage_public_grand_cote_autre,*/
                    zone_de_ramassage_centre_autre);
 
     // From top
