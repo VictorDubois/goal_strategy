@@ -841,7 +841,14 @@ bool GoalStrat::checkFunnyAction()
     {
         return true;
     }
-    const rclcpp::Duration funny_action_timing = rclcpp::Duration(15, 0); // 10s before T=0;
+
+    if (m_year == 2026)
+    {
+        // No need to prioritize funny action in 2026
+        return false;
+    }
+
+    const rclcpp::Duration funny_action_timing = rclcpp::Duration(10, 0); // 10s before T=0;
 
     if (m_remainig_time.seconds() < funny_action_timing.seconds())
     {

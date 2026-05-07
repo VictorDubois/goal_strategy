@@ -669,6 +669,10 @@ int Coupe2026::getScoreEtape(int i)
 
     case Etape::DEPART:
         l_score = 0;
+        if (getRemainingTime() > 85 * 1e3)
+        {
+            l_score = 10;
+        }
         break;
     case Etape::ZONE_DE_RAMASSAGE:
         l_score = 3;
@@ -684,15 +688,7 @@ int Coupe2026::getScoreEtape(int i)
 
         if (m_stock.size() && l_stock_area == 0)
         {
-            l_score = 6;
-            if (l_stock_area <= 4)
-            {
-                l_score = 12;
-            }
-            if (l_stock_area == 0)
-            {
-                l_score = 24;
-            }
+            l_score = 17;
         }
         break;
     case Etape::THERMOMETRE:
