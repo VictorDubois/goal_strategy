@@ -641,7 +641,7 @@ GoalStrat::GoalStrat()
                                         l_pump_4);
 
     m_actuators = Actuators2025(rclcpp::Node::SharedPtr(this),
-                                "actuators2026",
+                                "actuators2025",
                                 l_servo_grabi_left_most,
                                 l_servo_grabi_center_left,
                                 l_servo_grabi_center_right,
