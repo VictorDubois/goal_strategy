@@ -4,16 +4,16 @@
 #include <thread>
 
 #define AX12_LEFTMOST_GRAB 0
-#define AX12_LEFTMOST_RELEASE 500
+#define AX12_LEFTMOST_RELEASE 1000
 
 #define AX12_LEFTCENTER_GRAB 0
-#define AX12_LEFTCENTER_RELEASE 500
+#define AX12_LEFTCENTER_RELEASE 1000
 
 #define AX12_RIGHTCENTER_GRAB 0
-#define AX12_RIGHTCENTER_RELEASE 500
+#define AX12_RIGHTCENTER_RELEASE 1000
 
 #define AX12_RIGHTMOST_GRAB 0
-#define AX12_RIGHTMOST_RELEASE 500
+#define AX12_RIGHTMOST_RELEASE 1000
 
 #define SERVO_RIGHTMOST_UP 0
 #define SERVO_RIGHTMOST_DOWN 180
@@ -30,11 +30,11 @@
 enum ElevatorPositionMM // Positions in millimiters, with respect to the top of the elevator
                         //(0 when the elevator is at its highest position)
 {
-    GRABERS_LEVEL = -100,
+    GRABERS_LEVEL = -10,
     ABOVE_GRABBERS = 0,
-    TRANSPORT = -50,
-    CATCH = -150,
-    RELEASE = -145
+    TRANSPORT = -10,
+    CATCH = -90,
+    RELEASE = -85
 };
 
 Billig::Billig(Position a_relative_position_in_front,
@@ -133,6 +133,13 @@ void Billig::auto_flip_caisses(bool leftmost_flip,
 void Billig::initBillig(bool a_first_elevator_init)
 {
     wait_for_mutex();
+    unsigned int l_speed = 250;
+
+    // close grabbers before turning
+    m_ax12_1->set(AX12_LEFTMOST_GRAB, l_speed);
+    m_ax12_2->set(AX12_LEFTCENTER_GRAB, l_speed);
+    m_ax12_3->set(AX12_RIGHTCENTER_GRAB, l_speed);
+    m_ax12_4->set(AX12_RIGHTMOST_GRAB, l_speed);
 
     if (a_first_elevator_init)
     {
@@ -143,6 +150,7 @@ void Billig::initBillig(bool a_first_elevator_init)
         }
         m_billig_init_done = true;
         initializeElevator();
+        usleep(15e6);
     }
 
     m_stepper_elevator->goToPosition(ElevatorPositionMM::ABOVE_GRABBERS);
@@ -152,26 +160,19 @@ void Billig::initBillig(bool a_first_elevator_init)
     m_pump_2->release();
     m_pump_3->release();
     m_pump_4->release();
-    usleep(1.5e6);
-
-    // close grabbers before turning
-    m_ax12_1->set(AX12_LEFTMOST_GRAB, 100);
-    m_ax12_2->set(AX12_LEFTCENTER_GRAB, 100);
-    m_ax12_3->set(AX12_RIGHTCENTER_GRAB, 100);
-    m_ax12_4->set(AX12_RIGHTMOST_GRAB, 100);
 
     usleep(1.5e6);
 
-    m_servo_magnet_1->set(SERVO_RIGHTMOST_UP, 100);
-    m_servo_magnet_2->set(SERVO_RIGHTCENTER_UP, 100);
-    m_servo_magnet_3->set(SERVO_LEFTCENTER_UP, 100);
-    m_servo_magnet_4->set(SERVO_LEFTMOST_UP, 100);
+    m_servo_magnet_1->set(SERVO_RIGHTMOST_UP, l_speed);
+    m_servo_magnet_2->set(SERVO_RIGHTCENTER_UP, l_speed);
+    m_servo_magnet_3->set(SERVO_LEFTCENTER_UP, l_speed);
+    m_servo_magnet_4->set(SERVO_LEFTMOST_UP, l_speed);
     usleep(1.5e6);
 
-    m_ax12_1->set(AX12_LEFTMOST_RELEASE, 100);
-    m_ax12_2->set(AX12_LEFTCENTER_RELEASE, 100);
-    m_ax12_3->set(AX12_RIGHTCENTER_RELEASE, 100);
-    m_ax12_4->set(AX12_RIGHTMOST_RELEASE, 100);
+    m_ax12_1->set(AX12_LEFTMOST_RELEASE, l_speed);
+    m_ax12_2->set(AX12_LEFTCENTER_RELEASE, l_speed);
+    m_ax12_3->set(AX12_RIGHTCENTER_RELEASE, l_speed);
+    m_ax12_4->set(AX12_RIGHTMOST_RELEASE, l_speed);
 
     m_stepper_elevator->goToPosition(ElevatorPositionMM::TRANSPORT);
     usleep(1.5e6);
@@ -182,10 +183,12 @@ bool Billig::grab_caisses(bool /*a_do_sleep*/)
 {
     wait_for_mutex();
 
-    m_ax12_1->set(AX12_LEFTMOST_RELEASE, 100);
-    m_ax12_2->set(AX12_LEFTCENTER_RELEASE, 100);
-    m_ax12_3->set(AX12_RIGHTCENTER_RELEASE, 100);
-    m_ax12_4->set(AX12_RIGHTMOST_RELEASE, 100);
+    unsigned int l_speed = 250;
+
+    m_ax12_1->set(AX12_LEFTMOST_RELEASE, l_speed);
+    m_ax12_2->set(AX12_LEFTCENTER_RELEASE, l_speed);
+    m_ax12_3->set(AX12_RIGHTCENTER_RELEASE, l_speed);
+    m_ax12_4->set(AX12_RIGHTMOST_RELEASE, l_speed);
 
     m_pump_1->setPumping(true);
     m_pump_2->setPumping(true);
@@ -262,24 +265,26 @@ void Billig::reset_flipper()
     m_pump_4->release();
     usleep(1.5e6);
 
-    m_ax12_1->set(AX12_LEFTMOST_GRAB, 100);
-    m_ax12_2->set(AX12_LEFTCENTER_GRAB, 100);
-    m_ax12_3->set(AX12_RIGHTCENTER_GRAB, 100);
-    m_ax12_4->set(AX12_RIGHTMOST_GRAB, 100);
+    unsigned int l_speed = 250;
+
+    m_ax12_1->set(AX12_LEFTMOST_GRAB, l_speed);
+    m_ax12_2->set(AX12_LEFTCENTER_GRAB, l_speed);
+    m_ax12_3->set(AX12_RIGHTCENTER_GRAB, l_speed);
+    m_ax12_4->set(AX12_RIGHTMOST_GRAB, l_speed);
 
     usleep(1.5e6);
 
-    m_servo_magnet_1->set(SERVO_LEFTMOST_UP, 100);
-    m_servo_magnet_2->set(SERVO_LEFTCENTER_UP, 100);
-    m_servo_magnet_3->set(SERVO_RIGHTCENTER_UP, 100);
-    m_servo_magnet_4->set(SERVO_RIGHTMOST_UP, 100);
+    m_servo_magnet_1->set(SERVO_LEFTMOST_UP, l_speed);
+    m_servo_magnet_2->set(SERVO_LEFTCENTER_UP, l_speed);
+    m_servo_magnet_3->set(SERVO_RIGHTCENTER_UP, l_speed);
+    m_servo_magnet_4->set(SERVO_RIGHTMOST_UP, l_speed);
 
     usleep(1.5e6);
 
-    m_ax12_1->set(AX12_LEFTMOST_RELEASE, 100);
-    m_ax12_2->set(AX12_LEFTCENTER_RELEASE, 100);
-    m_ax12_3->set(AX12_RIGHTCENTER_RELEASE, 100);
-    m_ax12_4->set(AX12_RIGHTMOST_RELEASE, 100);
+    m_ax12_1->set(AX12_LEFTMOST_RELEASE, l_speed);
+    m_ax12_2->set(AX12_LEFTCENTER_RELEASE, l_speed);
+    m_ax12_3->set(AX12_RIGHTCENTER_RELEASE, l_speed);
+    m_ax12_4->set(AX12_RIGHTMOST_RELEASE, l_speed);
     usleep(1.5e6);
 
     m_mutexTaken = false;
@@ -304,6 +309,7 @@ bool Billig::flip_caisses(bool leftmost_flip,
     bool success = true;
     m_stepper_elevator->goToPosition(ElevatorPositionMM::GRABERS_LEVEL);
     usleep(1.5e6);
+    unsigned int l_speed = 250;
 
     if (leftmost_flip)
     {
@@ -346,38 +352,38 @@ bool Billig::flip_caisses(bool leftmost_flip,
 
     if (leftmost_flip == (m_servo_magnet_1->getAngle() == SERVO_LEFTMOST_DOWN))
     {
-        m_servo_magnet_1->set(SERVO_LEFTMOST_UP, 100);
+        m_servo_magnet_1->set(SERVO_LEFTMOST_UP, l_speed);
     }
     else
     {
-        m_servo_magnet_1->set(SERVO_LEFTMOST_DOWN, 100);
+        m_servo_magnet_1->set(SERVO_LEFTMOST_DOWN, l_speed);
     }
 
     if (leftcenter_flip == (m_servo_magnet_2->getAngle() == SERVO_LEFTCENTER_DOWN))
     {
-        m_servo_magnet_2->set(SERVO_LEFTCENTER_UP, 100);
+        m_servo_magnet_2->set(SERVO_LEFTCENTER_UP, l_speed);
     }
     else
     {
-        m_servo_magnet_2->set(SERVO_LEFTCENTER_DOWN, 100);
+        m_servo_magnet_2->set(SERVO_LEFTCENTER_DOWN, l_speed);
     }
 
     if (rightcenter_flip == (m_servo_magnet_3->getAngle() == SERVO_RIGHTCENTER_DOWN))
     {
-        m_servo_magnet_3->set(SERVO_RIGHTCENTER_UP, 100);
+        m_servo_magnet_3->set(SERVO_RIGHTCENTER_UP, l_speed);
     }
     else
     {
-        m_servo_magnet_3->set(SERVO_RIGHTCENTER_DOWN, 100);
+        m_servo_magnet_3->set(SERVO_RIGHTCENTER_DOWN, l_speed);
     }
 
     if (rightmost_flip == (m_servo_magnet_4->getAngle() == SERVO_RIGHTMOST_DOWN))
     {
-        m_servo_magnet_4->set(SERVO_RIGHTMOST_UP, 100);
+        m_servo_magnet_4->set(SERVO_RIGHTMOST_UP, l_speed);
     }
     else
     {
-        m_servo_magnet_4->set(SERVO_RIGHTMOST_DOWN, 100);
+        m_servo_magnet_4->set(SERVO_RIGHTMOST_DOWN, l_speed);
     }
 
     usleep(1.5e6);
@@ -391,10 +397,10 @@ bool Billig::flip_caisses(bool leftmost_flip,
 
     usleep(1.5e6);
 
-    m_ax12_1->set(AX12_LEFTMOST_RELEASE, 100);
-    m_ax12_2->set(AX12_LEFTCENTER_RELEASE, 100);
-    m_ax12_3->set(AX12_RIGHTCENTER_RELEASE, 100);
-    m_ax12_4->set(AX12_RIGHTMOST_RELEASE, 100);
+    m_ax12_1->set(AX12_LEFTMOST_RELEASE, l_speed);
+    m_ax12_2->set(AX12_LEFTCENTER_RELEASE, l_speed);
+    m_ax12_3->set(AX12_RIGHTCENTER_RELEASE, l_speed);
+    m_ax12_4->set(AX12_RIGHTMOST_RELEASE, l_speed);
     usleep(1.5e6);
 
     m_mutexTaken = false;
