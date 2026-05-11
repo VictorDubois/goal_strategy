@@ -113,8 +113,8 @@ public:
             }
             // wait for homing to be done
             usleep(10000);
-            return true;
         }
+        return true;
     };
     bool homingDone()
     {

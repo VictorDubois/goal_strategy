@@ -34,7 +34,8 @@ enum ElevatorPositionMM // Positions in millimiters, with respect to the top of 
     ABOVE_GRABBERS = 0,
     TRANSPORT = -10,
     CATCH = -90,
-    RELEASE = -85
+    RELEASE = -85,
+    REGRAB = -20
 };
 
 Billig::Billig(Position a_relative_position_in_front,
@@ -150,18 +151,18 @@ void Billig::initBillig(bool a_first_elevator_init)
         }
         m_billig_init_done = true;
         initializeElevator();
-        usleep(15e6);
+        usleep(1.5e6);
     }
 
     m_stepper_elevator->goToPosition(ElevatorPositionMM::ABOVE_GRABBERS);
-    usleep(1.5e6);
+    usleep(0.5e6);
 
     m_pump_1->release();
     m_pump_2->release();
     m_pump_3->release();
     m_pump_4->release();
 
-    usleep(1.5e6);
+    // usleep(1.5e6);
 
     m_servo_magnet_1->set(SERVO_RIGHTMOST_UP, l_speed);
     m_servo_magnet_2->set(SERVO_RIGHTCENTER_UP, l_speed);
@@ -279,7 +280,7 @@ void Billig::reset_flipper()
     m_servo_magnet_3->set(SERVO_RIGHTCENTER_UP, l_speed);
     m_servo_magnet_4->set(SERVO_RIGHTMOST_UP, l_speed);
 
-    usleep(1.5e6);
+    usleep(3.5e6);
 
     m_ax12_1->set(AX12_LEFTMOST_RELEASE, l_speed);
     m_ax12_2->set(AX12_LEFTCENTER_RELEASE, l_speed);
@@ -330,19 +331,19 @@ bool Billig::flip_caisses(bool leftmost_flip,
     }
     usleep(1.5e6);
 
-    if (leftmost_flip)
+    if (leftmost_flip || l_all_pumps_wired_together)
     {
         m_pump_1->release();
     }
-    if (leftcenter_flip)
+    if (leftcenter_flip || l_all_pumps_wired_together)
     {
         m_pump_2->release();
     }
-    if (rightcenter_flip)
+    if (rightcenter_flip || l_all_pumps_wired_together)
     {
         m_pump_3->release();
     }
-    if (rightmost_flip)
+    if (rightmost_flip || l_all_pumps_wired_together)
     {
         m_pump_4->release();
     }
@@ -394,7 +395,7 @@ bool Billig::flip_caisses(bool leftmost_flip,
     m_pump_3->setPumping(true);
     m_pump_4->setPumping(true);
     usleep(0.5e6);
-    m_stepper_elevator->goToPosition(ElevatorPositionMM::GRABERS_LEVEL);
+    m_stepper_elevator->goToPosition(ElevatorPositionMM::REGRAB);
 
     usleep(1.5e6);
 

@@ -42,7 +42,7 @@ public:
     void setInside();
     float getReach();
     Angle getAngle();
-    void initializeElevator();
+    bool initializeElevator();
     void auto_initBillig(bool a_force_init_elevator);
 
     void initBillig(bool a_force_init_elevator);
