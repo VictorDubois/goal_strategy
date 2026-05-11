@@ -1028,6 +1028,7 @@ void GoalStrat::publishScore()
  */
 void GoalStrat::stopActuators()
 {
+    m_actuators.shutdown();
 }
 
 /**
