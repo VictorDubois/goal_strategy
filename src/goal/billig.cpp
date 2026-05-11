@@ -33,6 +33,7 @@ enum ElevatorPositionMM // Positions in millimiters, with respect to the top of 
     GRABERS_LEVEL = -10,
     ABOVE_GRABBERS = 0,
     TRANSPORT = -10,
+    EMPTY_TRANSPORT_FOR_CAMERA = -59,
     CATCH = -90,
     RELEASE = -85,
     REGRAB = -20,
@@ -176,7 +177,7 @@ void Billig::initBillig(bool a_first_elevator_init)
     m_ax12_3->set(AX12_RIGHTCENTER_RELEASE, l_speed);
     m_ax12_4->set(AX12_RIGHTMOST_RELEASE, l_speed);
 
-    m_stepper_elevator->goToPosition(ElevatorPositionMM::TRANSPORT);
+    m_stepper_elevator->goToPosition(ElevatorPositionMM::EMPTY_TRANSPORT_FOR_CAMERA);
     usleep(1.5e6);
     m_mutexTaken = false;
 }
@@ -250,7 +251,7 @@ bool Billig::drop_caisses(bool /*a_do_sleep*/)
     m_pump_3->release();
     m_pump_4->release();
     usleep(0.5e6);
-    m_stepper_elevator->goToPosition(ElevatorPositionMM::TRANSPORT);
+    m_stepper_elevator->goToPosition(ElevatorPositionMM::EMPTY_TRANSPORT_FOR_CAMERA);
 
     m_mutexTaken = false;
     return success;
