@@ -93,9 +93,9 @@ Angle Billig::getAngle()
     return m_relative_position.getAngle();
 }
 
-void Billig::initializeElevator()
+bool Billig::initializeElevator()
 {
-    m_stepper_elevator->doHoming();
+    return m_stepper_elevator->doHoming();
 }
 
 bool Billig::elevatorInitDone()
