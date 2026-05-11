@@ -311,19 +311,20 @@ bool Billig::flip_caisses(bool leftmost_flip,
     usleep(1.5e6);
     unsigned int l_speed = 250;
 
-    if (leftmost_flip)
+    bool l_all_pumps_wired_together = true;
+    if (leftmost_flip || l_all_pumps_wired_together)
     {
         m_ax12_1->set(AX12_LEFTMOST_GRAB, 100);
     }
-    if (leftcenter_flip)
+    if (leftcenter_flip || l_all_pumps_wired_together)
     {
         m_ax12_2->set(AX12_LEFTCENTER_GRAB, 100);
     }
-    if (rightcenter_flip)
+    if (rightcenter_flip || l_all_pumps_wired_together)
     {
         m_ax12_3->set(AX12_RIGHTCENTER_GRAB, 100);
     }
-    if (rightmost_flip)
+    if (rightmost_flip || l_all_pumps_wired_together)
     {
         m_ax12_4->set(AX12_RIGHTMOST_GRAB, 100);
     }

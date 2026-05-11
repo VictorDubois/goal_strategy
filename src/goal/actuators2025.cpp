@@ -141,7 +141,10 @@ void Actuators2025::publish()
     m_message.vacuum_2.release = m_pump_2->getRelease();
     m_message.vacuum_3.enable_pump = m_pump_3->getPumping();
     m_message.vacuum_3.release = m_pump_3->getRelease();
-    m_message.vacuum_4.enable_pump = m_pump_4->getPumping();
+
+    // Hack to get the pumps on transistor 2, and the release valves on transistor 4
+    m_message.vacuum_4.enable_pump = m_pump_4->getRelease();
+    // m_message.vacuum_4.enable_pump = m_pump_4->getPumping();
     m_message.vacuum_4.release = m_pump_4->getRelease();
 
     m_message.stepper_1.speed = m_stepper_elevator_1->getSpeed();
