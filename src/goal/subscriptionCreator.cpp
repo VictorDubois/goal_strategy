@@ -10,8 +10,8 @@ void create_subscriptions(
   std::function<void(const std_msgs::msg::Float32::SharedPtr)> callback_vacuum_sub,
   rclcpp::Subscription<geometry_msgs::msg::PoseArray>::SharedPtr& a_other_robots_sub,
   std::function<void(const geometry_msgs::msg::PoseArray::SharedPtr)> callback_other_robots_sub,
-  rclcpp::Subscription<krabi_msgs::msg::InfosStepper>::SharedPtr& /*a_elevator_sub*/,
-  std::function<void(const krabi_msgs::msg::InfosStepper::SharedPtr)> /*callback_elevator_sub*/,
+  rclcpp::Subscription<krabi_msgs::msg::InfosStepper>::SharedPtr& a_elevator_sub,
+  std::function<void(const krabi_msgs::msg::InfosStepper::SharedPtr)> callback_elevator_sub,
   rclcpp::Subscription<krabi_msgs::msg::AX12Info>::SharedPtr& a_ax12_1_info_sub,
   std::function<void(const krabi_msgs::msg::AX12Info::SharedPtr)> callback_ax12_1_info_sub,
   rclcpp::Subscription<krabi_msgs::msg::AX12Info>::SharedPtr& a_ax12_2_info_sub,
@@ -29,6 +29,8 @@ void create_subscriptions(
 {
     a_remaining_time_match_sub = goal_node->create_subscription<builtin_interfaces::msg::Duration>(
       "/remaining_time", 5, callback_remaining_time_match, l_sub_options);
+    a_elevator_sub = goal_node->create_subscription<krabi_msgs::msg::InfosStepper>(
+      "stepper_info", 5, callback_elevator_sub, l_sub_options);
     a_tirette_sub = goal_node->create_subscription<std_msgs::msg::Bool>(
       "tirette", 5, callback_tirette_sub, l_sub_options);
     a_vacuum_sub = goal_node->create_subscription<std_msgs::msg::Float32>(
