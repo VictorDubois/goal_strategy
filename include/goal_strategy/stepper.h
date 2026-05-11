@@ -1,5 +1,9 @@
 #pragma once
 #include "krabi_msgs/msg/infos_stepper.hpp"
+#include <chrono>
+#include <thread>
+#include <time.h>
+#include <unistd.h>
 
 enum StepperMode
 {
@@ -15,9 +19,11 @@ protected:
     StepperMode m_stepper_mode;
     int16_t m_target_position; // mm
     int16_t m_distance_to_go;  // mm
+    uint16_t m_homing_sequences_done;
     void updateInfos(krabi_msgs::msg::InfosStepper::SharedPtr a_new_infos)
     {
         m_distance_to_go = a_new_infos->distance_to_go;
+        m_homing_sequences_done = a_new_infos->homing_sequences_done;
     };
 
 private:
@@ -33,6 +39,7 @@ public:
     {
         m_stepper_mode = StepperMode::DISABLE;
         m_target_position = 0;
+        m_homing_sequences_done = 0;
     };
 
     explicit StepperMotor()
@@ -92,9 +99,22 @@ public:
         m_homing_sequences_done = a_new_infos->homing_sequences_done;
         updateInfos(a_new_infos);
     };
-    void doHoming()
+    bool doHoming()
     {
+        auto l_nb_homing_sequences_done = m_homing_sequences_done;
         m_stepper_mode = StepperMode::HOMING;
+        auto l_timeout_homing_deadline = std::chrono::steady_clock::now() + std::chrono::seconds(3);
+        while (l_nb_homing_sequences_done == m_homing_sequences_done)
+        {
+            if (std::chrono::steady_clock::now() > l_timeout_homing_deadline)
+            {
+                // Failed to home in time
+                return false;
+            }
+            // wait for homing to be done
+            usleep(10000);
+            return true;
+        }
     };
     bool homingDone()
     {

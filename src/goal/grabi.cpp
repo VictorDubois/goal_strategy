@@ -88,9 +88,9 @@ void Grabi::resetElevatorLow()
     m_stepper_elevator->goToPosition(0); // mm
 }
 
-void Grabi::initializeElevator()
+bool Grabi::initializeElevator()
 {
-    m_stepper_elevator->doHoming();
+    return m_stepper_elevator->doHoming();
 }
 
 bool Grabi::elevatorInitDone()

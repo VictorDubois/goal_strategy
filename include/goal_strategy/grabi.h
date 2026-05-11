@@ -28,7 +28,7 @@ public:
     void setInside();
     float getReach();
     Angle getAngle();
-    void initializeElevator();
+    bool initializeElevator();
     void resetElevatorLow();
     void auto_initGrabi(bool a_force_init_elevator);
 
