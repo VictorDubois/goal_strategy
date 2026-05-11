@@ -35,7 +35,8 @@ enum ElevatorPositionMM // Positions in millimiters, with respect to the top of 
     TRANSPORT = -10,
     CATCH = -90,
     RELEASE = -85,
-    REGRAB = -20
+    REGRAB = -20,
+    BELOW_HOMING = -5
 };
 
 Billig::Billig(Position a_relative_position_in_front,
@@ -349,7 +350,7 @@ bool Billig::flip_caisses(bool leftmost_flip,
     }
 
     usleep(0.5e6);
-    m_stepper_elevator->goToPosition(ElevatorPositionMM::ABOVE_GRABBERS);
+    m_stepper_elevator->goToPosition(ElevatorPositionMM::BELOW_HOMING);
     usleep(0.5e6);
     m_stepper_elevator->doHoming();
     // usleep(1.0e6);
