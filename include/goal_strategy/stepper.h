@@ -88,7 +88,7 @@ class StepperElevator : public StepperMotor
 private:
     // float m_;
     bool m_homing_done;
-    uint8_t m_homing_sequences_done;
+    volatile uint8_t m_homing_sequences_done;
     int16_t m_max_height_mm;
     int16_t m_min_height_mm = -150; // mm (negative value because the elevator goes down)
 
@@ -103,7 +103,11 @@ public:
     {
         auto l_nb_homing_sequences_done = m_homing_sequences_done;
         m_stepper_mode = StepperMode::HOMING;
-        auto l_timeout_homing_deadline = std::chrono::steady_clock::now() + std::chrono::seconds(3);
+
+        usleep(0.2e6);
+        goToPosition(0); // Rest position, after homing is done
+
+        auto l_timeout_homing_deadline = std::chrono::steady_clock::now() + std::chrono::seconds(5);
         while (l_nb_homing_sequences_done == m_homing_sequences_done)
         {
             if (std::chrono::steady_clock::now() > l_timeout_homing_deadline)

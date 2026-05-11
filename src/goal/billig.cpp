@@ -350,7 +350,9 @@ bool Billig::flip_caisses(bool leftmost_flip,
 
     usleep(0.5e6);
     m_stepper_elevator->goToPosition(ElevatorPositionMM::ABOVE_GRABBERS);
-    usleep(1.0e6);
+    usleep(0.5e6);
+    m_stepper_elevator->doHoming();
+    // usleep(1.0e6);
 
     if (leftmost_flip == (m_servo_magnet_1->getAngle() == SERVO_LEFTMOST_DOWN))
     {
