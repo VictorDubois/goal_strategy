@@ -196,14 +196,14 @@ bool Billig::grab_caisses(bool /*a_do_sleep*/)
     m_pump_3->setPumping(true);
     m_pump_4->setPumping(true);
 
-    usleep(0.5e6);
+    // usleep(0.5e6);
 
     m_stepper_elevator->goToPosition(ElevatorPositionMM::CATCH); // mm
 
     usleep(1.5e6);
 
     m_stepper_elevator->goToPosition(ElevatorPositionMM::GRABERS_LEVEL); // mm
-    usleep(1.5e6);
+    usleep(1.0e6);
 
     m_mutexTaken = false;
     return true;
@@ -248,7 +248,7 @@ bool Billig::drop_caisses(bool /*a_do_sleep*/)
     m_pump_2->release();
     m_pump_3->release();
     m_pump_4->release();
-    usleep(1.5e6);
+    usleep(0.5e6);
     m_stepper_elevator->goToPosition(ElevatorPositionMM::TRANSPORT);
 
     m_mutexTaken = false;
@@ -309,7 +309,7 @@ bool Billig::flip_caisses(bool leftmost_flip,
     wait_for_mutex();
     bool success = true;
     m_stepper_elevator->goToPosition(ElevatorPositionMM::GRABERS_LEVEL);
-    usleep(1.5e6);
+    usleep(0.5e6);
     unsigned int l_speed = 250;
 
     bool l_all_pumps_wired_together = true;
@@ -329,7 +329,7 @@ bool Billig::flip_caisses(bool leftmost_flip,
     {
         m_ax12_4->set(AX12_RIGHTMOST_GRAB, 100);
     }
-    usleep(1.5e6);
+    usleep(1.0e6);
 
     if (leftmost_flip || l_all_pumps_wired_together)
     {
@@ -348,9 +348,9 @@ bool Billig::flip_caisses(bool leftmost_flip,
         m_pump_4->release();
     }
 
-    usleep(1.5e6);
+    usleep(0.5e6);
     m_stepper_elevator->goToPosition(ElevatorPositionMM::ABOVE_GRABBERS);
-    usleep(1.5e6);
+    usleep(1.0e6);
 
     if (leftmost_flip == (m_servo_magnet_1->getAngle() == SERVO_LEFTMOST_DOWN))
     {
@@ -394,16 +394,16 @@ bool Billig::flip_caisses(bool leftmost_flip,
     m_pump_2->setPumping(true);
     m_pump_3->setPumping(true);
     m_pump_4->setPumping(true);
-    usleep(0.5e6);
+    // usleep(0.5e6);
     m_stepper_elevator->goToPosition(ElevatorPositionMM::REGRAB);
 
-    usleep(1.5e6);
+    usleep(1.0e6);
 
     m_ax12_1->set(AX12_LEFTMOST_RELEASE, l_speed);
     m_ax12_2->set(AX12_LEFTCENTER_RELEASE, l_speed);
     m_ax12_3->set(AX12_RIGHTCENTER_RELEASE, l_speed);
     m_ax12_4->set(AX12_RIGHTMOST_RELEASE, l_speed);
-    usleep(1.5e6);
+    usleep(1.0e6);
 
     m_mutexTaken = false;
     return success;
