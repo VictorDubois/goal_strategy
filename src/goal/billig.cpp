@@ -139,6 +139,11 @@ void Billig::initBillig(bool a_first_elevator_init)
     unsigned int l_speed = 250;
 
     // close grabbers before turning
+
+    m_ax12_1->setCurrentLimit(AX12_CURRENT::MAX_CURRENT);
+    m_ax12_2->setCurrentLimit(AX12_CURRENT::MAX_CURRENT);
+    m_ax12_3->setCurrentLimit(AX12_CURRENT::MAX_CURRENT);
+    m_ax12_4->setCurrentLimit(AX12_CURRENT::MAX_CURRENT);
     m_ax12_1->set(AX12_LEFTMOST_GRAB, l_speed);
     m_ax12_2->set(AX12_LEFTCENTER_GRAB, l_speed);
     m_ax12_3->set(AX12_RIGHTCENTER_GRAB, l_speed);
@@ -171,7 +176,10 @@ void Billig::initBillig(bool a_first_elevator_init)
     m_servo_magnet_3->set(SERVO_LEFTCENTER_UP, l_speed);
     m_servo_magnet_4->set(SERVO_LEFTMOST_UP, l_speed);
     usleep(1.5e6);
-
+    m_ax12_1->setCurrentLimit(AX12_CURRENT::OPEN_CLAW);
+    m_ax12_2->setCurrentLimit(AX12_CURRENT::OPEN_CLAW);
+    m_ax12_3->setCurrentLimit(AX12_CURRENT::OPEN_CLAW);
+    m_ax12_4->setCurrentLimit(AX12_CURRENT::OPEN_CLAW);
     m_ax12_1->set(AX12_LEFTMOST_RELEASE, l_speed);
     m_ax12_2->set(AX12_LEFTCENTER_RELEASE, l_speed);
     m_ax12_3->set(AX12_RIGHTCENTER_RELEASE, l_speed);
@@ -188,6 +196,10 @@ bool Billig::grab_caisses(bool /*a_do_sleep*/)
 
     unsigned int l_speed = 250;
 
+    m_ax12_1->setCurrentLimit(AX12_CURRENT::OPEN_CLAW);
+    m_ax12_2->setCurrentLimit(AX12_CURRENT::OPEN_CLAW);
+    m_ax12_3->setCurrentLimit(AX12_CURRENT::OPEN_CLAW);
+    m_ax12_4->setCurrentLimit(AX12_CURRENT::OPEN_CLAW);
     m_ax12_1->set(AX12_LEFTMOST_RELEASE, l_speed);
     m_ax12_2->set(AX12_LEFTCENTER_RELEASE, l_speed);
     m_ax12_3->set(AX12_RIGHTCENTER_RELEASE, l_speed);
@@ -270,6 +282,10 @@ void Billig::reset_flipper()
 
     unsigned int l_speed = 250;
 
+    m_ax12_1->setCurrentLimit(AX12_CURRENT::RELEASE);
+    m_ax12_2->setCurrentLimit(AX12_CURRENT::RELEASE);
+    m_ax12_3->setCurrentLimit(AX12_CURRENT::RELEASE);
+    m_ax12_4->setCurrentLimit(AX12_CURRENT::RELEASE);
     m_ax12_1->set(AX12_LEFTMOST_GRAB, l_speed);
     m_ax12_2->set(AX12_LEFTCENTER_GRAB, l_speed);
     m_ax12_3->set(AX12_RIGHTCENTER_GRAB, l_speed);
@@ -284,6 +300,10 @@ void Billig::reset_flipper()
 
     usleep(3.5e6);
 
+    m_ax12_1->setCurrentLimit(AX12_CURRENT::RELEASE);
+    m_ax12_2->setCurrentLimit(AX12_CURRENT::RELEASE);
+    m_ax12_3->setCurrentLimit(AX12_CURRENT::RELEASE);
+    m_ax12_4->setCurrentLimit(AX12_CURRENT::RELEASE);
     m_ax12_1->set(AX12_LEFTMOST_RELEASE, l_speed);
     m_ax12_2->set(AX12_LEFTCENTER_RELEASE, l_speed);
     m_ax12_3->set(AX12_RIGHTCENTER_RELEASE, l_speed);
@@ -313,6 +333,11 @@ bool Billig::flip_caisses(bool leftmost_flip,
     m_stepper_elevator->goToPosition(ElevatorPositionMM::GRABERS_LEVEL);
     usleep(0.5e6);
     unsigned int l_speed = 250;
+
+    m_ax12_1->setCurrentLimit(AX12_CURRENT::MAX_CURRENT);
+    m_ax12_2->setCurrentLimit(AX12_CURRENT::MAX_CURRENT);
+    m_ax12_3->setCurrentLimit(AX12_CURRENT::MAX_CURRENT);
+    m_ax12_4->setCurrentLimit(AX12_CURRENT::MAX_CURRENT);
 
     bool l_all_pumps_wired_together = true;
     if (leftmost_flip || l_all_pumps_wired_together)
@@ -403,6 +428,10 @@ bool Billig::flip_caisses(bool leftmost_flip,
 
     usleep(1.0e6);
 
+    m_ax12_1->setCurrentLimit(AX12_CURRENT::RELEASE);
+    m_ax12_2->setCurrentLimit(AX12_CURRENT::RELEASE);
+    m_ax12_3->setCurrentLimit(AX12_CURRENT::RELEASE);
+    m_ax12_4->setCurrentLimit(AX12_CURRENT::RELEASE);
     m_ax12_1->set(AX12_LEFTMOST_RELEASE, l_speed);
     m_ax12_2->set(AX12_LEFTCENTER_RELEASE, l_speed);
     m_ax12_3->set(AX12_RIGHTCENTER_RELEASE, l_speed);

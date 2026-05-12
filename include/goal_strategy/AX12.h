@@ -2,13 +2,20 @@
 #include "servomotor.h"
 #include <stdint.h>
 
+enum AX12_CURRENT : uint8_t
+{
+    OFF = 0,
+    OPEN_CLAW = 30,
+    MAX_CURRENT = 100
+};
+
 class AX12 : public Servomotor
 {
 private:
     int m_mode = 1;
-    uint8_t m_temperature_limit = 65; // °C
-    uint8_t m_current_limit = 100;    // ??
-    uint8_t m_max_accel = 100;        // ??
+    uint8_t m_temperature_limit = 65;                    // °C
+    uint8_t m_current_limit = AX12_CURRENT::MAX_CURRENT; // ??
+    uint8_t m_max_accel = 100;                           // ??
     int16_t m_present_position = 0;
     uint8_t m_present_temperature = 0;
     uint16_t m_present_current = 0;
@@ -56,5 +63,10 @@ public:
     uint8_t getMaxAccel()
     {
         return m_max_accel;
+    }
+
+    void setCurrentLimit(uint8_t a_current_limit)
+    {
+        m_current_limit = a_current_limit;
     }
 };
