@@ -266,7 +266,7 @@ bool Billig::drop_caisses(bool /*a_do_sleep*/)
     m_pump_2->release();
     m_pump_3->release();
     m_pump_4->release();
-    usleep(0.5e6);
+    usleep(1.0e6);
     m_stepper_elevator->goToPosition(ElevatorPositionMM::TRANSPORT);
 
     m_mutexTaken = false;
