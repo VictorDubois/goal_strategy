@@ -189,7 +189,7 @@ void Billig::initBillig(bool a_first_elevator_init)
 
     usleep(2.5e6);
 
-    m_stepper_elevator->goToPosition(ElevatorPositionMM::EMPTY_TRANSPORT_FOR_CAMERA);
+    m_stepper_elevator->goToPosition(ElevatorPositionMM::TRANSPORT);
     usleep(1.5e6);
     m_mutexTaken = false;
 }
@@ -267,7 +267,7 @@ bool Billig::drop_caisses(bool /*a_do_sleep*/)
     m_pump_3->release();
     m_pump_4->release();
     usleep(0.5e6);
-    m_stepper_elevator->goToPosition(ElevatorPositionMM::EMPTY_TRANSPORT_FOR_CAMERA);
+    m_stepper_elevator->goToPosition(ElevatorPositionMM::TRANSPORT);
 
     m_mutexTaken = false;
     return success;
