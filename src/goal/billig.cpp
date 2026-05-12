@@ -185,6 +185,8 @@ void Billig::initBillig(bool a_first_elevator_init)
     m_ax12_3->set(AX12_RIGHTCENTER_RELEASE, l_speed);
     m_ax12_4->set(AX12_RIGHTMOST_RELEASE, l_speed);
 
+    usleep(2.5e6);
+
     m_stepper_elevator->goToPosition(ElevatorPositionMM::EMPTY_TRANSPORT_FOR_CAMERA);
     usleep(1.5e6);
     m_mutexTaken = false;
