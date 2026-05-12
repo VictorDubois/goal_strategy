@@ -284,10 +284,10 @@ void Billig::reset_flipper()
 
     unsigned int l_speed = 250;
 
-    m_ax12_1->setCurrentLimit(AX12_CURRENT::RELEASE);
-    m_ax12_2->setCurrentLimit(AX12_CURRENT::RELEASE);
-    m_ax12_3->setCurrentLimit(AX12_CURRENT::RELEASE);
-    m_ax12_4->setCurrentLimit(AX12_CURRENT::RELEASE);
+    m_ax12_1->setCurrentLimit(AX12_CURRENT::OPEN_CLAW);
+    m_ax12_2->setCurrentLimit(AX12_CURRENT::OPEN_CLAW);
+    m_ax12_3->setCurrentLimit(AX12_CURRENT::OPEN_CLAW);
+    m_ax12_4->setCurrentLimit(AX12_CURRENT::OPEN_CLAW);
     m_ax12_1->set(AX12_LEFTMOST_GRAB, l_speed);
     m_ax12_2->set(AX12_LEFTCENTER_GRAB, l_speed);
     m_ax12_3->set(AX12_RIGHTCENTER_GRAB, l_speed);
@@ -302,10 +302,10 @@ void Billig::reset_flipper()
 
     usleep(3.5e6);
 
-    m_ax12_1->setCurrentLimit(AX12_CURRENT::RELEASE);
-    m_ax12_2->setCurrentLimit(AX12_CURRENT::RELEASE);
-    m_ax12_3->setCurrentLimit(AX12_CURRENT::RELEASE);
-    m_ax12_4->setCurrentLimit(AX12_CURRENT::RELEASE);
+    m_ax12_1->setCurrentLimit(AX12_CURRENT::OPEN_CLAW);
+    m_ax12_2->setCurrentLimit(AX12_CURRENT::OPEN_CLAW);
+    m_ax12_3->setCurrentLimit(AX12_CURRENT::OPEN_CLAW);
+    m_ax12_4->setCurrentLimit(AX12_CURRENT::OPEN_CLAW);
     m_ax12_1->set(AX12_LEFTMOST_RELEASE, l_speed);
     m_ax12_2->set(AX12_LEFTCENTER_RELEASE, l_speed);
     m_ax12_3->set(AX12_RIGHTCENTER_RELEASE, l_speed);
@@ -430,10 +430,10 @@ bool Billig::flip_caisses(bool leftmost_flip,
 
     usleep(1.0e6);
 
-    m_ax12_1->setCurrentLimit(AX12_CURRENT::RELEASE);
-    m_ax12_2->setCurrentLimit(AX12_CURRENT::RELEASE);
-    m_ax12_3->setCurrentLimit(AX12_CURRENT::RELEASE);
-    m_ax12_4->setCurrentLimit(AX12_CURRENT::RELEASE);
+    m_ax12_1->setCurrentLimit(AX12_CURRENT::OPEN_CLAW);
+    m_ax12_2->setCurrentLimit(AX12_CURRENT::OPEN_CLAW);
+    m_ax12_3->setCurrentLimit(AX12_CURRENT::OPEN_CLAW);
+    m_ax12_4->setCurrentLimit(AX12_CURRENT::OPEN_CLAW);
     m_ax12_1->set(AX12_LEFTMOST_RELEASE, l_speed);
     m_ax12_2->set(AX12_LEFTCENTER_RELEASE, l_speed);
     m_ax12_3->set(AX12_RIGHTCENTER_RELEASE, l_speed);
