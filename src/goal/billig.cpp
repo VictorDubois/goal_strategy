@@ -180,6 +180,8 @@ void Billig::initBillig(bool a_first_elevator_init)
     m_ax12_2->setCurrentLimit(AX12_CURRENT::OPEN_CLAW);
     m_ax12_3->setCurrentLimit(AX12_CURRENT::OPEN_CLAW);
     m_ax12_4->setCurrentLimit(AX12_CURRENT::OPEN_CLAW);
+    usleep(1.5e6);
+
     m_ax12_1->set(AX12_LEFTMOST_RELEASE, l_speed);
     m_ax12_2->set(AX12_LEFTCENTER_RELEASE, l_speed);
     m_ax12_3->set(AX12_RIGHTCENTER_RELEASE, l_speed);

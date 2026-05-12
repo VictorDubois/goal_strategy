@@ -1475,7 +1475,7 @@ void GoalStrat::init()
     m_previous_etape_type = Etape::EtapeType::POINT_PASSAGE;
     // m_strat_graph->getEtapeEnCours()->getEtapeType(); // Was shitting when the first action was
     // one unidirectionnal
-    m_state = State::WAIT_TIRETTE;
+    m_state = State::INIT;
 
     m_running = std::thread(&GoalStrat::publishAll, this);
 }
@@ -1490,14 +1490,16 @@ void GoalStrat::loop()
     switch (m_state)
     {
     case State::INIT:
-        // init(); //init before
-        break;
-    case State::WAIT_TIRETTE:
+// init(); //init before
 #ifdef YEAR_2025
         m_grabi->initializeElevator();
 #elif defined(YEAR_2026)
         m_billig->initBillig(true);
 #endif
+        m_state = State::WAIT_TIRETTE;
+        break;
+    case State::WAIT_TIRETTE:
+
         if (m_state == State::WAIT_TIRETTE && m_tirette && m_remainig_time > rclcpp::Duration(1, 0))
         {
             m_state = State::RUN;
