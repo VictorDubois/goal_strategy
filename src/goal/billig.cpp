@@ -189,7 +189,7 @@ void Billig::initBillig(bool a_first_elevator_init)
 
     usleep(2.5e6);
 
-    m_stepper_elevator->goToPosition(ElevatorPositionMM::TRANSPORT);
+    m_stepper_elevator->goToPosition(ElevatorPositionMM::EMPTY_TRANSPORT_FOR_CAMERA);
     usleep(1.5e6);
     m_mutexTaken = false;
 }
