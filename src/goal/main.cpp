@@ -1307,6 +1307,8 @@ void GoalStrat::stateRun()
                     RCLCPP_INFO_STREAM(this->get_logger(), "Aligned, ready to drop caisse");
                 }
                 m_billig->drop_caisses();
+                RCLCPP_WARN_STREAM(this->get_logger(),
+                                   "mon stock: " << m_strat_graph->getStock().size() << std::endl);
                 m_strat_graph->dropCaisses(m_strat_graph->getEtapeEnCours());
                 // m_billig->auto_reset_flipper();
             }
@@ -1338,6 +1340,8 @@ void GoalStrat::stateRun()
                 }
                 m_billig->grab_caisses();
                 m_strat_graph->grabCaisses(m_strat_graph->getEtapeEnCours());
+                RCLCPP_WARN_STREAM(this->get_logger(),
+                                   "mon stock: " << m_strat_graph->getStock().size() << std::endl);
 
                 m_billig->auto_flip_caisses(!m_leftmost_caisse_is_our_side_up,
                                             !m_leftcenter_caisse_is_our_side_up,
@@ -1483,9 +1487,6 @@ void GoalStrat::init()
  */
 void GoalStrat::loop()
 {
-    RCLCPP_WARN_STREAM(this->get_logger(),
-                       "mon stock: " << m_strat_graph->getStock().size() << std::endl);
-
     switch (m_state)
     {
     case State::INIT:
