@@ -214,7 +214,7 @@ bool Billig::grab_caisses(bool /*a_do_sleep*/)
     m_pump_3->setPumping(true);
     m_pump_4->setPumping(true);
 
-    // usleep(0.5e6);
+    usleep(1.0e6);
 
     m_stepper_elevator->goToPosition(ElevatorPositionMM::CATCH); // mm
 
@@ -440,7 +440,7 @@ bool Billig::flip_caisses(bool leftmost_flip,
     m_ax12_2->set(AX12_LEFTCENTER_RELEASE, l_speed);
     m_ax12_3->set(AX12_RIGHTCENTER_RELEASE, l_speed);
     m_ax12_4->set(AX12_RIGHTMOST_RELEASE, l_speed);
-    usleep(1.0e6);
+    usleep(2.0e6);
 
     m_mutexTaken = false;
     return success;
