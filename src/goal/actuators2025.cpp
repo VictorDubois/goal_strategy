@@ -1,4 +1,5 @@
 #include "../include/goal_strategy/actuators2025.h"
+#include <rclcpp/utilities.hpp>
 #include <unistd.h> //usleep
 
 Actuators2025::Actuators2025(rclcpp::Node::SharedPtr a_node,
@@ -56,7 +57,7 @@ void Actuators2025::start()
 
 void Actuators2025::run()
 {
-    while (true)
+    while (rclcpp::ok())
     {
         usleep(100000);
         publish();
@@ -71,6 +72,14 @@ void Actuators2025::set_score(int a_score)
 void Actuators2025::shutdown()
 {
     m_shutdown = true;
+}
+
+Actuators2025::~Actuators2025()
+{
+    if (m_running.joinable())
+    {
+        m_running.join();
+    }
 }
 
 void Actuators2025::publish()

@@ -55,6 +55,7 @@ class GoalStrat : public rclcpp::Node
 {
 public:
     GoalStrat();
+    ~GoalStrat();
     void loop();
     enum class State
     {

@@ -73,7 +73,7 @@ bool GoalStrat::reculeOuAvance(rclcpp::Duration a_time, Distance a_distance, boo
 
     Distance l_distance_parcourue = Distance(0);
 
-    while (this->now().seconds() < recalageTimeoutDeadline.seconds()
+    while (rclcpp::ok() && this->now().seconds() < recalageTimeoutDeadline.seconds()
            && l_distance_parcourue < a_distance)
     {
         // todo fix and reenable
@@ -156,7 +156,7 @@ bool GoalStrat::goToDroit(Position& a_position,
     Distance l_distance_to_objective = Distance(0);
     Distance l_epsilon_distance = Distance(0.05);
 
-    while (this->now().seconds() < recalageTimeoutDeadline.seconds()
+    while (rclcpp::ok() && this->now().seconds() < recalageTimeoutDeadline.seconds()
            && l_distance_parcourue + l_epsilon_distance < a_distance)
     {
         // todo modify this to go backward
@@ -704,12 +704,20 @@ void GoalStrat::publishIsBlue()
     m_is_blue_pub->publish(isBlueMsg);
 }
 
+GoalStrat::~GoalStrat()
+{
+    if (m_running.joinable())
+    {
+        m_running.join();
+    }
+}
+
 void GoalStrat::publishAll()
 {
     std::string s = "mainPubAll";
 
     pthread_setname_np(pthread_self(), s.c_str());
-    while (true)
+    while (rclcpp::ok())
     {
         usleep(50000);
         updateCurrentPose();
@@ -873,7 +881,7 @@ bool GoalStrat::alignWithAngleWithTimeout(Angle angle)
     rclcpp::Time orientTimeoutDeadline = this->now() + rclcpp::Duration(m_timeout_orient, 0);
 
     rclcpp::Rate r(100); // Check at 100Hz the new pose msg
-    while (!isAlignedWithAngle(angle) && this->now().seconds() < orientTimeoutDeadline.seconds())
+    while (rclcpp::ok() && !isAlignedWithAngle(angle) && this->now().seconds() < orientTimeoutDeadline.seconds())
     {
         alignWithAngle(angle);
         m_strat_mvnt.orient

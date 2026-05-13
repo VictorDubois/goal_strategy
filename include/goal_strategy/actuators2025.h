@@ -44,6 +44,8 @@ private:
 
 public:
     Actuators2025() {};
+    ~Actuators2025();
+    Actuators2025& operator=(Actuators2025&&) = default;
     Actuators2025(rclcpp::Node::SharedPtr a_node,
                   std::string a_name,
                   std::shared_ptr<Servomotor> m_servo_1,
