@@ -32,11 +32,11 @@ enum ElevatorPositionMM // Positions in millimiters, with respect to the top of 
 {
     GRABERS_LEVEL = -12,
     ABOVE_GRABBERS = 0,
-    TRANSPORT = -10,
+    TRANSPORT = -20,
     EMPTY_TRANSPORT_FOR_CAMERA = -59,
-    CATCH = -95,
+    CATCH = -98,
     RELEASE = -85,
-    REGRAB = -22,
+    REGRAB = -30,
     BELOW_HOMING = -5
 };
 
