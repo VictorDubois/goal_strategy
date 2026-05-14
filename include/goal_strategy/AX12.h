@@ -5,7 +5,7 @@
 enum AX12_CURRENT : uint8_t
 {
     OFF = 0,
-    OPEN_CLAW = 50,
+    OPEN_CLAW = 20,
     MAX_CURRENT = 100
 };
 

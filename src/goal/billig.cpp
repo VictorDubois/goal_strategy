@@ -4,15 +4,19 @@
 #include <thread>
 
 #define AX12_LEFTMOST_GRAB 0
+#define AX12_LEFTMOST_MID 500
 #define AX12_LEFTMOST_RELEASE 1000
 
 #define AX12_LEFTCENTER_GRAB 0
+#define AX12_LEFTCENTER_MID 500
 #define AX12_LEFTCENTER_RELEASE 1000
 
 #define AX12_RIGHTCENTER_GRAB 0
+#define AX12_RIGHTCENTER_MID 500
 #define AX12_RIGHTCENTER_RELEASE 1000
 
 #define AX12_RIGHTMOST_GRAB 0
+#define AX12_RIGHTMOST_MID 500
 #define AX12_RIGHTMOST_RELEASE 1000
 
 #define SERVO_RIGHTMOST_UP 0
@@ -432,6 +436,15 @@ bool Billig::flip_caisses(bool leftmost_flip,
 
     usleep(1.0e6);
 
+    m_ax12_1->setCurrentLimit(AX12_CURRENT::MAX_CURRENT);
+    m_ax12_2->setCurrentLimit(AX12_CURRENT::MAX_CURRENT);
+    m_ax12_3->setCurrentLimit(AX12_CURRENT::MAX_CURRENT);
+    m_ax12_4->setCurrentLimit(AX12_CURRENT::MAX_CURRENT);
+    m_ax12_1->set(AX12_LEFTMOST_MID, l_speed);
+    m_ax12_2->set(AX12_LEFTCENTER_MID, l_speed);
+    m_ax12_3->set(AX12_RIGHTCENTER_MID, l_speed);
+    m_ax12_4->set(AX12_RIGHTMOST_MID, l_speed);
+    usleep(1.0e6);
     m_ax12_1->setCurrentLimit(AX12_CURRENT::OPEN_CLAW);
     m_ax12_2->setCurrentLimit(AX12_CURRENT::OPEN_CLAW);
     m_ax12_3->setCurrentLimit(AX12_CURRENT::OPEN_CLAW);
@@ -453,3 +466,4 @@ void Billig::conditionnal_sleep(uint a_microseconds, bool a_do_sleep)
         usleep(a_microseconds);
     }
 }
+
