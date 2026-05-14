@@ -694,6 +694,12 @@ GoalStrat::GoalStrat()
                          l_sub_options,
                          this);
 
+#ifdef YEAR_2026
+    m_grab_flip_drop_srv = this->create_service<krabi_msgs::srv::GrabFlipDrop>(
+        "grab_flip_drop",
+        std::bind(&GoalStrat::grabFlipDropCallback, this, std::placeholders::_1, std::placeholders::_2));
+#endif
+
     m_timer = this->create_wall_timer(100ms, std::bind(&GoalStrat::loop, this));
 }
 
@@ -729,6 +735,24 @@ void GoalStrat::updateCaissesSides(krabi_msgs::msg::CaissesSides::SharedPtr a_ca
     m_rightcenter_caisse_is_our_side_up = a_caisses_sides_msg->rightcenter_is_our_side_up;
     m_rightmost_caisse_is_our_side_up = a_caisses_sides_msg->rightmost_is_our_side_up;
 }
+
+#ifdef YEAR_2026
+void GoalStrat::grabFlipDropCallback(
+    const std::shared_ptr<krabi_msgs::srv::GrabFlipDrop::Request> request,
+    std::shared_ptr<krabi_msgs::srv::GrabFlipDrop::Response> response)
+{
+    m_billig->grab_caisses();
+    usleep(5000);
+    m_billig->auto_flip_caisses(request->leftmost_flip,
+                                request->leftcenter_flip,
+                                request->rightcenter_flip,
+                                request->rightmost_flip);
+    usleep(5000);
+    m_billig->drop_caisses();
+    response->success = true;
+}
+#endif
+
 void GoalStrat::updateAX12Info(krabi_msgs::msg::AX12Info::SharedPtr a_ax12_msg, uint8_t id)
 {
 #ifdef YEAR_2025

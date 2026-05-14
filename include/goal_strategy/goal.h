@@ -35,6 +35,7 @@
 #include "krabi_msgs/msg/caisses_sides.hpp"
 #include "krabi_msgs/msg/servos_cmd.hpp"
 #include "krabi_msgs/msg/strat_movement.hpp"
+#include "krabi_msgs/srv/grab_flip_drop.hpp"
 
 #include "goal_strategy/publisherCreator.h"
 #include "goal_strategy/subscriptionCreator.h"
@@ -111,6 +112,11 @@ private:
     void updateTirette(std_msgs::msg::Bool::SharedPtr tirette);
     void updateVacuum(std_msgs::msg::Float32::SharedPtr vacuum_msg);
     void updateCaissesSides(krabi_msgs::msg::CaissesSides::SharedPtr a_caisses_sides_msg);
+#ifdef YEAR_2026
+    void grabFlipDropCallback(
+        const std::shared_ptr<krabi_msgs::srv::GrabFlipDrop::Request> request,
+        std::shared_ptr<krabi_msgs::srv::GrabFlipDrop::Response> response);
+#endif
     void updateAX12Info(krabi_msgs::msg::AX12Info::SharedPtr ax12_msg, uint8_t);
     void updateAX12Info1(krabi_msgs::msg::AX12Info::SharedPtr ax12_msg)
     {
@@ -186,6 +192,10 @@ private:
     rclcpp::Subscription<krabi_msgs::msg::AX12Info>::SharedPtr m_ax12_4_info_sub;
     rclcpp::Subscription<std_msgs::msg::Byte>::SharedPtr m_digital_reads_sub;
     rclcpp::Subscription<krabi_msgs::msg::CaissesSides>::SharedPtr m_caisses_sides_sub;
+
+#ifdef YEAR_2026
+    rclcpp::Service<krabi_msgs::srv::GrabFlipDrop>::SharedPtr m_grab_flip_drop_srv;
+#endif
 
     std::shared_ptr<tf2_ros::TransformListener> m_tf_listener_{ nullptr };
     std::unique_ptr<tf2_ros::Buffer> m_tf_buffer_;
