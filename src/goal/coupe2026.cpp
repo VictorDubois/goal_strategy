@@ -246,18 +246,18 @@ Coupe2026::Coupe2026(const bool isYellow, rclcpp::Node::SharedPtr a_node)
                       Pose(positionC(0.25f, -0.45f), Angle(M_PI / 2 + l_offset_GD))),
       "garde_manger_frigo_them");
 
-    // Thermometre
-    int debut_thermometre = Etape::makeEtape(
-      new Thermometre(Pose(positionC(-0.2f, 1.0f - 0.3f), Angle(M_PI / 2 + l_offset_GD)),
-                      Pose(positionC(-0.2f, 1.0f), Angle(M_PI / 2 + l_offset_GD))),
-      "debut_thermometre");
-    int fin_thermometre = Etape::makeEtape(
-      positionC(-0.8f, 1.0f - 0.3f), "fin_thermometre", Etape::EtapeType::POINT_PASSAGE);
+    // // Thermometre
+    // int debut_thermometre = Etape::makeEtape(
+    //   new Thermometre(Pose(positionC(-0.2f, 1.0f - 0.3f), Angle(M_PI / 2 + l_offset_GD)),
+    //                   Pose(positionC(-0.2f, 1.0f), Angle(M_PI / 2 + l_offset_GD))),
+    //   "debut_thermometre");
+    // int fin_thermometre = Etape::makeEtape(
+    //   positionC(-0.8f, 1.0f - 0.3f), "fin_thermometre", Etape::EtapeType::POINT_PASSAGE);
 
-    Etape::get(debut_thermometre)->setNumeroEtapeFinAction(fin_thermometre);
+    //Etape::get(debut_thermometre)->setNumeroEtapeFinAction(fin_thermometre);
 
-    Etape::get(zone_de_ramassage_public_grand_cote)->addEtapeActiveApres(debut_thermometre);
-    Etape::get(debut_thermometre)->addEtapeActiveApres(garde_manger_public_us);
+    //Etape::get(zone_de_ramassage_public_grand_cote)->addEtapeActiveApres(debut_thermometre);
+    //Etape::get(debut_thermometre)->addEtapeActiveApres(garde_manger_public_us);
     // Etape::get(zone_de_ramassage_public_grand_cote)->setBoostManuelDeScore(1);
 
     // Définitions des voisins
@@ -279,8 +279,11 @@ Coupe2026::Coupe2026(const bool isYellow, rclcpp::Node::SharedPtr a_node)
                    zone_de_ramassage_public_grand_cote);
     Etape::get(garde_manger_centre_us)
       ->addVoisins(zone_de_ramassage_public_petit_cote,
-                   zone_de_ramassage_public_grand_cote,
                    zone_de_ramassage_centre);
+
+
+    Etape::get(zone_de_ramassage_public_grand_cote)
+      ->addVoisin(garde_manger_centre_us,false);
 
     Etape::get(garde_manger_public_milieu)
       ->addVoisins(/*zone_de_ramassage_centre,
@@ -349,13 +352,13 @@ Coupe2026::Coupe2026(const bool isYellow, rclcpp::Node::SharedPtr a_node)
 
     // Thermometre
 
-    Etape::get(debut_thermometre)
-      ->addVoisins(garde_manger_public_milieu,
-                   zone_de_ramassage_public_grand_cote,
-                   garde_manger_centre_milieu);
+    // Etape::get(debut_thermometre)
+    //   ->addVoisins(garde_manger_public_milieu,
+    //                zone_de_ramassage_public_grand_cote,
+    //                garde_manger_centre_milieu);
 
-    Etape::get(fin_thermometre)
-      ->addVoisins(garde_manger_centre_us, zone_de_ramassage_public_petit_cote, debut_thermometre);
+    // Etape::get(fin_thermometre)
+    //   ->addVoisins(garde_manger_centre_us, zone_de_ramassage_public_petit_cote, debut_thermometre);
 
     m_numero_etape_garage = nid; // Must be set!
 
