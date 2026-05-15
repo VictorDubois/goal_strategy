@@ -80,7 +80,7 @@ bool GoalStrat::reculeOuAvance(rclcpp::Duration a_time, Distance a_distance, boo
         // rclcpp::spin_some(shared_from_this());
         updateCurrentPose();
         l_distance_parcourue = (l_initial_pose - m_current_pose.getPosition()).getNorme();
-        usleep(0.1e6);
+        usleep(0.01e6);
     }
     override_gear = krabi_msgs::msg::StratMovement::FORWARD_OR_REVERSE;
 
@@ -165,8 +165,8 @@ bool GoalStrat::goToDroit(Position& a_position,
         l_distance_parcourue = (l_initial_pose - m_current_pose.getPosition()).getNorme();
         RCLCPP_DEBUG_STREAM(this->get_logger(), "distancePacrourue: " << l_distance_parcourue);
         publishStratMovement();
-
-        usleep(0.1e6);
+        
+        usleep(0.01e6);
 
         l_distance_to_objective = (a_position - m_current_pose.getPosition()).getNorme();
         RCLCPP_INFO_STREAM(this->get_logger(),
@@ -700,7 +700,7 @@ GoalStrat::GoalStrat()
         std::bind(&GoalStrat::grabFlipDropCallback, this, std::placeholders::_1, std::placeholders::_2));
 #endif
 
-    m_timer = this->create_wall_timer(100ms, std::bind(&GoalStrat::loop, this));
+    m_timer = this->create_wall_timer(10ms, std::bind(&GoalStrat::loop, this));
 }
 
 void GoalStrat::publishIsBlue()
