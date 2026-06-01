@@ -4,7 +4,6 @@ Chooses what to do: where and how to move (sends strat_movement to MainStrat), a
 
 <img width="1301" height="805" alt="rosgraph_editor_goalstrat" src="https://github.com/user-attachments/assets/9aab83fc-d9cc-45fe-bbb5-e99c101bc6aa" />
 
-
 # Outputs
 
 ## strat_movement
@@ -81,6 +80,20 @@ State of the tirette, that signals the start of the Match, read as a GPIO (type:
 
 ### remaining_time
 Time remaining until the robot has to stop. Note: it is not the actual end of the match, as the PAMIs can move after that. (type: [Duration](https://docs.ros2.org/foxy/api/builtin_interfaces/msg/Duration.html))
+
+# Guide to the files structure
+## goal
+- main.cpp: the main file, hosts the GoalStrat class. Ideally, it should be split up (~1.6k lines)
+- subscriptionCreator/publisherCreator: handle the creation of ROS2 publishers and subscribers (initially for compile time performance)
+- coupe202X.cpp: describes the graph on which the robot moves. Uses the classes defined in the krabilib <= this changes every year
+- actuators2025.cpp: handles sending the orders to the actuator PCB
+- bilig.cpp/grabi.cpp: complexe actuators for specific years. Defines the sequences to perform the various actions (ex: flip the 2026 caisses for bilig)
+- pump/servomotor/stepper.cpp: simple actuators
+
+## krabilib
+- angle, distance, pose, position.cpp: define values and the operators to manipulate them
+- stragie/strategiev3.cpp, etape.cpp, djikstra, mediumLevelAction.cpp: graph engine, used by coupe202X.cpp
+- stragie/gardeManger, zoneDeRamassage, etc: year-specific action to realize. Corresponds to a vertex in the graph
 
 # What to do for a new year
 A lot!
