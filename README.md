@@ -29,13 +29,24 @@ Pose of the current goal (type: [PoseStamped](https://docs.ros2.org/foxy/api/geo
 ### debug_etapes
 Visualization of the etapes (type: [MarkerArray](https://docs.ros.org/en/noetic/api/visualization_msgs/html/msg/MarkerArray.html))
 
-<img width="500" height="295" alt="image" src="https://github.com/user-attachments/assets/241cd9c7-f1fd-43be-b8cb-98a4e4b6732e" />
 
 - red lines: bidirectionnal edges of the graph on which the robot is allowed to move
 - red lines (bigger): path the robot is taking to go to the next goal
 - red arrows: unidirectionnal edges of the graph on which the robot is allowed to move
 - black cubes: etapes disabled (either not allowed yet, or disabled because the robot has failed to reach it - usually because of an obstacle)
 - other shapes : year-specific objectives (2026: yellow/blue = caisses de noisettes, white squares = gardes manger)
+
+2026 (Winter is coming):
+
+<img width="500" height="295" alt="image" src="https://github.com/user-attachments/assets/241cd9c7-f1fd-43be-b8cb-98a4e4b6732e" />
+
+2025 (The show must go on):
+
+<img width="500" height="350" alt="Capture d’écran du 2026-06-01 13-33-53" src="https://github.com/user-attachments/assets/1844b7b9-5be3-4495-9406-41f30b331fdc" />
+
+2024 (Farming Mars):
+
+<img width="500" height="350" alt="image" src="https://github.com/user-attachments/assets/6cce0cf6-6dbb-47ed-9c8c-f9fae3a13756" />
 
 ## is_blue
 Team color, received from ROS2 params, forwarded as a topic (type: [Bool](https://docs.ros2.org/foxy/api/std_msgs/msg/Bool.html))
