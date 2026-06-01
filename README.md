@@ -18,8 +18,8 @@ When the robot needs a new goal (start of the match, when the previous is done, 
 
 Notes:
 - "but A* is faster than Dijkstra!" => No and I don't care :p
-  - No, because A* only computes the path between two points, while we heuristic needs the distances to all the etapes
-  - I don't care, because the graph is hand made, has only ~30 vertices, so the compute time is negligible (even when it cas done on a microcontroler)
+  - No, because A* only computes the path between two points, while the heuristic needs the distances to all the etapes
+  - I don't care, because the graph is hand made, has only ~30 vertices, so the compute time is negligible (even when it was computed on a microcontroler)
 - there are quite a lot of added functionnalities, such as handling situations were an etape is unreachable, having multiple etapes for one action (ex: the same caisses can be taken from several places), activating an etape only after completing another, etc.
 
 <img width="1301" height="805" alt="rosgraph_editor_goalstrat" src="https://github.com/user-attachments/assets/9aab83fc-d9cc-45fe-bbb5-e99c101bc6aa" />
@@ -121,3 +121,14 @@ Time remaining until the robot has to stop. Note: it is not the actual end of th
 
 # What to do for a new year
 A lot!
+
+- Define the new actions (ex: krabilib/stragie/gardeManger.cpp)
+- Define a new coupe202X.cpp file, with:
+  - How to visualize the actions (debugEtapes)
+  - A new graph, in the constructor:
+    - The new etapes with actions (int my_first_etape = Etape::makeEtape)
+    - How are they linked (Etape::get(my_first_etape)->addVoisin(my_second_etape))
+  - Define the scoring (getScoreEtape)
+- If needed, add a new actuator (ex: bilig)
+- Modify main.cpp, with "#ifdef YEAR_202X" => adapt all the year-specific sections
+- Go from there. Whenever you have something that compiles, you can start the goal_strategy (`krabi && ros2 launch goal_strategy goal_strat_launch.py`), and view the graph on rviz/foxglove
