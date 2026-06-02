@@ -71,59 +71,6 @@ int Dijkstra::run()
     return 0;
 }
 
-int Dijkstra::miniRun(int step)
-{
-    if (step == 0)
-    {
-        initialiser();
-    }
-    else if (step < this->nombreEtapes - 2)
-    {
-        int min = trouverMin(step + 1);
-        // Si min vaut -1, c'est que le robot était coincé, et donc qu'il a fallut réinitialiser la
-        // recherche Donc on arrete la recherche en cours, une nouvelle a été lancée
-        if (min == -1)
-        {
-            return -1;
-        }
-        if (min == -2)
-        {
-            return 0;
-        }
-        this->numeroEtapeCourante = min;
-        mettreAJourVoisins(this->numeroEtapeCourante);
-    }
-    else
-    {
-        return 0;
-    }
-    return -2;
-    /*
-        int min = -2;
-
-
-        mettreAJourVoisins(this->numeroEtapeCourante);
-
-        for(int i = 0 ; i < this->nombreEtapes-2 ; i++)
-        {
-            min = trouverMin(i+1);
-            // Si min vaut -1, c'est que le robot était coincé, et donc qu'il a fallut réinitialiser
-       la recherche
-            // Donc on arrete la recherche en cours, une nouvelle a été lancée
-            if(min == -1)
-            {
-                return -1;
-            }
-            if(min == -2)
-            {
-                return 0;
-            }
-            this->numeroEtapeCourante = min;
-            mettreAJourVoisins(this->numeroEtapeCourante);
-        }
-        return 0;*/
-}
-
 // On réinitialise le tableau avant le commencer une nouvelle recherche
 void Dijkstra::initialiser()
 {

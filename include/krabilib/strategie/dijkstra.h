@@ -34,12 +34,6 @@ public:
      * robot) */
     int run();
 
-    /** @brief Décomposition de la fonction run, pour ne faire qu'une seule étape à la fois,
-     * et ainsi tenir dans un temps de traitement de 5 ms *
-     * @param step le numéro du miniRun *
-     * @return -1 en cas de graphe bloqué */
-    int miniRun(int step);
-
     /** @brief Renvoi le numéro de l'étape la plus proche dont on n'a pas encore mis à jour les
      * voisins *
      * @param classementEtapeMinimale sert à indiquer le classement de l'étape trouvée (de la plus
@@ -67,9 +61,6 @@ public:
      * @return le nombre d'etapes constituant de graphe */
     int getNombreEtapes();
 
-    /** @brief Reset l'index de progression pour miniRun */
-    void resetProgress();
-
     /** @brief Renvoi un booléen valait true si cette étape peut rapporter des points */
     bool etapeRapporte(Etape* etape);
 
@@ -88,19 +79,6 @@ private:
 
     /** @brief index de progression pour miniRun */
     int updateInProgress;
-
-    /** @brief nombre de fruits transporte par le robot */
-    int nombreFruitsTransporte;
-
-    /** @brief nombre de feux transporte par le robot */
-    int nombreFeuxTransporte;
-
-    /** @brief nombre de fresques transporte par le robot */
-    int nombreFresquesTransporte;
-
-    /** @brief nombre de lances transporte par le robot */
-    int nombreLancesTransporte;
-    int nombreFiletTransporte;
 
     /** @brief pour ne pas lancer cette opération récursive en boucle */
     bool deblocageEndroitPourriEnCours;
