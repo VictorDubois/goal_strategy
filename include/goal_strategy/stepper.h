@@ -136,7 +136,7 @@ public:
                     uint16_t accel,
                     uint16_t max_current,
                     int16_t a_max_height_mm,
-                    int16_t a_min_height_mm)
+                    int16_t a_min_height_mm = 0)
       : StepperMotor(speed, accel, max_current)
     {
         m_max_height_mm = a_max_height_mm;

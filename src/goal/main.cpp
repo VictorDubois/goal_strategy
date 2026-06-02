@@ -1215,11 +1215,13 @@ void GoalStrat::stateRun()
         }
 
         rclcpp::Time recalageTimeoutDeadline;
+#ifdef YEAR_2026
         bool successAlign = true;
         bool successGoTo = true;
         Position positionDeposeThermometre;
         ZoneDeRamassage* l_zone_de_ramassage;
         GardeManger* l_garde_manger;
+#endif
 
         switch (m_strat_graph->getEtapeEnCours()->getEtapeType())
         {
