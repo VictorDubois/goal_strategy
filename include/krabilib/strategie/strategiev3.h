@@ -71,7 +71,8 @@ public:
 protected:
     bool m_yellow;
     bool m_use_x_symetry;
-    /** @brief le numéro de l'étape en cours */
+    /** @brief Overloaded: "where the robot just arrived" on entry to update(), and
+     * "the next hop to drive to" on exit. See docs/ENGINE.md (§3). */
     int m_etape_en_cours;
     int m_nombre_etapes;
     int m_numero_etape_garage;

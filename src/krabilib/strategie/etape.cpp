@@ -37,9 +37,6 @@ std::string Etape::getName()
     case EtapeType::POINT_PASSAGE:
         return "PP";
         break;
-    case EtapeType::ROBOT_VU_ICI:
-        return "OBS";
-        break;
     case EtapeType::ZONE_DE_RAMASSAGE:
         return "ZdR";
         break;
@@ -165,10 +162,7 @@ void Etape::setEtapeType(Etape::EtapeType type)
 
 void Etape::robotVu()
 {
-    if (!aEviter())
-    {
-        this->type = (EtapeType)(this->type + ROBOT_VU_ICI);
-    }
+    m_robot_vu_ici = true;
 }
 
 int Etape::getNumero()
@@ -178,23 +172,12 @@ int Etape::getNumero()
 
 bool Etape::aEviter()
 {
-    if (((int)this->getEtapeType()) > ROBOT_VU_ICI - 1)
-    {
-        return true;
-    }
-    else
-    {
-        return false;
-    }
+    return m_robot_vu_ici || est_desactive();
 }
 
 void Etape::oublieRobotVu()
 {
-    if (this->aEviter() && this->getEtapeType() < Etape::EtapeType::PIVOT_DESACTIVEE)
-    {
-        // On oublie qu'on a vu un robot
-        this->setEtapeType((EtapeType)((int)this->getEtapeType() - ROBOT_VU_ICI));
-    }
+    m_robot_vu_ici = false;
 }
 
 float* Etape::getDistances()
@@ -240,15 +223,11 @@ std::vector<int> Etape::getEtapeActiveApres()
     return this->numerosEtapeActiveApres;
 }
 
+// Gate node `a_numeroEtapeActiveApres` behind this one: deactivate it now
 void Etape::addEtapeActiveApres(int a_numeroEtapeActiveApres)
 {
     this->numerosEtapeActiveApres.push_back(a_numeroEtapeActiveApres);
-    if (Etape::get(a_numeroEtapeActiveApres)->getEtapeType() < Etape::EtapeType::PIVOT_DESACTIVEE)
-    {
-        Etape::get(a_numeroEtapeActiveApres)
-          ->setEtapeType((EtapeType)(Etape::get(a_numeroEtapeActiveApres)->getEtapeType()
-                                     + Etape::EtapeType::PIVOT_DESACTIVEE));
-    }
+    Etape::get(a_numeroEtapeActiveApres)->desactive();
 }
 
 void Etape::setEtapesLieesParFinirEtape(std::vector<int> numerosEtapesLieesParFinirEtape)
@@ -308,6 +287,11 @@ void Etape::active()
 void Etape::desactive()
 {
     m_active = false;
+}
+
+bool Etape::est_desactive()
+{
+    return m_active == false;
 }
 
 void Etape::activeEtapesApres()

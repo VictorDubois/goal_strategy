@@ -72,6 +72,9 @@ int Dijkstra::run()
 }
 
 // On réinitialise le tableau avant le commencer une nouvelle recherche
+// Per-node bookkeeping for a run (docs/ENGINE.md §5):
+//   distance: -1 = unknown/unreachable, else cost from the source
+//   state:    -1 = unvisited, -2 = avoided (aEviter), 0 = source, >=1 = visit order
 void Dijkstra::initialiser()
 {
     for (int i = 0; i < this->nombreEtapes; i++)
@@ -90,7 +93,11 @@ void Dijkstra::initialiser()
     this->tableauEtapes[this->numeroEtapeCourante]->setState(0);
 }
 
-// Renvoi le numéro de l'étape la plus proche dont on n'a pas encore mis à jour les voisins
+// Closest not-yet-expanded node. Returns its index, or:
+//   -2 = no reachable scoring node left (strategy can finish), or
+//   -1 = stuck with no reachable task -> "deblocage": forget every robot-seen mark
+//        and retry once (recursion), so the robot can escape a fenced-in sub-graph.
+// See docs/ENGINE.md §5.
 int Dijkstra::trouverMin(int classementEtapeMinimale)
 {
     float minimum = -1;
@@ -166,6 +173,7 @@ int Dijkstra::trouverMin(int classementEtapeMinimale)
                 onEstCoinceDansUnEndroitPourri = false;
             }
         }
+        // deblocage: drop every robot-seen barrier and rerun once (recursion).
         // Sinon on supprime les barrières en oubliant qu'on a vu des robots
         if (onEstCoinceDansUnEndroitPourri)
         {

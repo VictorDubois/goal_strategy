@@ -354,16 +354,19 @@ void Coupe2025::etape_type_to_marker(visualization_msgs::msg::Marker& m, Etape* 
         m.type = visualization_msgs::msg::Marker::SPHERE;
         break;
 
-    case Etape::EtapeType::ROBOT_VU_ICI:
-        m.color.r = 1;
-        m.color.g = 1;
-        m.color.b = 1;
-        m.scale.x = 0.2;
-        m.scale.y = 0.2;
-        m.scale.z = 0.2;
-        break;
     default:
         break;
+    }
+
+    if (a_etape->aEviter())
+    {
+        m.color.r = 0;
+        m.color.g = 0;
+        m.color.b = 0;
+        m.scale.x = 0.05;
+        m.scale.y = 0.05;
+        m.scale.z = 0.05;
+        return;
     }
 }
 

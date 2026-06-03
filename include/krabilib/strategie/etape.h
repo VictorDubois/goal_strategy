@@ -10,7 +10,7 @@ class MediumLevelAction;
 class Etape
 {
 public:
-    /** @brief Enum des types d'étape possible (un feu, un point de passage...) */
+    /** @brief Enum des types d'étape possible (un garde manger, un point de passage...) */
     enum EtapeType
     {
         DEPART = 0x01,
@@ -22,14 +22,6 @@ public:
         THERMOMETRE = 0x2A,
 
         POINT_PASSAGE = 0x30,
-
-        ROBOT_VU_ICI = 0x60,
-
-        PIVOT_DESACTIVEE = 0x100,
-
-        POINT_PASSAGE_DESACTIVE = 0x130,
-        THERMOMETRE_DESACTIVE = 0x12A,
-        GARDE_MANGER_DESACTIVE = 0x128
     };
 
     static int makeEtape(MediumLevelAction* action);
@@ -241,6 +233,8 @@ public:
 
     void desactive();
 
+    bool est_desactive();
+
     void activeEtapesApres();
 
     void setBoostManuelDeScore(float boost)
@@ -328,4 +322,6 @@ private:
     std::vector<Etape*> m_etapes_a_activer_apres;
 
     float m_boost_manuel_de_score = 0.f;
+
+    bool m_robot_vu_ici = false;
 };

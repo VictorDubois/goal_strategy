@@ -22,6 +22,8 @@ Notes:
   - I don't care, because the graph is hand made, has only ~30 vertices, so the compute time is negligible (even when it was computed on a microcontroler)
 - there are quite a lot of added functionnalities, such as handling situations were an etape is unreachable, having multiple etapes for one action (ex: the same caisses can be taken from several places), activating an etape only after completing another, etc.
 
+**For the engine internals** (how `update()` / Dijkstra / the `EtapeType` flags work, plus a "add your first etape" walkthrough), see [docs/ENGINE.md](docs/ENGINE.md).
+
 <img width="1301" height="805" alt="rosgraph_editor_goalstrat" src="https://github.com/user-attachments/assets/9aab83fc-d9cc-45fe-bbb5-e99c101bc6aa" />
 
 # Outputs

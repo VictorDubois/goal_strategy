@@ -82,13 +82,13 @@ public:
     }
 
 protected:
-    // Mirrors the year-specific Coupe convention: a deactivated (>= PIVOT_DESACTIVEE)
+    // Mirrors the year-specific Coupe convention: a deactivated
     // or already-done (POINT_PASSAGE/DEPART) node scores 0; a manual boost amplifies
     // an already-scoring node (coupe2026.cpp:718).
     int getScoreEtape(int i) override
     {
         Etape::EtapeType t = Etape::get(i)->getEtapeType();
-        if (t >= Etape::PIVOT_DESACTIVEE || t == Etape::POINT_PASSAGE || t == Etape::DEPART)
+        if (Etape::get(i)->est_desactive() || t == Etape::POINT_PASSAGE || t == Etape::DEPART)
         {
             return 0;
         }
@@ -253,12 +253,11 @@ TEST_F(MissionGraphTest, PrerequisiteGatingThenReEnable)
     s.setTaskScore(drop, 9); // higher, but gated until pickup is done
     s.connect(start, pickup);
     s.connect(pickup, drop);
-    Etape::get(pickup)->addEtapeActiveApres(drop); // deactivates drop now (+PIVOT_DESACTIVEE)
+    Etape::get(pickup)->addEtapeActiveApres(drop);
     s.finalize(start);
 
-    ASSERT_GE(static_cast<int>(Etape::get(drop)->getEtapeType()),
-              static_cast<int>(Etape::PIVOT_DESACTIVEE))
-      << "drop starts deactivated";
+    EXPECT_TRUE(Etape::get(drop)->aEviter()) << "drop starts deactivated";
+    EXPECT_TRUE(Etape::get(drop)->est_desactive()) << "drop starts deactivated";
 
     s.update();
     EXPECT_EQ(s.goalNum(), pickup) << "deactivated drop is skipped; pickup chosen first";
@@ -273,9 +272,8 @@ TEST_F(MissionGraphTest, PrerequisiteGatingThenReEnable)
         }
     }
     EXPECT_TRUE(drop_selected) << "after completing pickup, drop is re-enabled and chosen";
-    EXPECT_LT(static_cast<int>(Etape::get(drop)->getEtapeType()),
-              static_cast<int>(Etape::PIVOT_DESACTIVEE))
-      << "drop's deactivation bit was cleared";
+    EXPECT_FALSE(Etape::get(drop)->aEviter()) << "drop's deactivation bit was cleared";
+    EXPECT_FALSE(Etape::get(drop)->est_desactive()) << "drop's deactivation bit was cleared";
 }
 
 // ---------------------------------------------------------------------------

@@ -78,6 +78,21 @@ void StrategieV3::robotVuDansCetteZone()
     }
 }
 
+/**
+ * @brief Recompute the next thing to do. Call once each time the robot reaches where
+ * it was going (see GoalStrat::stateRun). Full walkthrough in docs/ENGINE.md (§3).
+ *
+ * Three branches:
+ *   Phase A (m_avoiding): we failed to reach a node -> mark it / nearby nodes as
+ *           "robot seen", backtrack to the parent, reroute with Dijkstra.
+ *   Phase B (status == 2): arrived at an intermediate waypoint -> walk to the next
+ *           hop (updateIntermedaire), keep the same goal.
+ *   Phase C (status == 1): arrived at a goal -> finish/re-enable etapes, rescore,
+ *           run Dijkstra and pick the next goal.
+ *
+ * @return 1 = heading to a goal, 2 = heading to an intermediate, -1 = nothing left.
+ * Note: m_etape_en_cours is overloaded — "where we are" on entry, "next hop" on exit.
+ */
 int StrategieV3::update()
 {
     // this->actionEtape[m_etape_en_cours]->reset();
@@ -85,6 +100,7 @@ int StrategieV3::update()
 
     m_tableau_etapes_total[m_etape_en_cours]->reset();
 
+    // ---- Phase A: avoiding — we just failed to reach m_etape_en_cours ----
     // Si on est en train d'éviter, on revient à l'étape précédente, et on marque l'étape comme
     // à éviter
     if (m_avoiding)
@@ -150,10 +166,12 @@ int StrategieV3::update()
         m_en_train_eviter_reculant = false;
         m_en_train_eviter_avancant = false;
 
+        // ---- Phase B: arrived at an intermediate waypoint ----
         if (m_status_strat == 2) // Si on vient d'arriver à une étape intermédiare
         {
             this->updateIntermedaire();
         }
+        // ---- Phase C: arrived at a goal -> choose the next one ----
         else // Sinon, statusStrat==1, et il faut donc choisir un nouvel objectif
         {
             // Si on n'était pas en train d'éviter
@@ -172,14 +190,7 @@ int StrategieV3::update()
                 for (int l_etape_a_activer :
                      m_tableau_etapes_total[m_etape_en_cours]->getEtapeActiveApres())
                 {
-                    if (Etape::get(l_etape_a_activer)->getEtapeType()
-                        > Etape::EtapeType::PIVOT_DESACTIVEE)
-                    {
-                        Etape::get(l_etape_a_activer)
-                          ->setEtapeType(
-                            Etape::EtapeType(Etape::get(l_etape_a_activer)->getEtapeType()
-                                             - Etape::EtapeType::PIVOT_DESACTIVEE));
-                    }
+                    Etape::get(l_etape_a_activer)->active();
                 }
 
                 // Mise à jour du stock et l'objectif qu'on vient de remplir est maintenant un
@@ -251,7 +262,9 @@ int StrategieV3::update()
                 m_tableau_etapes_total[m_etape_en_cours]->reset();
             }
 
-            // On sélectionne l'objectif le plus prometteur : pas trop loin et qui rapporte
+            // On sélectionne l'objectif le plus prometteur : pas trop loin et qui rapporte.
+            // Heuristic: 100000 - distance*1000 + score*1000 -> score dominates, distance
+            // breaks ties (1 point ~= 1 m of detour). See docs/ENGINE.md (§4).
             int meilleurEtape = -1;
             int scoreMaxi = -100000;
 
@@ -302,6 +315,8 @@ void StrategieV3::collisionAvoided()
     m_avoiding = true;
 }
 
+// Walk the Dijkstra parent chain back from m_goal toward where we are, to set
+// m_etape_en_cours to the next hop (and m_next_step to the one after). docs/ENGINE.md §3.
 void StrategieV3::updateIntermedaire()
 {
     // Note : le parent d'une étape est l'étape le rapprochant le plus de l'étape d'origine
