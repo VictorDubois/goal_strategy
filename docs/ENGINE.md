@@ -43,7 +43,7 @@ simulate a sequence of arrivals.
 
 ## 2. The graph: `Etape`
 
-- An `Etape` has a **position** (metres), a **type** (see §3), neighbours
+- An `Etape` has a **position** (metres), a **type**, neighbours
   (`addVoisin`, bidirectional by default), an optional **`MediumLevelAction`**
   (what to *do* there), and a **score** (how much we want to go there).
 - Nodes are created with the static `Etape::makeEtape(...)` and stored in a
@@ -54,6 +54,10 @@ simulate a sequence of arrivals.
   `initTableauEtapeTotal(NOMBRE_ETAPES)` once at start.
 - Edge weights are straight-line distances (`computeChildDistances`), with a `+100`
   penalty when another robot is known to sit on that edge.
+- **Avoidance & activation state** — two booleans, *not* part of the type:
+  `robotVu()`/`oublieRobotVu()` toggle "a robot was seen here"; `desactive()`/`active()`
+  toggle whether a gated node is allowed yet. **`aEviter()` (= robot-seen *or*
+  deactivated)** is what makes Dijkstra skip a node, and an inactive node also scores 0.
 
 ---
 
@@ -86,13 +90,13 @@ toward where we are to find the next hop. No new goal is chosen.
 
 **Phase C — choose a new goal** (`m_status_strat == 1`):
 1. `finir()` the etapes linked to the one just completed; **re-enable** any nodes
-   gated behind it (subtract `0x100`); `updateStock()` turns the reached node into a
+   gated behind it (via `active()`); `updateStock()` turns the reached node into a
    plain `POINT_PASSAGE` (= done).
 2. `updateScores()` → set every node's score from the year-specific `getScoreEtape`.
    If *no* node scores, `oublieRobotVu()` on all nodes and re-check; if still nothing
    and we're at the garage, return `-1`; otherwise make the garage attractive.
 3. Run Dijkstra from here, then **select the goal**: the node maximising the
-   heuristic (§5) among nodes that score and are reachable.
+   heuristic (§4) among nodes that score and are reachable.
 4. `updateIntermedaire()` to set `m_etape_en_cours` to the first hop.
 
 ---
