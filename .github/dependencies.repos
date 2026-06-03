@@ -1,0 +1,9 @@
+# Sibling ROS 2 packages that goal_strategy depends on.
+# action-ros-ci checks these out alongside goal_strategy and colcon-builds the
+# workspace. Everything else goal_strategy needs is rosdep-resolvable, and
+# krabilib is built inside this repo. Omitting `version` uses the default branch.
+
+repositories:
+  krabi-msgs:
+    type: git
+    url: https://github.com/VictorDubois/krabi-msgs.git
