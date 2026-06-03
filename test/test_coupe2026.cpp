@@ -31,20 +31,6 @@ double Y(const Position& p)
 {
     return static_cast<double>(p.getY());
 }
-
-// First graph node of the given type, or -1. (Etape exposes the graph statically.)
-int firstEtapeOfType(Etape::EtapeType type)
-{
-    for (int i = 0; i < Etape::getTotalEtapes(); ++i)
-    {
-        Etape* e = Etape::get(i);
-        if (e != nullptr && e->getEtapeType() == type)
-        {
-            return i;
-        }
-    }
-    return -1;
-}
 } // namespace
 
 class Coupe2026Test : public ::testing::Test
