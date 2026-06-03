@@ -248,7 +248,7 @@ int StrategieV3::update()
                 // Etape* ancienneEtape = m_tableau_etapes_total[m_etape_en_cours];
                 // m_etape_en_cours =
                 // m_tableau_etapes_total[m_etape_en_cours]->getParent()->getNumero();
-                m_tableau_etapes_total[m_etape_en_cours]->getAction()->reset();
+                m_tableau_etapes_total[m_etape_en_cours]->reset();
             }
 
             // On sélectionne l'objectif le plus prometteur : pas trop loin et qui rapporte
@@ -295,14 +295,6 @@ int StrategieV3::update()
     }
 
     return m_status_strat;
-}
-
-void StrategieV3::resetEverything()
-{
-    for (int i = 0; i < 10; i++)
-    {
-        m_tableau_etapes_total[i]->setState(0);
-    }
 }
 
 void StrategieV3::collisionAvoided()

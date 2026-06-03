@@ -230,6 +230,11 @@ public:
 
     static std::vector<Etape*>& getTableauEtapesTotal();
 
+    /** @brief TEST-ONLY: drop the process-global graph so a fresh one can be built.
+     * Resets the instance counter and clears the static table (old Etapes leak, which
+     * is harmless in a short-lived test process). Unused by production code. */
+    static void resetForTests();
+
     void setEtapesActiveesApres(std::vector<Etape*> a_etapes_a_activer_apres);
 
     void active();

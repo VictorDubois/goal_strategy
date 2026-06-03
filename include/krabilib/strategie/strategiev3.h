@@ -25,8 +25,6 @@ public:
     /** @brief Met à jour la trajectoire pour se diriger vers une étape intermédiaire */
     void updateIntermedaire();
 
-    void resetEverything();
-
     void startDijkstra();
 
     /** @brief Retourne un pointeur sur l'étape en cours */

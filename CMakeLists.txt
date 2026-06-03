@@ -133,6 +133,16 @@ if(BUILD_TESTING)
     rclcpp geometry_msgs std_msgs krabi_msgs visualization_msgs
     tf2_eigen tf2_ros tf2_geometry_msgs)
 
+  # --- Integration tests for the mission-planning engine (StrategieV3 + Dijkstra + Etape) ---
+  # Evergreen: drives a custom minimal graph, no competition data, no ROS node.
+  ament_add_gtest(test_mission_graph
+    test/test_mission_graph.cpp
+  )
+  target_include_directories(test_mission_graph PRIVATE include)
+  target_link_libraries(test_mission_graph krabilib_strat krabilib)
+  ament_target_dependencies(test_mission_graph
+    rclcpp geometry_msgs tf2_eigen tf2_ros tf2_geometry_msgs)
+
   # --- Basic ROS 2 node tests: construction + pub/sub/service wiring + tirette->RUN ---
   # Compiles the full node implementation EXCEPT node_main.cpp (avoids a second main()).
   ament_add_gtest(test_goal_strat_node

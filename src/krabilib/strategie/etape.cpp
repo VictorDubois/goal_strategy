@@ -465,3 +465,9 @@ std::vector<Etape*>& Etape::getTableauEtapesTotal()
 {
     return tableauEtapesTotal;
 }
+
+void Etape::resetForTests()
+{
+    totalEtapesInstanciated = 0;
+    tableauEtapesTotal.clear();
+}

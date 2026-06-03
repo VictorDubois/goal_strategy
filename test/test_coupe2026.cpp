@@ -31,6 +31,20 @@ double Y(const Position& p)
 {
     return static_cast<double>(p.getY());
 }
+
+// First graph node of the given type, or -1. (Etape exposes the graph statically.)
+int firstEtapeOfType(Etape::EtapeType type)
+{
+    for (int i = 0; i < Etape::getTotalEtapes(); ++i)
+    {
+        Etape* e = Etape::get(i);
+        if (e != nullptr && e->getEtapeType() == type)
+        {
+            return i;
+        }
+    }
+    return -1;
+}
 } // namespace
 
 class Coupe2026Test : public ::testing::Test
@@ -50,11 +64,15 @@ protected:
             rclcpp::shutdown();
         }
     }
+
+    // Etape stores its graph in process-global static storage; reset it so each test
+    // builds a fresh Coupe2026.
+    void SetUp() override
+    {
+        Etape::resetForTests();
+    }
 };
 
-// NOTE: Etape stores its graph in process-global static storage, so only ONE
-// strategy graph may be built per test binary. Everything is asserted on a single
-// blue instance inside one test case.
 TEST_F(Coupe2026Test, BlueGraphCharacterization)
 {
     auto node = std::make_shared<rclcpp::Node>("coupe2026_test");
@@ -75,6 +93,69 @@ TEST_F(Coupe2026Test, BlueGraphCharacterization)
     Position park = strat.getParkedPosition();
     EXPECT_NEAR(X(park), -1.35, 1e-4);
     EXPECT_NEAR(Y(park), -0.85, 1e-4);
+}
+
+// Drive the REAL 2026 graph the way main.cpp does (each update() == an arrival) and
+// check it advances off the start and eventually completes (returns -1).
+TEST_F(Coupe2026Test, RealGraphProgressesAndTerminates)
+{
+    auto node = std::make_shared<rclcpp::Node>("coupe2026_progress");
+    Coupe2026 strat(/*isYellow=*/false, node);
+
+    int start_num = strat.getEtapeEnCours()->getNumero();
+    bool advanced = false;
+    int ret = 0;
+    for (int i = 0; i < 300; ++i)
+    {
+        ret = strat.update();
+        if (strat.getEtapeEnCours()->getNumero() != start_num)
+        {
+            advanced = true;
+        }
+        if (ret == -1)
+        {
+            break;
+        }
+    }
+    EXPECT_TRUE(advanced) << "the robot moves off the start node";
+    EXPECT_EQ(ret, -1) << "consuming every task eventually completes the strategy";
+}
+
+// The manual score boost (getBoostManuelDeScore, consumed in Coupe2026::getScoreEtape)
+// can override the engine's default goal choice on the real graph.
+TEST_F(Coupe2026Test, BoostOverridesRealGoalSelection)
+{
+    // Baseline: the default first goal.
+    int baseline_goal = -1;
+    {
+        auto node = std::make_shared<rclcpp::Node>("coupe2026_baseline");
+        Coupe2026 strat(/*isYellow=*/false, node);
+        strat.update();
+        baseline_goal = strat.getGoal()->getNumero();
+    }
+
+    // Fresh graph: boost a pickup zone that is NOT the default goal, then re-decide.
+    Etape::resetForTests();
+    auto node = std::make_shared<rclcpp::Node>("coupe2026_boost");
+    Coupe2026 strat(/*isYellow=*/false, node);
+
+    int zone = -1;
+    for (int i = 0; i < Etape::getTotalEtapes(); ++i)
+    {
+        Etape* e = Etape::get(i);
+        if (e != nullptr && e->getEtapeType() == Etape::ZONE_DE_RAMASSAGE && i != baseline_goal)
+        {
+            zone = i;
+            break;
+        }
+    }
+    ASSERT_GE(zone, 0) << "the 2026 graph has a pickup zone to boost";
+
+    Etape::get(zone)->setBoostManuelDeScore(50); // dwarf the default scores
+    strat.update();
+
+    EXPECT_EQ(strat.getGoal()->getNumero(), zone)
+      << "a large manual boost makes the zone the selected goal (overrides the default)";
 }
 
 int main(int argc, char** argv)
