@@ -557,7 +557,7 @@ GoalStrat::GoalStrat()
                                       l_stepper_grabi_elevator,
                                       l_pump_plank);
 
-    m_actuators = Actuators2025(rclcpp::Node::SharedPtr(this),
+    m_actuators = Actuators2025(rclcpp::Node::SharedPtr(this, [](rclcpp::Node*) {}),
                                 "actuators2025",
                                 l_servo_grabi_left_most,
                                 l_servo_grabi_center_left,
@@ -616,7 +616,7 @@ GoalStrat::GoalStrat()
                                         l_pump_3,
                                         l_pump_4);
 
-    m_actuators = Actuators2025(rclcpp::Node::SharedPtr(this),
+    m_actuators = Actuators2025(rclcpp::Node::SharedPtr(this, [](rclcpp::Node*) {}),
                                 "actuators2025",
                                 l_servo_grabi_left_most,
                                 l_servo_grabi_center_left,
@@ -678,6 +678,18 @@ GoalStrat::GoalStrat()
     m_timer = this->create_wall_timer(100ms, std::bind(&GoalStrat::loop, this));
 }
 
+GoalStrat::~GoalStrat()
+{
+    // Stop the background publishing thread spawned in init() before members are
+    // destroyed; otherwise the still-joinable thread would std::terminate.
+    // (m_actuators stops its own thread via ~Actuators2025.)
+    m_stop_publishing = true;
+    if (m_running.joinable())
+    {
+        m_running.join();
+    }
+}
+
 void GoalStrat::publishIsBlue()
 {
     auto isBlueMsg = std_msgs::msg::Bool();
@@ -690,7 +702,7 @@ void GoalStrat::publishAll()
     std::string s = "mainPubAll";
 
     pthread_setname_np(pthread_self(), s.c_str());
-    while (true)
+    while (!m_stop_publishing)
     {
         usleep(50000);
         updateCurrentPose();
@@ -1451,10 +1463,10 @@ void GoalStrat::init()
             RCLCPP_WARN_STREAM(this->get_logger(), "Unkown starting position" << std::endl);
         }
         m_strat_graph = std::make_unique<Coupe2025>(
-          !m_is_blue, m_starting_position_2025, rclcpp::Node::SharedPtr(this));
+          !m_is_blue, m_starting_position_2025, rclcpp::Node::SharedPtr(this, [](rclcpp::Node*) {}));
     }
 #elif defined(YEAR_2026)
-    m_strat_graph = std::make_unique<Coupe2026>(!m_is_blue, rclcpp::Node::SharedPtr(this));
+    m_strat_graph = std::make_unique<Coupe2026>(!m_is_blue, rclcpp::Node::SharedPtr(this, [](rclcpp::Node*) {}));
 #endif
 
     m_strat_graph->update();
@@ -1532,19 +1544,4 @@ void GoalStrat::stop()
     m_strat_mvnt.max_speed.angular.z = 0;
     m_strat_mvnt.max_speed.linear.x = 0;
     publishStratMovement();
-}
-
-// Entry point
-int main(int argc, char* argv[])
-{
-    rclcpp::init(argc, argv);
-    auto node = std::make_shared<GoalStrat>();
-    node->initTF();
-
-    rclcpp::executors::MultiThreadedExecutor executor;
-    executor.add_node(node);
-    executor.spin();
-
-    rclcpp::shutdown();
-    return 0;
 }

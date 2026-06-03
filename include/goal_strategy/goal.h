@@ -2,6 +2,7 @@
 
 #define YEAR_2026
 
+#include <atomic>
 #include <math.h>
 #include <memory>
 #include <stdint.h>
@@ -56,6 +57,7 @@ class GoalStrat : public rclcpp::Node
 {
 public:
     GoalStrat();
+    ~GoalStrat();
     void loop();
     enum class State
     {
@@ -68,6 +70,12 @@ public:
     bool isArrivedAtGoal();
     void stop();
     void initTF();
+
+    // Read-only accessor for tests (e.g. checking the tirette -> RUN transition).
+    State getState() const
+    {
+        return m_state;
+    }
 
 private:
     void init();
@@ -235,6 +243,7 @@ private:
     std::shared_ptr<Servomotor> m_servo_banner;
 
     std::thread m_running;
+    std::atomic<bool> m_stop_publishing{ false }; // stops publishAll() at shutdown
 
     int override_gear;
     Etape* m_area_funny = nullptr;

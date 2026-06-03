@@ -51,6 +51,7 @@ add_library(krabilib_strat
 )
 
 add_executable(goal_strategy_node
+  src/goal/node_main.cpp
   src/goal/main.cpp
   src/goal/goal_logic.cpp
   src/goal/subscriptionCreator.cpp
@@ -129,6 +130,29 @@ if(BUILD_TESTING)
   target_include_directories(test_coupe2026 PRIVATE include)
   target_link_libraries(test_coupe2026 krabilib_strat krabilib)
   ament_target_dependencies(test_coupe2026
+    rclcpp geometry_msgs std_msgs krabi_msgs visualization_msgs
+    tf2_eigen tf2_ros tf2_geometry_msgs)
+
+  # --- Basic ROS 2 node tests: construction + pub/sub/service wiring + tirette->RUN ---
+  # Compiles the full node implementation EXCEPT node_main.cpp (avoids a second main()).
+  ament_add_gtest(test_goal_strat_node
+    test/test_goal_strat_node.cpp
+    src/goal/main.cpp
+    src/goal/goal_logic.cpp
+    src/goal/subscriptionCreator.cpp
+    src/goal/publisherCreator.cpp
+    src/goal/coupe2025.cpp
+    src/goal/coupe2026.cpp
+    src/goal/pump.cpp
+    src/goal/servomotor.cpp
+    src/goal/grabi.cpp
+    src/goal/stepper.cpp
+    src/goal/actuators2025.cpp
+    src/goal/billig.cpp
+  )
+  target_include_directories(test_goal_strat_node PRIVATE include)
+  target_link_libraries(test_goal_strat_node krabilib_strat krabilib)
+  ament_target_dependencies(test_goal_strat_node
     rclcpp geometry_msgs std_msgs krabi_msgs visualization_msgs
     tf2_eigen tf2_ros tf2_geometry_msgs)
 endif()

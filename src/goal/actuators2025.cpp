@@ -56,10 +56,19 @@ void Actuators2025::start()
 
 void Actuators2025::run()
 {
-    while (true)
+    while (!m_shutdown)
     {
         usleep(100000);
         publish();
+    }
+}
+
+Actuators2025::~Actuators2025()
+{
+    m_shutdown = true;
+    if (m_running.joinable())
+    {
+        m_running.join();
     }
 }
 

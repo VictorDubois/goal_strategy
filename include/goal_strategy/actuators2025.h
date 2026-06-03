@@ -38,12 +38,20 @@ private:
     std::thread m_running;
 
     int m_score;
-    bool m_shutdown;
+    bool m_shutdown = false;
 
     void run();
 
 public:
     Actuators2025() {};
+    ~Actuators2025();
+
+    // A user-declared destructor suppresses the implicit move operations, but
+    // GoalStrat's constructor move-assigns a temporary (m_actuators = Actuators2025(...)),
+    // so re-enable them explicitly. Copy stays deleted via the std::thread member.
+    Actuators2025(Actuators2025&&) = default;
+    Actuators2025& operator=(Actuators2025&&) = default;
+
     Actuators2025(rclcpp::Node::SharedPtr a_node,
                   std::string a_name,
                   std::shared_ptr<Servomotor> m_servo_1,
