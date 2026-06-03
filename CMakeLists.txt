@@ -50,8 +50,9 @@ add_library(krabilib_strat
   src/krabilib/strategie/gardeManger.cpp
 )
 
-add_executable(goal_strategy_node 
+add_executable(goal_strategy_node
   src/goal/main.cpp
+  src/goal/goal_logic.cpp
   src/goal/subscriptionCreator.cpp
   src/goal/publisherCreator.cpp
   #src/goal/AX12.cpp
@@ -95,6 +96,42 @@ ament_target_dependencies(krabilib
   tf2_ros
   tf2_geometry_msgs
 )
+
+if(BUILD_TESTING)
+  find_package(ament_cmake_gtest REQUIRED)
+
+  # --- Tier 1: evergreen unit tests (pure logic + geometry, no competition rules) ---
+  # These assert only year-agnostic invariants and must keep passing across years.
+  ament_add_gtest(test_goal_logic
+    test/test_goal_logic.cpp
+    src/goal/goal_logic.cpp
+  )
+  target_include_directories(test_goal_logic PRIVATE include)
+  target_link_libraries(test_goal_logic krabilib_strat krabilib)
+  ament_target_dependencies(test_goal_logic
+    rclcpp geometry_msgs tf2_eigen tf2_ros tf2_geometry_msgs)
+
+  ament_add_gtest(test_geometry
+    test/test_geometry.cpp
+  )
+  target_include_directories(test_geometry PRIVATE include)
+  target_link_libraries(test_geometry krabilib)
+  ament_target_dependencies(test_geometry
+    rclcpp geometry_msgs tf2_eigen tf2_ros tf2_geometry_msgs)
+
+  # --- Tier 2: seasonal characterization of THIS YEAR's graph ---
+  # The test body is guarded by YEAR_2026 (from goal.h): when the year flips it
+  # compiles to an empty main and is replaced by test_coupe2027.cpp.
+  ament_add_gtest(test_coupe2026
+    test/test_coupe2026.cpp
+    src/goal/coupe2026.cpp
+  )
+  target_include_directories(test_coupe2026 PRIVATE include)
+  target_link_libraries(test_coupe2026 krabilib_strat krabilib)
+  ament_target_dependencies(test_coupe2026
+    rclcpp geometry_msgs std_msgs krabi_msgs visualization_msgs
+    tf2_eigen tf2_ros tf2_geometry_msgs)
+endif()
 
 ament_export_targets(export_${PROJECT_NAME} HAS_LIBRARY_TARGET)
 

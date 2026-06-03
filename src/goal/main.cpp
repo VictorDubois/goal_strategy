@@ -1,4 +1,5 @@
 #include "goal_strategy/goal.h"
+#include "goal_strategy/goal_logic.h"
 #include "goal_strategy/subscriptionCreator.h"
 #include <std_msgs/msg/float32.hpp>
 
@@ -106,23 +107,13 @@ bool GoalStrat::reculeOuAvanceDroit(rclcpp::Duration a_time, Distance a_distance
 {
     RCLCPP_INFO_STREAM(this->get_logger(), "recule/avance droit !!");
 
-    Position l_position_recule = m_current_pose.getPosition();
-
     if (sensRecule == false)
     {
         override_gear = krabi_msgs::msg::StratMovement::FORWARD;
-        l_position_recule.setX(
-          Distance(l_position_recule.getX() + a_distance * cos(m_current_pose.getAngle())));
-        l_position_recule.setY(
-          Distance(l_position_recule.getY() + a_distance * sin(m_current_pose.getAngle())));
     }
-    else
-    {
-        l_position_recule.setX(
-          Distance(l_position_recule.getX() - a_distance * cos(m_current_pose.getAngle())));
-        l_position_recule.setY(
-          Distance(l_position_recule.getY() - a_distance * sin(m_current_pose.getAngle())));
-    }
+
+    Position l_position_recule = goal_logic::straightLineTarget(
+      m_current_pose.getPosition(), m_current_pose.getAngle(), a_distance, sensRecule);
 
     return goToDroit(l_position_recule, a_time, a_distance, sensRecule, false);
 }
@@ -321,11 +312,8 @@ bool GoalStrat::isArrivedAt(Etape* a_etape)
         // l_reach_dist *= 2;
     }
 
-    if (m_dist_to_goal < l_reach_dist)
-    {
-        return true;
-    }
-    return false;
+    return goal_logic::isWithinReach(
+      m_current_pose.getPosition(), a_etape->getPosition(), Distance(l_reach_dist));
 }
 
 /**
@@ -340,25 +328,11 @@ bool GoalStrat::isAlignedWithAngle(Angle angle)
     RCLCPP_DEBUG_STREAM(this->get_logger(), m_current_pose.getPosition().getX() << std::endl);
 
     // Is the tool on the back?
-    Angle toolAngle = m_current_pose.getAngle();
-    if (m_strat_mvnt.reverse_gear == krabi_msgs::msg::StratMovement::REVERSE)
-    {
-        toolAngle += M_PI;
-    }
+    const bool reverse_gear
+      = (m_strat_mvnt.reverse_gear == krabi_msgs::msg::StratMovement::REVERSE);
 
-    // Compute angular diff
-    Angle angular_error = AngleTools::diffAngle(angle, toolAngle);
-    RCLCPP_DEBUG_STREAM(this->get_logger(),
-                        "isAlignedWithAngle angle: "
-                          << angle << " ? current: " << m_current_pose.getAngle()
-                          << "angular_error = " << AngleTools::rad2deg(angular_error) << std::endl);
-
-    // When we reached the correct orientation, angularly stop and switch state
-    if (abs(angular_error) < REACH_ANG)
-    {
-        return true;
-    }
-    return false;
+    return goal_logic::isAlignedWithAngle(
+      angle, m_current_pose.getAngle(), reverse_gear, REACH_ANG);
 }
 
 /// ################ ROS2 messages ################
@@ -696,8 +670,9 @@ GoalStrat::GoalStrat()
 
 #ifdef YEAR_2026
     m_grab_flip_drop_srv = this->create_service<krabi_msgs::srv::GrabFlipDrop>(
-        "grab_flip_drop",
-        std::bind(&GoalStrat::grabFlipDropCallback, this, std::placeholders::_1, std::placeholders::_2));
+      "grab_flip_drop",
+      std::bind(
+        &GoalStrat::grabFlipDropCallback, this, std::placeholders::_1, std::placeholders::_2));
 #endif
 
     m_timer = this->create_wall_timer(100ms, std::bind(&GoalStrat::loop, this));
@@ -738,8 +713,8 @@ void GoalStrat::updateCaissesSides(krabi_msgs::msg::CaissesSides::SharedPtr a_ca
 
 #ifdef YEAR_2026
 void GoalStrat::grabFlipDropCallback(
-    const std::shared_ptr<krabi_msgs::srv::GrabFlipDrop::Request> request,
-    std::shared_ptr<krabi_msgs::srv::GrabFlipDrop::Response> response)
+  const std::shared_ptr<krabi_msgs::srv::GrabFlipDrop::Request> request,
+  std::shared_ptr<krabi_msgs::srv::GrabFlipDrop::Response> response)
 {
     m_billig->grab_caisses();
     usleep(5000);
@@ -1000,15 +975,8 @@ bool GoalStrat::isParked()
         l_valid_end_locations.push_back(m_strat_graph->getParkedPosition());
     }
 
-    for (auto l_position : l_valid_end_locations)
-    {
-        if ((m_current_pose.getPosition() - l_position).getNorme() < 0.5f)
-        {
-            return true;
-        }
-    }
-
-    return false;
+    return goal_logic::isParkedAt(
+      m_current_pose.getPosition(), l_valid_end_locations, Distance(0.5f));
 }
 
 /**
@@ -1061,16 +1029,8 @@ void GoalStrat::stopActuators()
  */
 void GoalStrat::setMaxSpeedAtArrival()
 {
-    if (m_strat_graph->getEtapeEnCours()->getEtapeType() == Etape::EtapeType::POINT_PASSAGE)
-    {
-        // No need for complete stop at intermediate stops
-        m_strat_mvnt.max_speed_at_arrival = 0.1f; // 0.1f;
-    }
-    else
-    {
-        // By default, brake before arriving
-        m_strat_mvnt.max_speed_at_arrival = 0.f;
-    }
+    m_strat_mvnt.max_speed_at_arrival
+      = goal_logic::maxSpeedAtArrival(m_strat_graph->getEtapeEnCours()->getEtapeType());
 }
 
 void GoalStrat::chooseEffector(bool enable)
