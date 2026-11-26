@@ -1,7 +1,9 @@
 from launch import LaunchDescription
 from launch_ros.actions import Node
 import launch_ros.actions
-from launch.substitutions import Command, LaunchConfiguration, PythonExpression
+from launch_ros.parameter_descriptions import ParameterValue
+from launch.substitutions import Command, LaunchConfiguration, PathJoinSubstitution, PythonExpression
+from launch_ros.substitutions import FindPackageShare
 from launch.actions import DeclareLaunchArgument, IncludeLaunchDescription
 
 def generate_launch_description():
@@ -10,6 +12,7 @@ def generate_launch_description():
     yRobotPos_value = LaunchConfiguration('yRobotPos')
     zRobotOrientation_value = LaunchConfiguration('zRobotOrientation')
     use_sim_time_value = LaunchConfiguration('use_sim_time')
+    use_lidar_loc_value = LaunchConfiguration('use_lidar_loc')
 
     isBlue_launch_arg = DeclareLaunchArgument(
         'isBlue',
@@ -31,7 +34,19 @@ def generate_launch_description():
         'use_sim_time',
         default_value='True'
     )
+    use_lidar_loc_launch_arg = DeclareLaunchArgument(
+        'use_lidar_loc',
+        default_value='False'
+    )
+    # Zones de recalage et leurs séquences
+    recalage_file_launch_arg = DeclareLaunchArgument(
+        'recalage_file',
+        default_value=PathJoinSubstitution([
+            FindPackageShare('goal_strategy'), 'config', 'recalage_2026.yaml'])
+    )
     return LaunchDescription([
+        recalage_file_launch_arg,
+        use_lidar_loc_launch_arg,
         isBlue_launch_arg, xRobotPos_launch_arg, yRobotPos_launch_arg, zRobotOrientation_launch_arg,
         use_sim_time_launch_arg,
         launch_ros.actions.SetParameter(name='isBlue', value=isBlue_value),
@@ -44,7 +59,14 @@ def generate_launch_description():
             namespace='krabi_ns',
             executable='goal_strategy_node',
             name='goal_strat',
-            parameters=[{"use_sim_time": use_sim_time_value}],
+            parameters=[{"use_sim_time": use_sim_time_value},
+                        # Pose de départ, cible de go_to_start (même valeur que map_odom_publisher)
+                        {"start_pose.x": ParameterValue(xRobotPos_value, value_type=float)},
+                        {"start_pose.y": ParameterValue(yRobotPos_value, value_type=float)},
+                        {"start_pose.theta": ParameterValue(zRobotOrientation_value, value_type=float)},
+                        {"recalage.file": ParameterValue(LaunchConfiguration('recalage_file'), value_type=str)},
+                        # Lidar loc : AMCL publie map->odom, recalage bordure désactivé
+                        {"recalage.use_lidar_loc": ParameterValue(use_lidar_loc_value, value_type=bool)}],
             respawn=True,
             respawn_delay=5.0
             #,remappings=[

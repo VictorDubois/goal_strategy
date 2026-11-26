@@ -6,4 +6,7 @@
 repositories:
   krabi-msgs:
     type: git
-    url: https://github.com/VictorDubois/krabi-msgs.git
+    # TEMPORARY, to be reverted before merging: the new messages are only on this
+    # branch until https://github.com/VictorDubois/krabi-msgs/pull/2 is merged.
+    url: https://github.com/Acidpix/krabi-msgs.git
+    version: feature/recalage-bordure

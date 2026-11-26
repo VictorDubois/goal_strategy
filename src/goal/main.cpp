@@ -504,7 +504,6 @@ GoalStrat::GoalStrat()
     m_strat_mvnt.reverse_gear = krabi_msgs::msg::StratMovement::FORWARD_OR_REVERSE; // don't care
 
     m_state = State::WAIT_TIRETTE_IN;
-    m_tirette = true;
     m_vacuum_level = 0.f;
     m_vacuum_state = OPEN_AIR;
 
@@ -676,6 +675,8 @@ GoalStrat::GoalStrat()
         &GoalStrat::grabFlipDropCallback, this, std::placeholders::_1, std::placeholders::_2));
 #endif
 
+    declareRecalageParameters(); // recalage bordure (src/goal/recalage.cpp)
+
     m_timer = this->create_wall_timer(100ms, std::bind(&GoalStrat::loop, this));
 }
 
@@ -703,9 +704,13 @@ void GoalStrat::publishAll()
     std::string s = "mainPubAll";
 
     pthread_setname_np(pthread_self(), s.c_str());
-    while (!m_stop_publishing)
+    for (unsigned int i = 0; !m_stop_publishing; i++)
     {
         usleep(50000);
+        if (i % 20 == 0)
+        {
+            repeatPreMatchState();
+        }
         updateCurrentPose();
         checkFunnyAction();
         checkStopMatch();
@@ -772,7 +777,11 @@ void GoalStrat::updateDigitalReads([[maybe_unused]] std_msgs::msg::Byte::SharedP
  */
 void GoalStrat::updateTirette(std_msgs::msg::Bool::SharedPtr tirette)
 {
-    m_tirette = tirette->data;
+    if (m_tirette_filter.update(tirette->data))
+    {
+        // Sans attendre loop(), bloquée plusieurs secondes si l'initialisation est en cours
+        publishPreMatchState();
+    }
 }
 
 /**
@@ -821,6 +830,13 @@ void GoalStrat::updateRemainingTime(
   builtin_interfaces::msg::Duration::SharedPtr a_remaining_time_match)
 {
     m_remainig_time = rclcpp::Duration(*a_remaining_time_match);
+    // Avant le match, Core publie une valeur fixe ; elle ne diminue qu'en match
+    const double l_remaining_s = m_remainig_time.seconds();
+    if (m_last_remaining_s >= 0. && l_remaining_s < m_last_remaining_s)
+    {
+        m_chrono_running = true;
+    }
+    m_last_remaining_s = l_remaining_s;
     m_strat_graph->setRemainingTime(m_remainig_time.seconds() * 1000);
     checkFunnyAction();
     checkStopMatch();
@@ -1493,11 +1509,18 @@ void GoalStrat::init()
  */
 void GoalStrat::loop()
 {
+    publishPreMatchState();
+
     switch (m_state)
     {
     case State::WAIT_TIRETTE_IN:
+        // Action avant match demandée (recalage / go_to_start), possible sans tirette : bloquant
+        if (handlePreMatchRequest())
+        {
+            break;
+        }
         RCLCPP_INFO_STREAM(this->get_logger(), "Waiting for tirette to be in" << std::endl);
-        if (!m_tirette)
+        if (m_tirette_filter.armed())
         {
             RCLCPP_INFO_STREAM(this->get_logger(), "Tirette is in!" << std::endl);
 
@@ -1518,9 +1541,15 @@ void GoalStrat::loop()
         m_state = State::WAIT_TIRETTE;
         break;
     case State::WAIT_TIRETTE:
+        // Action avant match demandée (recalage / go_to_start) : bloquant
+        if (handlePreMatchRequest())
+        {
+            break;
+        }
         RCLCPP_INFO_STREAM(this->get_logger(), "Waiting for tirette to be out" << std::endl);
 
-        if (m_state == State::WAIT_TIRETTE && m_tirette && m_remainig_time > rclcpp::Duration(1, 0))
+        if (m_state == State::WAIT_TIRETTE && m_tirette_filter.started()
+            && m_remainig_time > rclcpp::Duration(1, 0))
         {
             RCLCPP_INFO_STREAM(this->get_logger(), "Go for Run!" << std::endl);
 

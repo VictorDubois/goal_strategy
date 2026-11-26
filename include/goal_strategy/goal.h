@@ -5,6 +5,7 @@
 #include <atomic>
 #include <math.h>
 #include <memory>
+#include <mutex>
 #include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -19,6 +20,7 @@
 #include <std_msgs/msg/float32.hpp>
 #include <std_msgs/msg/int16.hpp>
 #include <std_msgs/msg/int32.hpp>
+#include <std_msgs/msg/string.hpp>
 
 #include "tf2_ros/buffer.h"
 #include "tf2_ros/transform_listener.h"
@@ -36,13 +38,21 @@
 
 #include "krabi_msgs/msg/ax12_info.hpp"
 #include "krabi_msgs/msg/caisses_sides.hpp"
+#include "krabi_msgs/msg/recalage_zones.hpp"
 #include "krabi_msgs/msg/servos_cmd.hpp"
 #include "krabi_msgs/msg/strat_movement.hpp"
 #include "krabi_msgs/srv/grab_flip_drop.hpp"
+#include "krabi_msgs/msg/motors_current.hpp"
+#include "krabi_msgs/srv/correct_pose.hpp"
+#include "krabi_msgs/srv/start_recalage.hpp"
+#include <std_srvs/srv/set_bool.hpp>
+#include <std_srvs/srv/trigger.hpp>
 
 #include "goal_strategy/publisherCreator.h"
+#include "goal_strategy/recalage_sequence.h"
 #include "goal_strategy/subscriptionCreator.h"
 #include "krabilib/pose.h"
+#include "krabilib/tirette_filter.h"
 
 // The distance to a goal (in m)
 #define REACH_DIST 0.02                            // m
@@ -116,6 +126,41 @@ private:
     void stopLinear();
     void startLinear();
     void recalage_bordure();
+
+    // ---- Recalage automatique sur bordure ----
+    bool recalageBordure(Wall a_wall, double a_clearance, bool a_reverse = true);
+    void loadRecalageZones();
+    bool setZonePose(const recalage::Zone& a_zone);
+    bool runZone(const recalage::Zone& a_zone);
+    bool runStep(const recalage::Step& a_step);
+    bool alignInPlace(Angle a_angle, rclcpp::Duration a_timeout);
+    bool waitForWallContact(rclcpp::Duration a_timeout);
+    bool callCorrectPose(krabi_msgs::srv::CorrectPose::Request::SharedPtr a_request);
+    void updateMotorsCurrent(krabi_msgs::msg::MotorsCurrent::SharedPtr a_msg);
+    void declareRecalageParameters();
+
+    // ---- Actions avant match (start_recalage_zone / start_recalage / go_to_start) ----
+    enum PreMatchRequest
+    {
+        PRE_MATCH_NONE = 0,
+        PRE_MATCH_RECALAGE,
+        PRE_MATCH_GO_TO_START
+    };
+    bool requestPreMatchAction(PreMatchRequest a_request,
+                               const std::string& a_zone,
+                               std::string& a_message);
+    bool handlePreMatchRequest();
+    bool preMatchFail(const std::string& a_reason);
+    std::string preMatchState() const;
+    void publishPreMatchState();
+    void repeatPreMatchState();
+    void publishRecalageZones();
+    bool setPreMatchMotion(bool a_enable);
+    bool goToStartPose();
+    bool goToPosition(double a_x, double a_y);
+    void stopPreMatchMotion();
+    bool sleepUnlessMatch(double a_seconds);
+    bool getOdomStamp(rclcpp::Time& a_stamp);
     void checkStopMatch();
     bool checkFunnyAction();
 
@@ -173,7 +218,7 @@ private:
     bool isArrivedAt(Etape* a_etape);
     bool isCurrentEtapeTheGoal();
 
-    State m_state = State::RUN;
+    std::atomic<State> m_state{ State::RUN }; // lu par les services, hors du thread de loop()
     Distance m_dist_to_goal;
     bool m_state_msg_displayed;
 #ifdef YEAR_2025
@@ -225,7 +270,7 @@ private:
     rclcpp::Time m_moving_timeout_deadline;
     bool m_funny_action_counted;
     krabi_msgs::msg::StratMovement m_strat_mvnt;
-    bool m_tirette;
+    TiretteFilter m_tirette_filter; // insérée (armed) puis retirée (started)
     float m_vacuum_level;
     int m_vacuum_state;
     bool m_all_done_do_funny = false;
@@ -263,4 +308,52 @@ private:
     bool m_thermometer_move_timeout = false;
     bool m_garde_manger_orient_timeout = false;
     bool m_caisse_orient_timeout = false;
+
+    // ---- Recalage automatique sur bordure ----
+    struct RecalageParams
+    {
+        double contact_offset_back; // m, base_link -> face arrière (contact mur)
+        double contact_offset_front; // m, base_link -> face avant
+        double still_dist;     // m, déplacement max pour considérer le robot immobile
+        double still_time;     // s, durée d'immobilité = contact
+        double settle_time;    // s, attente après contact avant de corriger
+        double timeout;        // s, timeout global de la poussée
+        double align_timeout;  // s, timeout de l'alignement
+        double service_timeout; // s, attente de la réponse de correct_pose
+        double min_push_dist;  // m, déplacement minimal avant d'accepter un contact
+        double max_correction_dist;  // m, correction refusée au-delà
+        double max_correction_angle; // rad, correction refusée au-delà
+        bool use_lidar_loc;    // si vrai : recalage désactivé (AMCL publie map->odom)
+    } m_recalage;
+    rclcpp::CallbackGroup::SharedPtr m_recalage_cb_group;
+    rclcpp::Client<krabi_msgs::srv::CorrectPose>::SharedPtr m_correct_pose_client;
+    rclcpp::Subscription<krabi_msgs::msg::MotorsCurrent>::SharedPtr m_motors_current_sub;
+    std::atomic<bool> m_left_wheel_stalled{ false };
+    std::atomic<bool> m_right_wheel_stalled{ false };
+
+    // ---- Actions avant match ----
+    double m_start_pose_x, m_start_pose_y, m_start_pose_theta; // pose de départ (map)
+    std::atomic<int> m_pre_match_request{ PRE_MATCH_NONE };
+    std::string m_pre_match_zone; // écrit avant m_pre_match_request, lu après
+    recalage::Config m_recalage_config;
+    std::atomic<bool> m_pre_match_busy{ false };
+    // Le chrono de Core a diminué : un match est en cours, même si goal_strat vient de redémarrer
+    // (respawn) et attend la tirette
+    std::atomic<bool> m_chrono_running{ false };
+    double m_last_remaining_s = -1.; // callback remaining_time seulement
+    // Utilisés seulement par le thread de loop()
+    std::string m_pre_match_step;         // étape en cours
+    std::string m_pre_match_error;        // première erreur de l'action en cours
+    std::string m_recalage_done;          // libellé de la zone du dernier recalage réussi
+    std::string m_recalage_failure;       // cause d'échec du dernier recalage
+    std::string m_go_to_start_failure;    // cause d'échec du dernier go_to_start
+    std::mutex m_pre_match_state_mutex;
+    std::string m_pre_match_state_sent;   // dernier état publié (protégé par le mutex)
+    rclcpp::Publisher<std_msgs::msg::String>::SharedPtr m_pre_match_state_pub;
+    rclcpp::Publisher<krabi_msgs::msg::RecalageZones>::SharedPtr m_recalage_zones_pub;
+    rclcpp::Service<krabi_msgs::srv::StartRecalage>::SharedPtr m_start_recalage_zone_srv;
+    rclcpp::Subscription<std_msgs::msg::Bool>::SharedPtr m_recalage_sub; // bouton de l'IHM
+    rclcpp::Service<std_srvs::srv::Trigger>::SharedPtr m_start_recalage_srv;
+    rclcpp::Service<std_srvs::srv::Trigger>::SharedPtr m_go_to_start_srv;
+    rclcpp::Client<std_srvs::srv::SetBool>::SharedPtr m_pre_match_motion_client;
 };

@@ -1,0 +1,47 @@
+# Zones de recalage, sélectionnables sur l'IHM. Relu au démarrage de goal_strat (RESTART COLOR
+# sur l'IHM) ; pas besoin de recompiler.
+#
+# Repère map : origine au centre de la table, x de -1.5 à 1.5, y de -1 à 1 (mètres, degrés).
+# Tout s'écrit pour le BLEU. Le jaune est obtenu par symétrie (x -> -x, X_MIN <-> X_MAX), sauf si
+# pose_yellow / sequence_yellow sont donnés ; ceux-là sont écrits tels quels, pour le jaune.
+#
+# pose : où on pose le robot (position du centre des roues, cap).
+#   "x y degrés", ou "launch" = la pose de départ du robot (xRobotPos, yRobotPos, ...).
+#
+# sequence :
+#   wall <X_MIN|X_MAX|Y_MIN|Y_MAX> <dégagement>   dos au mur, corrige la pose, s'écarte (m)
+#   goto <x> <y>                                  va au point, en ligne droite
+#   rotate <degrés>                               s'oriente (cap absolu dans map)
+#   start                                         retour à la pose de départ (en dernier)
+#
+# !!! Il n'y a PAS d'évitement : c'est à la séquence d'éviter les caisses et le grenier
+#     (|x| < 0.9, y < -0.55). Toujours essayer en simu avec gz_world:=table2026Full.world.
+# Le robot s'arrête à 2 cm près : un dégagement de 0.10 donne 8 à 10 cm.
+
+default_zone: depart
+
+zones:
+  depart:
+    label: Départ
+    pose: launch
+    # L'ordre des murs dépend de la couleur : les deux départs n'ont pas le même cap, et cet
+    # ordre évite au robot de tourner plus que nécessaire.
+    sequence:
+      - wall X_MIN 0.10
+      - wall Y_MIN 0.10
+      - start
+    sequence_yellow:
+      - wall Y_MIN 0.10
+      - wall X_MAX 0.10
+      - start
+
+  public:
+    label: Côté public
+    pose: -0.9 0.75 -90
+    sequence:
+      - wall Y_MAX 0.10
+      - goto -1.0 0.2        # entre les deux groupes de caisses du petit côté
+      - wall X_MIN 0.30
+      - goto -1.05 -0.25     # longe les caisses du nid
+      - goto -1.2 -0.55      # puis s'écarte du coin du grenier (Core s'arrête s'il est devant)
+      - start
