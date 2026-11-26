@@ -17,9 +17,15 @@ public:
         // 2025
         STOCK_MATIERE_PREMIERE = 0x26,
         AIRE_DE_CONSTRUCTION = 0x27,
+        // 2026
         GARDE_MANGER = 0x28,
         ZONE_DE_RAMASSAGE = 0x29,
         THERMOMETRE = 0x2A,
+        // 2027
+        CARRIERE_PIERRES = 0x2B,
+        EMPLACEMENT_MUR = 0x2C,
+        EMPLACEMENT_TOUR = 0x2D,
+        GRAAL = 0x2E,
 
         POINT_PASSAGE = 0x30,
     };

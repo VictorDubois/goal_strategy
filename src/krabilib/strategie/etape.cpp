@@ -46,6 +46,18 @@ std::string Etape::getName()
     case EtapeType::THERMOMETRE:
         return "Thermo";
         break;
+    case EtapeType::CARRIERE_PIERRES:
+        return "Carriere";
+        break;
+    case EtapeType::EMPLACEMENT_MUR:
+        return "Mur";
+        break;
+    case EtapeType::EMPLACEMENT_TOUR:
+        return "Tour";
+        break;
+    case EtapeType::GRAAL:
+        return "Graal";
+        break;
     default:
         return "";
         break;

@@ -134,3 +134,12 @@ A lot!
 - If needed, add a new actuator (ex: bilig)
 - Modify main.cpp, with "#ifdef YEAR_202X" => adapt all the year-specific sections
 - Go from there. Whenever you have something that compiles, you can start the goal_strategy (`krabi && ros2 launch goal_strategy goal_strat_launch.py`), and view the graph on rviz/foxglove
+
+## 2027 template
+
+The 2027 skeleton is compiled but not active (`YEAR_2026` is still defined in `goal.h`; replace it by `YEAR_2027` to switch).
+
+- `krabilib/strategie`: `pierre.h` (`Pierre`), `carrierePierres` (`CARRIERE_PIERRES`), `constructionMur` (`EMPLACEMENT_MUR`, can host the porte), `constructionTour` (`EMPLACEMENT_TOUR`), `graal` (`GRAAL`, single pickup spot, carried on the robot's roof), `stockPierres.h` (`StockPierres` / `Actionneur`, `NOMBRE_ACTIONNEURS` to be decided: 2 or 3).
+- `goal/coupe2027.cpp`: placeholder graph (coordinates are TODO) and scoring. An used spot becomes a waypoint (`Etape::finir()`); only the porte is tracked (`StockPierres::isPorteConstruite`).
+- The robot must be back in its base before the PAMIs attack (`TEMPS_RETOUR_BASE_MS`, 85 s). The funny action (boulets) needs no etape.
+- Still to do: real coordinates, actuators (`main.cpp` TODOs under `YEAR_2027`), 2027 tests, simulator world/map.

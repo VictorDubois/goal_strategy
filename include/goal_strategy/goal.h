@@ -1,6 +1,6 @@
 #pragma once
 
-#define YEAR_2026
+#define YEAR_2027
 
 #include <atomic>
 #include <math.h>
@@ -31,6 +31,8 @@
 #elif defined(YEAR_2026)
 #include "coupe2026.h"
 #include "goal_strategy/billig.h"
+#elif defined(YEAR_2027)
+#include "coupe2027.h"
 #endif
 #include "goal_strategy/actuators2025.h"
 
@@ -179,8 +181,10 @@ private:
 #ifdef YEAR_2025
     std::unique_ptr<Coupe2025> m_strat_graph;
     StartingPosition2025 m_starting_position_2025;
-#else
+#elif defined(YEAR_2026)
     std::unique_ptr<Coupe2026> m_strat_graph;
+#elif defined(YEAR_2027)
+    std::unique_ptr<Coupe2027> m_strat_graph;
 #endif
 
     long m_timeout_moving, m_timeout_orient;
@@ -234,9 +238,10 @@ private:
 
 #ifdef YEAR_2025
     std::shared_ptr<Grabi> m_grabi;
-#else
+#elif defined(YEAR_2026)
     std::shared_ptr<Billig> m_billig;
 #endif
+    // 2027: the actuators of the main robot are not defined yet (TODO)
     bool m_goal_init_done;
     bool m_at_least_one_carre_fouille_done;
     std::vector<Position> m_potential_other_robots;

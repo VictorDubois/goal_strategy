@@ -49,6 +49,10 @@ add_library(krabilib_strat
   src/krabilib/strategie/thermometre.cpp
   src/krabilib/strategie/zoneDeRamassage.cpp
   src/krabilib/strategie/gardeManger.cpp
+  src/krabilib/strategie/carrierePierres.cpp
+  src/krabilib/strategie/constructionMur.cpp
+  src/krabilib/strategie/constructionTour.cpp
+  src/krabilib/strategie/graal.cpp
 )
 
 add_executable(goal_strategy_node
@@ -60,6 +64,7 @@ add_executable(goal_strategy_node
   #src/goal/AX12.cpp
   src/goal/coupe2025.cpp
   src/goal/coupe2026.cpp
+  src/goal/coupe2027.cpp
   src/goal/pump.cpp
   src/goal/servomotor.cpp
   src/goal/grabi.cpp
@@ -155,6 +160,7 @@ if(BUILD_TESTING)
     src/goal/publisherCreator.cpp
     src/goal/coupe2025.cpp
     src/goal/coupe2026.cpp
+    src/goal/coupe2027.cpp
     src/goal/pump.cpp
     src/goal/servomotor.cpp
     src/goal/grabi.cpp

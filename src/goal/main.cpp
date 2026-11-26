@@ -524,6 +524,8 @@ GoalStrat::GoalStrat()
     m_year = 2025;
 #elif defined(YEAR_2026)
     m_year = 2026;
+#elif defined(YEAR_2027)
+    m_year = 2027;
 #endif
 
     // 2025
@@ -616,6 +618,49 @@ GoalStrat::GoalStrat()
                                         l_pump_2,
                                         l_pump_3,
                                         l_pump_4);
+
+    m_actuators = Actuators2025(rclcpp::Node::SharedPtr(this, [](rclcpp::Node*) {}),
+                                "actuators2025",
+                                l_servo_grabi_left_most,
+                                l_servo_grabi_center_left,
+                                l_servo_grabi_center_right,
+                                l_servo_grabi_right_most,
+                                l_additionnal_servo,
+                                l_additionnal_servo,
+                                l_additionnal_servo,
+                                l_additionnal_servo,
+                                l_ax12_1,
+                                l_ax12_2,
+                                l_ax12_3,
+                                l_ax12_4,
+                                l_stepper_grabi_elevator,
+                                l_pump_1,
+                                l_pump_2,
+                                l_pump_3,
+                                l_pump_4);
+#elif defined(YEAR_2027)
+    // TODO adjust to the real actuators for the year 2027
+    uint8_t l_slow_speed = 30;
+    uint8_t l_high_speed = 200;
+    auto l_servo_grabi_left_most = std::make_shared<Servomotor>(l_slow_speed, 0);
+    auto l_servo_grabi_center_left = std::make_shared<Servomotor>(l_slow_speed, 0);
+    auto l_servo_grabi_center_right = std::make_shared<Servomotor>(l_slow_speed, 0);
+    auto l_servo_grabi_right_most = std::make_shared<Servomotor>(l_slow_speed, 0);
+    auto l_additionnal_servo = std::make_shared<Servomotor>(10, 62);
+    auto l_pump_1 = std::make_shared<Pump>(false, true);
+    auto l_pump_2 = std::make_shared<Pump>(false, true);
+    auto l_pump_3 = std::make_shared<Pump>(false, true);
+    auto l_pump_4 = std::make_shared<Pump>(false, true);
+    auto l_ax12_1 = std::make_shared<AX12>(l_high_speed, 0);
+    auto l_ax12_2 = std::make_shared<AX12>(l_high_speed, 0);
+    auto l_ax12_3 = std::make_shared<AX12>(l_high_speed, 0);
+    auto l_ax12_4 = std::make_shared<AX12>(l_high_speed, 0);
+    m_servo_banner = std::make_shared<Servomotor>(10, 90);
+    auto l_stepper_grabi_elevator = std::make_shared<StepperElevator>(100 /* mm/s */,
+                                                                      100 /* mm/s2 */,
+                                                                      100 /* x50mA */,
+                                                                      0 /*mm de haut max*/,
+                                                                      -150 /* mm vers le bas min*/);
 
     m_actuators = Actuators2025(rclcpp::Node::SharedPtr(this, [](rclcpp::Node*) {}),
                                 "actuators2025",
@@ -1354,6 +1399,23 @@ void GoalStrat::stateRun()
             break;
 #endif
 
+#ifdef YEAR_2027
+        case Etape::EtapeType::CARRIERE_PIERRES:
+            // TODO: actuator sequence to grab the pierres
+            m_strat_graph->ramassePierres(m_strat_graph->getEtapeEnCours());
+            break;
+
+        case Etape::EtapeType::EMPLACEMENT_MUR:
+        case Etape::EtapeType::EMPLACEMENT_TOUR:
+            // TODO: actuator sequence to build the mur, the tour or the porte
+            m_score_match += m_strat_graph->construit(m_strat_graph->getEtapeEnCours());
+            break;
+
+        case Etape::EtapeType::GRAAL:
+            // TODO: actuator sequence to pick up the Graal and carry it on the roof of the robot
+            break;
+#endif
+
         default:
             // stopAngular();
             RCLCPP_INFO_STREAM(this->get_logger(), "No special action here\n");
@@ -1475,6 +1537,9 @@ void GoalStrat::init()
 #elif defined(YEAR_2026)
     m_strat_graph = std::make_unique<Coupe2026>(
       !m_is_blue, rclcpp::Node::SharedPtr(this, [](rclcpp::Node*) {}));
+#elif defined(YEAR_2027)
+    m_strat_graph = std::make_unique<Coupe2027>(
+      !m_is_blue, rclcpp::Node::SharedPtr(this, [](rclcpp::Node*) {}));
 #endif
 
     m_strat_graph->update();
@@ -1512,6 +1577,8 @@ void GoalStrat::loop()
         m_grabi->initializeElevator();
 #elif defined(YEAR_2026)
         m_billig->initBillig(true);
+#elif defined(YEAR_2027)
+        // TODO: init the actuators of 2027
 #endif
         RCLCPP_INFO_STREAM(this->get_logger(), "Init done" << std::endl);
 
@@ -1533,7 +1600,7 @@ void GoalStrat::loop()
                 m_grabi->initGrabi(true);
 #endif
             }
-            else if (m_year == 2026)
+            else if (m_year == 2026 || m_year == 2027)
             {
                 publishDebugInfos();
             }
